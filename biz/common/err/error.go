@@ -1,0 +1,39 @@
+package err
+
+import (
+	"errors"
+	"github.com/cloudwego/hertz/pkg/protocol/consts"
+)
+
+type BizError struct {
+	Status  int    `json:"status"`
+	ErrCode int    `json:"errCode"`
+	ErrMsg  string `json:"errMsg"`
+}
+
+func (e BizError) Error() string {
+	return e.ErrMsg
+}
+
+func ConvertErr(err error) BizError {
+	Err := &BizError{}
+	if errors.As(err, &Err) {
+		return *Err
+	}
+	s := BizError{
+		Status:  consts.StatusInternalServerError,
+		ErrCode: 1000, // unknown error
+		ErrMsg:  err.Error(),
+	}
+	return s
+}
+
+var (
+	UnauthorisedError     = BizError{Status: consts.StatusUnauthorized, ErrCode: consts.StatusUnauthorized, ErrMsg: "unauthorized"}
+	InvalidParameterError = BizError{Status: consts.StatusBadRequest, ErrCode: consts.StatusBadRequest, ErrMsg: "invalid parameter"}
+
+	InternalError             = BizError{Status: consts.StatusInternalServerError, ErrCode: 1000, ErrMsg: "internal error"}
+	InvalidBuyerError         = BizError{Status: consts.StatusInternalServerError, ErrCode: 1001, ErrMsg: "invalid buyer id"}
+	TooLowReferencePriceError = BizError{Status: consts.StatusInternalServerError, ErrCode: 1002, ErrMsg: "the reference price is too low"}
+	ItemNotOnSaleError        = BizError{Status: consts.StatusInternalServerError, ErrCode: 1003, ErrMsg: "item not on sale"}
+)

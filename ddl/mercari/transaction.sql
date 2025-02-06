@@ -1,0 +1,22 @@
+CREATE TABLE `mercari`.`transaction` (
+    `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+    `created_at` datetime(3) DEFAULT NULL,
+    `updated_at` datetime(3) DEFAULT NULL,
+    `deleted_at` datetime(3) DEFAULT NULL,
+    `trx_id` varchar(255) DEFAULT NULL,
+    `ref_id` varchar(255) DEFAULT NULL,
+    `item_id` varchar(255) DEFAULT NULL,
+    `item_type` varchar(255) DEFAULT NULL,
+    `item_detail` json DEFAULT NULL,
+    `buyer_id` varchar(255) DEFAULT NULL,
+    `price` decimal(10, 2) DEFAULT NULL,
+    `paid_price` decimal(10, 2) DEFAULT NULL,
+    `ref_price` decimal(10, 2) DEFAULT NULL,
+    `failure_details` json DEFAULT NULL,
+    `checksum` varchar(255) DEFAULT NULL,
+    `coupon_id` varchar(255) DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY (`trx_id`),
+    UNIQUE KEY (`ref_id`),
+    KEY `idx_deleted_at` (`deleted_at`)
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci

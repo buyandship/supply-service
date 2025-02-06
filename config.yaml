@@ -1,0 +1,8 @@
+env: "development"
+mysql:
+  username: "root"
+  password: ""
+  addr: "localhost:3306"
+  db_name: "mercari"
+redis:
+  addr: "localhost:6379"
