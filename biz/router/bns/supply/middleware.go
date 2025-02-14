@@ -49,3 +49,28 @@ func _mercariregisteraccountserviceMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _xbMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _mercarilogincallbackserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _mercarigettokenserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _v1Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _supplysrvMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

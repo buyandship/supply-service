@@ -1,0 +1,12 @@
+env: "development"
+mysql:
+  username: "bns_test"
+  password: "sees7&ch@nting"
+  addr: "test-mysql.ctgaq8igsgen.ap-southeast-1.rds.amazonaws.com:3306"
+  db_name: "mercari"
+redis:
+  addr: "bso-redis:6379"
+mercari:
+  client_id: "NUSnaBnbqRGy1sndWIYZUQJFnwousvRh"
+  client_secret: "7D0mXAF7VsfRswFSckwwb1NoGBU6J7N0"
+hmac_secret: "utmtuacz-hhme-fht4-gba6-3lg4vi8fzpu6"

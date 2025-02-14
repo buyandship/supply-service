@@ -4,17 +4,18 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/cenkalti/backoff/v5"
-	"net/http"
-	"strconv"
-
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"io"
+	"net/http"
 )
 
 type PurchaseItemRequest struct {
-	BuyerId            string `json:"buyer_id"`
+	BuyerId            int32  `json:"buyer_id"`
 	ItemId             string `json:"item_id"`
 	FamilyName         string `json:"family_name"`
 	FirstName          string `json:"first_name"`
@@ -37,11 +38,11 @@ type PurchaseItemResponse struct {
 	RequestId          string `json:"request_id"`
 	TransactionStatus  string `json:"transaction_status"`
 	TransactionDetails struct {
-		TrxId            int    `json:"trx_id"`
+		TrxId            int64  `json:"trx_id"`
 		PaidMethod       string `json:"paid_method"`
-		Price            int    `json:"price"`
-		PaidPrice        int    `json:"paid_price"`
-		BuyerShippingFee int    `json:"buyer_shipping_fee"`
+		Price            int64  `json:"price"`
+		PaidPrice        int64  `json:"paid_price"`
+		BuyerShippingFee string `json:"buyer_shipping_fee"`
 		ItemId           string `json:"item_id"`
 		Checksum         string `json:"checksum"`
 		UserAddress      struct {
@@ -59,6 +60,8 @@ type PurchaseItemResponse struct {
 		} `json:"user_address"`
 		ShippingMethodId int `json:"shipping_method_id"`
 	} `json:"transaction_details"`
+
+	CouponId int `json:"coupon_id"`
 }
 
 type PurchaseItemErrorResponse struct {
@@ -72,28 +75,25 @@ type PurchaseItemErrorResponse struct {
 
 func (m *Mercari) PurchaseItem(ctx context.Context, req *PurchaseItemRequest) (*PurchaseItemResponse, error) {
 	purchaseItemFunc := func() (*PurchaseItemResponse, error) {
-		acc, ok := m.Accounts[req.BuyerId]
-		if !ok {
-			hlog.Errorf("buyer not exists, buyer_id: %s", req.BuyerId)
-			return nil, bizErr.InvalidBuyerError
+		if ok := redis.GetHandler().Limit(ctx); ok {
+			return nil, bizErr.RateLimitError
 		}
 
 		headers := map[string][]string{
-			"Content-Type":  []string{"application/json"},
-			"Accept":        []string{"application/json"},
-			"Authorization": []string{acc.AccessToken},
+			"Content-Type":  {"application/json"},
+			"Accept":        {"application/json"},
+			"Authorization": {m.Token.AccessToken},
 		}
-
 		reqBody, err := json.Marshal(req)
 		if err != nil {
-			hlog.Errorf("marshal json request error, %s", err.Error())
-			return nil, bizErr.InternalError
+			hlog.CtxErrorf(ctx, "marshal json request error, %s", err.Error())
+			return nil, backoff.Permanent(bizErr.InternalError)
 		}
 		data := bytes.NewBuffer(reqBody)
 		httpReq, err := http.NewRequest("POST", fmt.Sprintf("%s/v1/items/purchase", m.OpenApiDomain), data)
 		if err != nil {
-			hlog.Errorf("http request error, err: %v", err)
-			return nil, bizErr.InternalError
+			hlog.CtxErrorf(ctx, "http request error, err: %v", err)
+			return nil, backoff.Permanent(bizErr.InternalError)
 		}
 		httpReq.Header = headers
 
@@ -105,60 +105,63 @@ func (m *Mercari) PurchaseItem(ctx context.Context, req *PurchaseItemRequest) (*
 			}
 		}()
 		if err != nil {
-			hlog.Errorf("http error, err: %v", err)
-			return nil, bizErr.InternalError
+			hlog.CtxErrorf(ctx, "http error, err: %v", err)
+			return nil, backoff.Permanent(bizErr.InternalError)
 		}
 		if httpRes.StatusCode == http.StatusUnauthorized {
-			if err := m.RefreshToken(req.BuyerId); err != nil {
-				hlog.Errorf("try to refresh token, but fails, err: %v", err)
+			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
+			if err := m.RefreshToken(ctx); err != nil {
+				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
 			}
-			seconds, err := strconv.ParseInt(httpRes.Header.Get("Retry-After"), 10, 64)
-			if err == nil {
-				return nil, backoff.RetryAfter(int(seconds))
-			}
+			return nil, bizErr.UnauthorisedError
 		}
 		// retry code: 409, 429, 5xx
 		if httpRes.StatusCode == http.StatusTooManyRequests {
-			seconds, err := strconv.ParseInt(httpRes.Header.Get("Retry-After"), 10, 64)
-			if err == nil {
-				return nil, backoff.RetryAfter(int(seconds))
-			}
+			hlog.CtxErrorf(ctx, "http too many requests, retrying...")
+			return nil, backoff.RetryAfter(1)
 		}
 		if httpRes.StatusCode == http.StatusConflict {
-			seconds, err := strconv.ParseInt(httpRes.Header.Get("Retry-After"), 10, 64)
-			if err == nil {
-				return nil, backoff.RetryAfter(int(seconds))
-			}
+			hlog.CtxErrorf(ctx, "http conflict, retrying...")
+			return nil, bizErr.ConflictError
 		}
 		if httpRes.StatusCode >= 500 && httpRes.StatusCode < 600 {
-			seconds, err := strconv.ParseInt(httpRes.Header.Get("Retry-After"), 10, 64)
-			if err == nil {
-				return nil, backoff.RetryAfter(int(seconds))
+			respBody, _ := io.ReadAll(httpRes.Body)
+			hlog.CtxErrorf(ctx, "http error, error_code: [%d], err_msg:[%s], retrying...", httpRes.StatusCode, respBody)
+			return nil, bizErr.BizError{
+				Status:  httpRes.StatusCode,
+				ErrCode: httpRes.StatusCode,
+				ErrMsg:  string(respBody),
 			}
 		}
 
 		if httpRes.StatusCode != http.StatusOK {
+			hlog.CtxErrorf(ctx, "http error, error_code: [%d]", httpRes.StatusCode)
 			errResp := &PurchaseItemErrorResponse{}
 			if err := json.NewDecoder(httpRes.Body).Decode(errResp); err != nil {
-				hlog.Errorf("decode http response error, err: %v", err)
-				return nil, bizErr.InternalError
+				hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
+				return nil, backoff.Permanent(bizErr.InternalError)
 			}
-			return nil, bizErr.BizError{
+			return nil, backoff.Permanent(bizErr.BizError{
 				Status:  httpRes.StatusCode,
 				ErrCode: httpRes.StatusCode,
 				ErrMsg:  errResp.FailureDetails.Reasons,
-			}
+			})
 		}
 
 		resp := &PurchaseItemResponse{}
 		if err := json.NewDecoder(httpRes.Body).Decode(resp); err != nil {
-			hlog.Errorf("decode http response error, err: %v", err)
-			return nil, bizErr.InternalError
+			hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
+			return nil, backoff.Permanent(bizErr.InternalError)
 		}
 		return resp, nil
 	}
-	result, err := backoff.Retry(context.TODO(), purchaseItemFunc, backoff.WithBackOff(backoff.NewExponentialBackOff()))
+	result, err := backoff.Retry(ctx, purchaseItemFunc, m.GetRetryOpts()...)
 	if err != nil {
+		pErr := &backoff.PermanentError{}
+		if errors.As(err, &pErr) {
+			berr := pErr.Unwrap()
+			return nil, berr
+		}
 		return nil, err
 	}
 	return result, nil

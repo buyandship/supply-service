@@ -8,23 +8,37 @@ import (
 	"github.com/buyandship/supply-svr/biz/handler/bns/supply/mercari"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"github.com/google/uuid"
+	hertzzap "github.com/hertz-contrib/logger/zap"
 )
 
 // MercariGetItemService .
 // @router /mercari/item [GET]
 func MercariGetItemService(ctx context.Context, c *app.RequestContext) {
+	var requestId string
+	if string(c.GetHeader("X-Request-ID")) == "" {
+		requestId = uuid.NewString()
+	} else {
+		requestId = string(c.GetHeader("X-Request-ID"))
+	}
+	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
+
 	var err error
 	var req supply.MercariGetItemReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
+		hlog.CtxErrorf(ctx, "invalid parameter, err: %+v", err)
 		c.AbortWithStatusJSON(consts.StatusBadRequest, bizErr.InvalidParameterError)
 		return
 	}
+
 	resp, err := mercari.GetItemService(ctx, &req)
 	if err != nil {
 		cerr := bizErr.ConvertErr(err)
 		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
 	}
 	c.JSON(consts.StatusOK, resp)
 }
@@ -32,18 +46,19 @@ func MercariGetItemService(ctx context.Context, c *app.RequestContext) {
 // MercariGetCategoriesService .
 // @router /mercari/categories [GET]
 func MercariGetCategoriesService(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req supply.MercariGetCategoriesReq
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.AbortWithStatusJSON(consts.StatusBadRequest, bizErr.InvalidParameterError)
-		return
+	var requestId string
+	if string(c.GetHeader("X-Request-ID")) == "" {
+		requestId = uuid.NewString()
+	} else {
+		requestId = string(c.GetHeader("X-Request-ID"))
 	}
+	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
 
-	resp, err := mercari.GetCategoriesService(ctx, &req)
+	resp, err := mercari.GetCategoriesService(ctx)
 	if err != nil {
 		cerr := bizErr.ConvertErr(err)
 		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
 	}
 	c.JSON(consts.StatusOK, resp)
 }
@@ -51,17 +66,28 @@ func MercariGetCategoriesService(ctx context.Context, c *app.RequestContext) {
 // MercariGetSellerService .
 // @router /mercari/seller [GET]
 func MercariGetSellerService(ctx context.Context, c *app.RequestContext) {
+	var requestId string
+	if string(c.GetHeader("X-Request-ID")) == "" {
+		requestId = uuid.NewString()
+	} else {
+		requestId = string(c.GetHeader("X-Request-ID"))
+	}
+	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
+
 	var err error
 	var req supply.MercariGetSellerReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
+		hlog.CtxErrorf(ctx, "invalid parameter, err: %+v", err)
 		c.AbortWithStatusJSON(consts.StatusBadRequest, bizErr.InvalidParameterError)
 		return
 	}
+
 	resp, err := mercari.GetSellerService(ctx, &req)
 	if err != nil {
 		cerr := bizErr.ConvertErr(err)
 		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
 	}
 	c.JSON(consts.StatusOK, resp)
 }
@@ -69,10 +95,19 @@ func MercariGetSellerService(ctx context.Context, c *app.RequestContext) {
 // MercariPostOrderService .
 // @router /mercari/order [POST]
 func MercariPostOrderService(ctx context.Context, c *app.RequestContext) {
+	var requestId string
+	if string(c.GetHeader("X-Request-ID")) == "" {
+		requestId = uuid.NewString()
+	} else {
+		requestId = string(c.GetHeader("X-Request-ID"))
+	}
+	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
+
 	var err error
 	var req supply.MercariPostOrderReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
+		hlog.CtxErrorf(ctx, "invalid parameter, err: %+v", err)
 		c.AbortWithStatusJSON(consts.StatusBadRequest, bizErr.InvalidParameterError)
 		return
 	}
@@ -80,6 +115,7 @@ func MercariPostOrderService(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		cerr := bizErr.ConvertErr(err)
 		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
 	}
 	c.JSON(consts.StatusOK, resp)
 }
@@ -87,10 +123,19 @@ func MercariPostOrderService(ctx context.Context, c *app.RequestContext) {
 // MercariPostMessageService .
 // @router /mercari/message [POST]
 func MercariPostMessageService(ctx context.Context, c *app.RequestContext) {
+	var requestId string
+	if string(c.GetHeader("X-Request-ID")) == "" {
+		requestId = uuid.NewString()
+	} else {
+		requestId = string(c.GetHeader("X-Request-ID"))
+	}
+	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
+
 	var err error
 	var req supply.MercariPostMessageReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
+		hlog.CtxErrorf(ctx, "invalid parameter, err: %+v", err)
 		c.AbortWithStatusJSON(consts.StatusBadRequest, bizErr.InvalidParameterError)
 		return
 	}
@@ -98,6 +143,7 @@ func MercariPostMessageService(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		cerr := bizErr.ConvertErr(err)
 		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
 	}
 	c.JSON(consts.StatusOK, resp)
 }
@@ -105,10 +151,19 @@ func MercariPostMessageService(ctx context.Context, c *app.RequestContext) {
 // MercariRegisterAccountService .
 // @router /mercari/register [POST]
 func MercariRegisterAccountService(ctx context.Context, c *app.RequestContext) {
+	var requestId string
+	if string(c.GetHeader("X-Request-ID")) == "" {
+		requestId = uuid.NewString()
+	} else {
+		requestId = string(c.GetHeader("X-Request-ID"))
+	}
+	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
+
 	var err error
 	var req supply.MercariRegisterAccountReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
+		hlog.CtxErrorf(ctx, "invalid parameter, err: %+v", err)
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
@@ -117,6 +172,59 @@ func MercariRegisterAccountService(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		cerr := bizErr.ConvertErr(err)
 		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+	c.JSON(consts.StatusOK, resp)
+}
+
+// MercariLoginCallBackService .
+// @router /xb/login_callback [POST]
+func MercariLoginCallBackService(ctx context.Context, c *app.RequestContext) {
+	var requestId string
+	if string(c.GetHeader("X-Request-ID")) == "" {
+		requestId = uuid.NewString()
+	} else {
+		requestId = string(c.GetHeader("X-Request-ID"))
+	}
+	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
+
+	var err error
+	var req supply.MercariLoginCallBackReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		hlog.CtxErrorf(ctx, "invalid parameter, err: %+v", err)
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	req.RedirectUrl = c.URI().String()
+
+	if err := mercari.LoginCallBackService(ctx, &req); err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+	c.JSON(consts.StatusOK, "success")
+}
+
+// MercariGetTokenService .
+// @router /mercari/token [GET]
+func MercariGetTokenService(ctx context.Context, c *app.RequestContext) {
+	var err error
+
+	var requestId string
+	if string(c.GetHeader("X-Request-ID")) == "" {
+		requestId = uuid.NewString()
+	} else {
+		requestId = string(c.GetHeader("X-Request-ID"))
+	}
+	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
+
+	resp, err := mercari.GetTokenService(ctx)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
 	}
 	c.JSON(consts.StatusOK, resp)
 }

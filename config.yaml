@@ -6,3 +6,7 @@ mysql:
   db_name: "mercari"
 redis:
   addr: "localhost:6379"
+mercari:
+  client_id: "NUSnaBnbqRGy1sndWIYZUQJFnwousvRh"
+  client_secret: "7D0mXAF7VsfRswFSckwwb1NoGBU6J7N0"
+hmac_secret: "utmtuacz-hhme-fht4-gba6-3lg4vi8fzpu6"

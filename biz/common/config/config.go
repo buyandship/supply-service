@@ -6,6 +6,11 @@ import (
 	"sync"
 )
 
+type MercariConfig struct {
+	ClientId     string `mapstructure:"client_id"`
+	ClientSecret string `mapstructure:"client_secret"`
+}
+
 type MySQLConfig struct {
 	Username string `mapstructure:"username"`
 	Password string `mapstructure:"password"`
@@ -18,10 +23,12 @@ type RedisConfig struct {
 }
 
 type ServerConfig struct {
-	v     *viper.Viper
-	Env   string      `mapstructure:"env"`
-	Mysql MySQLConfig `mapstructure:"mysql"`
-	Redis RedisConfig `mapstructure:"redis"`
+	v          *viper.Viper
+	Env        string        `mapstructure:"env"`
+	Mysql      MySQLConfig   `mapstructure:"mysql"`
+	Redis      RedisConfig   `mapstructure:"redis"`
+	Mercari    MercariConfig `mapstructure:"mercari"`
+	HmacSecret string        `mapstructure:"hmac_secret"`
 }
 
 var (
@@ -63,6 +70,9 @@ func LoadTestConfig() {
 			Username: "root",
 			Address:  "localhost:3306",
 			DBName:   "mercari",
+		},
+		Redis: RedisConfig{
+			Address: "localhost:6379",
 		},
 	}
 }

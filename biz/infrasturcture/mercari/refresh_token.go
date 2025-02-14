@@ -2,86 +2,111 @@ package mercari
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
+	"github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"io"
 	"net/http"
+	"net/url"
 )
 
 type RefreshTokenResponse struct {
 	AccessToken  string `json:"access_token"`
-	ExpiresIn    int    `json:"expires_in"`
+	ExpiresIn    int32  `json:"expires_in"`
 	RefreshToken string `json:"refresh_token"`
 	Scope        string `json:"scope"`
 	TokenType    string `json:"token_type"`
 }
 
-func (m *Mercari) RefreshToken(buyerID string) error {
-	// call refresh token
-	acc, ok := m.Accounts[buyerID]
-	if !ok {
-		hlog.Errorf("buyer not exists, buyer_id: %s", buyerID)
-		return bizErr.InvalidBuyerError
+type T struct {
+	Info struct {
+		AccessToken string `json:"access_token"`
+	} `json:"info"`
+}
+
+func (m *Mercari) RefreshToken(ctx context.Context) error {
+	t, err := db.GetHandler().GetToken()
+	if err != nil {
+		return err
+	}
+	m.Token = t
+
+	if m.TokenExpired() {
+		if err := m.refreshToken(ctx); err != nil {
+			return err
+		}
 	}
 
-	secret, err := m.GenerateSecret(buyerID)
+	return nil
+}
+
+func (m *Mercari) refreshToken(ctx context.Context) error {
+	if ok := redis.GetHandler().Limit(ctx); ok {
+		return bizErr.RateLimitError
+	}
+
+	secret, err := m.GenerateSecret()
 	if err != nil {
 		return err
 	}
 
 	headers := map[string][]string{
-		"Content-Type":  []string{"application/x-www-form-urlencoded"},
-		"Authorization": []string{fmt.Sprintf("Basic %s", secret)},
+		"Content-Type":  {"application/x-www-form-urlencoded"},
+		"Authorization": {fmt.Sprintf("Basic %s", secret)},
 	}
 
-	body := map[string]string{
-		"grant_type":    "refresh_token",
-		"scope":         "openapi:buy%20offline_access",
-		"refresh_token": acc.RefreshToken,
-	}
+	body := fmt.Sprintf("grant_type=%s&scope=%s&refresh_token=%s", "refresh_token",
+		url.QueryEscape(m.Token.Scope), m.Token.RefreshToken)
 
-	reqBody, err := json.Marshal(body)
-	if err != nil {
-		hlog.Errorf("json marshal error, body: %s, err: %v", body, err)
-		return bizErr.InternalError
-	}
-
-	data := bytes.NewBuffer(reqBody)
+	data := bytes.NewBuffer([]byte(body))
 	httpReq, err := http.NewRequest("POST", fmt.Sprintf("%s/jp/v1/token", m.AuthServiceDomain), data)
 	if err != nil {
-		hlog.Errorf("http request error, err: %v", err)
+		hlog.CtxErrorf(ctx, "http request error, err: %v", err)
 		return bizErr.InternalError
 	}
 	httpReq.Header = headers
-	client := &http.Client{}
-	httpRes, err := client.Do(httpReq)
+	c := &http.Client{}
+	httpRes, err := c.Do(httpReq)
 	defer func() {
 		if err := httpRes.Body.Close(); err != nil {
-			hlog.Errorf("http close error: %s", err)
+			hlog.CtxErrorf(ctx, "http close error: %s", err)
 		}
 	}()
 	if err != nil {
-		hlog.Errorf("http error, err: %v", err)
+		hlog.CtxErrorf(ctx, "http error, err: %v", err)
 		return bizErr.InternalError
 	}
 	if httpRes.StatusCode != http.StatusOK {
 		respBody, _ := io.ReadAll(httpRes.Body)
-		hlog.Errorf("purchase mercari item error: %s", respBody)
+		hlog.CtxErrorf(ctx, "refresh token error: %s", respBody)
 		return bizErr.UnauthorisedError
 	}
 
 	resp := &RefreshTokenResponse{}
 	if err := json.NewDecoder(httpRes.Body).Decode(resp); err != nil {
-		hlog.Errorf("decode http response error, err: %v", err)
+		hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
 		return bizErr.InternalError
 	}
 
-	go func() {
+	if err := db.GetHandler().InsertTokenLog(context.Background(), &mercari.Token{
+		AccessToken:  resp.AccessToken,
+		RefreshToken: resp.RefreshToken,
+		ExpiresIn:    resp.ExpiresIn,
+		Scope:        resp.Scope,
+		TokenType:    resp.TokenType,
+	}); err != nil {
+		return bizErr.InternalError
+	}
 
-	}()
+	m.Token, err = db.GetHandler().GetToken()
+	if err != nil {
+		return bizErr.InternalError
+	}
 
-	acc.AccessToken = resp.AccessToken
 	return nil
 }

@@ -6,60 +6,54 @@ import (
 	"encoding/json"
 	"fmt"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
+	"github.com/buyandship/supply-svr/biz/model/bns/supply"
+	"github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"io"
 	"net/http"
 	"net/url"
 )
 
-type GetTokenRequest struct {
-	BuyerID     string `json:"buyer_id"`
+type SetTokenRequest struct {
 	RedirectUrl string `json:"redirect_url"`
+	Code        string `json:"code"`
+	Scope       string `json:"scope"`
+	State       string `json:"state"`
 }
 
 type GetTokenResponse struct {
 	AccessToken  string `json:"access_token"`
-	ExpiresIn    int    `json:"expires_in"`
+	ExpiresIn    int32  `json:"expires_in"`
 	RefreshToken string `json:"refresh_token"`
 	Scope        string `json:"scope"`
 	TokenType    string `json:"token_type"`
 }
 
-func (m *Mercari) GetToken(ctx context.Context, req *GetTokenRequest) (*GetTokenResponse, error) {
-	parsedUrl, err := url.Parse(req.RedirectUrl)
-	if err != nil {
-		hlog.Errorf("url parse error: %s", err.Error())
-		return nil, bizErr.InvalidParameterError
+func (m *Mercari) SetToken(ctx context.Context, req *supply.MercariLoginCallBackReq) error {
+	if ok := redis.GetHandler().Limit(ctx); ok {
+		return bizErr.RateLimitError
 	}
-	code := parsedUrl.Query().Get("code")
-	scope := parsedUrl.Query().Get("scope")
 
-	secret, err := m.GenerateSecret(req.BuyerID)
+	secret, err := m.GenerateSecret()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	headers := map[string][]string{
-		"Content-Type":  []string{"application/x-www-form-urlencoded"},
-		"Authorization": []string{fmt.Sprintf("Basic %s", secret)},
+		"Content-Type":  {"application/x-www-form-urlencoded"},
+		"Authorization": {fmt.Sprintf("Basic %s", secret)},
 	}
 
-	body := map[string]string{
-		"grant_type":   "authorization_code",
-		"scope":        scope,
-		"redirect_uri": req.RedirectUrl,
-		"code":         code,
-	}
-	reqBody, err := json.Marshal(body)
+	body := fmt.Sprintf("grant_type=%s&scope=%s&redirect_uri=%s&code=%s", "authorization_code",
+		url.QueryEscape(req.Scope), "https://b4u-req-api-test.buynship.com/api/callback/mercari/login/", req.Code)
+
+	httpReq, err := http.NewRequest("POST", fmt.Sprintf("%s/jp/v1/token", m.AuthServiceDomain),
+		bytes.NewBuffer([]byte(body)))
 	if err != nil {
-		hlog.Errorf("json marshal error, body: %s, err: %v", body, err)
-		return nil, bizErr.InternalError
-	}
-	data := bytes.NewBuffer(reqBody)
-	httpReq, err := http.NewRequest("POST", fmt.Sprintf("%s/jp/v1/token", m.AuthServiceDomain), data)
-	if err != nil {
-		hlog.Errorf("http request error, err: %v", err)
-		return nil, bizErr.InternalError
+		hlog.CtxErrorf(ctx, "http request error, err: %v", err)
+		return bizErr.InternalError
 	}
 	httpReq.Header = headers
 	client := &http.Client{}
@@ -70,24 +64,36 @@ func (m *Mercari) GetToken(ctx context.Context, req *GetTokenRequest) (*GetToken
 		}
 	}()
 	if err != nil {
-		hlog.Errorf("http error, err: %v", err)
-		return nil, bizErr.InternalError
+		hlog.CtxErrorf(ctx, "http error, err: %v", err)
+		return bizErr.InternalError
 	}
 
 	if httpRes.StatusCode != http.StatusOK {
 		respBody, _ := io.ReadAll(httpRes.Body)
-		hlog.Errorf("get mercari token error: %s", respBody)
-		return nil, bizErr.BizError{
+		hlog.CtxErrorf(ctx, "get mercari token error: %s", respBody)
+		return bizErr.BizError{
 			Status:  httpRes.StatusCode,
 			ErrCode: httpRes.StatusCode,
-			ErrMsg:  "get mercari token failed",
+			ErrMsg:  string(respBody),
 		}
 	}
 
 	resp := &GetTokenResponse{}
 	if err := json.NewDecoder(httpRes.Body).Decode(resp); err != nil {
-		hlog.Errorf("decode http response error, err: %v", err)
-		return nil, bizErr.InternalError
+		hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
+		return bizErr.InternalError
 	}
-	return resp, nil
+
+	// insert token
+	if err := db.GetHandler().InsertTokenLog(ctx, &mercari.Token{
+		AccessToken:  resp.AccessToken,
+		RefreshToken: resp.RefreshToken,
+		ExpiresIn:    resp.ExpiresIn,
+		Scope:        resp.Scope,
+		TokenType:    resp.TokenType,
+	}); err != nil {
+		return bizErr.InternalError
+	}
+
+	return nil
 }

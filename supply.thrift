@@ -2,81 +2,84 @@
 namespace go bns.supply
 
 struct MercariGetItemReq {
-    1: string buyer_id (api.json="buyer_id");
-    2: string item_id (api.json="item_id"); // 添加 api 注解为方便进行参数绑定
-}
-
-struct MercariGetItemResp {
-}
-
-struct MercariGetCategoriesReq {
-    1: string buyer_id (api.json="buyer_id");
-}
-
-struct MercariGetCategoriesResp {
-
+    1: i32 buyer_id (api.json="buyer_id");
+    2: string item_id (api.json="item_id");
 }
 
 struct MercariGetSellerReq {
-    1: string buyer_id (api.json="buyer_id");
-    2: string seller_id (api.json="seller_id");
-}
-
-struct MercariGetSellerResp {
-
+    1: string seller_id (api.json="seller_id");
 }
 
 struct MercariPostOrderReq {
-    1: string buyer_id (api.json="buyer_id");
+    1: i32 buyer_id (api.json="buyer_id");
     2: string item_id (api.json="item_id")
-    3: i32 ref_price (api.json="ref_price")
+    3: i64 ref_price (api.json="ref_price")
     4: string ref_currency (api.json="ref_currency")
     5: string checksum (api.json="checksum")
     6: string ref_id (api.json="ref_id")
 }
 
-struct MercariPostOrderResp {
-}
-
 struct MercariPostMessageReq {
-    1: string buyer_id (api.json="buyer_id");
-    2: string trx_id (api.json="trx_id");
-    3: string msg (api.json="msg");
+    1: i64 trx_id (api.json="trx_id");
+    2: string msg (api.json="msg");
 }
 
 struct MercariPostMessageResp {
+    1: i64 trx_id
+    2: string body
+    3: string id
 }
 
-
 struct MercariRegisterAccountReq {
-    1: string buyer_id (api.json="buyer_id");
+    1: i32 buyer_id (api.json="buyer_id");
     2: string email (api.json="email");
-    3: string redirectUrl (api.json="redirect_url");
-    4: string family_name (api.json="family_name");
-    5: string first_name (api.json="first_name");
-    6: string family_name_kana (api.json="family_name_kana");
-    7: string first_name_kana (api.json="first_name_kana");
-    8: string telephone (api.json="telephone");
-    9: string zip_code1 (api.json="zip_code1");
-    10: string zip_code2 (api.json="zip_code2");
-    11: string prefecture (api.json="prefecture");
-    12: string city (api.json="city");
-    13: string address1 (api.json="address1");
-    14: string address2 (api.json="address2");
-    15: string client_id (api.json="client_id");
-    16: string client_secret (api.json="client_secret")
+    3: string family_name (api.json="family_name");
+    4: string first_name (api.json="first_name");
+    5: string family_name_kana (api.json="family_name_kana");
+    6: string first_name_kana (api.json="first_name_kana");
+    7: string telephone (api.json="telephone");
+    8: string zip_code1 (api.json="zip_code1");
+    9: string zip_code2 (api.json="zip_code2");
+    10: string prefecture (api.json="prefecture");
+    11: string city (api.json="city");
+    12: string address1 (api.json="address1");
+    13: string address2 (api.json="address2");
 }
 
 struct MercariRegisterAccountResp {
-
+    1: i32 buyer_id
+    2: string email
+    3: string family_name
+    4: string first_name
+    5: string family_name_kana
+    6: string first_name_kana
+    7: string telephone
+    8: string zip_code1
+    9: string zip_code2
+    10: string prefecture
+    11: string city
+    12: string address1
+    13: string address2
 }
 
+struct MercariLoginCallBackReq {
+    1: string code (api.query="code")
+    2: string scope (api.query="scope")
+    3: string state (api.query="state")
+    4: string redirectUrl
+}
+
+struct MercariGetTokenResp {
+    1: string token
+}
 
 service SupplyService {
-    MercariRegisterAccountResp MercariRegisterAccountService(1: MercariRegisterAccountReq req) (api.post="/mercari/register");
-    MercariGetItemResp MercariGetItemService(1: MercariGetItemReq req) (api.get="/mercari/item");
-    MercariGetCategoriesResp MercariGetCategoriesService(1: MercariGetCategoriesReq req) (api.get="/mercari/categories")
-    MercariGetSellerResp MercariGetSellerService(1: MercariGetSellerReq req) (api.get="/mercari/seller")
-    MercariPostOrderResp MercariPostOrderService(1: MercariPostOrderReq req) (api.post="/mercari/order")
-    MercariPostMessageResp MercariPostMessageService(1: MercariPostMessageReq req) (api.post="/mercari/message")
+    MercariRegisterAccountResp MercariRegisterAccountService(1: MercariRegisterAccountReq req) (api.post="/v1/supplysrv/mercari/register");
+    string MercariGetItemService(1: MercariGetItemReq req) (api.get="/v1/supplysrv/mercari/item");
+    string MercariGetCategoriesService() (api.get="/v1/supplysrv/mercari/categories")
+    string MercariGetSellerService(1: MercariGetSellerReq req) (api.get="/v1/supplysrv/mercari/seller")
+    string MercariPostOrderService(1: MercariPostOrderReq req) (api.post="/v1/supplysrv/mercari/order")
+    MercariPostMessageResp MercariPostMessageService(1: MercariPostMessageReq req) (api.post="/v1/supplysrv/mercari/message")
+    string MercariLoginCallBackService(1: MercariLoginCallBackReq req) (api.get="/xb/login_callback")
+    MercariGetTokenResp MercariGetTokenService() (api.get="/v1/supplysrv/mercari/token")
 }

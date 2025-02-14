@@ -9,7 +9,5 @@ import (
 
 // customizeRegister registers customize routers.
 func customizedRegister(r *server.Hertz) {
-	r.GET("/live", handler.HealthCheck)
-
-	// your code ...
+	r.GET("/v1/supplysrv/mercari/live", handler.HealthCheck)
 }

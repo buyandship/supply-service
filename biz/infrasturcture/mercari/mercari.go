@@ -3,11 +3,12 @@ package mercari
 import (
 	"encoding/base64"
 	"fmt"
+	model "github.com/buyandship/supply-svr/biz/model/mercari"
+	"github.com/cenkalti/backoff/v5"
+	"time"
 
 	"github.com/buyandship/supply-svr/biz/common/config"
-	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
-	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"sync"
 )
@@ -20,21 +21,23 @@ var (
 type Mercari struct {
 	AuthServiceDomain string
 	OpenApiDomain     string
-	Accounts          map[string]model.Account
+	ClientID          string
+	ClientSecret      string
+	Token             *model.Token
 }
 
 func GetHandler() *Mercari {
 	once.Do(func() {
 		var url, authServiceDomain string
 		if config.GlobalServerConfig.Env == "development" {
-			authServiceDomain = "auth-sandbox.mercari.com"
+			authServiceDomain = "https://auth-sandbox.mercari.com"
 			url = "https://api.mercari-sandbox.com"
 		} else if config.GlobalServerConfig.Env == "production" {
-			authServiceDomain = "auth.mercari.com"
-			url = "https://api.mercari-sandbox.com"
+			authServiceDomain = "https://auth.mercari.com"
+			url = "https://api.jp-mercari.com"
 		}
 
-		accs, err := db.GetHandler().GetAccounts()
+		t, err := db.GetHandler().GetToken()
 		if err != nil {
 			hlog.Fatal(err)
 		}
@@ -42,20 +45,34 @@ func GetHandler() *Mercari {
 		Handler = &Mercari{
 			AuthServiceDomain: authServiceDomain,
 			OpenApiDomain:     url,
-			Accounts:          accs,
+			ClientID:          config.GlobalServerConfig.Mercari.ClientId,
+			ClientSecret:      config.GlobalServerConfig.Mercari.ClientSecret,
+			Token:             t,
 		}
 	})
 	return Handler
 }
 
-func (m *Mercari) GenerateSecret(buyerID string) (string, error) {
-	acc, ok := m.Accounts[buyerID]
-	if !ok {
-		hlog.Errorf("buyer not exists: %s", buyerID)
-		return "", bizErr.InvalidBuyerError
-	}
+func (m *Mercari) GenerateSecret() (string, error) {
 	basicSecret := base64.StdEncoding.EncodeToString(
-		[]byte(fmt.Sprintf("%s:%s", acc.ClientID, acc.ClientSecret)))
-
+		[]byte(fmt.Sprintf("%s:%s", m.ClientID, m.ClientSecret)))
 	return basicSecret, nil
+}
+
+func (m *Mercari) GetRetryOpts() []backoff.RetryOption {
+	var opts []backoff.RetryOption
+	opts = append(opts, backoff.WithBackOff(backoff.NewExponentialBackOff()))
+	opts = append(opts, backoff.WithMaxTries(5))
+	return opts
+}
+
+func (m *Mercari) TokenExpired() bool {
+	if m.Token == nil {
+		return true
+	}
+	expiredTime := m.Token.CreatedAt.Add(time.Duration(m.Token.ExpiresIn-60) * time.Second)
+	if time.Now().After(expiredTime) {
+		return true
+	}
+	return false
 }

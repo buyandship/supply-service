@@ -6,24 +6,22 @@ import (
 	"context"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
+	"net/http"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // HealthCheck .
 func HealthCheck(ctx context.Context, c *app.RequestContext) {
-
 	if err := db.Handler.HealthCheck(); err != nil {
-		// TODO
+		c.AbortWithStatusJSON(http.StatusInternalServerError, "can not connect to db.")
+		return
 	}
-
 	if err := redis.Handler.HealthCheck(); err != nil {
-		// TODO
+		c.AbortWithStatusJSON(http.StatusInternalServerError, "can not connect to redis.")
+		return
 	}
-
-	c.JSON(consts.StatusOK, utils.H{
-		"message": "pong",
-	})
+	c.JSON(consts.StatusOK, "ok")
+	return
 }

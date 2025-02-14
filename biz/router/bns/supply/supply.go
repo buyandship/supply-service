@@ -18,12 +18,23 @@ func Register(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
 	{
-		_mercari := root.Group("/mercari", _mercariMw()...)
-		_mercari.GET("/categories", append(_mercarigetcategoriesserviceMw(), supply.MercariGetCategoriesService)...)
-		_mercari.GET("/item", append(_mercarigetitemserviceMw(), supply.MercariGetItemService)...)
-		_mercari.POST("/message", append(_mercaripostmessageserviceMw(), supply.MercariPostMessageService)...)
-		_mercari.POST("/order", append(_mercaripostorderserviceMw(), supply.MercariPostOrderService)...)
-		_mercari.POST("/register", append(_mercariregisteraccountserviceMw(), supply.MercariRegisterAccountService)...)
-		_mercari.GET("/seller", append(_mercarigetsellerserviceMw(), supply.MercariGetSellerService)...)
+		_v1 := root.Group("/v1", _v1Mw()...)
+		{
+			_supplysrv := _v1.Group("/supplysrv", _supplysrvMw()...)
+			{
+				_mercari := _supplysrv.Group("/mercari", _mercariMw()...)
+				_mercari.GET("/categories", append(_mercarigetcategoriesserviceMw(), supply.MercariGetCategoriesService)...)
+				_mercari.GET("/item", append(_mercarigetitemserviceMw(), supply.MercariGetItemService)...)
+				_mercari.POST("/message", append(_mercaripostmessageserviceMw(), supply.MercariPostMessageService)...)
+				_mercari.POST("/order", append(_mercaripostorderserviceMw(), supply.MercariPostOrderService)...)
+				_mercari.POST("/register", append(_mercariregisteraccountserviceMw(), supply.MercariRegisterAccountService)...)
+				_mercari.GET("/seller", append(_mercarigetsellerserviceMw(), supply.MercariGetSellerService)...)
+				_mercari.GET("/token", append(_mercarigettokenserviceMw(), supply.MercariGetTokenService)...)
+			}
+		}
+	}
+	{
+		_xb := root.Group("/xb", _xbMw()...)
+		_xb.GET("/login_callback", append(_mercarilogincallbackserviceMw(), supply.MercariLoginCallBackService)...)
 	}
 }

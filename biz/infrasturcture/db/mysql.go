@@ -2,12 +2,14 @@ package db
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/buyandship/supply-svr/biz/common/config"
 	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"sync"
 )
 
@@ -55,9 +57,9 @@ func (h *H) UpsertAccount(ctx context.Context, account *model.Account) error {
 	if err := h.cli.
 		WithContext(ctx).
 		Debug().
-		Where(&model.Account{BuyerID: account.BuyerID}).
-		FirstOrCreate(&account).Error; err != nil {
-		hlog.Errorf("upsert account err, %s", err.Error())
+		Clauses(clause.OnConflict{
+			UpdateAll: true,
+		}).Create(&account).Error; err != nil {
 		return err
 	}
 	return nil
@@ -68,10 +70,23 @@ func (h *H) InsertMessage(ctx context.Context, message *model.Message) error {
 		WithContext(ctx).
 		Debug().
 		Create(&message).Error; err != nil {
-		hlog.Errorf("insert message err, %s", err.Error())
 		return err
 	}
 	return nil
+}
+
+func (h *H) CheckTransactionExist(ctx context.Context, trxId string) (bool, error) {
+	var trx model.Transaction
+	if err := h.cli.WithContext(ctx).
+		Debug().
+		Where("ref_id = ?", trxId).
+		First(&trx).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
 }
 
 func (h *H) InsertTransaction(ctx context.Context, transaction *model.Transaction) error {
@@ -79,7 +94,16 @@ func (h *H) InsertTransaction(ctx context.Context, transaction *model.Transactio
 		WithContext(ctx).
 		Debug().
 		Create(&transaction).Error; err != nil {
-		hlog.Errorf("insert transaction err, %s", err.Error())
+		return err
+	}
+	return nil
+}
+
+func (h *H) InsertTokenLog(ctx context.Context, token *model.Token) error {
+	if err := h.cli.
+		WithContext(ctx).
+		Debug().
+		Create(&token).Error; err != nil {
 		return err
 	}
 	return nil
@@ -89,23 +113,31 @@ func (h *H) UpdateTransaction(ctx context.Context, cond *model.Transaction) erro
 	if err := h.cli.
 		WithContext(ctx).
 		Debug().
-		Where("trx_id = ?", cond.TrxID).
+		Where("ref_id = ?", cond.RefID).
 		Updates(cond).Error; err != nil {
-		hlog.Errorf("update transaction err, %s", err.Error())
 		return err
 	}
 	return nil
 }
 
-func (h *H) GetAccounts() (map[string]model.Account, error) {
-	accounts := make(map[string]model.Account)
-	var dbAccounts []*model.Account
-	if err := h.cli.Debug().Find(&dbAccounts).Error; err != nil {
-		hlog.Errorf("get account err %s", err.Error())
+func (h *H) GetAccount(ctx context.Context, buyerID int32) (*model.Account, error) {
+	account := &model.Account{}
+	if err := h.cli.
+		WithContext(ctx).
+		Debug().
+		Where("buyer_id = ?", buyerID).
+		First(account).Error; err != nil {
 		return nil, err
 	}
-	for _, dbAccount := range dbAccounts {
-		accounts[dbAccount.BuyerID] = *dbAccount
+	return account, nil
+}
+
+func (h *H) GetToken() (*model.Token, error) {
+	var token model.Token
+	if err := h.cli.
+		Order("created_at desc").
+		First(&token).Error; err != nil {
+		return nil, err
 	}
-	return accounts, nil
+	return &token, nil
 }

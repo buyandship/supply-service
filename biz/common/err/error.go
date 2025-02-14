@@ -16,9 +16,9 @@ func (e BizError) Error() string {
 }
 
 func ConvertErr(err error) BizError {
-	Err := &BizError{}
+	Err := BizError{}
 	if errors.As(err, &Err) {
-		return *Err
+		return Err
 	}
 	s := BizError{
 		Status:  consts.StatusInternalServerError,
@@ -31,9 +31,13 @@ func ConvertErr(err error) BizError {
 var (
 	UnauthorisedError     = BizError{Status: consts.StatusUnauthorized, ErrCode: consts.StatusUnauthorized, ErrMsg: "unauthorized"}
 	InvalidParameterError = BizError{Status: consts.StatusBadRequest, ErrCode: consts.StatusBadRequest, ErrMsg: "invalid parameter"}
+	ConflictError         = BizError{Status: consts.StatusConflict, ErrCode: consts.StatusConflict, ErrMsg: "conflict"}
 
 	InternalError             = BizError{Status: consts.StatusInternalServerError, ErrCode: 1000, ErrMsg: "internal error"}
 	InvalidBuyerError         = BizError{Status: consts.StatusInternalServerError, ErrCode: 1001, ErrMsg: "invalid buyer id"}
 	TooLowReferencePriceError = BizError{Status: consts.StatusInternalServerError, ErrCode: 1002, ErrMsg: "the reference price is too low"}
 	ItemNotOnSaleError        = BizError{Status: consts.StatusInternalServerError, ErrCode: 1003, ErrMsg: "item not on sale"}
+	InvalidCheckSumError      = BizError{Status: consts.StatusInternalServerError, ErrCode: 1004, ErrMsg: "invalid checksum"}
+	RefIdDuplicatedError      = BizError{Status: consts.StatusInternalServerError, ErrCode: 1005, ErrMsg: "duplicated ref_id"}
+	RateLimitError            = BizError{Status: consts.StatusInternalServerError, ErrCode: 1006, ErrMsg: "rate limit"}
 )

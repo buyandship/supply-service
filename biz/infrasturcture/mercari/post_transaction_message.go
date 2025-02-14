@@ -4,19 +4,19 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"io"
 	"net/http"
-	"strconv"
 )
 
 type PostTransactionMessageRequest struct {
-	TransactionId string `json:"transactionID"`
+	TransactionId int64  `json:"transactionID"`
 	Message       string `json:"message"`
-	BuyerId       string `json:"buyer_id"`
 }
 
 type PostTransactionMessageResponse struct {
@@ -28,31 +28,28 @@ type PostTransactionMessageResponse struct {
 
 func (m *Mercari) PostTransactionMessage(ctx context.Context, req *PostTransactionMessageRequest) (*PostTransactionMessageResponse, error) {
 	postTransactionMessageFunc := func() (*PostTransactionMessageResponse, error) {
-		acc, ok := m.Accounts[req.BuyerId]
-		if !ok {
-			hlog.Errorf("buyer not exists, buyer_id: %s", req.BuyerId)
-			return nil, bizErr.InvalidBuyerError
+		if ok := redis.GetHandler().Limit(ctx); ok {
+			return nil, bizErr.RateLimitError
 		}
 
 		headers := map[string][]string{
-			"Content-Type":  []string{"application/json"},
-			"Accept":        []string{"application/json"},
-			"Authorization": []string{acc.AccessToken},
+			"Content-Type":  {"application/json"},
+			"Accept":        {"application/json"},
+			"Authorization": {m.Token.AccessToken},
 		}
-
 		jsonReq := map[string]string{
 			"message": req.Message,
 		}
 		reqBody, err := json.Marshal(jsonReq)
 		if err != nil {
-			hlog.Errorf("marshal json request error, %s", err.Error())
-			return nil, bizErr.InternalError
+			hlog.CtxErrorf(ctx, "marshal json request error, %s", err.Error())
+			return nil, backoff.Permanent(bizErr.InternalError)
 		}
 		data := bytes.NewBuffer(reqBody)
-		httpReq, err := http.NewRequest("POST", fmt.Sprintf("%s/v2/transactions/%s/messages", m.OpenApiDomain, req.TransactionId), data)
+		httpReq, err := http.NewRequest("POST", fmt.Sprintf("%s/v2/transactions/%d/messages", m.OpenApiDomain, req.TransactionId), data)
 		if err != nil {
-			hlog.Errorf("http request error, err: %v", err)
-			return nil, bizErr.InternalError
+			hlog.CtxErrorf(ctx, "http request error, err: %v", err)
+			return nil, backoff.Permanent(bizErr.InternalError)
 		}
 		httpReq.Header = headers
 
@@ -64,59 +61,58 @@ func (m *Mercari) PostTransactionMessage(ctx context.Context, req *PostTransacti
 			}
 		}()
 		if err != nil {
-			hlog.Errorf("http error, err: %v", err)
-			return nil, bizErr.InternalError
+			hlog.CtxErrorf(ctx, "http error, err: %v", err)
+			return nil, backoff.Permanent(bizErr.InternalError)
 		}
-
 		if httpRes.StatusCode == http.StatusUnauthorized {
-			if err := m.RefreshToken(req.BuyerId); err != nil {
-				hlog.Errorf("try to refresh token, but fails, err: %v", err)
+			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
+			if err := m.RefreshToken(ctx); err != nil {
+				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
 			}
-			seconds, err := strconv.ParseInt(httpRes.Header.Get("Retry-After"), 10, 64)
-			if err == nil {
-				return nil, backoff.RetryAfter(int(seconds))
-			}
+			return nil, bizErr.UnauthorisedError
 		}
 		// retry code: 409, 429, 5xx
 		if httpRes.StatusCode == http.StatusTooManyRequests {
-			seconds, err := strconv.ParseInt(httpRes.Header.Get("Retry-After"), 10, 64)
-			if err == nil {
-				return nil, backoff.RetryAfter(int(seconds))
-			}
+			hlog.CtxErrorf(ctx, "http too many requests, retrying...")
+			return nil, backoff.RetryAfter(1)
 		}
 		if httpRes.StatusCode == http.StatusConflict {
-			seconds, err := strconv.ParseInt(httpRes.Header.Get("Retry-After"), 10, 64)
-			if err == nil {
-				return nil, backoff.RetryAfter(int(seconds))
-			}
+			hlog.CtxErrorf(ctx, "http conflict, retrying...")
+			return nil, bizErr.ConflictError
 		}
 		if httpRes.StatusCode >= 500 && httpRes.StatusCode < 600 {
-			seconds, err := strconv.ParseInt(httpRes.Header.Get("Retry-After"), 10, 64)
-			if err == nil {
-				return nil, backoff.RetryAfter(int(seconds))
-			}
-		}
-
-		if httpRes.StatusCode != http.StatusOK {
 			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.Errorf("post mercari transaction message error: %s", respBody)
+			hlog.CtxErrorf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...", httpRes.StatusCode, respBody)
 			return nil, bizErr.BizError{
 				Status:  httpRes.StatusCode,
 				ErrCode: httpRes.StatusCode,
-				ErrMsg:  "post mercari transaction message fails",
+				ErrMsg:  string(respBody),
 			}
 		}
-
+		if httpRes.StatusCode != http.StatusOK {
+			respBody, _ := io.ReadAll(httpRes.Body)
+			hlog.CtxErrorf(ctx, "post mercari transaction message error: %s", respBody)
+			return nil, backoff.Permanent(bizErr.BizError{
+				Status:  httpRes.StatusCode,
+				ErrCode: httpRes.StatusCode,
+				ErrMsg:  string(respBody),
+			})
+		}
 		resp := &PostTransactionMessageResponse{}
 		if err := json.NewDecoder(httpRes.Body).Decode(resp); err != nil {
-			hlog.Errorf("decode http response error, err: %v", err)
-			return nil, bizErr.InternalError
+			hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
+			return nil, backoff.Permanent(bizErr.InternalError)
 		}
 		return resp, nil
 	}
 
-	result, err := backoff.Retry(context.TODO(), postTransactionMessageFunc, backoff.WithBackOff(backoff.NewExponentialBackOff()))
+	result, err := backoff.Retry(ctx, postTransactionMessageFunc, m.GetRetryOpts()...)
 	if err != nil {
+		pErr := &backoff.PermanentError{}
+		if errors.As(err, &pErr) {
+			berr := pErr.Unwrap()
+			return nil, berr
+		}
 		return nil, err
 	}
 	return result, nil

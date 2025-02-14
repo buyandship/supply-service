@@ -3,11 +3,16 @@
 package main
 
 import (
+	"github.com/buyandship/bns-golib/log"
+	"github.com/buyandship/bns-golib/log/rollwriter"
 	"github.com/buyandship/supply-svr/biz/common/config"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"io"
+	"os"
 )
 
 func Init() {
@@ -15,10 +20,25 @@ func Init() {
 	if err := config.LoadGlobalConfig("./config.yaml"); err != nil {
 		hlog.Fatal(err)
 	}
+
+	// set hlog
+	hlog.SetLogger(log.NewHertzZapLogger())
+	w2, err := rollwriter.NewRollWriter("logs/supplysrv-app.log",
+		rollwriter.WithMaxSize(100), rollwriter.WithMaxBackups(10))
+	if err != nil {
+		hlog.Fatalf("%s", err.Error())
+	}
+	multiWriter := io.MultiWriter(os.Stdout, w2)
+
+	hlog.SetOutput(multiWriter)
+	hlog.SetLevel(hlog.Level(2))
+
 	// Connect Mysql
 	db.GetHandler()
 	// Connect Redis
 	redis.GetHandler()
+	// Get mercari setting
+	mercari.GetHandler()
 }
 
 func main() {
@@ -29,7 +49,7 @@ func main() {
 
 	Init()
 
-	h := server.Default()
+	h := server.Default(server.WithHostPorts(":8573"))
 	register(h)
 	h.Spin()
 }
