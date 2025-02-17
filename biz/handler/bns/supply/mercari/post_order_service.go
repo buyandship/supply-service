@@ -101,7 +101,7 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*me
 		ItemID:     req.GetItemID(),
 		ItemType:   resp.ItemType,
 		ItemDetail: jsonItemDetail,
-		BuyerID:    req.GetBuyerID(),
+		BuyerID:    buyerId,
 		RefPrice:   req.GetRefPrice(),
 		Checksum:   req.GetChecksum(),
 		Currency:   req.GetRefCurrency(),

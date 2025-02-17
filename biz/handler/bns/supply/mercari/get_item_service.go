@@ -18,7 +18,6 @@ func GetItemService(ctx context.Context, req *supply.MercariGetItemReq) (*mercar
 		hlog.CtxErrorf(ctx, "empty item_id")
 		return nil, bizErr.InvalidParameterError
 	}
-
 	h := mercari.GetHandler()
 
 	var prefecture string

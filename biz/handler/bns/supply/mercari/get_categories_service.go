@@ -13,7 +13,6 @@ import (
 )
 
 func GetCategoriesService(ctx context.Context) (resp *mercari.GetItemCategoriesResp, err error) {
-
 	cat, err := cache.GetHandler().Get(ctx, "mercari_categories")
 	if errors.Is(err, redis.Nil) {
 		// 1.2.3
@@ -22,7 +21,7 @@ func GetCategoriesService(ctx context.Context) (resp *mercari.GetItemCategoriesR
 		if err != nil {
 			return nil, err
 		}
-		r, err := json.Marshal(cat)
+		r, err := json.Marshal(resp)
 		if err != nil {
 			hlog.CtxErrorf(ctx, "json marshal err: %v", err)
 			return nil, bizErr.InternalError
@@ -36,17 +35,14 @@ func GetCategoriesService(ctx context.Context) (resp *mercari.GetItemCategoriesR
 		return nil, bizErr.InternalError
 	}
 
-	r, err := json.Marshal(cat)
-	if err != nil {
-		hlog.CtxErrorf(ctx, "json marshal err: %v", err)
-		return nil, bizErr.InternalError
+	resp = &mercari.GetItemCategoriesResp{}
+	if jsonStr, ok := cat.(string); ok {
+		if err := json.Unmarshal([]byte(jsonStr), resp); err != nil {
+			hlog.CtxErrorf(ctx, "json unmarshal err: %v", err)
+			return nil, bizErr.InternalError
+		}
+		return resp, nil
 	}
 
-	hlog.CtxInfof(ctx, "mercari_categories resp: %v", string(r))
-	if err := json.Unmarshal(r, resp); err != nil {
-		hlog.CtxErrorf(ctx, "json unmarshal err: %v", err)
-		return nil, bizErr.InternalError
-	}
-
-	return resp, err
+	return resp, bizErr.InternalError
 }

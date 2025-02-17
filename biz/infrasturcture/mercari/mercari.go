@@ -23,6 +23,7 @@ type Mercari struct {
 	OpenApiDomain     string
 	ClientID          string
 	ClientSecret      string
+	CallbackUrl       string
 	Token             *model.Token
 }
 
@@ -47,6 +48,7 @@ func GetHandler() *Mercari {
 			OpenApiDomain:     url,
 			ClientID:          config.GlobalServerConfig.Mercari.ClientId,
 			ClientSecret:      config.GlobalServerConfig.Mercari.ClientSecret,
+			CallbackUrl:       config.GlobalServerConfig.Mercari.CallbackUrl,
 			Token:             t,
 		}
 	})

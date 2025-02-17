@@ -47,7 +47,7 @@ func (m *Mercari) SetToken(ctx context.Context, req *supply.MercariLoginCallBack
 	}
 
 	body := fmt.Sprintf("grant_type=%s&scope=%s&redirect_uri=%s&code=%s", "authorization_code",
-		url.QueryEscape(req.Scope), "https://b4u-req-api-test.buynship.com/api/callback/mercari/login/", req.Code)
+		url.QueryEscape(req.Scope), m.CallbackUrl, req.Code)
 
 	httpReq, err := http.NewRequest("POST", fmt.Sprintf("%s/jp/v1/token", m.AuthServiceDomain),
 		bytes.NewBuffer([]byte(body)))

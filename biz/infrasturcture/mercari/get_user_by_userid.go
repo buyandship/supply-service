@@ -11,6 +11,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"io"
 	"net/http"
+	"time"
 )
 
 type GetUserByUserIDRequest struct {
@@ -43,6 +44,7 @@ type GetUserByUserIDResponse struct {
 
 func (m *Mercari) GetUser(ctx context.Context, req *GetUserByUserIDRequest) (*GetUserByUserIDResponse, error) {
 	getUserFunc := func() (*GetUserByUserIDResponse, error) {
+		hlog.CtxInfof(ctx, "call /v1/users at %+v", time.Now())
 		if ok := redis.GetHandler().Limit(ctx); ok {
 			return nil, bizErr.RateLimitError
 		}
@@ -89,7 +91,8 @@ func (m *Mercari) GetUser(ctx context.Context, req *GetUserByUserIDRequest) (*Ge
 		}
 		if httpRes.StatusCode >= 500 && httpRes.StatusCode < 600 {
 			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying...", httpRes.StatusCode, respBody)
+			hlog.CtxErrorf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
+				httpRes.StatusCode, respBody, time.Now().Local())
 			return nil, bizErr.BizError{
 				Status:  httpRes.StatusCode,
 				ErrCode: httpRes.StatusCode,
@@ -112,6 +115,7 @@ func (m *Mercari) GetUser(ctx context.Context, req *GetUserByUserIDRequest) (*Ge
 			hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
+		hlog.CtxInfof(ctx, "get mercari user successfully")
 		return resp, nil
 	}
 	result, err := backoff.Retry(ctx, getUserFunc, m.GetRetryOpts()...)

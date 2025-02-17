@@ -11,6 +11,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"io"
 	"net/http"
+	"time"
 )
 
 type GetItemCategoriesResp struct {
@@ -24,13 +25,13 @@ type GetItemCategoriesResp struct {
 
 func (m *Mercari) GetItemCategories(ctx context.Context) (*GetItemCategoriesResp, error) {
 	getItemFunc := func() (*GetItemCategoriesResp, error) {
+		hlog.CtxInfof(ctx, "call /v1/master/item_categories at %+v", time.Now())
 		if ok := redis.GetHandler().Limit(ctx); ok {
 			return nil, bizErr.RateLimitError
 		}
 		headers := map[string][]string{
-			"Accept":              {"application/json"},
-			"Authorization":       {m.Token.AccessToken},
-			"x-crossborder-fresh": {"true"},
+			"Accept":        {"application/json"},
+			"Authorization": {m.Token.AccessToken},
 		}
 
 		httpReq, err := http.NewRequest("GET",
@@ -71,7 +72,8 @@ func (m *Mercari) GetItemCategories(ctx context.Context) (*GetItemCategoriesResp
 		}
 		if httpRes.StatusCode >= 500 && httpRes.StatusCode < 600 {
 			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying...", httpRes.StatusCode, respBody)
+			hlog.CtxErrorf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
+				httpRes.StatusCode, respBody, time.Now().Local())
 			return nil, bizErr.BizError{
 				Status:  httpRes.StatusCode,
 				ErrCode: httpRes.StatusCode,
@@ -81,7 +83,7 @@ func (m *Mercari) GetItemCategories(ctx context.Context) (*GetItemCategoriesResp
 
 		if httpRes.StatusCode != http.StatusOK {
 			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "get mercari item error: %s", respBody)
+			hlog.CtxErrorf(ctx, "get mercari item categories error: %s", respBody)
 			return nil, backoff.Permanent(bizErr.BizError{
 				Status:  httpRes.StatusCode,
 				ErrCode: httpRes.StatusCode,
@@ -94,7 +96,7 @@ func (m *Mercari) GetItemCategories(ctx context.Context) (*GetItemCategoriesResp
 			hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
-
+		hlog.CtxInfof(ctx, "get item categories successfully")
 		return resp, nil
 	}
 	result, err := backoff.Retry(ctx, getItemFunc, m.GetRetryOpts()...)

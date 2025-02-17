@@ -9,6 +9,7 @@ import (
 type MercariConfig struct {
 	ClientId     string `mapstructure:"client_id"`
 	ClientSecret string `mapstructure:"client_secret"`
+	CallbackUrl  string `mapstructure:"callback_url"`
 }
 
 type MySQLConfig struct {
