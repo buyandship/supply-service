@@ -40,4 +40,5 @@ var (
 	InvalidCheckSumError      = BizError{Status: consts.StatusInternalServerError, ErrCode: 1004, ErrMsg: "invalid checksum"}
 	RefIdDuplicatedError      = BizError{Status: consts.StatusInternalServerError, ErrCode: 1005, ErrMsg: "duplicated ref_id"}
 	RateLimitError            = BizError{Status: consts.StatusInternalServerError, ErrCode: 1006, ErrMsg: "rate limit"}
+	UnloginError              = BizError{Status: consts.StatusInternalServerError, ErrCode: 1007, ErrMsg: "mercari unlogin"}
 )

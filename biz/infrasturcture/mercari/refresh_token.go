@@ -4,12 +4,14 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"gorm.io/gorm"
 	"io"
 	"net/http"
 	"net/url"
@@ -33,6 +35,9 @@ func (m *Mercari) GetToken(ctx context.Context) error {
 	// TODO: use redis
 	t, err := db.GetHandler().GetToken()
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return bizErr.UnloginError
+		}
 		return err
 	}
 	m.Token = t
