@@ -17,7 +17,7 @@ import (
 
 type RefreshTokenResponse struct {
 	AccessToken  string `json:"access_token"`
-	ExpiresIn    int32  `json:"expires_in"`
+	ExpiresIn    int32  `json:"expires_in"` // in second, e.g. 3600
 	RefreshToken string `json:"refresh_token"`
 	Scope        string `json:"scope"`
 	TokenType    string `json:"token_type"`
@@ -29,7 +29,8 @@ type T struct {
 	} `json:"info"`
 }
 
-func (m *Mercari) RefreshToken(ctx context.Context) error {
+func (m *Mercari) GetToken(ctx context.Context) error {
+	// TODO: use redis
 	t, err := db.GetHandler().GetToken()
 	if err != nil {
 		return err

@@ -7,11 +7,14 @@ import (
 	"errors"
 	"fmt"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
+	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"io"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -74,7 +77,7 @@ type PurchaseItemErrorResponse struct {
 	} `json:"failure_details"`
 }
 
-func (m *Mercari) PurchaseItem(ctx context.Context, req *PurchaseItemRequest) (*PurchaseItemResponse, error) {
+func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseItemRequest) error {
 	purchaseItemFunc := func() (*PurchaseItemResponse, error) {
 		hlog.CtxInfof(ctx, "call /v1/items/purchase at %+v", time.Now())
 		if ok := redis.GetHandler().Limit(ctx); ok {
@@ -112,7 +115,7 @@ func (m *Mercari) PurchaseItem(ctx context.Context, req *PurchaseItemRequest) (*
 		}
 		if httpRes.StatusCode == http.StatusUnauthorized {
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
-			if err := m.RefreshToken(ctx); err != nil {
+			if err := m.GetToken(ctx); err != nil {
 				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
 			}
 			return nil, bizErr.UnauthorisedError
@@ -144,29 +147,69 @@ func (m *Mercari) PurchaseItem(ctx context.Context, req *PurchaseItemRequest) (*
 				hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
 				return nil, backoff.Permanent(bizErr.InternalError)
 			}
-			return nil, backoff.Permanent(bizErr.BizError{
-				Status:  httpRes.StatusCode,
-				ErrCode: httpRes.StatusCode,
-				ErrMsg:  errResp.FailureDetails.Reasons,
-			})
+
+			// if we purchase item fails, query by item
+			getTxResp, err := m.GetTransactionByItemID(ctx, req.ItemId)
+			if err != nil {
+				// if query transaction by item_id return error, update the failure_reason.
+				hlog.CtxErrorf(ctx, "GetTransactionByItemID error: %s", err.Error())
+				if err := db.GetHandler().UpdateTransaction(ctx, &model.Transaction{
+					RefID:         refId,
+					FailureReason: fmt.Sprintf("%s|%s", errResp.RequestId, errResp.FailureDetails.Reasons),
+				}); err != nil {
+					hlog.CtxErrorf(ctx, "UpdateTransaction fail, [%s]", err.Error())
+				}
+				return nil, backoff.Permanent(bizErr.BizError{
+					Status:  httpRes.StatusCode,
+					ErrCode: httpRes.StatusCode,
+					ErrMsg:  fmt.Sprintf("%s|%s", errResp.RequestId, errResp.FailureDetails.Reasons),
+				})
+			}
+
+			// if the query transaction by item_id return success, update the transaction
+			if err := db.GetHandler().UpdateTransaction(ctx, &model.Transaction{
+				RefID:            refId,
+				PaidPrice:        getTxResp.PaidPrice,
+				Price:            getTxResp.Price,
+				TrxID:            getTxResp.Id,
+				BuyerShippingFee: getTxResp.ShippingInfo.BuyerShippingFee,
+			}); err != nil {
+				hlog.CtxErrorf(ctx, "UpdateTransaction fail, [%s]", err.Error())
+				return nil, backoff.Permanent(bizErr.InternalError)
+			}
+			return nil, nil
 		}
 
+		// purchase successfully.
 		resp := &PurchaseItemResponse{}
 		if err := json.NewDecoder(httpRes.Body).Decode(resp); err != nil {
 			hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
-		hlog.CtxInfof(ctx, "purchase item response: %+v", resp)
-		return resp, nil
+		hlog.CtxInfof(ctx, "post mercari transaction message response: %+v", resp)
+		// purchasing successfully
+		trxId := strconv.FormatInt(resp.TransactionDetails.TrxId, 10)
+		if err := db.GetHandler().UpdateTransaction(ctx, &model.Transaction{
+			RefID:     refId,
+			TrxID:     trxId,
+			PaidPrice: resp.TransactionDetails.PaidPrice,
+			Price:     resp.TransactionDetails.Price,
+		}); err != nil {
+			hlog.CtxErrorf(ctx, "UpdateTransaction fail, [%s]", err.Error())
+			return nil, backoff.Permanent(bizErr.InternalError)
+		}
+		return nil, nil
 	}
-	result, err := backoff.Retry(ctx, purchaseItemFunc, m.GetRetryOpts()...)
+
+	_, err := backoff.Retry(ctx, purchaseItemFunc, m.GetRetryOpts()...)
 	if err != nil {
 		pErr := &backoff.PermanentError{}
 		if errors.As(err, &pErr) {
 			berr := pErr.Unwrap()
-			return nil, berr
+			return berr
 		}
-		return nil, err
+		return err
 	}
-	return result, nil
+
+	return nil
 }

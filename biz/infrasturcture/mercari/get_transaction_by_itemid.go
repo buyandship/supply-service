@@ -14,28 +14,34 @@ import (
 	"time"
 )
 
-type GetItemCategoriesResp struct {
-	MasterCategories []struct {
-		Id       string `json:"id"`
-		Name     string `json:"name"`
-		Level    string `json:"level,omitempty"`
-		ParentId string `json:"parent_id,omitempty"`
-	} `json:"master_categories"`
+type GetTransactionByItemIDResponse struct {
+	Id           string `json:"id"`
+	Status       string `json:"status"`
+	ItemId       string `json:"item_id"`
+	SellerId     string `json:"seller_id"`
+	Price        int64  `json:"price"`
+	PaidPrice    int64  `json:"paid_price"`
+	UpdatedTime  int    `json:"updated_time"`
+	ShippingInfo struct {
+		ShippingMethodName string `json:"shipping_method_name"`
+		TrackingNumber     string `json:"tracking_number"`
+		Status             string `json:"status"`
+		BuyerShippingFee   string `json:"buyer_shipping_fee"`
+	} `json:"shipping_info"`
 }
 
-func (m *Mercari) GetItemCategories(ctx context.Context) (*GetItemCategoriesResp, error) {
-	getItemFunc := func() (*GetItemCategoriesResp, error) {
-		hlog.CtxInfof(ctx, "call /v1/master/item_categories at %+v", time.Now())
+func (m *Mercari) GetTransactionByItemID(ctx context.Context, itemId string) (*GetTransactionByItemIDResponse, error) {
+	getItemFunc := func() (*GetTransactionByItemIDResponse, error) {
+		hlog.CtxInfof(ctx, "call /v2/transactions/{itemID} at %+v", time.Now().Local())
 		if ok := redis.GetHandler().Limit(ctx); ok {
 			return nil, bizErr.RateLimitError
 		}
 		headers := map[string][]string{
-			"Accept":        {"application/json"},
 			"Authorization": {m.Token.AccessToken},
 		}
 
 		httpReq, err := http.NewRequest("GET",
-			fmt.Sprintf("%s/v1/master/item_categories", m.OpenApiDomain), nil)
+			fmt.Sprintf("%s/v2/transactions/%s", m.OpenApiDomain, itemId), nil)
 		if err != nil {
 			hlog.CtxErrorf(ctx, "http request error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
@@ -83,7 +89,7 @@ func (m *Mercari) GetItemCategories(ctx context.Context) (*GetItemCategoriesResp
 
 		if httpRes.StatusCode != http.StatusOK {
 			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "get mercari item categories error: %s", respBody)
+			hlog.CtxErrorf(ctx, "get mercari item error: %s", respBody)
 			return nil, backoff.Permanent(bizErr.BizError{
 				Status:  httpRes.StatusCode,
 				ErrCode: httpRes.StatusCode,
@@ -91,12 +97,12 @@ func (m *Mercari) GetItemCategories(ctx context.Context) (*GetItemCategoriesResp
 			})
 		}
 
-		resp := &GetItemCategoriesResp{}
+		resp := &GetTransactionByItemIDResponse{}
 		if err := json.NewDecoder(httpRes.Body).Decode(resp); err != nil {
 			hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
-		hlog.CtxInfof(ctx, "get item categories successfully")
+		hlog.CtxInfof(ctx, "get item by id successfully")
 		return resp, nil
 	}
 	result, err := backoff.Retry(ctx, getItemFunc, m.GetRetryOpts()...)

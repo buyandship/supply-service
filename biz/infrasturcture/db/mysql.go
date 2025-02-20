@@ -75,18 +75,18 @@ func (h *H) InsertMessage(ctx context.Context, message *model.Message) error {
 	return nil
 }
 
-func (h *H) CheckTransactionExist(ctx context.Context, trxId string) (bool, error) {
-	var trx model.Transaction
+func (h *H) GetTransaction(ctx context.Context, trxId string) (*model.Transaction, error) {
+	var trx *model.Transaction
 	if err := h.cli.WithContext(ctx).
 		Debug().
 		Where("ref_id = ?", trxId).
 		First(&trx).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return false, nil
+			return nil, nil
 		}
-		return false, err
+		return nil, err
 	}
-	return true, nil
+	return trx, nil
 }
 
 func (h *H) InsertTransaction(ctx context.Context, transaction *model.Transaction) error {

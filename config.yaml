@@ -8,6 +8,6 @@ redis:
   addr: "localhost:6379"
 mercari:
   client_id: "NUSnaBnbqRGy1sndWIYZUQJFnwousvRh"
-  client_secret: "7D0mXAF7VsfRswFSckwwb1NoGBU6J7N0"
+  client_secret: "lyQCWHIurdhwqTEjk492VwxBhyO0P6YG"
   callback_url: "https://b4u-req-api-test.buynship.com/api/callback/mercari/login/"
 hmac_secret: "utmtuacz-hhme-fht4-gba6-3lg4vi8fzpu6"

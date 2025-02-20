@@ -75,7 +75,7 @@ func (m *Mercari) GetUser(ctx context.Context, req *GetUserByUserIDRequest) (*Ge
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
-			if err := m.RefreshToken(ctx); err != nil {
+			if err := m.GetToken(ctx); err != nil {
 				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
 			}
 			return nil, bizErr.UnauthorisedError

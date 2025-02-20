@@ -73,13 +73,30 @@ struct MercariGetTokenResp {
     1: string token
 }
 
+struct MercariGetTransactionByItemIdReq {
+    1: i32 buyer_id (api.json="buyer_id");
+    2: string item_id (api.json="item_id");
+}
+
+struct MercariPostOrderResp {
+    1: string trx_id
+    2: i64 coupon_id
+    3: i64 price
+    4: i64 paid_price
+    5: i64 buyer_shipping_fee
+    6: string item_id
+    7: string checksum
+}
+
 service SupplyService {
-    MercariRegisterAccountResp MercariRegisterAccountService(1: MercariRegisterAccountReq req) (api.post="/v1/supplysrv/mercari/register");
-    string MercariGetItemService(1: MercariGetItemReq req) (api.get="/v1/supplysrv/mercari/item");
-    string MercariGetCategoriesService() (api.get="/v1/supplysrv/mercari/categories")
-    string MercariGetSellerService(1: MercariGetSellerReq req) (api.get="/v1/supplysrv/mercari/seller")
-    string MercariPostOrderService(1: MercariPostOrderReq req) (api.post="/v1/supplysrv/mercari/order")
-    MercariPostMessageResp MercariPostMessageService(1: MercariPostMessageReq req) (api.post="/v1/supplysrv/mercari/message")
-    string MercariLoginCallBackService(1: MercariLoginCallBackReq req) (api.get="/xb/login_callback")
-    MercariGetTokenResp MercariGetTokenService() (api.get="/v1/supplysrv/mercari/token")
+    string MercariGetItemService(1: MercariGetItemReq req) (api.get="/v1/supplysrv/internal/mercari/item");
+    string MercariGetCategoriesService() (api.get="/v1/supplysrv/internal/mercari/categories")
+    string MercariGetSellerService(1: MercariGetSellerReq req) (api.get="/v1/supplysrv/internal/mercari/seller")
+    string MercariLoginCallBackService(1: MercariLoginCallBackReq req) (api.get="/v1/supplysrc/mercari/webhook/login_callback")
+    string MercariGetTransactionByItemIdService(1: MercariGetTransactionByItemIdReq req) (api.get="/v1/supplysrv/internal/mercari/tx")
+
+    MercariRegisterAccountResp MercariRegisterAccountService(1: MercariRegisterAccountReq req) (api.post="/v1/supplysrv/internal/mercari/register");
+    MercariPostOrderResp MercariPostOrderService(1: MercariPostOrderReq req) (api.post="/v1/supplysrv/internal/mercari/order")
+    MercariPostMessageResp MercariPostMessageService(1: MercariPostMessageReq req) (api.post="/v1/supplysrv/internal/mercari/message")
+    MercariGetTokenResp MercariGetTokenService() (api.get="/v1/supplysrv/internal/mercari/token")
 }

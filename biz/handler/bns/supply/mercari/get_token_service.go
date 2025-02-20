@@ -11,7 +11,7 @@ func GetTokenService(ctx context.Context) (*supply.MercariGetTokenResp, error) {
 	hlog.CtxInfof(ctx, "Getting token service")
 	h := mercari.GetHandler()
 
-	if err := h.RefreshToken(ctx); err != nil {
+	if err := h.GetToken(ctx); err != nil {
 		return nil, err
 	}
 
