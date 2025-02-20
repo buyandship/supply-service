@@ -140,6 +140,7 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 			}
 		}
 
+		// purchasing fails
 		if httpRes.StatusCode != http.StatusOK {
 			hlog.CtxErrorf(ctx, "http error, error_code: [%d]", httpRes.StatusCode)
 			errResp := &PurchaseItemErrorResponse{}
@@ -158,6 +159,7 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 					FailureReason: fmt.Sprintf("%s|%s", errResp.RequestId, errResp.FailureDetails.Reasons),
 				}); err != nil {
 					hlog.CtxErrorf(ctx, "UpdateTransaction fail, [%s]", err.Error())
+					return nil, backoff.Permanent(bizErr.InternalError)
 				}
 				return nil, backoff.Permanent(bizErr.BizError{
 					Status:  httpRes.StatusCode,
@@ -180,7 +182,7 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 			return nil, nil
 		}
 
-		// purchase successfully.
+		// purchase success.
 		resp := &PurchaseItemResponse{}
 		if err := json.NewDecoder(httpRes.Body).Decode(resp); err != nil {
 			hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
