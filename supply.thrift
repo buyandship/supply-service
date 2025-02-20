@@ -92,7 +92,7 @@ service SupplyService {
     string MercariGetItemService(1: MercariGetItemReq req) (api.get="/v1/supplysrv/internal/mercari/item");
     string MercariGetCategoriesService() (api.get="/v1/supplysrv/internal/mercari/categories")
     string MercariGetSellerService(1: MercariGetSellerReq req) (api.get="/v1/supplysrv/internal/mercari/seller")
-    string MercariLoginCallBackService(1: MercariLoginCallBackReq req) (api.get="/v1/supplysrc/mercari/webhook/login_callback")
+    string MercariLoginCallBackService(1: MercariLoginCallBackReq req) (api.get="/xb/login_callback")
     string MercariGetTransactionByItemIdService(1: MercariGetTransactionByItemIdReq req) (api.get="/v1/supplysrv/internal/mercari/tx")
 
     MercariRegisterAccountResp MercariRegisterAccountService(1: MercariRegisterAccountReq req) (api.post="/v1/supplysrv/internal/mercari/register");

@@ -20,31 +20,25 @@ func Register(r *server.Hertz) {
 	{
 		_v1 := root.Group("/v1", _v1Mw()...)
 		{
-			_supplysrc := _v1.Group("/supplysrc", _supplysrcMw()...)
-			{
-				_mercari := _supplysrc.Group("/mercari", _mercariMw()...)
-				{
-					_webhook := _mercari.Group("/webhook", _webhookMw()...)
-					_webhook.GET("/login_callback", append(_mercarilogincallbackserviceMw(), supply.MercariLoginCallBackService)...)
-				}
-			}
-		}
-		{
 			_supplysrv := _v1.Group("/supplysrv", _supplysrvMw()...)
 			{
 				_internal := _supplysrv.Group("/internal", _internalMw()...)
 				{
-					_mercari0 := _internal.Group("/mercari", _mercari0Mw()...)
-					_mercari0.GET("/categories", append(_mercarigetcategoriesserviceMw(), supply.MercariGetCategoriesService)...)
-					_mercari0.GET("/item", append(_mercarigetitemserviceMw(), supply.MercariGetItemService)...)
-					_mercari0.POST("/message", append(_mercaripostmessageserviceMw(), supply.MercariPostMessageService)...)
-					_mercari0.POST("/order", append(_mercaripostorderserviceMw(), supply.MercariPostOrderService)...)
-					_mercari0.POST("/register", append(_mercariregisteraccountserviceMw(), supply.MercariRegisterAccountService)...)
-					_mercari0.GET("/seller", append(_mercarigetsellerserviceMw(), supply.MercariGetSellerService)...)
-					_mercari0.GET("/token", append(_mercarigettokenserviceMw(), supply.MercariGetTokenService)...)
-					_mercari0.GET("/tx", append(_mercarigettransactionbyitemidserviceMw(), supply.MercariGetTransactionByItemIdService)...)
+					_mercari := _internal.Group("/mercari", _mercariMw()...)
+					_mercari.GET("/categories", append(_mercarigetcategoriesserviceMw(), supply.MercariGetCategoriesService)...)
+					_mercari.GET("/item", append(_mercarigetitemserviceMw(), supply.MercariGetItemService)...)
+					_mercari.POST("/message", append(_mercaripostmessageserviceMw(), supply.MercariPostMessageService)...)
+					_mercari.POST("/order", append(_mercaripostorderserviceMw(), supply.MercariPostOrderService)...)
+					_mercari.POST("/register", append(_mercariregisteraccountserviceMw(), supply.MercariRegisterAccountService)...)
+					_mercari.GET("/seller", append(_mercarigetsellerserviceMw(), supply.MercariGetSellerService)...)
+					_mercari.GET("/token", append(_mercarigettokenserviceMw(), supply.MercariGetTokenService)...)
+					_mercari.GET("/tx", append(_mercarigettransactionbyitemidserviceMw(), supply.MercariGetTransactionByItemIdService)...)
 				}
 			}
 		}
+	}
+	{
+		_xb := root.Group("/xb", _xbMw()...)
+		_xb.GET("/login_callback", append(_mercarilogincallbackserviceMw(), supply.MercariLoginCallBackService)...)
 	}
 }
