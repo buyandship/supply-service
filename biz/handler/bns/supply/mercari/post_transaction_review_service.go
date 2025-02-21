@@ -1,0 +1,50 @@
+package mercari
+
+import (
+	"context"
+	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
+	"github.com/buyandship/supply-svr/biz/model/bns/supply"
+	model "github.com/buyandship/supply-svr/biz/model/mercari"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
+)
+
+func PostTransactionReviewService(ctx context.Context, req *supply.MercariPostTransactionReviewReq) (*mercari.PostTransactionReviewResponse, error) {
+	hlog.CtxInfof(ctx, "PostTransactionReviewService is called, %+v", req)
+	h := mercari.GetHandler()
+
+	if req.GetTrxID() == "" {
+		hlog.CtxErrorf(ctx, "empty trx_id")
+		return nil, bizErr.InvalidParameterError
+	}
+
+	if req.GetFame() != "good" && req.GetFame() != "bad" {
+		hlog.CtxErrorf(ctx, "invalid fame: %s", req.GetFame())
+		return nil, bizErr.InvalidParameterError
+	}
+
+	if len(req.GetReview()) >= 140 {
+		hlog.CtxErrorf(ctx, "the length of review reach maximum: %d", len(req.GetReview()))
+		return nil, bizErr.InvalidParameterError
+	}
+
+	mResp, err := h.PostTransactionReview(ctx, &mercari.PostTransactionReviewRequest{
+		TrxId:   req.GetTrxID(),
+		Fame:    req.GetFame(),
+		Message: req.GetReview(),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if err := db.GetHandler().InsertReview(ctx, &model.Review{
+		TrxID:  req.GetTrxID(),
+		Fame:   req.GetFame(),
+		Review: req.GetReview(),
+	}); err != nil {
+		hlog.CtxErrorf(ctx, "Insert review failed: %v", err)
+		return nil, bizErr.InternalError
+	}
+	return mResp, nil
+}

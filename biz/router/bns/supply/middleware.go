@@ -99,3 +99,8 @@ func _mercari0Mw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _mercariposttransactionreviewserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

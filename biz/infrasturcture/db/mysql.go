@@ -75,6 +75,16 @@ func (h *H) InsertMessage(ctx context.Context, message *model.Message) error {
 	return nil
 }
 
+func (h *H) InsertReview(ctx context.Context, review *model.Review) error {
+	if err := h.cli.
+		WithContext(ctx).
+		Debug().
+		Create(&review).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
 func (h *H) GetTransaction(ctx context.Context, trxId string) (*model.Transaction, error) {
 	var trx *model.Transaction
 	if err := h.cli.WithContext(ctx).

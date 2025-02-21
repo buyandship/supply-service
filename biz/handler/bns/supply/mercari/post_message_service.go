@@ -14,7 +14,7 @@ func PostMessageService(ctx context.Context, req *supply.MercariPostMessageReq) 
 	hlog.CtxInfof(ctx, "PostMessageService is called, trx_id: %d, msg: %s", req.GetTrxID(), req.GetMsg())
 	h := mercari.GetHandler()
 
-	if req.GetTrxID() == 0 {
+	if req.GetTrxID() == "" {
 		hlog.CtxErrorf(ctx, "empty trx_id")
 		return nil, bizErr.InvalidParameterError
 	}

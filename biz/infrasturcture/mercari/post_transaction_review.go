@@ -15,31 +15,34 @@ import (
 	"time"
 )
 
-type PostTransactionMessageRequest struct {
-	TransactionId string `json:"transactionID"`
-	Message       string `json:"message"`
+type PostTransactionReviewRequest struct {
+	TrxId   string `json:"trx_id"`
+	Fame    string `json:"fame"`
+	Message string `json:"message"`
 }
 
-type PostTransactionMessageResponse struct {
-	Id      string `json:"id"`
-	Body    string `json:"body"`
-	UserId  string `json:"user_id"`
-	Created int    `json:"created"`
+type PostTransactionReviewResponse struct {
+	FailureDetails struct {
+		Code    string `json:"code"`
+		Reasons string `json:"reasons"`
+	} `json:"failure_details,omitempty"`
+	RequestId    string `json:"request_id"`
+	ReviewStatus string `json:"review_status"`
 }
 
-func (m *Mercari) PostTransactionMessage(ctx context.Context, req *PostTransactionMessageRequest) (*PostTransactionMessageResponse, error) {
-	postTransactionMessageFunc := func() (*PostTransactionMessageResponse, error) {
-		hlog.CtxInfof(ctx, "call /v2/transactions at %+v", time.Now())
+func (m *Mercari) PostTransactionReview(ctx context.Context, req *PostTransactionReviewRequest) (*PostTransactionReviewResponse, error) {
+	postTransactionReviewFunc := func() (*PostTransactionReviewResponse, error) {
+		hlog.CtxInfof(ctx, "call /v1/transactions/{transactionID}/post_review at %+v", time.Now())
 		if ok := redis.GetHandler().Limit(ctx); ok {
 			return nil, bizErr.RateLimitError
 		}
 
 		headers := map[string][]string{
 			"Content-Type":  {"application/json"},
-			"Accept":        {"application/json"},
 			"Authorization": {m.Token.AccessToken},
 		}
 		jsonReq := map[string]string{
+			"fame":    req.Fame,
 			"message": req.Message,
 		}
 		reqBody, err := json.Marshal(jsonReq)
@@ -48,7 +51,8 @@ func (m *Mercari) PostTransactionMessage(ctx context.Context, req *PostTransacti
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
 		data := bytes.NewBuffer(reqBody)
-		httpReq, err := http.NewRequest("POST", fmt.Sprintf("%s/v2/transactions/%s/messages", m.OpenApiDomain, req.TransactionId), data)
+		httpReq, err := http.NewRequest("POST",
+			fmt.Sprintf("%s/v1/transactions/%s/post_review", m.OpenApiDomain, req.TrxId), data)
 		if err != nil {
 			hlog.CtxErrorf(ctx, "http request error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
@@ -94,23 +98,23 @@ func (m *Mercari) PostTransactionMessage(ctx context.Context, req *PostTransacti
 		}
 		if httpRes.StatusCode != http.StatusOK {
 			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "post mercari transaction message error: %s", respBody)
+			hlog.CtxErrorf(ctx, "post mercari transaction review error: %s", respBody)
 			return nil, backoff.Permanent(bizErr.BizError{
 				Status:  httpRes.StatusCode,
 				ErrCode: httpRes.StatusCode,
 				ErrMsg:  string(respBody),
 			})
 		}
-		resp := &PostTransactionMessageResponse{}
+		resp := &PostTransactionReviewResponse{}
 		if err := json.NewDecoder(httpRes.Body).Decode(resp); err != nil {
 			hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
-		hlog.CtxInfof(ctx, "post mercari transaction message response: %+v", resp)
+		hlog.CtxInfof(ctx, "post mercari transaction review response: %+v", resp)
 		return resp, nil
 	}
 
-	result, err := backoff.Retry(ctx, postTransactionMessageFunc, m.GetRetryOpts()...)
+	result, err := backoff.Retry(ctx, postTransactionReviewFunc, m.GetRetryOpts()...)
 	if err != nil {
 		pErr := &backoff.PermanentError{}
 		if errors.As(err, &pErr) {

@@ -20,12 +20,12 @@ struct MercariPostOrderReq {
 }
 
 struct MercariPostMessageReq {
-    1: i64 trx_id (api.json="trx_id");
+    1: string trx_id (api.json="trx_id");
     2: string msg (api.json="msg");
 }
 
 struct MercariPostMessageResp {
-    1: i64 trx_id
+    1: string trx_id
     2: string body
     3: string id
 }
@@ -88,6 +88,12 @@ struct MercariPostOrderResp {
     7: string checksum
 }
 
+struct MercariPostTransactionReviewReq {
+    1: string trx_id
+    2: string fame
+    3: string review
+}
+
 service SupplyService {
     string MercariGetItemService(1: MercariGetItemReq req) (api.get="/v1/supplysrv/internal/mercari/item");
     string MercariGetCategoriesService() (api.get="/v1/supplysrv/internal/mercari/categories")
@@ -95,6 +101,7 @@ service SupplyService {
     string MercariLoginCallBackService(1: MercariLoginCallBackReq req) (api.get="/xb/login_callback")
     string MercariGetTransactionByItemIdService(1: MercariGetTransactionByItemIdReq req) (api.get="/v1/supplysrv/internal/mercari/tx")
 
+    string MercariPostTransactionReviewService(1: MercariPostTransactionReviewReq req) (api.post="/v1/supplysrv/internal/mercari/review")
     MercariRegisterAccountResp MercariRegisterAccountService(1: MercariRegisterAccountReq req) (api.post="/v1/supplysrv/internal/mercari/register");
     MercariPostOrderResp MercariPostOrderService(1: MercariPostOrderReq req) (api.post="/v1/supplysrv/internal/mercari/order")
     MercariPostMessageResp MercariPostMessageService(1: MercariPostMessageReq req) (api.post="/v1/supplysrv/internal/mercari/message")

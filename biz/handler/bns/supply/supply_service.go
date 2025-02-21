@@ -257,3 +257,31 @@ func MercariGetTransactionByItemIdService(ctx context.Context, c *app.RequestCon
 	}
 	c.JSON(consts.StatusOK, resp)
 }
+
+// MercariPostTransactionReviewService .
+// @router /v1/supplysrv/internal/mercari/review [GET]
+func MercariPostTransactionReviewService(ctx context.Context, c *app.RequestContext) {
+	var requestId string
+	if string(c.GetHeader("X-Request-ID")) == "" {
+		requestId = uuid.NewString()
+	} else {
+		requestId = string(c.GetHeader("X-Request-ID"))
+	}
+	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
+
+	var err error
+	var req supply.MercariPostTransactionReviewReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		hlog.CtxErrorf(ctx, "invalid parameter, err: %+v", err)
+		c.AbortWithStatusJSON(consts.StatusBadRequest, bizErr.InvalidParameterError)
+		return
+	}
+	resp, err := mercari.PostTransactionReviewService(ctx, &req)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+	c.JSON(consts.StatusOK, resp)
+}
