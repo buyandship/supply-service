@@ -15,6 +15,7 @@ import (
 )
 
 const priceThreshold = 0.49
+const CountryCodeHK = "HK"
 
 func validateRequest(ctx context.Context, req *supply.MercariPostOrderReq) error {
 	if req.GetItemID() == "" {
@@ -201,6 +202,7 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 		Checksum:           resp.Checksum,
 		CouponId:           couponId,
 		DeliveryIdentifier: req.GetItemID(),
+		CountryCode:        CountryCodeHK,
 	}); err != nil {
 		return nil, err
 	}

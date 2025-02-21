@@ -104,3 +104,8 @@ func _mercariposttransactionreviewserviceMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _mercarigettodolistserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

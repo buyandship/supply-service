@@ -285,3 +285,31 @@ func MercariPostTransactionReviewService(ctx context.Context, c *app.RequestCont
 	}
 	c.JSON(consts.StatusOK, resp)
 }
+
+// MercariGetTodoListService .
+// @router /v1/supplysrv/internal/mercari/todo [GET]
+func MercariGetTodoListService(ctx context.Context, c *app.RequestContext) {
+	var requestId string
+	if string(c.GetHeader("X-Request-ID")) == "" {
+		requestId = uuid.NewString()
+	} else {
+		requestId = string(c.GetHeader("X-Request-ID"))
+	}
+	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
+
+	var err error
+	var req supply.MercariGetTodoListReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp, err := mercari.GetTodoListService(ctx, &req)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+	c.JSON(consts.StatusOK, resp)
+}

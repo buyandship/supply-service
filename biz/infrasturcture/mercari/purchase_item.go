@@ -36,6 +36,7 @@ type PurchaseItemRequest struct {
 	Checksum           string `json:"checksum"`
 	CouponId           int    `json:"coupon_id"`
 	ItemAuthentication bool   `json:"item_authentication"`
+	CountryCode        string `json:"country_code"`
 }
 
 type PurchaseItemResponse struct {
