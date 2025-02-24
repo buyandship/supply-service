@@ -92,7 +92,7 @@ func (m *Mercari) PostTransactionMessage(ctx context.Context, req *PostTransacti
 				ErrMsg:  string(respBody),
 			}
 		}
-		if httpRes.StatusCode != http.StatusOK {
+		if httpRes.StatusCode != http.StatusOK && httpRes.StatusCode != http.StatusCreated {
 			respBody, _ := io.ReadAll(httpRes.Body)
 			hlog.CtxErrorf(ctx, "post mercari transaction message error: %s", respBody)
 			return nil, backoff.Permanent(bizErr.BizError{

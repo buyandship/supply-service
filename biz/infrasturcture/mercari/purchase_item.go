@@ -78,6 +78,15 @@ type PurchaseItemErrorResponse struct {
 	} `json:"failure_details"`
 }
 
+type GenericErrorResponse struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Details []struct {
+		Type      string `json:"@type"`
+		RequestId string `json:"request_id"`
+	} `json:"details"`
+}
+
 func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseItemRequest) error {
 	purchaseItemFunc := func() (*PurchaseItemResponse, error) {
 		hlog.CtxInfof(ctx, "call /v1/items/purchase at %+v", time.Now())
@@ -162,10 +171,24 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 					hlog.CtxErrorf(ctx, "UpdateTransaction fail, [%s]", err.Error())
 					return nil, backoff.Permanent(bizErr.InternalError)
 				}
+				var errMsg string
+				if errResp.FailureDetails.Reasons == "" {
+					errResp := &GenericErrorResponse{}
+					if err := json.NewDecoder(httpRes.Body).Decode(errResp); err != nil {
+						hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
+					}
+					if len(errResp.Details) > 0 {
+						errMsg = fmt.Sprintf("%s|Generic Error", errResp.Details[0].RequestId)
+					} else {
+						errMsg = fmt.Sprintf("%d", httpRes.StatusCode)
+					}
+				} else {
+					errMsg = fmt.Sprintf("%s|%s", errResp.RequestId, errResp.FailureDetails.Reasons)
+				}
 				return nil, backoff.Permanent(bizErr.BizError{
 					Status:  httpRes.StatusCode,
 					ErrCode: httpRes.StatusCode,
-					ErrMsg:  fmt.Sprintf("%s|%s", errResp.RequestId, errResp.FailureDetails.Reasons),
+					ErrMsg:  errMsg,
 				})
 			}
 

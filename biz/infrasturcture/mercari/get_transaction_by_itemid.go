@@ -89,7 +89,7 @@ func (m *Mercari) GetTransactionByItemID(ctx context.Context, itemId string) (*G
 
 		if httpRes.StatusCode != http.StatusOK {
 			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "get mercari item error: %s", respBody)
+			hlog.CtxErrorf(ctx, "get mercari transaction by itemid error: %s", respBody)
 			return nil, backoff.Permanent(bizErr.BizError{
 				Status:  httpRes.StatusCode,
 				ErrCode: httpRes.StatusCode,

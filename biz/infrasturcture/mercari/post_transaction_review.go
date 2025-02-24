@@ -96,7 +96,7 @@ func (m *Mercari) PostTransactionReview(ctx context.Context, req *PostTransactio
 				ErrMsg:  string(respBody),
 			}
 		}
-		if httpRes.StatusCode != http.StatusOK {
+		if httpRes.StatusCode != http.StatusOK && httpRes.StatusCode != http.StatusCreated {
 			respBody, _ := io.ReadAll(httpRes.Body)
 			hlog.CtxErrorf(ctx, "post mercari transaction review error: %s", respBody)
 			return nil, backoff.Permanent(bizErr.BizError{
