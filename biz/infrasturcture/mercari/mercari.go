@@ -2,9 +2,11 @@ package mercari
 
 import (
 	"encoding/base64"
+	"errors"
 	"fmt"
 	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cenkalti/backoff/v5"
+	"gorm.io/gorm"
 	"time"
 
 	"github.com/buyandship/supply-svr/biz/common/config"
@@ -40,7 +42,11 @@ func GetHandler() *Mercari {
 
 		t, err := db.GetHandler().GetToken()
 		if err != nil {
-			hlog.Fatal(err)
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				hlog.Infof("Mercari token not found")
+			} else {
+				hlog.Fatal(err)
+			}
 		}
 
 		Handler = &Mercari{
