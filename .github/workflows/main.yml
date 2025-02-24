@@ -1,0 +1,28 @@
+name: Build go package and pr to update image tag
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for checking out the repository
+
+on:
+  workflow_dispatch:
+      
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build_and_push_image:
+    uses: buyandship/bso-infra/.github/workflows/go_build_and_push_image.yml@main
+    secrets: inherit
+    with:
+      IMAGE_NAME: supply-service
+      DOCKERFILE: dockerfile
+
+       
+  update-image-pr:
+    needs: build_and_push_image
+    uses: buyandship/bso-infra/.github/workflows/update_image_tag_pr.yml@main
+    secrets: inherit
+    with:
+      TARGET_FOLDER: k8s/supply-service
