@@ -8,18 +8,21 @@ import (
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"unicode/utf8"
 )
 
 func PostMessageService(ctx context.Context, req *supply.MercariPostMessageReq) (*supply.MercariPostMessageResp, error) {
-	hlog.CtxInfof(ctx, "PostMessageService is called, trx_id: %d, msg: %s", req.GetTrxID(), req.GetMsg())
+	hlog.CtxInfof(ctx, "PostMessageService is called, req: %+v", req)
 	h := mercari.GetHandler()
+
+	charCount := utf8.RuneCountInString(req.GetMsg())
 
 	if req.GetTrxID() == "" {
 		hlog.CtxErrorf(ctx, "empty trx_id")
 		return nil, bizErr.InvalidParameterError
 	}
 
-	if req.GetMsg() == "" || len(req.GetMsg()) > 1000 {
+	if req.GetMsg() == "" || charCount > 1000 {
 		hlog.CtxErrorf(ctx, "msg is empty or length exceeds 1000")
 		return nil, bizErr.InvalidParameterError
 	}
