@@ -7,6 +7,7 @@ import (
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
+	"github.com/buyandship/supply-svr/biz/mock"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -67,6 +68,11 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 	hlog.CtxInfof(ctx, "PostOrderService is called, req: %+v", req)
 	// 1. validation
 	if err := validateRequest(ctx, req); err != nil {
+		return nil, err
+	}
+
+	// Mock
+	if err := mock.MockMercariPostOrderError(req.GetItemID()); err != nil {
 		return nil, err
 	}
 

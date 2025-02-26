@@ -32,7 +32,13 @@ var (
 	UnauthorisedError     = BizError{Status: consts.StatusUnauthorized, ErrCode: consts.StatusUnauthorized, ErrMsg: "unauthorized"}
 	InvalidParameterError = BizError{Status: consts.StatusBadRequest, ErrCode: consts.StatusBadRequest, ErrMsg: "invalid parameter"}
 	ConflictError         = BizError{Status: consts.StatusConflict, ErrCode: consts.StatusConflict, ErrMsg: "conflict"}
+	BadRequestError       = BizError{Status: consts.StatusBadRequest, ErrCode: consts.StatusBadRequest, ErrMsg: "bad request"}
+	ForbiddenError        = BizError{Status: consts.StatusForbidden, ErrCode: consts.StatusForbidden, ErrMsg: "forbidden"}
+	PaymentRequiredError  = BizError{Status: consts.StatusPaymentRequired, ErrCode: consts.StatusPaymentRequired, ErrMsg: "payment required"}
+	NotFoundError         = BizError{Status: consts.StatusNotFound, ErrCode: consts.StatusNotFound, ErrMsg: "not found"}
+	InvalidInputError     = BizError{Status: consts.StatusForbidden, ErrCode: consts.StatusForbidden, ErrMsg: "invalid input"}
 
+	MercariInternalError      = BizError{Status: consts.StatusInternalServerError, ErrCode: consts.StatusInternalServerError, ErrMsg: "mercari internal error"}
 	InternalError             = BizError{Status: consts.StatusInternalServerError, ErrCode: 1000, ErrMsg: "internal error"}
 	InvalidBuyerError         = BizError{Status: consts.StatusInternalServerError, ErrCode: 1001, ErrMsg: "invalid buyer id"}
 	TooLowReferencePriceError = BizError{Status: consts.StatusInternalServerError, ErrCode: 1002, ErrMsg: "the reference price is too low"}

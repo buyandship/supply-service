@@ -6,6 +6,7 @@ import (
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
+	"github.com/buyandship/supply-svr/biz/mock"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"gorm.io/gorm"
@@ -18,6 +19,12 @@ func GetItemService(ctx context.Context, req *supply.MercariGetItemReq) (*mercar
 		hlog.CtxErrorf(ctx, "empty item_id")
 		return nil, bizErr.InvalidParameterError
 	}
+
+	// Mock
+	if err := mock.MockMercariGetItemError(req.GetItemID()); err != nil {
+		return nil, err
+	}
+
 	h := mercari.GetHandler()
 
 	var prefecture string
@@ -42,6 +49,10 @@ func GetItemService(ctx context.Context, req *supply.MercariGetItemReq) (*mercar
 		BuyerId:    req.GetBuyerID(),
 		Prefecture: prefecture,
 	})
+
+	if err := mock.MockMercariItemResponse(resp); err != nil {
+		return nil, err
+	}
 
 	return resp, err
 }
