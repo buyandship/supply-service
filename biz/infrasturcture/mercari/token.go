@@ -84,6 +84,8 @@ func (m *Mercari) SetToken(ctx context.Context, req *supply.MercariLoginCallBack
 		return bizErr.InternalError
 	}
 
+	hlog.CtxInfof(ctx, "get token success, resp: %+v", resp)
+
 	// insert token
 	if err := db.GetHandler().InsertTokenLog(ctx, &mercari.Token{
 		AccessToken:  resp.AccessToken,

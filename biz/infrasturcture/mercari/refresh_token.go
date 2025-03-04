@@ -99,6 +99,8 @@ func (m *Mercari) refreshToken(ctx context.Context) error {
 		return bizErr.InternalError
 	}
 
+	hlog.CtxInfof(ctx, "refresh token success, resp: %+v", resp)
+
 	if err := db.GetHandler().InsertTokenLog(context.Background(), &mercari.Token{
 		AccessToken:  resp.AccessToken,
 		RefreshToken: resp.RefreshToken,
