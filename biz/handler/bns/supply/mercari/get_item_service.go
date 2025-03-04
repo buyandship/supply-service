@@ -33,20 +33,18 @@ func GetItemService(ctx context.Context, req *supply.MercariGetItemReq) (*mercar
 	if req.GetBuyerID() != 0 {
 		buyerId = req.GetBuyerID()
 	}
-	if req.BuyerID != 0 {
-		acc, err := db.GetHandler().GetAccount(ctx, buyerId)
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, bizErr.InvalidBuyerError
-		}
-		if err != nil {
-			return nil, bizErr.InternalError
-		}
-		prefecture = acc.Prefecture
+
+	acc, err := db.GetHandler().GetAccount(ctx, buyerId)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, bizErr.InvalidBuyerError
 	}
+	if err != nil {
+		return nil, bizErr.InternalError
+	}
+	prefecture = acc.Prefecture
 
 	resp, err := h.GetItemByID(ctx, &mercari.GetItemByIDRequest{
 		ItemId:     req.GetItemID(),
-		BuyerId:    req.GetBuyerID(),
 		Prefecture: prefecture,
 	})
 

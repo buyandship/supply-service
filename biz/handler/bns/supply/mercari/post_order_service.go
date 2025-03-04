@@ -95,7 +95,6 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 	// 3. get item by item_id
 	resp, err := h.GetItemByID(ctx, &mercari.GetItemByIDRequest{
 		ItemId:     req.GetItemID(),
-		BuyerId:    req.GetBuyerID(),
 		Prefecture: acc.Prefecture,
 	})
 	if err != nil {

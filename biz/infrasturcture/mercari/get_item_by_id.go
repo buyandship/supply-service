@@ -11,11 +11,11 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"io"
 	"net/http"
+	"net/url"
 	"time"
 )
 
 type GetItemByIDRequest struct {
-	BuyerId    int32  `json:"buyer_id"`
 	ItemId     string `json:"itemID"`
 	Prefecture string `json:"prefecture"`
 }
@@ -142,7 +142,7 @@ func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*Ge
 		}
 
 		httpReq, err := http.NewRequest("GET",
-			fmt.Sprintf("%s/v1/items/%s?prefecture=%s", m.OpenApiDomain, req.ItemId, req.Prefecture), nil)
+			fmt.Sprintf("%s/v1/items/%s?prefecture=%s", m.OpenApiDomain, req.ItemId, url.QueryEscape(req.Prefecture)), nil)
 		if err != nil {
 			hlog.CtxErrorf(ctx, "http request error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
