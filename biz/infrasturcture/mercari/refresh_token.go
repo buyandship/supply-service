@@ -15,6 +15,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 type RefreshTokenResponse struct {
@@ -32,22 +33,52 @@ type T struct {
 }
 
 func (m *Mercari) GetToken(ctx context.Context) error {
-	// TODO: use redis
-	t, err := db.GetHandler().GetToken()
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return bizErr.UnloginError
+	// load from redis cache
+	if err := m.getTokenFromCache(ctx); err != nil {
+		hlog.CtxInfof(ctx, "load from cache failed, err:%v", err)
+		// Degrade to load from mysql
+		t, err := db.GetHandler().GetToken()
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return bizErr.UnloginError
+			}
+			return err
 		}
-		return err
+		m.Token = t
 	}
-	m.Token = t
-
 	if m.TokenExpired() {
-		if err := m.refreshToken(ctx); err != nil {
+		if err := m.RefreshToken(ctx); err != nil {
 			return err
 		}
 	}
+	return nil
+}
 
+func (m *Mercari) getTokenFromCache(ctx context.Context) error {
+	s, err := redis.GetHandler().Get(ctx, redis.TokenRedisKey)
+	if err != nil {
+		return err
+	}
+	if t, ok := s.(string); ok {
+		if err := json.Unmarshal([]byte(t), m.Token); err != nil {
+			return bizErr.InternalError
+		}
+		return nil
+	}
+	return fmt.Errorf("get token from cache failed")
+}
+
+func (m *Mercari) RefreshToken(ctx context.Context) error {
+	if err := redis.GetHandler().Del(ctx, redis.TokenRedisKey); err != nil {
+		return err
+	}
+	if err := m.refreshToken(ctx); err != nil {
+		return err
+	}
+	// refresh cache
+	if err := redis.GetHandler().Set(ctx, redis.TokenRedisKey, m.Token, time.Hour); err != nil {
+		return err
+	}
 	return nil
 }
 

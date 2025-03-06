@@ -90,6 +90,11 @@ type GenericErrorResponse struct {
 func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseItemRequest) error {
 	purchaseItemFunc := func() (*PurchaseItemResponse, error) {
 		hlog.CtxInfof(ctx, "call /v1/items/purchase at %+v", time.Now())
+
+		if err := m.GetToken(ctx); err != nil {
+			return nil, bizErr.InternalError
+		}
+
 		if ok := redis.GetHandler().Limit(ctx); ok {
 			return nil, bizErr.RateLimitError
 		}
@@ -125,7 +130,7 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 		}
 		if httpRes.StatusCode == http.StatusUnauthorized {
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
-			if err := m.GetToken(ctx); err != nil {
+			if err := m.RefreshToken(ctx); err != nil {
 				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
 			}
 			return nil, bizErr.UnauthorisedError
