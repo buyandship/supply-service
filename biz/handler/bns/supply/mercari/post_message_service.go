@@ -2,7 +2,6 @@ package mercari
 
 import (
 	"context"
-	"github.com/buyandship/supply-svr/biz/common/config"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
@@ -15,10 +14,6 @@ import (
 func PostMessageService(ctx context.Context, req *supply.MercariPostMessageReq) (*supply.MercariPostMessageResp, error) {
 	hlog.CtxInfof(ctx, "PostMessageService is called, req: %+v", req)
 	h := mercari.GetHandler()
-
-	if config.GlobalServerConfig.Env == "development" {
-		return nil, bizErr.BadRequestError
-	}
 
 	charCount := utf8.RuneCountInString(req.GetMsg())
 

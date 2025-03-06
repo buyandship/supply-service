@@ -78,7 +78,6 @@ func (m *Mercari) TokenExpired() bool {
 	if m.Token == nil {
 		return true
 	}
-	// TODO: comment
 	expiredTime := m.Token.CreatedAt.Add(time.Duration(m.Token.ExpiresIn-60) * time.Second)
 	if time.Now().After(expiredTime) {
 		return true

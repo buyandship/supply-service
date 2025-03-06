@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/buyandship/supply-svr/biz/common/config"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
 	cache "github.com/buyandship/supply-svr/biz/infrasturcture/redis"
@@ -14,10 +13,6 @@ import (
 )
 
 func GetCategoriesService(ctx context.Context) (resp *mercari.GetItemCategoriesResp, err error) {
-	if config.GlobalServerConfig.Env == "development" {
-		return nil, bizErr.BadRequestError
-	}
-
 	cat, err := cache.GetHandler().Get(ctx, "mercari_categories")
 	if errors.Is(err, redis.Nil) {
 		// 1.2.3

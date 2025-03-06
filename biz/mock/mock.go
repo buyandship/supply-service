@@ -42,6 +42,10 @@ func MockMercariGetItemError(itemId string) error {
 		return bizErr.UndefinedError
 	}
 
+	if itemId == "m64928494499" {
+		return bizErr.TooManyRequestError
+	}
+
 	return nil
 }
 
@@ -75,6 +79,14 @@ func MockMercariPostOrderError(itemId string) error {
 
 	if itemId == "m65378237792" {
 		return bizErr.NotFoundError
+	}
+
+	if itemId == "m55618538005" {
+		return bizErr.UndefinedError
+	}
+
+	if itemId == "m44557269639" {
+		return bizErr.TooManyRequestError
 	}
 
 	return nil
@@ -155,6 +167,10 @@ func MockMercariSellerError(sellerId string) error {
 
 	if sellerId == "215320064" {
 		return bizErr.InternalError
+	}
+
+	if sellerId == "850025121" {
+		return bizErr.TooManyRequestError
 	}
 
 	return nil
@@ -255,6 +271,52 @@ func MockMercariItemResponse(resp *mercari.GetItemByIDResponse) error {
 			resp.Price = 300
 			resp.ItemDiscount.ReturnAbsolute = 10
 		}
+
+		if resp.Id == "m72592393057" {
+			resp.Price = 300
+			resp.Discounts.TotalReturnAbsolute = 10
+		}
+
+		if resp.Id == "m88973643686" {
+			resp.Price = 300
+			resp.ItemDiscount.ReturnAbsolute = 10
+		}
+
+		if resp.Id == "m28450369044" {
+			resp.Price = 300
+			resp.Discounts.TotalReturnAbsolute = 10
+		}
+
+		if resp.Id == "m28315619029" {
+			resp.Price = 300
+			resp.ItemDiscount.ReturnAbsolute = 10
+		}
+
+		if resp.Id == "m70978824732" {
+			resp.Price = 300
+			resp.Discounts.TotalReturnAbsolute = 10
+		}
+
+		if resp.Id == "m79555391109" {
+			resp.Price = 300
+			resp.ItemDiscount.ReturnAbsolute = 10
+		}
+
+		if resp.Id == "m97778471314" {
+			resp.Price = 300
+			resp.ItemDiscount.ReturnAbsolute = 50
+		}
+
+		if resp.Id == "m94826714492" {
+			resp.Price = 300
+			resp.Discounts.TotalReturnAbsolute = 10
+		}
+
+		if resp.Id == "m98984482817" {
+			resp.Price = 300
+			resp.Discounts.TotalReturnAbsolute = 50
+		}
+
 	}
 	return nil
 }
