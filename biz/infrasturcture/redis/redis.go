@@ -56,3 +56,7 @@ func (h *H) Set(ctx context.Context, key string, value interface{}, expiration t
 func (h *H) Get(ctx context.Context, key string) (interface{}, error) {
 	return h.redisClient.Get(ctx, key).Result()
 }
+
+func (h *H) Del(ctx context.Context, key string) error {
+	return h.redisClient.Del(ctx, key).Err()
+}

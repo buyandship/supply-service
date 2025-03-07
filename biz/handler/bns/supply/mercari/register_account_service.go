@@ -2,8 +2,10 @@ package mercari
 
 import (
 	"context"
+	"fmt"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -32,6 +34,10 @@ func RegisterAccountService(ctx context.Context, req *supply.MercariRegisterAcco
 		Address1:       req.GetAddress1(),
 		Address2:       req.GetAddress2(),
 	}); err != nil {
+		return nil, err
+	}
+	// delete cache
+	if err := redis.GetHandler().Del(ctx, fmt.Sprintf("buyer:%d", req.GetBuyerID())); err != nil {
 		return nil, err
 	}
 
