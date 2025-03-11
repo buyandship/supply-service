@@ -5,14 +5,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
-	"github.com/cenkalti/backoff/v5"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"io"
 	"net/http"
 	"net/url"
 	"time"
+
+	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
+	"github.com/cenkalti/backoff/v5"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
 type GetItemByIDRequest struct {
@@ -134,6 +135,7 @@ func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*Ge
 	getItemFunc := func() (*GetItemByIDResponse, error) {
 		hlog.CtxInfof(ctx, "call /v1/items at %+v", time.Now().Local())
 		if ok := redis.GetHandler().Limit(ctx); ok {
+			hlog.CtxErrorf(ctx, "hit rate limit")
 			return nil, bizErr.RateLimitError
 		}
 		headers := map[string][]string{
