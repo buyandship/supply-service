@@ -30,6 +30,11 @@ type PostTransactionMessageResponse struct {
 func (m *Mercari) PostTransactionMessage(ctx context.Context, req *PostTransactionMessageRequest) (*PostTransactionMessageResponse, error) {
 	postTransactionMessageFunc := func() (*PostTransactionMessageResponse, error) {
 		hlog.CtxInfof(ctx, "call /v2/transactions at %+v", time.Now())
+
+		if err := m.GetToken(ctx); err != nil {
+			return nil, bizErr.InternalError
+		}
+
 		if ok := redis.GetHandler().Limit(ctx); ok {
 			return nil, bizErr.RateLimitError
 		}
@@ -68,7 +73,7 @@ func (m *Mercari) PostTransactionMessage(ctx context.Context, req *PostTransacti
 		}
 		if httpRes.StatusCode == http.StatusUnauthorized {
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
-			if err := m.GetToken(ctx); err != nil {
+			if err := m.RefreshToken(ctx); err != nil {
 				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
 			}
 			return nil, bizErr.UnauthorisedError

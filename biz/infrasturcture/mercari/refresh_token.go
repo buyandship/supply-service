@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"time"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
@@ -33,22 +34,58 @@ type T struct {
 }
 
 func (m *Mercari) GetToken(ctx context.Context) error {
-	// TODO: use redis
-	t, err := db.GetHandler().GetToken()
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return bizErr.UnloginError
+	// load from redis cache
+	if err := m.LoadTokenFromCache(ctx); err != nil {
+		hlog.CtxInfof(ctx, "load from cache failed, err:%v", err)
+		// Degrade to load from mysql
+		t, err := db.GetHandler().GetToken()
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return bizErr.UnloginError
+			}
+			return err
 		}
-		return err
+		m.Token = t
+		js, err := json.Marshal(m.Token)
+		if err != nil {
+			hlog.CtxInfof(ctx, "marshal json failed, err:%v", err)
+		} else {
+			if err := redis.GetHandler().Set(ctx, redis.TokenRedisKey, string(js), 5*time.Minute); err != nil {
+				hlog.CtxErrorf(ctx, "redis set failed, err:%v", err)
+				return err
+			}
+		}
 	}
-	m.Token = t
-
 	if m.TokenExpired() {
-		if err := m.refreshToken(ctx); err != nil {
+		if err := m.RefreshToken(ctx); err != nil {
 			return err
 		}
 	}
+	return nil
+}
 
+func (m *Mercari) LoadTokenFromCache(ctx context.Context) error {
+	s, err := redis.GetHandler().Get(ctx, redis.TokenRedisKey)
+	if err != nil {
+		return err
+	}
+	if t, ok := s.(string); ok {
+		hlog.CtxInfof(ctx, "get token from cache %s", t)
+		if err := json.Unmarshal([]byte(t), m.Token); err != nil {
+			return bizErr.InternalError
+		}
+		return nil
+	}
+	return fmt.Errorf("get token from cache failed")
+}
+
+func (m *Mercari) RefreshToken(ctx context.Context) error {
+	if err := m.refreshToken(ctx); err != nil {
+		return err
+	}
+	if err := redis.GetHandler().Del(ctx, redis.TokenRedisKey); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -110,11 +147,6 @@ func (m *Mercari) refreshToken(ctx context.Context) error {
 		Scope:        resp.Scope,
 		TokenType:    resp.TokenType,
 	}); err != nil {
-		return bizErr.InternalError
-	}
-
-	m.Token, err = db.GetHandler().GetToken()
-	if err != nil {
 		return bizErr.InternalError
 	}
 

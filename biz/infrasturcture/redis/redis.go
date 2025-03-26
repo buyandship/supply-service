@@ -11,6 +11,10 @@ import (
 	"time"
 )
 
+const (
+	TokenRedisKey = "mercari_token"
+)
+
 var (
 	once    sync.Once
 	Handler *H
