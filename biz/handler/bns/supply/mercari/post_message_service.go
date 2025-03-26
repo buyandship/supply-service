@@ -2,18 +2,23 @@ package mercari
 
 import (
 	"context"
+	"unicode/utf8"
+
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"unicode/utf8"
 )
 
 func PostMessageService(ctx context.Context, req *supply.MercariPostMessageReq) (*supply.MercariPostMessageResp, error) {
 	hlog.CtxInfof(ctx, "PostMessageService is called, req: %+v", req)
 	h := mercari.GetHandler()
+
+	/* 	if config.GlobalServerConfig.Env == "development" {
+		return nil, bizErr.ConflictError
+	} */
 
 	charCount := utf8.RuneCountInString(req.GetMsg())
 

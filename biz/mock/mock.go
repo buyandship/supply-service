@@ -348,3 +348,66 @@ func MockMercariCategory(cid string) error {
 	}
 	return nil
 }
+
+func MockMercariGetTransactionByItemId(resp *mercari.GetTransactionByItemIDResponse) error {
+	if config.GlobalServerConfig.Env != "development" {
+		return nil
+	}
+
+	// Case 1: Transactions with tracking numbers
+	trackingNumberCases := map[string]string{
+		"m92760180388": "520198765432",
+		"m52779338879": "520287654321",
+		"m57479709388": "520376543210",
+		"m88774196481": "520465432109",
+		"m89528493541": "520554321098",
+		"m61022850419": "520643210987",
+		"m86545992008": "520732109876",
+		"m82944619012": "520821098765",
+		"m80349753918": "520912345678",
+		"m82088723367": "521023456789",
+		"m78778189968": "521134567890",
+		"m29456318542": "521245678901",
+		"m94614181196": "521356789012",
+		"m83031001810": "521467890123",
+		"m96164664967": "521578901234",
+		"m94455048583": "521689012345",
+		"m65651422692": "521790123456",
+		"m24472580811": "521801234567",
+	}
+
+	// Case 2: Transactions without tracking numbers
+	noTrackingCases := map[string]bool{
+		"m16155925172": true,
+		"m20792871193": true,
+		"m45868093966": true,
+	}
+
+	// Case 3: Error cases
+	errorCases := map[string]error{
+		"m54081840575": bizErr.UndefinedError,
+		"m79752279771": bizErr.UnauthorisedError,
+		"m92588011186": bizErr.ConflictError,
+		"m81844429902": bizErr.RateLimitError,
+		"m31143390731": bizErr.MercariInternalError,
+		"m21457538128": bizErr.InternalError,
+	}
+
+	if trackingNumber, ok := trackingNumberCases[resp.ItemId]; ok {
+		resp.ShippingInfo.TrackingNumber = trackingNumber
+		resp.Status = "wait_review"
+		return nil
+	}
+
+	if _, ok := noTrackingCases[resp.ItemId]; ok {
+		resp.ShippingInfo.TrackingNumber = ""
+		resp.Status = "wait_review"
+		return nil
+	}
+
+	if err, ok := errorCases[resp.ItemId]; ok {
+		return err
+	}
+
+	return nil
+}

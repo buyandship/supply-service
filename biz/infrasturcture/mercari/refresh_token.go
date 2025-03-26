@@ -6,15 +6,16 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"net/url"
+
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"gorm.io/gorm"
-	"io"
-	"net/http"
-	"net/url"
 )
 
 type RefreshTokenResponse struct {
@@ -53,6 +54,7 @@ func (m *Mercari) GetToken(ctx context.Context) error {
 
 func (m *Mercari) refreshToken(ctx context.Context) error {
 	if ok := redis.GetHandler().Limit(ctx); ok {
+		hlog.CtxErrorf(ctx, "rate limit error")
 		return bizErr.RateLimitError
 	}
 
