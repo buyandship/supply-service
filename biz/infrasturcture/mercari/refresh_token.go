@@ -27,12 +27,6 @@ type RefreshTokenResponse struct {
 	TokenType    string `json:"token_type"`
 }
 
-type T struct {
-	Info struct {
-		AccessToken string `json:"access_token"`
-	} `json:"info"`
-}
-
 func (m *Mercari) GetToken(ctx context.Context) error {
 	// load from redis cache
 	if err := m.LoadTokenFromCache(ctx); err != nil {
@@ -167,6 +161,14 @@ func (m *Mercari) refreshToken(ctx context.Context) error {
 		TokenType:    resp.TokenType,
 	}); err != nil {
 		return bizErr.InternalError
+	}
+
+	m.Token = &mercari.Token{
+		AccessToken:  resp.AccessToken,
+		RefreshToken: resp.RefreshToken,
+		ExpiresIn:    resp.ExpiresIn,
+		Scope:        resp.Scope,
+		TokenType:    resp.TokenType,
 	}
 
 	return nil
