@@ -5,15 +5,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	"net/url"
+
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	"github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"io"
-	"net/http"
-	"net/url"
 )
 
 type SetTokenRequest struct {
@@ -95,6 +96,10 @@ func (m *Mercari) SetToken(ctx context.Context, req *supply.MercariLoginCallBack
 		TokenType:    resp.TokenType,
 	}); err != nil {
 		return bizErr.InternalError
+	}
+
+	if err := redis.GetHandler().Del(ctx, redis.TokenRedisKey); err != nil {
+		return err
 	}
 
 	return nil
