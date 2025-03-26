@@ -6,16 +6,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"strconv"
+	"time"
+
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"io"
-	"net/http"
-	"strconv"
-	"time"
 )
 
 type PurchaseItemRequest struct {
@@ -91,6 +92,7 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 	purchaseItemFunc := func() (*PurchaseItemResponse, error) {
 		hlog.CtxInfof(ctx, "call /v1/items/purchase at %+v", time.Now())
 		if ok := redis.GetHandler().Limit(ctx); ok {
+			hlog.CtxErrorf(ctx, "hit rate limit")
 			return nil, bizErr.RateLimitError
 		}
 

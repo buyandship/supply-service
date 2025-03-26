@@ -3,6 +3,8 @@ package mercari
 import (
 	"context"
 	"encoding/json"
+	"strconv"
+
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/handler/bns/supply/utils"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
@@ -11,7 +13,6 @@ import (
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"strconv"
 )
 
 const priceThreshold = 0.49
@@ -97,6 +98,13 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 		couponId = resp.ItemDiscount.CouponId
 	}
 
+	var deliveryId string
+	if req.GetDeliveryID() == "" {
+		deliveryId = req.GetRefID()
+	} else {
+		deliveryId = req.GetDeliveryID()
+	}
+
 	// 4. check if transaction with ref_id already exists.
 	tx, err := db.GetHandler().GetTransaction(ctx, req.GetRefID())
 	if err != nil {
@@ -137,6 +145,7 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 			Checksum:   req.GetChecksum(),
 			Currency:   req.GetRefCurrency(),
 			CouponID:   couponId,
+			DeliveryId: deliveryId,
 		}); err != nil {
 			return nil, bizErr.InternalError
 		}
@@ -194,7 +203,7 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 		Address2:           acc.Address2,
 		Checksum:           resp.Checksum,
 		CouponId:           couponId,
-		DeliveryIdentifier: req.GetItemID(),
+		DeliveryIdentifier: deliveryId,
 		CountryCode:        CountryCodeHK,
 	}); err != nil {
 		return nil, err
