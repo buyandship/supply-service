@@ -93,7 +93,7 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 		hlog.CtxInfof(ctx, "call /v1/items/purchase at %+v", time.Now())
 
 		if err := m.GetToken(ctx); err != nil {
-			return nil, bizErr.InternalError
+			return nil, err
 		}
 
 		if ok := redis.GetHandler().Limit(ctx); ok {
@@ -134,6 +134,7 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
 			if err := m.RefreshToken(ctx); err != nil {
 				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
+				return nil, backoff.RetryAfter(1)
 			}
 			return nil, bizErr.UnauthorisedError
 		}

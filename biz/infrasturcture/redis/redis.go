@@ -3,16 +3,19 @@ package redis
 import (
 	"context"
 	"errors"
+	"sync"
+	"time"
+
 	"github.com/buyandship/supply-svr/biz/common/config"
 	"github.com/google/uuid"
 	"github.com/mennanov/limiters"
 	"github.com/redis/go-redis/v9"
-	"sync"
-	"time"
 )
 
 const (
 	TokenRedisKey = "mercari_token"
+	LockKeyPrefix = "lock:"
+	LockTTL       = 2 * time.Second
 )
 
 var (
@@ -63,4 +66,18 @@ func (h *H) Get(ctx context.Context, key string) (interface{}, error) {
 
 func (h *H) Del(ctx context.Context, key string) error {
 	return h.redisClient.Del(ctx, key).Err()
+}
+
+func (h *H) TryLock(ctx context.Context, key string) (bool, error) {
+	lockKey := LockKeyPrefix + key
+	success, err := h.redisClient.SetNX(ctx, lockKey, 1, LockTTL).Result()
+	if err != nil {
+		return false, err
+	}
+	return success, nil
+}
+
+func (h *H) Unlock(ctx context.Context, key string) error {
+	lockKey := LockKeyPrefix + key
+	return h.redisClient.Del(ctx, lockKey).Err()
 }

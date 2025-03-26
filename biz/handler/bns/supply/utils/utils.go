@@ -5,13 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
+
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"gorm.io/gorm"
-	"time"
 )
 
 const (
@@ -37,7 +38,7 @@ func GetBuyer(ctx context.Context, buyerId int32) (*mercari.Account, error) {
 			hlog.CtxErrorf(ctx, "json marshal error: %+v", err)
 			return acc, nil
 		}
-		if err := redis.GetHandler().Set(ctx, fmt.Sprintf("buyer:%d", buyerId), jsonAcc, time.Hour); err != nil {
+		if err := redis.GetHandler().Set(ctx, fmt.Sprintf("buyer:%d", buyerId), jsonAcc, time.Minute*1); err != nil {
 			hlog.CtxErrorf(ctx, "redis set buyer error: %+v", err)
 			return acc, nil
 		}

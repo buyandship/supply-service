@@ -90,6 +90,22 @@ func (m *Mercari) RefreshToken(ctx context.Context) error {
 }
 
 func (m *Mercari) refreshToken(ctx context.Context) error {
+	// Try to acquire lock
+	locked, err := redis.GetHandler().TryLock(ctx, "mercari_refresh_token")
+	if err != nil {
+		hlog.CtxErrorf(ctx, "failed to acquire lock: %v", err)
+		return bizErr.InternalError
+	}
+	if !locked {
+		hlog.CtxErrorf(ctx, "failed to acquire lock: another refresh is in progress")
+		return bizErr.ConflictError
+	}
+	defer func() {
+		if err := redis.GetHandler().Unlock(ctx, "mercari_refresh_token"); err != nil {
+			hlog.CtxErrorf(ctx, "failed to release lock: %v", err)
+		}
+	}()
+
 	if ok := redis.GetHandler().Limit(ctx); ok {
 		hlog.CtxErrorf(ctx, "rate limit error")
 		return bizErr.RateLimitError
@@ -97,7 +113,7 @@ func (m *Mercari) refreshToken(ctx context.Context) error {
 
 	secret, err := m.GenerateSecret()
 	if err != nil {
-		return err
+		return bizErr.InternalError
 	}
 
 	headers := map[string][]string{
@@ -116,6 +132,9 @@ func (m *Mercari) refreshToken(ctx context.Context) error {
 	}
 	httpReq.Header = headers
 	c := &http.Client{}
+
+	hlog.CtxInfof(ctx, "refresh token request, refresh_token=%s, access_token=%s", m.Token.RefreshToken, m.Token.AccessToken)
+
 	httpRes, err := c.Do(httpReq)
 	defer func() {
 		if err := httpRes.Body.Close(); err != nil {
