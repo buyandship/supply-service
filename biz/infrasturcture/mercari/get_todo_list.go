@@ -6,13 +6,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"time"
+
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"io"
-	"net/http"
-	"time"
 )
 
 type ToDo struct {
@@ -36,6 +37,11 @@ type GetTodoListResp struct {
 func (m *Mercari) GetTodoList(ctx context.Context, req *GetTodoListReq) (*GetTodoListResp, error) {
 	getItemFunc := func() (*GetTodoListResp, error) {
 		hlog.CtxInfof(ctx, "call /v1/todolist at %+v", time.Now())
+
+		if err := m.GetToken(ctx); err != nil {
+			return nil, bizErr.InternalError
+		}
+
 		if ok := redis.GetHandler().Limit(ctx); ok {
 			return nil, bizErr.RateLimitError
 		}
@@ -71,8 +77,9 @@ func (m *Mercari) GetTodoList(ctx context.Context, req *GetTodoListReq) (*GetTod
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
-			if err := m.GetToken(ctx); err != nil {
+			if err := m.RefreshToken(ctx); err != nil {
 				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
+				return nil, backoff.RetryAfter(1)
 			}
 			return nil, bizErr.UnauthorisedError
 		}
