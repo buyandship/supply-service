@@ -5,14 +5,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
-	"github.com/cenkalti/backoff/v5"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"io"
 	"net/http"
 	"net/url"
 	"time"
+
+	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
+	"github.com/cenkalti/backoff/v5"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
 type GetItemByIDRequest struct {
@@ -133,7 +134,13 @@ type GetItemByIDResponse struct {
 func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*GetItemByIDResponse, error) {
 	getItemFunc := func() (*GetItemByIDResponse, error) {
 		hlog.CtxInfof(ctx, "call /v1/items at %+v", time.Now().Local())
+
+		if err := m.GetToken(ctx); err != nil {
+			return nil, bizErr.InternalError
+		}
+
 		if ok := redis.GetHandler().Limit(ctx); ok {
+			hlog.CtxErrorf(ctx, "hit rate limit")
 			return nil, bizErr.RateLimitError
 		}
 		headers := map[string][]string{
@@ -163,7 +170,7 @@ func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*Ge
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
-			if err := m.GetToken(ctx); err != nil {
+			if err := m.RefreshToken(ctx); err != nil {
 				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
 			}
 			return nil, bizErr.UnauthorisedError

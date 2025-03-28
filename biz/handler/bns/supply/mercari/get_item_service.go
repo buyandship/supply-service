@@ -2,14 +2,12 @@ package mercari
 
 import (
 	"context"
-	"errors"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
+	"github.com/buyandship/supply-svr/biz/handler/bns/supply/utils"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
 	"github.com/buyandship/supply-svr/biz/mock"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"gorm.io/gorm"
 )
 
 func GetItemService(ctx context.Context, req *supply.MercariGetItemReq) (*mercari.GetItemByIDResponse, error) {
@@ -27,21 +25,13 @@ func GetItemService(ctx context.Context, req *supply.MercariGetItemReq) (*mercar
 
 	h := mercari.GetHandler()
 
-	var prefecture string
-
-	var buyerId int32 = 1
-	if req.GetBuyerID() != 0 {
-		buyerId = req.GetBuyerID()
-	}
-
-	acc, err := db.GetHandler().GetAccount(ctx, buyerId)
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, bizErr.InvalidBuyerError
-	}
+	prefecture := ""
+	acc, err := utils.GetBuyer(ctx, req.GetBuyerID())
 	if err != nil {
-		return nil, bizErr.InternalError
+		hlog.CtxErrorf(ctx, "GetBuyer error: %v", err)
+	} else {
+		prefecture = acc.Prefecture
 	}
-	prefecture = acc.Prefecture
 
 	resp, err := h.GetItemByID(ctx, &mercari.GetItemByIDRequest{
 		ItemId:     req.GetItemID(),

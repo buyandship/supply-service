@@ -3,17 +3,16 @@ package mercari
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"strconv"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/handler/bns/supply/utils"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
 	"github.com/buyandship/supply-svr/biz/mock"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"gorm.io/gorm"
 )
 
 const priceThreshold = 0.49
@@ -77,20 +76,13 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 		return nil, err
 	}
 
-	// 2. get buyer
 	h := mercari.GetHandler()
-	var buyerId int32 = 1
-	if req.GetBuyerID() != 0 {
-		buyerId = req.GetBuyerID()
-	}
-	// check buyer_id
-	acc, err := db.GetHandler().GetAccount(ctx, buyerId)
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, bizErr.InvalidBuyerError
-	}
+
+	// 2. get buyer
+	acc := &model.Account{}
+	acc, err := utils.GetBuyer(ctx, req.GetBuyerID())
 	if err != nil {
-		hlog.CtxErrorf(ctx, "get account error: %s", err.Error())
-		return nil, bizErr.InternalError
+		hlog.CtxErrorf(ctx, "GetBuyer error: %v", err)
 	}
 
 	// 3. get item by item_id
@@ -148,7 +140,7 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 			ItemID:     req.GetItemID(),
 			ItemType:   resp.ItemType,
 			ItemDetail: jsonItemDetail,
-			BuyerID:    buyerId,
+			BuyerID:    acc.BuyerID,
 			RefPrice:   req.GetRefPrice(),
 			Checksum:   req.GetChecksum(),
 			Currency:   req.GetRefCurrency(),
@@ -181,10 +173,6 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 		// 4.2.3 check if the parameters is changed
 		if tx.ItemID != req.GetItemID() {
 			hlog.CtxErrorf(ctx, "item_id does not match")
-			return nil, bizErr.InvalidParameterError
-		}
-		if tx.BuyerID != buyerId {
-			hlog.CtxErrorf(ctx, "buyer_id does not match")
 			return nil, bizErr.InvalidParameterError
 		}
 		if tx.RefPrice != req.GetRefPrice() {
