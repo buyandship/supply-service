@@ -25,19 +25,6 @@ func Init() {
 	if err := config.LoadGlobalConfig("./config.yaml"); err != nil {
 		hlog.Fatal(err)
 	}
-
-	// set hlog
-	hlog.SetLogger(log.NewHertzZapLogger())
-	w2, err := rollwriter.NewRollWriter("logs/supplysrv-app.log",
-		rollwriter.WithMaxSize(100), rollwriter.WithMaxBackups(10))
-	if err != nil {
-		hlog.Fatalf("%s", err.Error())
-	}
-	multiWriter := io.MultiWriter(os.Stdout, w2)
-
-	hlog.SetOutput(multiWriter)
-	hlog.SetLevel(hlog.Level(2))
-
 	// Connect Mysql
 	db.GetHandler()
 	// Connect Redis
@@ -53,17 +40,27 @@ func main() {
 	}
 
 	Init()
-
 	p := provider.NewOpenTelemetryProvider(
 		provider.WithServiceName("supply-svr"),
 		provider.WithExportEndpoint(config.GlobalServerConfig.Otel.Endpoint),
 		provider.WithInsecure(),
 	)
 	defer p.Shutdown(context.Background())
-	tracer, cfg := hertztracing.NewServerTracer()
+
+	// set hlog
+	hlog.SetLogger(log.NewHertzZapLogger())
+	w2, err := rollwriter.NewRollWriter("logs/supplysrv-app.log",
+		rollwriter.WithMaxSize(100), rollwriter.WithMaxBackups(10))
+	if err != nil {
+		hlog.Fatalf("%s", err.Error())
+	}
+	multiWriter := io.MultiWriter(os.Stdout, w2)
+
+	hlog.SetOutput(multiWriter)
+	hlog.SetLevel(hlog.Level(2))
 
 	var opts []cc.Option
-
+	tracer, cfg := hertztracing.NewServerTracer()
 	opts = append(opts, server.WithHostPorts(":8573"))
 	opts = append(opts, tracer)
 

@@ -3,7 +3,6 @@ package mercari
 import (
 	"context"
 
-	"github.com/buyandship/supply-svr/biz/common/config"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
@@ -16,9 +15,9 @@ func PostTransactionReviewService(ctx context.Context, req *supply.MercariPostTr
 	hlog.CtxInfof(ctx, "PostTransactionReviewService is called, %+v", req)
 	h := mercari.GetHandler()
 
-	if config.GlobalServerConfig.Env == "development" {
+	/* 	if config.GlobalServerConfig.Env == "development" {
 		return nil, bizErr.NotFoundError
-	}
+	} */
 
 	/* 	if config.GlobalServerConfig.Env == "development" {
 		return &mercari.PostTransactionReviewResponse{

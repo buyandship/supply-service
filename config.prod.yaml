@@ -12,4 +12,4 @@ mercari:
   callback_url: "https://b4u-req-api.buynship.com/api/callback/mercari/login/"
 hmac_secret: "4i8bcy1d-hagm-nfaj-vze5-zzezywp531ro"
 otel:
-  endpoint: "ec2-user-tempo-1:4317"
+  endpoint: "alloy.alloy:4317"
