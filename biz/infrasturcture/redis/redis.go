@@ -66,12 +66,12 @@ func (h *H) Set(ctx context.Context, key string, value any, expiration time.Dura
 	defer trace.EndSpan(span, err)
 
 	err = h.redisClient.Set(ctx, key, value, expiration).Err()
-	return err
+	return
 }
 
 func (h *H) Get(ctx context.Context, key string) (result any, err error) {
 	ctx, span := trace.StartRedisOperation(ctx, "Get", key)
-	defer trace.EndSpan(span, nil)
+	defer trace.EndSpan(span, err)
 
 	result, err = h.redisClient.Get(ctx, key).Result()
 	return
@@ -79,7 +79,7 @@ func (h *H) Get(ctx context.Context, key string) (result any, err error) {
 
 func (h *H) Del(ctx context.Context, key string) (err error) {
 	ctx, span := trace.StartRedisOperation(ctx, "Del", key)
-	defer trace.EndSpan(span, nil)
+	defer trace.EndSpan(span, err)
 
 	err = h.redisClient.Del(ctx, key).Err()
 	return
@@ -87,7 +87,7 @@ func (h *H) Del(ctx context.Context, key string) (err error) {
 
 func (h *H) TryLock(ctx context.Context, key string) (success bool, err error) {
 	ctx, span := trace.StartRedisOperation(ctx, "TryLock", key)
-	defer trace.EndSpan(span, nil)
+	defer trace.EndSpan(span, err)
 
 	lockKey := LockKeyPrefix + key
 	success, err = h.redisClient.SetNX(ctx, lockKey, 1, LockTTL).Result()
