@@ -379,6 +379,11 @@ func MockMercariGetTransactionByItemId(resp *mercari.GetTransactionByItemIDRespo
 		"m15297147252": "522134567890",
 		"m56496480575": "522245678901",
 		"m87339221708": "522356789012",
+		"m27781850905": "522467890123",
+		"m67177021875": "522578901234",
+		"m27928417925": "522689012345",
+		"m67570147112": "522790123456",
+		"m42339612386": "522801234567",
 	}
 
 	// Case 2: Transactions without tracking numbers
@@ -396,6 +401,12 @@ func MockMercariGetTransactionByItemId(resp *mercari.GetTransactionByItemIDRespo
 		"m70687287564": true,
 		"m61551956239": true,
 		"m31337561540": true,
+		"m26922603870": true,
+		"m41740765280": true,
+		"m39411058099": true,
+		"m49714846192": true,
+		"m96503874959": true,
+		"m91470723883": true,
 	}
 
 	// Case 3: Error cases

@@ -2,8 +2,9 @@ package config
 
 import (
 	"fmt"
-	"github.com/spf13/viper"
 	"sync"
+
+	"github.com/spf13/viper"
 )
 
 type MercariConfig struct {
@@ -23,6 +24,12 @@ type RedisConfig struct {
 	Address string `mapstructure:"addr"`
 }
 
+type OtelConfig struct {
+	Endpoint    string `mapstructure:"endpoint"`
+	Insecure    bool   `mapstructure:"insecure"`
+	ServiceName string `mapstructure:"service_name"`
+}
+
 type ServerConfig struct {
 	v          *viper.Viper
 	Env        string        `mapstructure:"env"`
@@ -30,6 +37,7 @@ type ServerConfig struct {
 	Redis      RedisConfig   `mapstructure:"redis"`
 	Mercari    MercariConfig `mapstructure:"mercari"`
 	HmacSecret string        `mapstructure:"hmac_secret"`
+	Otel       OtelConfig    `mapstructure:"otel"`
 }
 
 var (

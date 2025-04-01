@@ -11,3 +11,5 @@ mercari:
   client_secret: "7D0mXAF7VsfRswFSckwwb1NoGBU6J7N0"
   callback_url: "https://b4u-req-api-test.buynship.com/api/callback/mercari/login/"
 hmac_secret: "utmtuacz-hhme-fht4-gba6-3lg4vi8fzpu6"
+otel:
+  endpoint: "ec2-user-tempo-1:4317"

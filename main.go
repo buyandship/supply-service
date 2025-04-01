@@ -3,6 +3,10 @@
 package main
 
 import (
+	"context"
+	"io"
+	"os"
+
 	"github.com/buyandship/bns-golib/log"
 	"github.com/buyandship/bns-golib/log/rollwriter"
 	"github.com/buyandship/supply-svr/biz/common/config"
@@ -10,9 +14,10 @@ import (
 	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/cloudwego/hertz/pkg/app/server"
+	cc "github.com/cloudwego/hertz/pkg/common/config"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"io"
-	"os"
+	"github.com/hertz-contrib/obs-opentelemetry/provider"
+	hertztracing "github.com/hertz-contrib/obs-opentelemetry/tracing"
 )
 
 func Init() {
@@ -49,7 +54,22 @@ func main() {
 
 	Init()
 
-	h := server.Default(server.WithHostPorts(":8573"))
+	p := provider.NewOpenTelemetryProvider(
+		provider.WithServiceName("supply-svr"),
+		provider.WithExportEndpoint(config.GlobalServerConfig.Otel.Endpoint),
+		provider.WithInsecure(),
+	)
+	defer p.Shutdown(context.Background())
+	tracer, cfg := hertztracing.NewServerTracer()
+
+	var opts []cc.Option
+
+	opts = append(opts, server.WithHostPorts(":8573"))
+	opts = append(opts, tracer)
+
+	h := server.Default(opts...)
+
+	h.Use(hertztracing.ServerMiddleware(cfg))
 	register(h)
 	h.Spin()
 }
