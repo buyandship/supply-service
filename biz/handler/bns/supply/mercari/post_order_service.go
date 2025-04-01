@@ -79,10 +79,12 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 	h := mercari.GetHandler()
 
 	// 2. get buyer
+
 	acc := &model.Account{}
 	acc, err := utils.GetBuyer(ctx, req.GetBuyerID())
 	if err != nil {
 		hlog.CtxErrorf(ctx, "GetBuyer error: %v", err)
+		return nil, bizErr.InternalError
 	}
 
 	// 3. get item by item_id

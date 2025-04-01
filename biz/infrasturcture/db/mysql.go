@@ -157,9 +157,10 @@ func (h *H) GetAccount(ctx context.Context, buyerID int32) (account *model.Accou
 		WithContext(ctx).
 		Debug().
 		Where("buyer_id = ?", buyerID).
-		First(account).Error
+		First(&account).Error
 
 	if err != nil {
+		hlog.CtxErrorf(ctx, "get account error: %s", err.Error())
 		return nil, err
 	}
 	return
