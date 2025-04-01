@@ -10,6 +10,7 @@ import (
 	"time"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/common/trace"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -60,8 +61,8 @@ func (m *Mercari) GetUser(ctx context.Context, req *GetUserByUserIDRequest) (*Ge
 			"Accept":        {"application/json"},
 			"Authorization": {m.Token.AccessToken},
 		}
-
-		httpReq, err := http.NewRequest("GET", fmt.Sprintf("%s/v1/users/%s", m.OpenApiDomain, req.UserId), nil)
+		url := fmt.Sprintf("%s/v1/users/%s", m.OpenApiDomain, req.UserId)
+		httpReq, err := http.NewRequest("GET", url, nil)
 		if err != nil {
 			hlog.CtxErrorf(ctx, "http request error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
@@ -69,6 +70,9 @@ func (m *Mercari) GetUser(ctx context.Context, req *GetUserByUserIDRequest) (*Ge
 		httpReq.Header = headers
 
 		client := &http.Client{}
+
+		ctx, span := trace.StartHTTPOperation(ctx, "GET", url)
+		defer trace.EndSpan(span, nil)
 		httpRes, err := client.Do(httpReq)
 		defer func() {
 			if err := httpRes.Body.Close(); err != nil {
@@ -79,6 +83,8 @@ func (m *Mercari) GetUser(ctx context.Context, req *GetUserByUserIDRequest) (*Ge
 			hlog.CtxErrorf(ctx, "http error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
+
+		trace.RecordHTTPResponse(span, httpRes)
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")

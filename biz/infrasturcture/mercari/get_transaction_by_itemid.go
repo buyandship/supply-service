@@ -10,6 +10,7 @@ import (
 	"time"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/common/trace"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -46,8 +47,8 @@ func (m *Mercari) GetTransactionByItemID(ctx context.Context, itemId string) (*G
 			"Authorization": {m.Token.AccessToken},
 		}
 
-		httpReq, err := http.NewRequest("GET",
-			fmt.Sprintf("%s/v2/transactions/%s", m.OpenApiDomain, itemId), nil)
+		url := fmt.Sprintf("%s/v2/transactions/%s", m.OpenApiDomain, itemId)
+		httpReq, err := http.NewRequest("GET", url, nil)
 		if err != nil {
 			hlog.CtxErrorf(ctx, "http request error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
@@ -55,6 +56,9 @@ func (m *Mercari) GetTransactionByItemID(ctx context.Context, itemId string) (*G
 		httpReq.Header = headers
 
 		client := &http.Client{}
+
+		ctx, span := trace.StartHTTPOperation(ctx, "GET", url)
+		defer trace.EndSpan(span, nil)
 		httpRes, err := client.Do(httpReq)
 		defer func() {
 			if err := httpRes.Body.Close(); err != nil {
@@ -65,6 +69,8 @@ func (m *Mercari) GetTransactionByItemID(ctx context.Context, itemId string) (*G
 			hlog.CtxErrorf(ctx, "http error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
+
+		trace.RecordHTTPResponse(span, httpRes)
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")

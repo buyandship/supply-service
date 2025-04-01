@@ -12,6 +12,7 @@ import (
 	"time"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/common/trace"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/buyandship/supply-svr/biz/model/mercari"
@@ -32,7 +33,7 @@ func (m *Mercari) GetToken(ctx context.Context) error {
 	if err := m.LoadTokenFromCache(ctx); err != nil {
 		hlog.CtxInfof(ctx, "load from cache failed, err:%v", err)
 		// Degrade to load from mysql
-		t, err := db.GetHandler().GetToken()
+		t, err := db.GetHandler().GetToken(ctx)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return bizErr.UnloginError
@@ -119,13 +120,17 @@ func (m *Mercari) refreshToken(ctx context.Context) error {
 		url.QueryEscape(m.Token.Scope), m.Token.RefreshToken)
 
 	data := bytes.NewBuffer([]byte(body))
-	httpReq, err := http.NewRequest("POST", fmt.Sprintf("%s/jp/v1/token", m.AuthServiceDomain), data)
+	url := fmt.Sprintf("%s/jp/v1/token", m.AuthServiceDomain)
+	httpReq, err := http.NewRequest("POST", url, data)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "http request error, err: %v", err)
 		return bizErr.InternalError
 	}
 	httpReq.Header = headers
 	c := &http.Client{}
+
+	ctx, span := trace.StartHTTPOperation(ctx, "POST", url)
+	defer trace.EndSpan(span, nil)
 
 	hlog.CtxInfof(ctx, "refresh token request, refresh_token=%s, access_token=%s", m.Token.RefreshToken, m.Token.AccessToken)
 
@@ -144,7 +149,7 @@ func (m *Mercari) refreshToken(ctx context.Context) error {
 		hlog.CtxErrorf(ctx, "refresh token error: %s", respBody)
 		return bizErr.UnauthorisedError
 	}
-
+	trace.RecordHTTPResponse(span, httpRes)
 	resp := &RefreshTokenResponse{}
 	if err := json.NewDecoder(httpRes.Body).Decode(resp); err != nil {
 		hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
@@ -153,7 +158,7 @@ func (m *Mercari) refreshToken(ctx context.Context) error {
 
 	hlog.CtxInfof(ctx, "refresh token success, resp: %+v", resp)
 
-	if err := db.GetHandler().InsertTokenLog(context.Background(), &mercari.Token{
+	if err := db.GetHandler().InsertTokenLog(ctx, &mercari.Token{
 		AccessToken:  resp.AccessToken,
 		RefreshToken: resp.RefreshToken,
 		ExpiresIn:    resp.ExpiresIn,

@@ -1,18 +1,21 @@
 package mercari
 
 import (
+	"context"
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"time"
+
 	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cenkalti/backoff/v5"
 	"gorm.io/gorm"
-	"time"
+
+	"sync"
 
 	"github.com/buyandship/supply-svr/biz/common/config"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"sync"
 )
 
 var (
@@ -40,7 +43,7 @@ func GetHandler() *Mercari {
 			url = "https://api.jp-mercari.com"
 		}
 
-		t, err := db.GetHandler().GetToken()
+		t, err := db.GetHandler().GetToken(context.Background())
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				hlog.Infof("Mercari token not found")

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/common/trace"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -54,7 +55,8 @@ func (m *Mercari) PostTransactionMessage(ctx context.Context, req *PostTransacti
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
 		data := bytes.NewBuffer(reqBody)
-		httpReq, err := http.NewRequest("POST", fmt.Sprintf("%s/v2/transactions/%s/messages", m.OpenApiDomain, req.TransactionId), data)
+		url := fmt.Sprintf("%s/v2/transactions/%s/messages", m.OpenApiDomain, req.TransactionId)
+		httpReq, err := http.NewRequest("POST", url, data)
 		if err != nil {
 			hlog.CtxErrorf(ctx, "http request error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
@@ -62,6 +64,9 @@ func (m *Mercari) PostTransactionMessage(ctx context.Context, req *PostTransacti
 		httpReq.Header = headers
 
 		client := &http.Client{}
+
+		ctx, span := trace.StartHTTPOperation(ctx, "POST", url)
+		defer trace.EndSpan(span, nil)
 		httpRes, err := client.Do(httpReq)
 		defer func() {
 			if err := httpRes.Body.Close(); err != nil {
@@ -72,6 +77,8 @@ func (m *Mercari) PostTransactionMessage(ctx context.Context, req *PostTransacti
 			hlog.CtxErrorf(ctx, "http error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
+		trace.RecordHTTPResponse(span, httpRes)
+
 		if httpRes.StatusCode == http.StatusUnauthorized {
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
 			if err := m.RefreshToken(ctx); err != nil {

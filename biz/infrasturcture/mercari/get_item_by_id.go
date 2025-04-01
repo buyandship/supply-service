@@ -11,6 +11,7 @@ import (
 	"time"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/common/trace"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -142,13 +143,17 @@ func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*Ge
 			hlog.CtxErrorf(ctx, "hit rate limit")
 			return nil, bizErr.RateLimitError
 		}
+
 		headers := map[string][]string{
 			"Accept":        {"application/json"},
 			"Authorization": {m.Token.AccessToken},
 		}
 
-		httpReq, err := http.NewRequest("GET",
-			fmt.Sprintf("%s/v1/items/%s?prefecture=%s", m.OpenApiDomain, req.ItemId, url.QueryEscape(req.Prefecture)), nil)
+		url := fmt.Sprintf("%s/v1/items/%s?prefecture=%s", m.OpenApiDomain, req.ItemId, url.QueryEscape(req.Prefecture))
+		ctx, span := trace.StartHTTPOperation(ctx, "GET", url)
+		defer trace.EndSpan(span, nil)
+
+		httpReq, err := http.NewRequest("GET", url, nil)
 		if err != nil {
 			hlog.CtxErrorf(ctx, "http request error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
@@ -166,6 +171,8 @@ func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*Ge
 			hlog.CtxErrorf(ctx, "http error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
+
+		trace.RecordHTTPResponse(span, httpRes)
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
@@ -185,25 +192,11 @@ func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*Ge
 			hlog.CtxErrorf(ctx, "http conflict, retrying...")
 			return nil, bizErr.ConflictError
 		}
-		if httpRes.StatusCode >= 500 && httpRes.StatusCode < 600 {
-			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
-				httpRes.StatusCode, respBody, time.Now().Local())
-			return nil, bizErr.BizError{
-				Status:  httpRes.StatusCode,
-				ErrCode: httpRes.StatusCode,
-				ErrMsg:  string(respBody),
-			}
-		}
 
 		if httpRes.StatusCode != http.StatusOK {
 			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "get mercari item error: %s", respBody)
-			return nil, backoff.Permanent(bizErr.BizError{
-				Status:  httpRes.StatusCode,
-				ErrCode: httpRes.StatusCode,
-				ErrMsg:  string(respBody),
-			})
+			hlog.CtxErrorf(ctx, "http error: %s", respBody)
+			return nil, backoff.Permanent(bizErr.InternalError)
 		}
 
 		resp := &GetItemByIDResponse{}
@@ -211,7 +204,7 @@ func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*Ge
 			hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
-		hlog.CtxInfof(ctx, "get item by id successfully")
+
 		return resp, nil
 	}
 	result, err := backoff.Retry(ctx, getItemFunc, m.GetRetryOpts()...)

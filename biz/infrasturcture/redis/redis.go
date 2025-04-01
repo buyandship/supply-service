@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/buyandship/supply-svr/biz/common/config"
+	"github.com/buyandship/supply-svr/biz/common/trace"
 	"github.com/google/uuid"
 	"github.com/mennanov/limiters"
 	"github.com/redis/go-redis/v9"
@@ -45,6 +46,9 @@ func GetHandler() *H {
 }
 
 func (h *H) Limit(ctx context.Context) bool {
+	ctx, span := trace.StartRedisOperation(ctx, "Limit", "")
+	defer trace.EndSpan(span, nil)
+
 	_, err := h.limiter.Limit(ctx)
 	if errors.Is(err, limiters.ErrLimitExhausted) {
 		return true
@@ -53,22 +57,40 @@ func (h *H) Limit(ctx context.Context) bool {
 }
 
 func (h *H) HealthCheck() error {
-	return h.redisClient.Ping(context.Background()).Err()
+	ctx, span := trace.StartRedisOperation(context.Background(), "HealthCheck", "")
+	defer trace.EndSpan(span, nil)
+
+	return h.redisClient.Ping(ctx).Err()
 }
 
 func (h *H) Set(ctx context.Context, key string, value interface{}, expiration time.Duration) error {
-	return h.redisClient.Set(ctx, key, value, expiration).Err()
+	ctx, span := trace.StartRedisOperation(ctx, "Set", key)
+	defer trace.EndSpan(span, nil)
+
+	err := h.redisClient.Set(ctx, key, value, expiration).Err()
+	return err
 }
 
 func (h *H) Get(ctx context.Context, key string) (interface{}, error) {
-	return h.redisClient.Get(ctx, key).Result()
+	ctx, span := trace.StartRedisOperation(ctx, "Get", key)
+	defer trace.EndSpan(span, nil)
+
+	result, err := h.redisClient.Get(ctx, key).Result()
+	return result, err
 }
 
 func (h *H) Del(ctx context.Context, key string) error {
-	return h.redisClient.Del(ctx, key).Err()
+	ctx, span := trace.StartRedisOperation(ctx, "Del", key)
+	defer trace.EndSpan(span, nil)
+
+	err := h.redisClient.Del(ctx, key).Err()
+	return err
 }
 
 func (h *H) TryLock(ctx context.Context, key string) (bool, error) {
+	ctx, span := trace.StartRedisOperation(ctx, "TryLock", key)
+	defer trace.EndSpan(span, nil)
+
 	lockKey := LockKeyPrefix + key
 	success, err := h.redisClient.SetNX(ctx, lockKey, 1, LockTTL).Result()
 	if err != nil {
@@ -78,6 +100,10 @@ func (h *H) TryLock(ctx context.Context, key string) (bool, error) {
 }
 
 func (h *H) Unlock(ctx context.Context, key string) error {
+	ctx, span := trace.StartRedisOperation(ctx, "Unlock", key)
+	defer trace.EndSpan(span, nil)
+
 	lockKey := LockKeyPrefix + key
-	return h.redisClient.Del(ctx, lockKey).Err()
+	err := h.redisClient.Del(ctx, lockKey).Err()
+	return err
 }

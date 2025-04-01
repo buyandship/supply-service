@@ -10,6 +10,7 @@ import (
 	"net/url"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/common/trace"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
@@ -50,14 +51,16 @@ func (m *Mercari) SetToken(ctx context.Context, req *supply.MercariLoginCallBack
 	body := fmt.Sprintf("grant_type=%s&scope=%s&redirect_uri=%s&code=%s", "authorization_code",
 		url.QueryEscape(req.Scope), m.CallbackUrl, req.Code)
 
-	httpReq, err := http.NewRequest("POST", fmt.Sprintf("%s/jp/v1/token", m.AuthServiceDomain),
-		bytes.NewBuffer([]byte(body)))
+	url := fmt.Sprintf("%s/jp/v1/token", m.AuthServiceDomain)
+	httpReq, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(body)))
 	if err != nil {
 		hlog.CtxErrorf(ctx, "http request error, err: %v", err)
 		return bizErr.InternalError
 	}
 	httpReq.Header = headers
 	client := &http.Client{}
+	ctx, span := trace.StartHTTPOperation(ctx, "POST", url)
+	defer trace.EndSpan(span, nil)
 	httpRes, err := client.Do(httpReq)
 	defer func() {
 		if err := httpRes.Body.Close(); err != nil {
@@ -68,6 +71,7 @@ func (m *Mercari) SetToken(ctx context.Context, req *supply.MercariLoginCallBack
 		hlog.CtxErrorf(ctx, "http error, err: %v", err)
 		return bizErr.InternalError
 	}
+	trace.RecordHTTPResponse(span, httpRes)
 
 	if httpRes.StatusCode != http.StatusOK {
 		respBody, _ := io.ReadAll(httpRes.Body)
