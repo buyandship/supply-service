@@ -34,11 +34,12 @@ type GetItemByIDResponse struct {
 		Id           int    `json:"id"`
 		Name         string `json:"name"`
 		NumSellItems int    `json:"num_sell_items"`
+		ShopId       string `json:"shop_id,omitempty"`
 		Ratings      struct {
 			Good   int `json:"good"`
 			Normal int `json:"normal"`
 			Bad    int `json:"bad"`
-		} `json:"ratings"`
+		} `json:"ratings,omitempty"`
 	} `json:"seller"`
 	Photos       []string `json:"photos"`
 	ItemCategory struct {
@@ -52,7 +53,13 @@ type GetItemByIDResponse struct {
 	ItemSize struct {
 		Id   int    `json:"id"`
 		Name string `json:"name"`
-	} `json:"item_size"`
+	} `json:"item_size,omitempty"`
+	ItemVariants []struct {
+		Id       string `json:"id"`
+		Name     string `json:"name"`
+		Size     string `json:"size"`
+		Quantity int    `json:"quantity"`
+	} `json:"item_variants,omitempty"`
 	ItemBrand struct {
 		Id      int    `json:"id"`
 		Name    string `json:"name"`
@@ -80,20 +87,12 @@ type GetItemByIDResponse struct {
 	ShippingClass struct {
 		Id  int `json:"id"`
 		Fee int `json:"fee"`
-	} `json:"shipping_class"`
-	CatalogDetails struct {
-		ItemModel           string `json:"item_model"`
-		ItemModelAttributes string `json:"item_model_attributes"`
-		Color               string `json:"color"`
-		Capacity            string `json:"capacity"`
-		Carrier             string `json:"carrier"`
-		Accessories         string `json:"accessories"`
-		Imei                string `json:"imei"`
-		Limitation          string `json:"limitation"`
-	} `json:"catalog_details"`
-	ItemDiscount struct {
+	} `json:"shipping_class,omitempty"`
+	ShopsShippingFee int                 `json:"shops_shipping_fee,omitempty"`
+	Metadata         map[string][]string `json:"metadata,omitempty"`
+	ItemDiscount     struct {
 		Expire         int `json:"expire"`
-		CouponId       int `json:"coupon_id"`
+		CouponId       int `json:"coupon_id,omitempty"`
 		ReturnPercent  int `json:"return_percent"`
 		ReturnAbsolute int `json:"return_absolute"`
 	} `json:"item_discount"`
@@ -104,31 +103,31 @@ type GetItemByIDResponse struct {
 				DiscountOrder  int `json:"discount_order"`
 				ReturnPercent  int `json:"return_percent"`
 				ReturnAbsolute int `json:"return_absolute"`
-			} `json:"offer_to_everyone"`
+			} `json:"offer_to_everyone,omitempty"`
 			ItemCoupon struct {
 				Expire         int `json:"expire"`
 				CouponId       int `json:"coupon_id"`
 				DiscountOrder  int `json:"discount_order"`
 				ReturnPercent  int `json:"return_percent"`
 				ReturnAbsolute int `json:"return_absolute"`
-			} `json:"item_coupon"`
+			} `json:"item_coupon,omitempty"`
 			InhouseItemDiscount struct {
 				Expire         int `json:"expire"`
 				DiscountOrder  int `json:"discount_order"`
 				ReturnPercent  int `json:"return_percent"`
 				ReturnAbsolute int `json:"return_absolute"`
-			} `json:"inhouse_item_discount"`
-		} `json:"breakdown"`
-		TotalReturnPercent  int `json:"total_return_percent"`
-		TotalReturnAbsolute int `json:"total_return_absolute"`
-	} `json:"discounts"`
+			} `json:"inhouse_item_discount,omitempty"`
+		} `json:"breakdown,omitempty"`
+		TotalReturnPercent  int `json:"total_return_percent,omitempty"`
+		TotalReturnAbsolute int `json:"total_return_absolute,omitempty"`
+	} `json:"discounts,omitempty"`
 	NumComments              int    `json:"num_comments"`
 	NumLikes                 int    `json:"num_likes"`
 	Checksum                 string `json:"checksum"`
 	AnshinItemAuthentication struct {
 		IsAuthenticatable bool `json:"is_authenticatable"`
 		Fee               int  `json:"fee"`
-	} `json:"anshin_item_authentication"`
+	} `json:"anshin_item_authentication,omitempty"`
 }
 
 func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*GetItemByIDResponse, error) {
