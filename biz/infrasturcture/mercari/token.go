@@ -10,7 +10,6 @@ import (
 	"net/url"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/common/trace"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
@@ -58,20 +57,17 @@ func (m *Mercari) SetToken(ctx context.Context, req *supply.MercariLoginCallBack
 		return bizErr.InternalError
 	}
 	httpReq.Header = headers
-	client := &http.Client{}
-	ctx, span := trace.StartHTTPOperation(ctx, "POST", url)
-	defer trace.EndSpan(span, nil)
-	httpRes, err := client.Do(httpReq)
+
+	httpRes, err := HttpDo(ctx, httpReq)
+	if err != nil {
+		hlog.CtxErrorf(ctx, "http error, err: %v", err)
+		return bizErr.InternalError
+	}
 	defer func() {
 		if err := httpRes.Body.Close(); err != nil {
 			hlog.CtxErrorf(ctx, "http close error: %s", err)
 		}
 	}()
-	if err != nil {
-		hlog.CtxErrorf(ctx, "http error, err: %v", err)
-		return bizErr.InternalError
-	}
-	trace.RecordHTTPResponse(span, httpRes)
 
 	if httpRes.StatusCode != http.StatusOK {
 		respBody, _ := io.ReadAll(httpRes.Body)

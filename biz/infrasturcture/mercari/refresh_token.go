@@ -12,7 +12,6 @@ import (
 	"time"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/common/trace"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/buyandship/supply-svr/biz/model/mercari"
@@ -127,29 +126,25 @@ func (m *Mercari) refreshToken(ctx context.Context) error {
 		return bizErr.InternalError
 	}
 	httpReq.Header = headers
-	c := &http.Client{}
 
-	ctx, span := trace.StartHTTPOperation(ctx, "POST", url)
-	defer trace.EndSpan(span, nil)
+	httpRes, err := HttpDo(ctx, httpReq)
+	if err != nil {
+		hlog.CtxErrorf(ctx, "http error, err: %v", err)
+		return bizErr.InternalError
+	}
 
-	hlog.CtxInfof(ctx, "refresh token request, refresh_token=%s, access_token=%s", m.Token.RefreshToken, m.Token.AccessToken)
-
-	httpRes, err := c.Do(httpReq)
 	defer func() {
 		if err := httpRes.Body.Close(); err != nil {
 			hlog.CtxErrorf(ctx, "http close error: %s", err)
 		}
 	}()
-	if err != nil {
-		hlog.CtxErrorf(ctx, "http error, err: %v", err)
-		return bizErr.InternalError
-	}
+
 	if httpRes.StatusCode != http.StatusOK {
 		respBody, _ := io.ReadAll(httpRes.Body)
 		hlog.CtxErrorf(ctx, "refresh token error: %s", respBody)
 		return bizErr.UnauthorisedError
 	}
-	trace.RecordHTTPResponse(span, httpRes)
+
 	resp := &RefreshTokenResponse{}
 	if err := json.NewDecoder(httpRes.Body).Decode(resp); err != nil {
 		hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)

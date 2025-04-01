@@ -33,12 +33,12 @@ func StartRedisOperation(ctx context.Context, operation string, key string) (con
 }
 
 // StartHTTPOperation starts a new span for an HTTP operation
-func StartHTTPOperation(ctx context.Context, method, url string) (context.Context, trace.Span) {
+func StartHTTPOperation(ctx context.Context, req *http.Request) (context.Context, trace.Span) {
 	tracer := otel.Tracer("http")
-	ctx, span := tracer.Start(ctx, fmt.Sprintf("http.%s", method))
+	ctx, span := tracer.Start(ctx, req.URL.Path)
 	span.SetAttributes(
-		attribute.String("http.method", method),
-		attribute.String("http.url", url),
+		attribute.String("http.url", req.URL.String()),
+		attribute.String("http.method", req.Method),
 	)
 	return ctx, span
 }
