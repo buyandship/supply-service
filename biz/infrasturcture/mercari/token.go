@@ -50,24 +50,24 @@ func (m *Mercari) SetToken(ctx context.Context, req *supply.MercariLoginCallBack
 	body := fmt.Sprintf("grant_type=%s&scope=%s&redirect_uri=%s&code=%s", "authorization_code",
 		url.QueryEscape(req.Scope), m.CallbackUrl, req.Code)
 
-	httpReq, err := http.NewRequest("POST", fmt.Sprintf("%s/jp/v1/token", m.AuthServiceDomain),
-		bytes.NewBuffer([]byte(body)))
+	url := fmt.Sprintf("%s/jp/v1/token", m.AuthServiceDomain)
+	httpReq, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(body)))
 	if err != nil {
 		hlog.CtxErrorf(ctx, "http request error, err: %v", err)
 		return bizErr.InternalError
 	}
 	httpReq.Header = headers
-	client := &http.Client{}
-	httpRes, err := client.Do(httpReq)
+
+	httpRes, err := HttpDo(ctx, httpReq)
+	if err != nil {
+		hlog.CtxErrorf(ctx, "http error, err: %v", err)
+		return bizErr.InternalError
+	}
 	defer func() {
 		if err := httpRes.Body.Close(); err != nil {
 			hlog.CtxErrorf(ctx, "http close error: %s", err)
 		}
 	}()
-	if err != nil {
-		hlog.CtxErrorf(ctx, "http error, err: %v", err)
-		return bizErr.InternalError
-	}
 
 	if httpRes.StatusCode != http.StatusOK {
 		respBody, _ := io.ReadAll(httpRes.Body)

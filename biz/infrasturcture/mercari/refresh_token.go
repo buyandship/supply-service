@@ -32,7 +32,7 @@ func (m *Mercari) GetToken(ctx context.Context) error {
 	if err := m.LoadTokenFromCache(ctx); err != nil {
 		hlog.CtxInfof(ctx, "load from cache failed, err:%v", err)
 		// Degrade to load from mysql
-		t, err := db.GetHandler().GetToken()
+		t, err := db.GetHandler().GetToken(ctx)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return bizErr.UnloginError
@@ -119,26 +119,26 @@ func (m *Mercari) refreshToken(ctx context.Context) error {
 		url.QueryEscape(m.Token.Scope), m.Token.RefreshToken)
 
 	data := bytes.NewBuffer([]byte(body))
-	httpReq, err := http.NewRequest("POST", fmt.Sprintf("%s/jp/v1/token", m.AuthServiceDomain), data)
+	url := fmt.Sprintf("%s/jp/v1/token", m.AuthServiceDomain)
+	httpReq, err := http.NewRequest("POST", url, data)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "http request error, err: %v", err)
 		return bizErr.InternalError
 	}
 	httpReq.Header = headers
-	c := &http.Client{}
 
-	hlog.CtxInfof(ctx, "refresh token request, refresh_token=%s, access_token=%s", m.Token.RefreshToken, m.Token.AccessToken)
+	httpRes, err := HttpDo(ctx, httpReq)
+	if err != nil {
+		hlog.CtxErrorf(ctx, "http error, err: %v", err)
+		return bizErr.InternalError
+	}
 
-	httpRes, err := c.Do(httpReq)
 	defer func() {
 		if err := httpRes.Body.Close(); err != nil {
 			hlog.CtxErrorf(ctx, "http close error: %s", err)
 		}
 	}()
-	if err != nil {
-		hlog.CtxErrorf(ctx, "http error, err: %v", err)
-		return bizErr.InternalError
-	}
+
 	if httpRes.StatusCode != http.StatusOK {
 		respBody, _ := io.ReadAll(httpRes.Body)
 		hlog.CtxErrorf(ctx, "refresh token error: %s", respBody)
@@ -153,7 +153,7 @@ func (m *Mercari) refreshToken(ctx context.Context) error {
 
 	hlog.CtxInfof(ctx, "refresh token success, resp: %+v", resp)
 
-	if err := db.GetHandler().InsertTokenLog(context.Background(), &mercari.Token{
+	if err := db.GetHandler().InsertTokenLog(ctx, &mercari.Token{
 		AccessToken:  resp.AccessToken,
 		RefreshToken: resp.RefreshToken,
 		ExpiresIn:    resp.ExpiresIn,

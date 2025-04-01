@@ -40,25 +40,26 @@ func (m *Mercari) GetItemCategories(ctx context.Context) (*GetItemCategoriesResp
 			"Authorization": {m.Token.AccessToken},
 		}
 
+		url := fmt.Sprintf("%s/v1/master/item_categories", m.OpenApiDomain)
 		httpReq, err := http.NewRequest("GET",
-			fmt.Sprintf("%s/v1/master/item_categories", m.OpenApiDomain), nil)
+			url, nil)
 		if err != nil {
 			hlog.CtxErrorf(ctx, "http request error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
 		httpReq.Header = headers
 
-		client := &http.Client{}
-		httpRes, err := client.Do(httpReq)
+		httpRes, err := HttpDo(ctx, httpReq)
+		if err != nil {
+			hlog.CtxErrorf(ctx, "http error, err: %v", err)
+			return nil, backoff.Permanent(bizErr.InternalError)
+		}
+
 		defer func() {
 			if err := httpRes.Body.Close(); err != nil {
 				hlog.CtxErrorf(ctx, "http close error: %s", err)
 			}
 		}()
-		if err != nil {
-			hlog.CtxErrorf(ctx, "http error, err: %v", err)
-			return nil, backoff.Permanent(bizErr.InternalError)
-		}
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")

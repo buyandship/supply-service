@@ -4,13 +4,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
+	"sync"
+
 	"github.com/buyandship/supply-svr/biz/common/config"
+	"github.com/buyandship/supply-svr/biz/common/trace"
 	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"sync"
 )
 
 var (
@@ -53,101 +56,127 @@ func (h *H) HealthCheck() error {
 	return nil
 }
 
-func (h *H) UpsertAccount(ctx context.Context, account *model.Account) error {
-	if err := h.cli.
+func (h *H) UpsertAccount(ctx context.Context, account *model.Account) (err error) {
+	ctx, span := trace.StartDBOperation(ctx, "UpsertAccount")
+	defer trace.EndSpan(span, err)
+
+	err = h.cli.
 		WithContext(ctx).
 		Debug().
 		Clauses(clause.OnConflict{
 			UpdateAll: true,
-		}).Create(&account).Error; err != nil {
-		return err
-	}
-	return nil
+		}).Create(&account).Error
+
+	return err
 }
 
-func (h *H) InsertMessage(ctx context.Context, message *model.Message) error {
-	if err := h.cli.
+func (h *H) InsertMessage(ctx context.Context, message *model.Message) (err error) {
+	ctx, span := trace.StartDBOperation(ctx, "InsertMessage")
+	defer trace.EndSpan(span, err)
+
+	err = h.cli.
 		WithContext(ctx).
 		Debug().
-		Create(&message).Error; err != nil {
-		return err
-	}
-	return nil
+		Create(&message).Error
+
+	return
 }
 
-func (h *H) InsertReview(ctx context.Context, review *model.Review) error {
-	if err := h.cli.
+func (h *H) InsertReview(ctx context.Context, review *model.Review) (err error) {
+	ctx, span := trace.StartDBOperation(ctx, "InsertReview")
+	defer trace.EndSpan(span, err)
+
+	err = h.cli.
 		WithContext(ctx).
 		Debug().
-		Create(&review).Error; err != nil {
-		return err
-	}
-	return nil
+		Create(&review).Error
+
+	return
 }
 
-func (h *H) GetTransaction(ctx context.Context, trxId string) (*model.Transaction, error) {
-	var trx *model.Transaction
-	if err := h.cli.WithContext(ctx).
+func (h *H) GetTransaction(ctx context.Context, trxId string) (trx *model.Transaction, err error) {
+	ctx, span := trace.StartDBOperation(ctx, "GetTransaction")
+	defer trace.EndSpan(span, err)
+
+	err = h.cli.WithContext(ctx).
 		Debug().
 		Where("ref_id = ?", trxId).
-		First(&trx).Error; err != nil {
+		First(&trx).Error
+
+	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
 		return nil, err
 	}
-	return trx, nil
+	return
 }
 
-func (h *H) InsertTransaction(ctx context.Context, transaction *model.Transaction) error {
-	if err := h.cli.
+func (h *H) InsertTransaction(ctx context.Context, transaction *model.Transaction) (err error) {
+	ctx, span := trace.StartDBOperation(ctx, "InsertTransaction")
+	defer trace.EndSpan(span, err)
+
+	err = h.cli.
 		WithContext(ctx).
 		Debug().
-		Create(&transaction).Error; err != nil {
-		return err
-	}
-	return nil
+		Create(&transaction).Error
+
+	return
 }
 
-func (h *H) InsertTokenLog(ctx context.Context, token *model.Token) error {
-	if err := h.cli.
+func (h *H) InsertTokenLog(ctx context.Context, token *model.Token) (err error) {
+	ctx, span := trace.StartDBOperation(ctx, "InsertTokenLog")
+	defer trace.EndSpan(span, err)
+
+	err = h.cli.
 		WithContext(ctx).
 		Debug().
-		Create(&token).Error; err != nil {
-		return err
-	}
-	return nil
+		Create(&token).Error
+
+	return err
 }
 
-func (h *H) UpdateTransaction(ctx context.Context, cond *model.Transaction) error {
-	if err := h.cli.
+func (h *H) UpdateTransaction(ctx context.Context, cond *model.Transaction) (err error) {
+	ctx, span := trace.StartDBOperation(ctx, "UpdateTransaction")
+	defer trace.EndSpan(span, err)
+
+	err = h.cli.
 		WithContext(ctx).
 		Debug().
 		Where("ref_id = ?", cond.RefID).
-		Updates(cond).Error; err != nil {
-		return err
-	}
-	return nil
+		Updates(cond).Error
+
+	return
 }
 
-func (h *H) GetAccount(ctx context.Context, buyerID int32) (*model.Account, error) {
-	account := &model.Account{}
-	if err := h.cli.
+func (h *H) GetAccount(ctx context.Context, buyerID int32) (account *model.Account, err error) {
+	ctx, span := trace.StartDBOperation(ctx, "GetAccount")
+	defer trace.EndSpan(span, err)
+
+	err = h.cli.
 		WithContext(ctx).
 		Debug().
 		Where("buyer_id = ?", buyerID).
-		First(account).Error; err != nil {
+		First(&account).Error
+
+	if err != nil {
+		hlog.CtxErrorf(ctx, "get account error: %s", err.Error())
 		return nil, err
 	}
-	return account, nil
+	return
 }
 
-func (h *H) GetToken() (*model.Token, error) {
-	var token model.Token
-	if err := h.cli.
+func (h *H) GetToken(ctx context.Context) (token *model.Token, err error) {
+	ctx, span := trace.StartDBOperation(ctx, "GetToken")
+	defer trace.EndSpan(span, err)
+
+	err = h.cli.
+		WithContext(ctx).
 		Order("created_at desc").
-		First(&token).Error; err != nil {
+		First(&token).Error
+
+	if err != nil {
 		return nil, err
 	}
-	return &token, nil
+	return
 }

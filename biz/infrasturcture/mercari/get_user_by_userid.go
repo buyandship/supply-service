@@ -60,25 +60,25 @@ func (m *Mercari) GetUser(ctx context.Context, req *GetUserByUserIDRequest) (*Ge
 			"Accept":        {"application/json"},
 			"Authorization": {m.Token.AccessToken},
 		}
-
-		httpReq, err := http.NewRequest("GET", fmt.Sprintf("%s/v1/users/%s", m.OpenApiDomain, req.UserId), nil)
+		url := fmt.Sprintf("%s/v1/users/%s", m.OpenApiDomain, req.UserId)
+		httpReq, err := http.NewRequest("GET", url, nil)
 		if err != nil {
 			hlog.CtxErrorf(ctx, "http request error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
 		httpReq.Header = headers
 
-		client := &http.Client{}
-		httpRes, err := client.Do(httpReq)
+		httpRes, err := HttpDo(ctx, httpReq)
+		if err != nil {
+			hlog.CtxErrorf(ctx, "http error, err: %v", err)
+			return nil, backoff.Permanent(bizErr.InternalError)
+		}
+
 		defer func() {
 			if err := httpRes.Body.Close(); err != nil {
 				hlog.CtxErrorf(ctx, "http close error: %s", err)
 			}
 		}()
-		if err != nil {
-			hlog.CtxErrorf(ctx, "http error, err: %v", err)
-			return nil, backoff.Permanent(bizErr.InternalError)
-		}
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")

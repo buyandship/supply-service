@@ -2,6 +2,7 @@ package mercari
 
 import (
 	"context"
+
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
@@ -13,6 +14,17 @@ import (
 func PostTransactionReviewService(ctx context.Context, req *supply.MercariPostTransactionReviewReq) (*mercari.PostTransactionReviewResponse, error) {
 	hlog.CtxInfof(ctx, "PostTransactionReviewService is called, %+v", req)
 	h := mercari.GetHandler()
+
+	/* 	if config.GlobalServerConfig.Env == "development" {
+		return nil, bizErr.NotFoundError
+	} */
+
+	/* 	if config.GlobalServerConfig.Env == "development" {
+		return &mercari.PostTransactionReviewResponse{
+			ReviewStatus: "success",
+			RequestId:    uuid.NewString(),
+		}, nil
+	} */
 
 	if req.GetTrxID() == "" {
 		hlog.CtxErrorf(ctx, "empty trx_id")

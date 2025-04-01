@@ -142,30 +142,32 @@ func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*Ge
 			hlog.CtxErrorf(ctx, "hit rate limit")
 			return nil, bizErr.RateLimitError
 		}
+
 		headers := map[string][]string{
 			"Accept":        {"application/json"},
 			"Authorization": {m.Token.AccessToken},
 		}
 
-		httpReq, err := http.NewRequest("GET",
-			fmt.Sprintf("%s/v1/items/%s?prefecture=%s", m.OpenApiDomain, req.ItemId, url.QueryEscape(req.Prefecture)), nil)
+		url := fmt.Sprintf("%s/v1/items/%s?prefecture=%s", m.OpenApiDomain, req.ItemId, url.QueryEscape(req.Prefecture))
+
+		httpReq, err := http.NewRequest("GET", url, nil)
 		if err != nil {
 			hlog.CtxErrorf(ctx, "http request error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
 		httpReq.Header = headers
 
-		client := &http.Client{}
-		httpRes, err := client.Do(httpReq)
+		httpRes, err := HttpDo(ctx, httpReq)
+		if err != nil {
+			hlog.CtxErrorf(ctx, "http error, err: %v", err)
+			return nil, backoff.Permanent(bizErr.InternalError)
+		}
+
 		defer func() {
 			if err := httpRes.Body.Close(); err != nil {
 				hlog.CtxErrorf(ctx, "http close error: %s", err)
 			}
 		}()
-		if err != nil {
-			hlog.CtxErrorf(ctx, "http error, err: %v", err)
-			return nil, backoff.Permanent(bizErr.InternalError)
-		}
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
@@ -185,6 +187,7 @@ func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*Ge
 			hlog.CtxErrorf(ctx, "http conflict, retrying...")
 			return nil, bizErr.ConflictError
 		}
+
 		if httpRes.StatusCode >= 500 && httpRes.StatusCode < 600 {
 			respBody, _ := io.ReadAll(httpRes.Body)
 			hlog.CtxErrorf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
@@ -211,7 +214,7 @@ func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*Ge
 			hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
-		hlog.CtxInfof(ctx, "get item by id successfully")
+
 		return resp, nil
 	}
 	result, err := backoff.Retry(ctx, getItemFunc, m.GetRetryOpts()...)

@@ -58,25 +58,26 @@ func (m *Mercari) PostTransactionReview(ctx context.Context, req *PostTransactio
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
 		data := bytes.NewBuffer(reqBody)
-		httpReq, err := http.NewRequest("POST",
-			fmt.Sprintf("%s/v1/transactions/%s/post_review", m.OpenApiDomain, req.TrxId), data)
+		url := fmt.Sprintf("%s/v1/transactions/%s/post_review", m.OpenApiDomain, req.TrxId)
+		httpReq, err := http.NewRequest("POST", url, data)
 		if err != nil {
 			hlog.CtxErrorf(ctx, "http request error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
 		httpReq.Header = headers
 
-		client := &http.Client{}
-		httpRes, err := client.Do(httpReq)
+		httpRes, err := HttpDo(ctx, httpReq)
+		if err != nil {
+			hlog.CtxErrorf(ctx, "http error, err: %v", err)
+			return nil, backoff.Permanent(bizErr.InternalError)
+		}
+
 		defer func() {
 			if err := httpRes.Body.Close(); err != nil {
 				hlog.CtxErrorf(ctx, "http close error: %s", err)
 			}
 		}()
-		if err != nil {
-			hlog.CtxErrorf(ctx, "http error, err: %v", err)
-			return nil, backoff.Permanent(bizErr.InternalError)
-		}
+
 		if httpRes.StatusCode == http.StatusUnauthorized {
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
 			if err := m.RefreshToken(ctx); err != nil {
