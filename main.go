@@ -61,10 +61,7 @@ func main() {
 	hlog.SetOutput(multiWriter)
 	hlog.SetLevel(hlog.Level(2))
 
-	propagator := propagation.NewCompositeTextMapPropagator(
-		propagation.TraceContext{},
-		propagation.Baggage{},
-	)
+	propagator := propagation.NewCompositeTextMapPropagator()
 
 	var opts []cc.Option
 	tracer, cfg := hertztracing.NewServerTracer(
