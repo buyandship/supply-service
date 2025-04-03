@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/hertz-contrib/logger/zap"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -17,6 +18,7 @@ func StartDBOperation(ctx context.Context, operation string) (context.Context, t
 	ctx, span := tracer.Start(ctx, fmt.Sprintf("db.%s", operation))
 	span.SetAttributes(
 		attribute.String("db.system", "mysql"),
+		attribute.String("X-Request-ID", ctx.Value(zap.ExtraKey("X-Request-ID")).(string)),
 	)
 	return ctx, span
 }
@@ -27,6 +29,7 @@ func StartRedisOperation(ctx context.Context, operation string, key string) (con
 	if key != "" {
 		span.SetAttributes(
 			attribute.String("key", key),
+			attribute.String("X-Request-ID", ctx.Value(zap.ExtraKey("X-Request-ID")).(string)),
 		)
 	}
 	return ctx, span
@@ -39,6 +42,7 @@ func StartHTTPOperation(ctx context.Context, req *http.Request) (context.Context
 	span.SetAttributes(
 		attribute.String("http.url", req.URL.String()),
 		attribute.String("http.method", req.Method),
+		attribute.String("X-Request-ID", ctx.Value(zap.ExtraKey("X-Request-ID")).(string)),
 	)
 	return ctx, span
 }
@@ -62,19 +66,4 @@ func RecordHTTPResponse(span trace.Span, resp *http.Response) {
 			attribute.String("http.status_text", resp.Status),
 		)
 	}
-}
-
-// RecordDBQuery records database query details in the span
-func RecordDBQuery(span trace.Span, query string, args ...interface{}) {
-	span.SetAttributes(
-		attribute.String("db.query", query),
-		attribute.String("db.args", fmt.Sprintf("%v", args)),
-	)
-}
-
-func RecordRedisQuery(span trace.Span, op string, args ...interface{}) {
-	span.SetAttributes(
-		attribute.String("redis.operation", op),
-		attribute.String("redis.key", fmt.Sprintf("%v", args)),
-	)
 }

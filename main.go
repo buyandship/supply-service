@@ -18,6 +18,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/hertz-contrib/obs-opentelemetry/provider"
 	hertztracing "github.com/hertz-contrib/obs-opentelemetry/tracing"
+	"go.opentelemetry.io/otel/propagation"
 )
 
 func Init() {
@@ -44,6 +45,7 @@ func main() {
 		provider.WithServiceName("supply-svr"),
 		provider.WithExportEndpoint(config.GlobalServerConfig.Otel.Endpoint),
 		provider.WithInsecure(),
+		provider.WithEnableMetrics(false),
 	)
 	defer p.Shutdown(context.Background())
 
@@ -59,8 +61,15 @@ func main() {
 	hlog.SetOutput(multiWriter)
 	hlog.SetLevel(hlog.Level(2))
 
+	propagator := propagation.NewCompositeTextMapPropagator(
+		propagation.TraceContext{},
+		propagation.Baggage{},
+	)
+
 	var opts []cc.Option
-	tracer, cfg := hertztracing.NewServerTracer()
+	tracer, cfg := hertztracing.NewServerTracer(
+		hertztracing.WithTextMapPropagator(propagator),
+	)
 	opts = append(opts, server.WithHostPorts(":8573"))
 	opts = append(opts, tracer)
 
