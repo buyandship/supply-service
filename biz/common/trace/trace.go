@@ -16,9 +16,14 @@ import (
 func StartDBOperation(ctx context.Context, operation string) (context.Context, trace.Span) {
 	tracer := otel.Tracer("database")
 	ctx, span := tracer.Start(ctx, fmt.Sprintf("db.%s", operation))
+	ctxRequestId := ctx.Value(zap.ExtraKey("X-Request-ID"))
+	requestId := ""
+	if rid, ok := ctxRequestId.(string); ok {
+		requestId = rid
+	}
 	span.SetAttributes(
 		attribute.String("db.system", "mysql"),
-		attribute.String("X-Request-ID", ctx.Value(zap.ExtraKey("X-Request-ID")).(string)),
+		attribute.String("X-Request-ID", requestId),
 	)
 	return ctx, span
 }
@@ -26,10 +31,15 @@ func StartDBOperation(ctx context.Context, operation string) (context.Context, t
 func StartRedisOperation(ctx context.Context, operation string, key string) (context.Context, trace.Span) {
 	tracer := otel.Tracer("redis")
 	ctx, span := tracer.Start(ctx, fmt.Sprintf("redis.%s", operation))
+	ctxRequestId := ctx.Value(zap.ExtraKey("X-Request-ID"))
+	requestId := ""
+	if rid, ok := ctxRequestId.(string); ok {
+		requestId = rid
+	}
 	if key != "" {
 		span.SetAttributes(
 			attribute.String("key", key),
-			attribute.String("X-Request-ID", ctx.Value(zap.ExtraKey("X-Request-ID")).(string)),
+			attribute.String("X-Request-ID", requestId),
 		)
 	}
 	return ctx, span
@@ -39,10 +49,15 @@ func StartRedisOperation(ctx context.Context, operation string, key string) (con
 func StartHTTPOperation(ctx context.Context, req *http.Request) (context.Context, trace.Span) {
 	tracer := otel.Tracer("http")
 	ctx, span := tracer.Start(ctx, req.URL.Path)
+	ctxRequestId := ctx.Value(zap.ExtraKey("X-Request-ID"))
+	requestId := ""
+	if rid, ok := ctxRequestId.(string); ok {
+		requestId = rid
+	}
 	span.SetAttributes(
 		attribute.String("http.url", req.URL.String()),
 		attribute.String("http.method", req.Method),
-		attribute.String("X-Request-ID", ctx.Value(zap.ExtraKey("X-Request-ID")).(string)),
+		attribute.String("X-Request-ID", requestId),
 	)
 	return ctx, span
 }
