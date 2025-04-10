@@ -227,10 +227,11 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 		// purchasing successfully
 		trxId := strconv.FormatInt(resp.TransactionDetails.TrxId, 10)
 		if err := db.GetHandler().UpdateTransaction(ctx, &model.Transaction{
-			RefID:     refId,
-			TrxID:     trxId,
-			PaidPrice: resp.TransactionDetails.PaidPrice,
-			Price:     resp.TransactionDetails.Price,
+			RefID:            refId,
+			TrxID:            trxId,
+			PaidPrice:        resp.TransactionDetails.PaidPrice,
+			Price:            resp.TransactionDetails.Price,
+			BuyerShippingFee: resp.TransactionDetails.BuyerShippingFee,
 		}); err != nil {
 			hlog.CtxErrorf(ctx, "UpdateTransaction fail, [%s]", err.Error())
 			return nil, backoff.Permanent(bizErr.InternalError)
