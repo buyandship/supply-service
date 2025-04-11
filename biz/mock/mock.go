@@ -125,6 +125,11 @@ func MockMercariPostMessageError(itemId string) error {
 }
 
 func MockMercariSellerError(sellerId string) error {
+
+	if config.GlobalServerConfig.Env != "development" {
+		return nil
+	}
+
 	if sellerId == "127569133" {
 		return bizErr.BadRequestError
 	}
@@ -322,6 +327,10 @@ func MockMercariItemResponse(resp *mercari.GetItemByIDResponse) error {
 }
 
 func MockMercariCategory(cid string) error {
+	if config.GlobalServerConfig.Env != "development" {
+		return nil
+	}
+
 	if cid == "208" {
 		return bizErr.BadRequestError
 	}
