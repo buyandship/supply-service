@@ -46,6 +46,10 @@ func MockMercariGetItemError(itemId string) error {
 		return bizErr.TooManyRequestError
 	}
 
+	if itemId == "m65772869996" {
+		return bizErr.NotFoundError
+	}
+
 	return nil
 }
 
@@ -87,6 +91,22 @@ func MockMercariPostOrderError(itemId string) error {
 
 	if itemId == "m44557269639" {
 		return bizErr.TooManyRequestError
+	}
+
+	if itemId == "m83954959553" {
+		return bizErr.BadRequestError
+	}
+
+	if itemId == "m63823469042" {
+		return bizErr.PaymentRequiredError
+	}
+
+	if itemId == "m24876695495" {
+		return bizErr.MercariInternalError
+	}
+
+	if itemId == "m71491191679" {
+		return bizErr.InternalError
 	}
 
 	return nil
@@ -393,6 +413,7 @@ func MockMercariGetTransactionByItemId(resp *mercari.GetTransactionByItemIDRespo
 		"m27928417925": "522689012345",
 		"m67570147112": "522790123456",
 		"m42339612386": "522801234567",
+		"m24477724560": "522912345678",
 	}
 
 	// Case 2: Transactions without tracking numbers
