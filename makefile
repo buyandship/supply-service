@@ -1,9 +1,10 @@
-HOST=bravo-lu
-ENGINE=docker
-
-.PHONY: build_all build docker_build
+.PHONY: build_all build docker_build docker_login
 
 build_all: build docker_build
+
+docker_login:
+	aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin 211125742375.dkr.ecr.ap-southeast-1.amazonaws.com
+
 
 build:
 	@echo "Building go binary..."
@@ -13,9 +14,9 @@ build:
 
 docker_build:
 	@echo "Building docker image..."
-	@${ENGINE} build -f dockerfile -t ghcr.io/${HOST}/supply-svr:latest .
+	@docker build -f dockerfile -t 211125742375.dkr.ecr.ap-southeast-1.amazonaws.com/supply-service:latest .
 	@echo "Pushing docker image..."
-	@${ENGINE} push ghcr.io/${HOST}/supply-svr:latest
+	@docker push 211125742375.dkr.ecr.ap-southeast-1.amazonaws.com/supply-service:latest
 
 .PHONY: t2
 t2:
