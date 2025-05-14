@@ -109,3 +109,13 @@ func _mercarigettodolistserviceMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _mercarisearchitemsserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _mercarigetbrandsserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
