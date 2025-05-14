@@ -3831,6 +3831,1307 @@ func (p *MercariGetTodoListReq) String() string {
 
 }
 
+type MercariSearchItemsReq struct {
+	Keyword                 *string `thrift:"keyword,1,optional" form:"keyword" json:"keyword,omitempty" query:"keyword"`
+	ExcludeKeyword          *string `thrift:"exclude_keyword,2,optional" form:"exclude_keyword" json:"exclude_keyword,omitempty" query:"exclude_keyword"`
+	CategoryID              *int32  `thrift:"category_id,3,optional" form:"category_id" json:"category_id,omitempty" query:"category_id"`
+	SellerID                *int32  `thrift:"seller_id,4,optional" form:"seller_id" json:"seller_id,omitempty" query:"seller_id"`
+	ShopID                  *string `thrift:"shop_id,5,optional" form:"shop_id" json:"shop_id,omitempty" query:"shop_id"`
+	SizeID                  *int32  `thrift:"size_id,6,optional" form:"size_id" json:"size_id,omitempty" query:"size_id"`
+	ColorID                 *int32  `thrift:"color_id,7,optional" form:"color_id" json:"color_id,omitempty" query:"color_id"`
+	PriceMin                *int32  `thrift:"price_min,8,optional" form:"price_min" json:"price_min,omitempty" query:"price_min"`
+	PriceMax                *int32  `thrift:"price_max,9,optional" form:"price_max" json:"price_max,omitempty" query:"price_max"`
+	CreatedBeforeDate       *int32  `thrift:"created_before_date,10,optional" form:"created_before_date" json:"created_before_date,omitempty" query:"created_before_date"`
+	CreatedAfterDate        *int32  `thrift:"created_after_date,11,optional" form:"created_after_date" json:"created_after_date,omitempty" query:"created_after_date"`
+	ItemConditionID         *int32  `thrift:"item_condition_id,12,optional" form:"item_condition_id" json:"item_condition_id,omitempty" query:"item_condition_id"`
+	ShippingPayerID         *int32  `thrift:"shipping_payer_id,13,optional" form:"shipping_payer_id" json:"shipping_payer_id,omitempty" query:"shipping_payer_id"`
+	Status                  *string `thrift:"status,14,optional" form:"status" json:"status,omitempty" query:"status"`
+	Marketplace             *int32  `thrift:"marketplace,15,optional" form:"marketplace" json:"marketplace,omitempty" query:"marketplace"`
+	Sort                    *string `thrift:"sort,16,optional" form:"sort" json:"sort,omitempty" query:"sort"`
+	Order                   *string `thrift:"order,17,optional" form:"order" json:"order,omitempty" query:"order"`
+	Page                    *int32  `thrift:"page,18,optional" form:"page" json:"page,omitempty" query:"page"`
+	Limit                   *int32  `thrift:"limit,19,optional" form:"limit" json:"limit,omitempty" query:"limit"`
+	ItemAuthentication      *bool   `thrift:"item_authentication,20,optional" form:"item_authentication" json:"item_authentication,omitempty" query:"item_authentication"`
+	TimeSale                *bool   `thrift:"time_sale,21,optional" form:"time_sale" json:"time_sale,omitempty" query:"time_sale"`
+	WithOfferPricePromotion *bool   `thrift:"with_offer_price_promotion,22,optional" form:"with_offer_price_promotion" json:"with_offer_price_promotion,omitempty" query:"with_offer_price_promotion"`
+}
+
+func NewMercariSearchItemsReq() *MercariSearchItemsReq {
+	return &MercariSearchItemsReq{}
+}
+
+var MercariSearchItemsReq_Keyword_DEFAULT string
+
+func (p *MercariSearchItemsReq) GetKeyword() (v string) {
+	if !p.IsSetKeyword() {
+		return MercariSearchItemsReq_Keyword_DEFAULT
+	}
+	return *p.Keyword
+}
+
+var MercariSearchItemsReq_ExcludeKeyword_DEFAULT string
+
+func (p *MercariSearchItemsReq) GetExcludeKeyword() (v string) {
+	if !p.IsSetExcludeKeyword() {
+		return MercariSearchItemsReq_ExcludeKeyword_DEFAULT
+	}
+	return *p.ExcludeKeyword
+}
+
+var MercariSearchItemsReq_CategoryID_DEFAULT int32
+
+func (p *MercariSearchItemsReq) GetCategoryID() (v int32) {
+	if !p.IsSetCategoryID() {
+		return MercariSearchItemsReq_CategoryID_DEFAULT
+	}
+	return *p.CategoryID
+}
+
+var MercariSearchItemsReq_SellerID_DEFAULT int32
+
+func (p *MercariSearchItemsReq) GetSellerID() (v int32) {
+	if !p.IsSetSellerID() {
+		return MercariSearchItemsReq_SellerID_DEFAULT
+	}
+	return *p.SellerID
+}
+
+var MercariSearchItemsReq_ShopID_DEFAULT string
+
+func (p *MercariSearchItemsReq) GetShopID() (v string) {
+	if !p.IsSetShopID() {
+		return MercariSearchItemsReq_ShopID_DEFAULT
+	}
+	return *p.ShopID
+}
+
+var MercariSearchItemsReq_SizeID_DEFAULT int32
+
+func (p *MercariSearchItemsReq) GetSizeID() (v int32) {
+	if !p.IsSetSizeID() {
+		return MercariSearchItemsReq_SizeID_DEFAULT
+	}
+	return *p.SizeID
+}
+
+var MercariSearchItemsReq_ColorID_DEFAULT int32
+
+func (p *MercariSearchItemsReq) GetColorID() (v int32) {
+	if !p.IsSetColorID() {
+		return MercariSearchItemsReq_ColorID_DEFAULT
+	}
+	return *p.ColorID
+}
+
+var MercariSearchItemsReq_PriceMin_DEFAULT int32
+
+func (p *MercariSearchItemsReq) GetPriceMin() (v int32) {
+	if !p.IsSetPriceMin() {
+		return MercariSearchItemsReq_PriceMin_DEFAULT
+	}
+	return *p.PriceMin
+}
+
+var MercariSearchItemsReq_PriceMax_DEFAULT int32
+
+func (p *MercariSearchItemsReq) GetPriceMax() (v int32) {
+	if !p.IsSetPriceMax() {
+		return MercariSearchItemsReq_PriceMax_DEFAULT
+	}
+	return *p.PriceMax
+}
+
+var MercariSearchItemsReq_CreatedBeforeDate_DEFAULT int32
+
+func (p *MercariSearchItemsReq) GetCreatedBeforeDate() (v int32) {
+	if !p.IsSetCreatedBeforeDate() {
+		return MercariSearchItemsReq_CreatedBeforeDate_DEFAULT
+	}
+	return *p.CreatedBeforeDate
+}
+
+var MercariSearchItemsReq_CreatedAfterDate_DEFAULT int32
+
+func (p *MercariSearchItemsReq) GetCreatedAfterDate() (v int32) {
+	if !p.IsSetCreatedAfterDate() {
+		return MercariSearchItemsReq_CreatedAfterDate_DEFAULT
+	}
+	return *p.CreatedAfterDate
+}
+
+var MercariSearchItemsReq_ItemConditionID_DEFAULT int32
+
+func (p *MercariSearchItemsReq) GetItemConditionID() (v int32) {
+	if !p.IsSetItemConditionID() {
+		return MercariSearchItemsReq_ItemConditionID_DEFAULT
+	}
+	return *p.ItemConditionID
+}
+
+var MercariSearchItemsReq_ShippingPayerID_DEFAULT int32
+
+func (p *MercariSearchItemsReq) GetShippingPayerID() (v int32) {
+	if !p.IsSetShippingPayerID() {
+		return MercariSearchItemsReq_ShippingPayerID_DEFAULT
+	}
+	return *p.ShippingPayerID
+}
+
+var MercariSearchItemsReq_Status_DEFAULT string
+
+func (p *MercariSearchItemsReq) GetStatus() (v string) {
+	if !p.IsSetStatus() {
+		return MercariSearchItemsReq_Status_DEFAULT
+	}
+	return *p.Status
+}
+
+var MercariSearchItemsReq_Marketplace_DEFAULT int32
+
+func (p *MercariSearchItemsReq) GetMarketplace() (v int32) {
+	if !p.IsSetMarketplace() {
+		return MercariSearchItemsReq_Marketplace_DEFAULT
+	}
+	return *p.Marketplace
+}
+
+var MercariSearchItemsReq_Sort_DEFAULT string
+
+func (p *MercariSearchItemsReq) GetSort() (v string) {
+	if !p.IsSetSort() {
+		return MercariSearchItemsReq_Sort_DEFAULT
+	}
+	return *p.Sort
+}
+
+var MercariSearchItemsReq_Order_DEFAULT string
+
+func (p *MercariSearchItemsReq) GetOrder() (v string) {
+	if !p.IsSetOrder() {
+		return MercariSearchItemsReq_Order_DEFAULT
+	}
+	return *p.Order
+}
+
+var MercariSearchItemsReq_Page_DEFAULT int32
+
+func (p *MercariSearchItemsReq) GetPage() (v int32) {
+	if !p.IsSetPage() {
+		return MercariSearchItemsReq_Page_DEFAULT
+	}
+	return *p.Page
+}
+
+var MercariSearchItemsReq_Limit_DEFAULT int32
+
+func (p *MercariSearchItemsReq) GetLimit() (v int32) {
+	if !p.IsSetLimit() {
+		return MercariSearchItemsReq_Limit_DEFAULT
+	}
+	return *p.Limit
+}
+
+var MercariSearchItemsReq_ItemAuthentication_DEFAULT bool
+
+func (p *MercariSearchItemsReq) GetItemAuthentication() (v bool) {
+	if !p.IsSetItemAuthentication() {
+		return MercariSearchItemsReq_ItemAuthentication_DEFAULT
+	}
+	return *p.ItemAuthentication
+}
+
+var MercariSearchItemsReq_TimeSale_DEFAULT bool
+
+func (p *MercariSearchItemsReq) GetTimeSale() (v bool) {
+	if !p.IsSetTimeSale() {
+		return MercariSearchItemsReq_TimeSale_DEFAULT
+	}
+	return *p.TimeSale
+}
+
+var MercariSearchItemsReq_WithOfferPricePromotion_DEFAULT bool
+
+func (p *MercariSearchItemsReq) GetWithOfferPricePromotion() (v bool) {
+	if !p.IsSetWithOfferPricePromotion() {
+		return MercariSearchItemsReq_WithOfferPricePromotion_DEFAULT
+	}
+	return *p.WithOfferPricePromotion
+}
+
+var fieldIDToName_MercariSearchItemsReq = map[int16]string{
+	1:  "keyword",
+	2:  "exclude_keyword",
+	3:  "category_id",
+	4:  "seller_id",
+	5:  "shop_id",
+	6:  "size_id",
+	7:  "color_id",
+	8:  "price_min",
+	9:  "price_max",
+	10: "created_before_date",
+	11: "created_after_date",
+	12: "item_condition_id",
+	13: "shipping_payer_id",
+	14: "status",
+	15: "marketplace",
+	16: "sort",
+	17: "order",
+	18: "page",
+	19: "limit",
+	20: "item_authentication",
+	21: "time_sale",
+	22: "with_offer_price_promotion",
+}
+
+func (p *MercariSearchItemsReq) IsSetKeyword() bool {
+	return p.Keyword != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetExcludeKeyword() bool {
+	return p.ExcludeKeyword != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetCategoryID() bool {
+	return p.CategoryID != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetSellerID() bool {
+	return p.SellerID != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetShopID() bool {
+	return p.ShopID != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetSizeID() bool {
+	return p.SizeID != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetColorID() bool {
+	return p.ColorID != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetPriceMin() bool {
+	return p.PriceMin != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetPriceMax() bool {
+	return p.PriceMax != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetCreatedBeforeDate() bool {
+	return p.CreatedBeforeDate != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetCreatedAfterDate() bool {
+	return p.CreatedAfterDate != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetItemConditionID() bool {
+	return p.ItemConditionID != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetShippingPayerID() bool {
+	return p.ShippingPayerID != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetStatus() bool {
+	return p.Status != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetMarketplace() bool {
+	return p.Marketplace != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetSort() bool {
+	return p.Sort != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetOrder() bool {
+	return p.Order != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetPage() bool {
+	return p.Page != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetLimit() bool {
+	return p.Limit != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetItemAuthentication() bool {
+	return p.ItemAuthentication != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetTimeSale() bool {
+	return p.TimeSale != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetWithOfferPricePromotion() bool {
+	return p.WithOfferPricePromotion != nil
+}
+
+func (p *MercariSearchItemsReq) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 2:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 3:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField3(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 4:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField4(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 5:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField5(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 6:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField6(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 7:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField7(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 8:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField8(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 9:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField9(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 10:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField10(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 11:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField11(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 12:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField12(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 13:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField13(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 14:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField14(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 15:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField15(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 16:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField16(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 17:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField17(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 18:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField18(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 19:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField19(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 20:
+			if fieldTypeId == thrift.BOOL {
+				if err = p.ReadField20(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 21:
+			if fieldTypeId == thrift.BOOL {
+				if err = p.ReadField21(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 22:
+			if fieldTypeId == thrift.BOOL {
+				if err = p.ReadField22(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_MercariSearchItemsReq[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) ReadField1(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Keyword = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField2(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.ExcludeKeyword = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField3(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.CategoryID = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField4(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.SellerID = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField5(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.ShopID = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField6(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.SizeID = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField7(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.ColorID = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField8(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.PriceMin = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField9(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.PriceMax = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField10(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.CreatedBeforeDate = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField11(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.CreatedAfterDate = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField12(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.ItemConditionID = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField13(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.ShippingPayerID = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField14(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Status = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField15(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Marketplace = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField16(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Sort = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField17(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Order = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField18(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Page = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField19(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Limit = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField20(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadBool(); err != nil {
+		return err
+	} else {
+		p.ItemAuthentication = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField21(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadBool(); err != nil {
+		return err
+	} else {
+		p.TimeSale = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField22(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadBool(); err != nil {
+		return err
+	} else {
+		p.WithOfferPricePromotion = &v
+	}
+	return nil
+}
+
+func (p *MercariSearchItemsReq) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("MercariSearchItemsReq"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField2(oprot); err != nil {
+			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField3(oprot); err != nil {
+			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
+			goto WriteFieldError
+		}
+		if err = p.writeField5(oprot); err != nil {
+			fieldId = 5
+			goto WriteFieldError
+		}
+		if err = p.writeField6(oprot); err != nil {
+			fieldId = 6
+			goto WriteFieldError
+		}
+		if err = p.writeField7(oprot); err != nil {
+			fieldId = 7
+			goto WriteFieldError
+		}
+		if err = p.writeField8(oprot); err != nil {
+			fieldId = 8
+			goto WriteFieldError
+		}
+		if err = p.writeField9(oprot); err != nil {
+			fieldId = 9
+			goto WriteFieldError
+		}
+		if err = p.writeField10(oprot); err != nil {
+			fieldId = 10
+			goto WriteFieldError
+		}
+		if err = p.writeField11(oprot); err != nil {
+			fieldId = 11
+			goto WriteFieldError
+		}
+		if err = p.writeField12(oprot); err != nil {
+			fieldId = 12
+			goto WriteFieldError
+		}
+		if err = p.writeField13(oprot); err != nil {
+			fieldId = 13
+			goto WriteFieldError
+		}
+		if err = p.writeField14(oprot); err != nil {
+			fieldId = 14
+			goto WriteFieldError
+		}
+		if err = p.writeField15(oprot); err != nil {
+			fieldId = 15
+			goto WriteFieldError
+		}
+		if err = p.writeField16(oprot); err != nil {
+			fieldId = 16
+			goto WriteFieldError
+		}
+		if err = p.writeField17(oprot); err != nil {
+			fieldId = 17
+			goto WriteFieldError
+		}
+		if err = p.writeField18(oprot); err != nil {
+			fieldId = 18
+			goto WriteFieldError
+		}
+		if err = p.writeField19(oprot); err != nil {
+			fieldId = 19
+			goto WriteFieldError
+		}
+		if err = p.writeField20(oprot); err != nil {
+			fieldId = 20
+			goto WriteFieldError
+		}
+		if err = p.writeField21(oprot); err != nil {
+			fieldId = 21
+			goto WriteFieldError
+		}
+		if err = p.writeField22(oprot); err != nil {
+			fieldId = 22
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField1(oprot thrift.TProtocol) (err error) {
+	if p.IsSetKeyword() {
+		if err = oprot.WriteFieldBegin("keyword", thrift.STRING, 1); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Keyword); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField2(oprot thrift.TProtocol) (err error) {
+	if p.IsSetExcludeKeyword() {
+		if err = oprot.WriteFieldBegin("exclude_keyword", thrift.STRING, 2); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.ExcludeKeyword); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField3(oprot thrift.TProtocol) (err error) {
+	if p.IsSetCategoryID() {
+		if err = oprot.WriteFieldBegin("category_id", thrift.I32, 3); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.CategoryID); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField4(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSellerID() {
+		if err = oprot.WriteFieldBegin("seller_id", thrift.I32, 4); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.SellerID); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField5(oprot thrift.TProtocol) (err error) {
+	if p.IsSetShopID() {
+		if err = oprot.WriteFieldBegin("shop_id", thrift.STRING, 5); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.ShopID); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField6(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSizeID() {
+		if err = oprot.WriteFieldBegin("size_id", thrift.I32, 6); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.SizeID); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 6 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 6 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField7(oprot thrift.TProtocol) (err error) {
+	if p.IsSetColorID() {
+		if err = oprot.WriteFieldBegin("color_id", thrift.I32, 7); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.ColorID); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 7 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 7 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField8(oprot thrift.TProtocol) (err error) {
+	if p.IsSetPriceMin() {
+		if err = oprot.WriteFieldBegin("price_min", thrift.I32, 8); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.PriceMin); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField9(oprot thrift.TProtocol) (err error) {
+	if p.IsSetPriceMax() {
+		if err = oprot.WriteFieldBegin("price_max", thrift.I32, 9); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.PriceMax); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField10(oprot thrift.TProtocol) (err error) {
+	if p.IsSetCreatedBeforeDate() {
+		if err = oprot.WriteFieldBegin("created_before_date", thrift.I32, 10); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.CreatedBeforeDate); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField11(oprot thrift.TProtocol) (err error) {
+	if p.IsSetCreatedAfterDate() {
+		if err = oprot.WriteFieldBegin("created_after_date", thrift.I32, 11); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.CreatedAfterDate); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 11 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 11 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField12(oprot thrift.TProtocol) (err error) {
+	if p.IsSetItemConditionID() {
+		if err = oprot.WriteFieldBegin("item_condition_id", thrift.I32, 12); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.ItemConditionID); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 12 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 12 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField13(oprot thrift.TProtocol) (err error) {
+	if p.IsSetShippingPayerID() {
+		if err = oprot.WriteFieldBegin("shipping_payer_id", thrift.I32, 13); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.ShippingPayerID); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 13 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 13 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField14(oprot thrift.TProtocol) (err error) {
+	if p.IsSetStatus() {
+		if err = oprot.WriteFieldBegin("status", thrift.STRING, 14); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Status); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 14 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 14 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField15(oprot thrift.TProtocol) (err error) {
+	if p.IsSetMarketplace() {
+		if err = oprot.WriteFieldBegin("marketplace", thrift.I32, 15); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.Marketplace); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 15 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 15 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField16(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSort() {
+		if err = oprot.WriteFieldBegin("sort", thrift.STRING, 16); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Sort); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 16 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 16 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField17(oprot thrift.TProtocol) (err error) {
+	if p.IsSetOrder() {
+		if err = oprot.WriteFieldBegin("order", thrift.STRING, 17); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Order); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 17 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 17 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField18(oprot thrift.TProtocol) (err error) {
+	if p.IsSetPage() {
+		if err = oprot.WriteFieldBegin("page", thrift.I32, 18); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.Page); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 18 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 18 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField19(oprot thrift.TProtocol) (err error) {
+	if p.IsSetLimit() {
+		if err = oprot.WriteFieldBegin("limit", thrift.I32, 19); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.Limit); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 19 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 19 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField20(oprot thrift.TProtocol) (err error) {
+	if p.IsSetItemAuthentication() {
+		if err = oprot.WriteFieldBegin("item_authentication", thrift.BOOL, 20); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteBool(*p.ItemAuthentication); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 20 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 20 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField21(oprot thrift.TProtocol) (err error) {
+	if p.IsSetTimeSale() {
+		if err = oprot.WriteFieldBegin("time_sale", thrift.BOOL, 21); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteBool(*p.TimeSale); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 21 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 21 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField22(oprot thrift.TProtocol) (err error) {
+	if p.IsSetWithOfferPricePromotion() {
+		if err = oprot.WriteFieldBegin("with_offer_price_promotion", thrift.BOOL, 22); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteBool(*p.WithOfferPricePromotion); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 22 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 22 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("MercariSearchItemsReq(%+v)", *p)
+
+}
+
 type SupplyService interface {
 	MercariGetItemService(ctx context.Context, req *MercariGetItemReq) (r string, err error)
 
@@ -3845,6 +5146,10 @@ type SupplyService interface {
 	MercariPostTransactionReviewService(ctx context.Context, req *MercariPostTransactionReviewReq) (r string, err error)
 
 	MercariGetTodoListService(ctx context.Context, req *MercariPostTransactionReviewReq) (r string, err error)
+
+	MercariSearchItemsService(ctx context.Context, req *MercariSearchItemsReq) (r string, err error)
+
+	MercariGetBrandsService(ctx context.Context) (r string, err error)
 
 	MercariRegisterAccountService(ctx context.Context, req *MercariRegisterAccountReq) (r *MercariRegisterAccountResp, err error)
 
@@ -3943,6 +5248,23 @@ func (p *SupplyServiceClient) MercariGetTodoListService(ctx context.Context, req
 	}
 	return _result.GetSuccess(), nil
 }
+func (p *SupplyServiceClient) MercariSearchItemsService(ctx context.Context, req *MercariSearchItemsReq) (r string, err error) {
+	var _args SupplyServiceMercariSearchItemsServiceArgs
+	_args.Req = req
+	var _result SupplyServiceMercariSearchItemsServiceResult
+	if err = p.Client_().Call(ctx, "MercariSearchItemsService", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+func (p *SupplyServiceClient) MercariGetBrandsService(ctx context.Context) (r string, err error) {
+	var _args SupplyServiceMercariGetBrandsServiceArgs
+	var _result SupplyServiceMercariGetBrandsServiceResult
+	if err = p.Client_().Call(ctx, "MercariGetBrandsService", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
 func (p *SupplyServiceClient) MercariRegisterAccountService(ctx context.Context, req *MercariRegisterAccountReq) (r *MercariRegisterAccountResp, err error) {
 	var _args SupplyServiceMercariRegisterAccountServiceArgs
 	_args.Req = req
@@ -4006,6 +5328,8 @@ func NewSupplyServiceProcessor(handler SupplyService) *SupplyServiceProcessor {
 	self.AddToProcessorMap("MercariGetTransactionByItemIdService", &supplyServiceProcessorMercariGetTransactionByItemIdService{handler: handler})
 	self.AddToProcessorMap("MercariPostTransactionReviewService", &supplyServiceProcessorMercariPostTransactionReviewService{handler: handler})
 	self.AddToProcessorMap("MercariGetTodoListService", &supplyServiceProcessorMercariGetTodoListService{handler: handler})
+	self.AddToProcessorMap("MercariSearchItemsService", &supplyServiceProcessorMercariSearchItemsService{handler: handler})
+	self.AddToProcessorMap("MercariGetBrandsService", &supplyServiceProcessorMercariGetBrandsService{handler: handler})
 	self.AddToProcessorMap("MercariRegisterAccountService", &supplyServiceProcessorMercariRegisterAccountService{handler: handler})
 	self.AddToProcessorMap("MercariPostOrderService", &supplyServiceProcessorMercariPostOrderService{handler: handler})
 	self.AddToProcessorMap("MercariPostMessageService", &supplyServiceProcessorMercariPostMessageService{handler: handler})
@@ -4349,6 +5673,102 @@ func (p *supplyServiceProcessorMercariGetTodoListService) Process(ctx context.Co
 		result.Success = &retval
 	}
 	if err2 = oprot.WriteMessageBegin("MercariGetTodoListService", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 = result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
+}
+
+type supplyServiceProcessorMercariSearchItemsService struct {
+	handler SupplyService
+}
+
+func (p *supplyServiceProcessorMercariSearchItemsService) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := SupplyServiceMercariSearchItemsServiceArgs{}
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+		oprot.WriteMessageBegin("MercariSearchItemsService", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return false, err
+	}
+
+	iprot.ReadMessageEnd()
+	var err2 error
+	result := SupplyServiceMercariSearchItemsServiceResult{}
+	var retval string
+	if retval, err2 = p.handler.MercariSearchItemsService(ctx, args.Req); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing MercariSearchItemsService: "+err2.Error())
+		oprot.WriteMessageBegin("MercariSearchItemsService", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return true, err2
+	} else {
+		result.Success = &retval
+	}
+	if err2 = oprot.WriteMessageBegin("MercariSearchItemsService", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 = result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
+}
+
+type supplyServiceProcessorMercariGetBrandsService struct {
+	handler SupplyService
+}
+
+func (p *supplyServiceProcessorMercariGetBrandsService) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := SupplyServiceMercariGetBrandsServiceArgs{}
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+		oprot.WriteMessageBegin("MercariGetBrandsService", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return false, err
+	}
+
+	iprot.ReadMessageEnd()
+	var err2 error
+	result := SupplyServiceMercariGetBrandsServiceResult{}
+	var retval string
+	if retval, err2 = p.handler.MercariGetBrandsService(ctx); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing MercariGetBrandsService: "+err2.Error())
+		oprot.WriteMessageBegin("MercariGetBrandsService", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return true, err2
+	} else {
+		result.Success = &retval
+	}
+	if err2 = oprot.WriteMessageBegin("MercariGetBrandsService", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -6509,6 +7929,520 @@ func (p *SupplyServiceMercariGetTodoListServiceResult) String() string {
 		return "<nil>"
 	}
 	return fmt.Sprintf("SupplyServiceMercariGetTodoListServiceResult(%+v)", *p)
+
+}
+
+type SupplyServiceMercariSearchItemsServiceArgs struct {
+	Req *MercariSearchItemsReq `thrift:"req,1"`
+}
+
+func NewSupplyServiceMercariSearchItemsServiceArgs() *SupplyServiceMercariSearchItemsServiceArgs {
+	return &SupplyServiceMercariSearchItemsServiceArgs{}
+}
+
+var SupplyServiceMercariSearchItemsServiceArgs_Req_DEFAULT *MercariSearchItemsReq
+
+func (p *SupplyServiceMercariSearchItemsServiceArgs) GetReq() (v *MercariSearchItemsReq) {
+	if !p.IsSetReq() {
+		return SupplyServiceMercariSearchItemsServiceArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+var fieldIDToName_SupplyServiceMercariSearchItemsServiceArgs = map[int16]string{
+	1: "req",
+}
+
+func (p *SupplyServiceMercariSearchItemsServiceArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *SupplyServiceMercariSearchItemsServiceArgs) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_SupplyServiceMercariSearchItemsServiceArgs[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariSearchItemsServiceArgs) ReadField1(iprot thrift.TProtocol) error {
+	p.Req = NewMercariSearchItemsReq()
+	if err := p.Req.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *SupplyServiceMercariSearchItemsServiceArgs) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("MercariSearchItemsService_args"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariSearchItemsServiceArgs) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.Req.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariSearchItemsServiceArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SupplyServiceMercariSearchItemsServiceArgs(%+v)", *p)
+
+}
+
+type SupplyServiceMercariSearchItemsServiceResult struct {
+	Success *string `thrift:"success,0,optional"`
+}
+
+func NewSupplyServiceMercariSearchItemsServiceResult() *SupplyServiceMercariSearchItemsServiceResult {
+	return &SupplyServiceMercariSearchItemsServiceResult{}
+}
+
+var SupplyServiceMercariSearchItemsServiceResult_Success_DEFAULT string
+
+func (p *SupplyServiceMercariSearchItemsServiceResult) GetSuccess() (v string) {
+	if !p.IsSetSuccess() {
+		return SupplyServiceMercariSearchItemsServiceResult_Success_DEFAULT
+	}
+	return *p.Success
+}
+
+var fieldIDToName_SupplyServiceMercariSearchItemsServiceResult = map[int16]string{
+	0: "success",
+}
+
+func (p *SupplyServiceMercariSearchItemsServiceResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *SupplyServiceMercariSearchItemsServiceResult) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 0:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField0(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_SupplyServiceMercariSearchItemsServiceResult[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariSearchItemsServiceResult) ReadField0(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Success = &v
+	}
+	return nil
+}
+
+func (p *SupplyServiceMercariSearchItemsServiceResult) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("MercariSearchItemsService_result"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField0(oprot); err != nil {
+			fieldId = 0
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariSearchItemsServiceResult) writeField0(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSuccess() {
+		if err = oprot.WriteFieldBegin("success", thrift.STRING, 0); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Success); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariSearchItemsServiceResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SupplyServiceMercariSearchItemsServiceResult(%+v)", *p)
+
+}
+
+type SupplyServiceMercariGetBrandsServiceArgs struct {
+}
+
+func NewSupplyServiceMercariGetBrandsServiceArgs() *SupplyServiceMercariGetBrandsServiceArgs {
+	return &SupplyServiceMercariGetBrandsServiceArgs{}
+}
+
+var fieldIDToName_SupplyServiceMercariGetBrandsServiceArgs = map[int16]string{}
+
+func (p *SupplyServiceMercariGetBrandsServiceArgs) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		if err = iprot.Skip(fieldTypeId); err != nil {
+			goto SkipFieldTypeError
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+SkipFieldTypeError:
+	return thrift.PrependError(fmt.Sprintf("%T skip field type %d error", p, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariGetBrandsServiceArgs) Write(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteStructBegin("MercariGetBrandsService_args"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariGetBrandsServiceArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SupplyServiceMercariGetBrandsServiceArgs(%+v)", *p)
+
+}
+
+type SupplyServiceMercariGetBrandsServiceResult struct {
+	Success *string `thrift:"success,0,optional"`
+}
+
+func NewSupplyServiceMercariGetBrandsServiceResult() *SupplyServiceMercariGetBrandsServiceResult {
+	return &SupplyServiceMercariGetBrandsServiceResult{}
+}
+
+var SupplyServiceMercariGetBrandsServiceResult_Success_DEFAULT string
+
+func (p *SupplyServiceMercariGetBrandsServiceResult) GetSuccess() (v string) {
+	if !p.IsSetSuccess() {
+		return SupplyServiceMercariGetBrandsServiceResult_Success_DEFAULT
+	}
+	return *p.Success
+}
+
+var fieldIDToName_SupplyServiceMercariGetBrandsServiceResult = map[int16]string{
+	0: "success",
+}
+
+func (p *SupplyServiceMercariGetBrandsServiceResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *SupplyServiceMercariGetBrandsServiceResult) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 0:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField0(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_SupplyServiceMercariGetBrandsServiceResult[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariGetBrandsServiceResult) ReadField0(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Success = &v
+	}
+	return nil
+}
+
+func (p *SupplyServiceMercariGetBrandsServiceResult) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("MercariGetBrandsService_result"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField0(oprot); err != nil {
+			fieldId = 0
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariGetBrandsServiceResult) writeField0(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSuccess() {
+		if err = oprot.WriteFieldBegin("success", thrift.STRING, 0); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Success); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariGetBrandsServiceResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SupplyServiceMercariGetBrandsServiceResult(%+v)", *p)
 
 }
 

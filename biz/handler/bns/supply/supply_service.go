@@ -314,3 +314,39 @@ func MercariGetTodoListService(ctx context.Context, c *app.RequestContext) {
 	}
 	c.JSON(consts.StatusOK, resp)
 }
+
+// MercariSearchItemsService .
+// @router /v1/supplysrv/internal/mercari/search [GET]
+func MercariSearchItemsService(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req supply.MercariSearchItemsReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp, err := mercari.SearchItemsService(ctx, &req)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// MercariGetBrandsService .
+// @router /v1/supplysrv/internal/mercari/brands [GET]
+func MercariGetBrandsService(ctx context.Context, c *app.RequestContext) {
+	var err error
+
+	resp, err := mercari.GetBrandsService(ctx)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
