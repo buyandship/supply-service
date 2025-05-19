@@ -19,6 +19,10 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
+var FailureDetailsCodeMap = map[string]int{
+	"F0017": 17,
+}
+
 type PurchaseItemRequest struct {
 	BuyerId            int32  `json:"buyer_id"`
 	ItemId             string `json:"item_id"`
@@ -196,9 +200,15 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 				} else {
 					errMsg = fmt.Sprintf("%s|%s", errResp.RequestId, errResp.FailureDetails.Reasons)
 				}
+
+				errCode := httpRes.StatusCode
+				if e, ok := FailureDetailsCodeMap[errResp.FailureDetails.Code]; ok {
+					errCode = e
+				}
+
 				return nil, backoff.Permanent(bizErr.BizError{
 					Status:  httpRes.StatusCode,
-					ErrCode: httpRes.StatusCode,
+					ErrCode: errCode,
 					ErrMsg:  errMsg,
 				})
 			}
