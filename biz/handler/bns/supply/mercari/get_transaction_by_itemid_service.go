@@ -13,6 +13,10 @@ import (
 func GetTransactionByItemIdService(ctx context.Context, req *supply.MercariGetTransactionByItemIdReq) (*mercari.GetTransactionByItemIDResponse, error) {
 	hlog.CtxInfof(ctx, "GetTransactionByItemIdService is called, item_id: %s", req.GetItemID())
 
+	if ok, resp := mock.MockResponse(req.GetItemID()); ok {
+		return resp, nil
+	}
+
 	if req.GetItemID() == "" {
 		hlog.CtxErrorf(ctx, "empty item_id")
 		return nil, bizErr.InvalidParameterError

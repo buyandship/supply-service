@@ -4,6 +4,8 @@ import (
 	"github.com/buyandship/supply-svr/biz/common/config"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
+	"github.com/buyandship/supply-svr/biz/model/bns/supply"
+	"github.com/google/uuid"
 )
 
 func MockMercariGetItemError(itemId string) error {
@@ -414,6 +416,16 @@ func MockMercariGetTransactionByItemId(resp *mercari.GetTransactionByItemIDRespo
 		"m67570147112": "522790123456",
 		"m42339612386": "522801234567",
 		"m24477724560": "522912345678",
+		"m77197283692": "523023456789",
+		"m25366988287": "523134567890",
+		"m65348352858": "523245678901",
+		"m84293744322": "523356789012",
+		"m65486048153": "523467890123",
+		"m48800956402": "523578901234",
+		"m73104232732": "523689012345",
+		"m59625710362": "523790123456",
+		"m80365432910": "523801234567",
+		"m44940266156": "523912345678",
 	}
 
 	// Case 2: Transactions without tracking numbers
@@ -437,6 +449,7 @@ func MockMercariGetTransactionByItemId(resp *mercari.GetTransactionByItemIDRespo
 		"m49714846192": true,
 		"m96503874959": true,
 		"m91470723883": true,
+		"m63656178257": true,
 	}
 
 	// Case 3: Error cases
@@ -447,6 +460,10 @@ func MockMercariGetTransactionByItemId(resp *mercari.GetTransactionByItemIDRespo
 		"m81844429902": bizErr.RateLimitError,
 		"m31143390731": bizErr.MercariInternalError,
 		"m21457538128": bizErr.InternalError,
+	}
+
+	waitShippingCases := map[string]bool{
+		"m80365432910": true,
 	}
 
 	if trackingNumber, ok := trackingNumberCases[resp.ItemId]; ok {
@@ -461,9 +478,110 @@ func MockMercariGetTransactionByItemId(resp *mercari.GetTransactionByItemIDRespo
 		return nil
 	}
 
+	if _, ok := waitShippingCases[resp.ItemId]; ok {
+		resp.Status = "wait_shipping"
+		return nil
+	}
+
 	if err, ok := errorCases[resp.ItemId]; ok {
 		return err
 	}
 
 	return nil
+}
+
+func MockResponse(itemId string) (bool, *mercari.GetTransactionByItemIDResponse) {
+	if config.GlobalServerConfig.Env != "development" {
+		return false, nil
+	}
+
+	case1 := map[string]bool{
+		"m84912732956": true,
+	}
+
+	case2 := map[string]string{
+		"m98313908967": "520198765432",
+		"m21398498724": "",
+		"m23552581043": "520198765431",
+	}
+
+	case3 := map[string]bool{
+		"m87457435408": true,
+	}
+
+	if _, ok := case1[itemId]; ok {
+		return true, &mercari.GetTransactionByItemIDResponse{
+			ItemId: itemId,
+			Status: "wait_review",
+			ShippingInfo: struct {
+				ShippingMethodName string `json:"shipping_method_name"`
+				TrackingNumber     string `json:"tracking_number"`
+				Status             string `json:"status"`
+				BuyerShippingFee   string `json:"buyer_shipping_fee"`
+			}{
+				TrackingNumber: uuid.New().String(),
+			},
+		}
+	}
+
+	if trackingNumber, ok := case2[itemId]; ok {
+		return true, &mercari.GetTransactionByItemIDResponse{
+			ItemId: itemId,
+			Status: "wait_review",
+			ShippingInfo: struct {
+				ShippingMethodName string `json:"shipping_method_name"`
+				TrackingNumber     string `json:"tracking_number"`
+				Status             string `json:"status"`
+				BuyerShippingFee   string `json:"buyer_shipping_fee"`
+			}{
+				TrackingNumber: trackingNumber,
+			},
+		}
+	}
+
+	if _, ok := case3[itemId]; ok {
+		return true, &mercari.GetTransactionByItemIDResponse{
+			ItemId: itemId,
+			Status: "wait_shipping",
+			ShippingInfo: struct {
+				ShippingMethodName string `json:"shipping_method_name"`
+				TrackingNumber     string `json:"tracking_number"`
+				Status             string `json:"status"`
+				BuyerShippingFee   string `json:"buyer_shipping_fee"`
+			}{
+				TrackingNumber: uuid.New().String(),
+			},
+		}
+	}
+
+	return false, nil
+}
+
+func MockMercariPostOrderResponse(req *supply.MercariPostOrderReq) (*supply.MercariPostOrderResp, bool) {
+	if config.GlobalServerConfig.Env != "development" {
+		return nil, false
+	}
+
+	case1 := map[string]bool{
+		"m84912732956": true,
+		"m98313908967": true,
+		"m21398498724": true,
+		"m87457435408": true,
+		"m23552581043": true,
+	}
+
+	if _, ok := case1[req.ItemID]; ok {
+		return &supply.MercariPostOrderResp{
+			TrxID:            uuid.New().String(),
+			Price:            req.RefPrice,
+			PaidPrice:        req.RefPrice,
+			Checksum:         req.Checksum,
+			ItemID:           req.ItemID,
+			CouponID:         0,
+			BuyerShippingFee: 0,
+		}, true
+	}
+
+	return nil, false
+
 }

@@ -66,6 +66,11 @@ func getResponse(tx *model.Transaction) *supply.MercariPostOrderResp {
 
 func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*supply.MercariPostOrderResp, error) {
 	hlog.CtxInfof(ctx, "PostOrderService is called, req: %+v", req)
+
+	if resp, ok := mock.MockMercariPostOrderResponse(req); ok {
+		return resp, nil
+	}
+
 	// 1. validation
 	if err := validateRequest(ctx, req); err != nil {
 		return nil, err

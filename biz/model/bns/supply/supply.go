@@ -3835,25 +3835,26 @@ type MercariSearchItemsReq struct {
 	Keyword                 *string `thrift:"keyword,1,optional" form:"keyword" json:"keyword,omitempty" query:"keyword"`
 	ExcludeKeyword          *string `thrift:"exclude_keyword,2,optional" form:"exclude_keyword" json:"exclude_keyword,omitempty" query:"exclude_keyword"`
 	CategoryID              *int32  `thrift:"category_id,3,optional" form:"category_id" json:"category_id,omitempty" query:"category_id"`
-	SellerID                *int32  `thrift:"seller_id,4,optional" form:"seller_id" json:"seller_id,omitempty" query:"seller_id"`
-	ShopID                  *string `thrift:"shop_id,5,optional" form:"shop_id" json:"shop_id,omitempty" query:"shop_id"`
-	SizeID                  *int32  `thrift:"size_id,6,optional" form:"size_id" json:"size_id,omitempty" query:"size_id"`
-	ColorID                 *int32  `thrift:"color_id,7,optional" form:"color_id" json:"color_id,omitempty" query:"color_id"`
-	PriceMin                *int32  `thrift:"price_min,8,optional" form:"price_min" json:"price_min,omitempty" query:"price_min"`
-	PriceMax                *int32  `thrift:"price_max,9,optional" form:"price_max" json:"price_max,omitempty" query:"price_max"`
-	CreatedBeforeDate       *int32  `thrift:"created_before_date,10,optional" form:"created_before_date" json:"created_before_date,omitempty" query:"created_before_date"`
-	CreatedAfterDate        *int32  `thrift:"created_after_date,11,optional" form:"created_after_date" json:"created_after_date,omitempty" query:"created_after_date"`
-	ItemConditionID         *int32  `thrift:"item_condition_id,12,optional" form:"item_condition_id" json:"item_condition_id,omitempty" query:"item_condition_id"`
-	ShippingPayerID         *int32  `thrift:"shipping_payer_id,13,optional" form:"shipping_payer_id" json:"shipping_payer_id,omitempty" query:"shipping_payer_id"`
-	Status                  *string `thrift:"status,14,optional" form:"status" json:"status,omitempty" query:"status"`
-	Marketplace             *int32  `thrift:"marketplace,15,optional" form:"marketplace" json:"marketplace,omitempty" query:"marketplace"`
-	Sort                    *string `thrift:"sort,16,optional" form:"sort" json:"sort,omitempty" query:"sort"`
-	Order                   *string `thrift:"order,17,optional" form:"order" json:"order,omitempty" query:"order"`
-	Page                    *int32  `thrift:"page,18,optional" form:"page" json:"page,omitempty" query:"page"`
-	Limit                   *int32  `thrift:"limit,19,optional" form:"limit" json:"limit,omitempty" query:"limit"`
-	ItemAuthentication      *bool   `thrift:"item_authentication,20,optional" form:"item_authentication" json:"item_authentication,omitempty" query:"item_authentication"`
-	TimeSale                *bool   `thrift:"time_sale,21,optional" form:"time_sale" json:"time_sale,omitempty" query:"time_sale"`
-	WithOfferPricePromotion *bool   `thrift:"with_offer_price_promotion,22,optional" form:"with_offer_price_promotion" json:"with_offer_price_promotion,omitempty" query:"with_offer_price_promotion"`
+	BrandID                 *int32  `thrift:"brand_id,4,optional" form:"brand_id" json:"brand_id,omitempty" query:"brand_id"`
+	SellerID                *int32  `thrift:"seller_id,5,optional" form:"seller_id" json:"seller_id,omitempty" query:"seller_id"`
+	ShopID                  *string `thrift:"shop_id,6,optional" form:"shop_id" json:"shop_id,omitempty" query:"shop_id"`
+	SizeID                  *int32  `thrift:"size_id,7,optional" form:"size_id" json:"size_id,omitempty" query:"size_id"`
+	ColorID                 *int32  `thrift:"color_id,8,optional" form:"color_id" json:"color_id,omitempty" query:"color_id"`
+	PriceMin                *int32  `thrift:"price_min,9,optional" form:"price_min" json:"price_min,omitempty" query:"price_min"`
+	PriceMax                *int32  `thrift:"price_max,10,optional" form:"price_max" json:"price_max,omitempty" query:"price_max"`
+	CreatedBeforeDate       *int32  `thrift:"created_before_date,11,optional" form:"created_before_date" json:"created_before_date,omitempty" query:"created_before_date"`
+	CreatedAfterDate        *int32  `thrift:"created_after_date,12,optional" form:"created_after_date" json:"created_after_date,omitempty" query:"created_after_date"`
+	ItemConditionID         *int32  `thrift:"item_condition_id,13,optional" form:"item_condition_id" json:"item_condition_id,omitempty" query:"item_condition_id"`
+	ShippingPayerID         *int32  `thrift:"shipping_payer_id,14,optional" form:"shipping_payer_id" json:"shipping_payer_id,omitempty" query:"shipping_payer_id"`
+	Status                  *string `thrift:"status,15,optional" form:"status" json:"status,omitempty" query:"status"`
+	Marketplace             *int32  `thrift:"marketplace,16,optional" form:"marketplace" json:"marketplace,omitempty" query:"marketplace"`
+	Sort                    *string `thrift:"sort,17,optional" form:"sort" json:"sort,omitempty" query:"sort"`
+	Order                   *string `thrift:"order,18,optional" form:"order" json:"order,omitempty" query:"order"`
+	Page                    *int32  `thrift:"page,19,optional" form:"page" json:"page,omitempty" query:"page"`
+	Limit                   *int32  `thrift:"limit,20,optional" form:"limit" json:"limit,omitempty" query:"limit"`
+	ItemAuthentication      *bool   `thrift:"item_authentication,21,optional" form:"item_authentication" json:"item_authentication,omitempty" query:"item_authentication"`
+	TimeSale                *bool   `thrift:"time_sale,22,optional" form:"time_sale" json:"time_sale,omitempty" query:"time_sale"`
+	WithOfferPricePromotion *bool   `thrift:"with_offer_price_promotion,23,optional" form:"with_offer_price_promotion" json:"with_offer_price_promotion,omitempty" query:"with_offer_price_promotion"`
 }
 
 func NewMercariSearchItemsReq() *MercariSearchItemsReq {
@@ -3885,6 +3886,15 @@ func (p *MercariSearchItemsReq) GetCategoryID() (v int32) {
 		return MercariSearchItemsReq_CategoryID_DEFAULT
 	}
 	return *p.CategoryID
+}
+
+var MercariSearchItemsReq_BrandID_DEFAULT int32
+
+func (p *MercariSearchItemsReq) GetBrandID() (v int32) {
+	if !p.IsSetBrandID() {
+		return MercariSearchItemsReq_BrandID_DEFAULT
+	}
+	return *p.BrandID
 }
 
 var MercariSearchItemsReq_SellerID_DEFAULT int32
@@ -4062,25 +4072,26 @@ var fieldIDToName_MercariSearchItemsReq = map[int16]string{
 	1:  "keyword",
 	2:  "exclude_keyword",
 	3:  "category_id",
-	4:  "seller_id",
-	5:  "shop_id",
-	6:  "size_id",
-	7:  "color_id",
-	8:  "price_min",
-	9:  "price_max",
-	10: "created_before_date",
-	11: "created_after_date",
-	12: "item_condition_id",
-	13: "shipping_payer_id",
-	14: "status",
-	15: "marketplace",
-	16: "sort",
-	17: "order",
-	18: "page",
-	19: "limit",
-	20: "item_authentication",
-	21: "time_sale",
-	22: "with_offer_price_promotion",
+	4:  "brand_id",
+	5:  "seller_id",
+	6:  "shop_id",
+	7:  "size_id",
+	8:  "color_id",
+	9:  "price_min",
+	10: "price_max",
+	11: "created_before_date",
+	12: "created_after_date",
+	13: "item_condition_id",
+	14: "shipping_payer_id",
+	15: "status",
+	16: "marketplace",
+	17: "sort",
+	18: "order",
+	19: "page",
+	20: "limit",
+	21: "item_authentication",
+	22: "time_sale",
+	23: "with_offer_price_promotion",
 }
 
 func (p *MercariSearchItemsReq) IsSetKeyword() bool {
@@ -4093,6 +4104,10 @@ func (p *MercariSearchItemsReq) IsSetExcludeKeyword() bool {
 
 func (p *MercariSearchItemsReq) IsSetCategoryID() bool {
 	return p.CategoryID != nil
+}
+
+func (p *MercariSearchItemsReq) IsSetBrandID() bool {
+	return p.BrandID != nil
 }
 
 func (p *MercariSearchItemsReq) IsSetSellerID() bool {
@@ -4223,7 +4238,7 @@ func (p *MercariSearchItemsReq) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 5:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField5(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -4231,7 +4246,7 @@ func (p *MercariSearchItemsReq) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 6:
-			if fieldTypeId == thrift.I32 {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField6(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -4295,7 +4310,7 @@ func (p *MercariSearchItemsReq) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 14:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField14(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -4303,7 +4318,7 @@ func (p *MercariSearchItemsReq) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 15:
-			if fieldTypeId == thrift.I32 {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField15(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -4311,7 +4326,7 @@ func (p *MercariSearchItemsReq) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 16:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField16(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -4327,7 +4342,7 @@ func (p *MercariSearchItemsReq) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 18:
-			if fieldTypeId == thrift.I32 {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField18(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -4343,7 +4358,7 @@ func (p *MercariSearchItemsReq) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 20:
-			if fieldTypeId == thrift.BOOL {
+			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField20(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -4361,6 +4376,14 @@ func (p *MercariSearchItemsReq) Read(iprot thrift.TProtocol) (err error) {
 		case 22:
 			if fieldTypeId == thrift.BOOL {
 				if err = p.ReadField22(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 23:
+			if fieldTypeId == thrift.BOOL {
+				if err = p.ReadField23(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -4427,11 +4450,20 @@ func (p *MercariSearchItemsReq) ReadField4(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI32(); err != nil {
 		return err
 	} else {
-		p.SellerID = &v
+		p.BrandID = &v
 	}
 	return nil
 }
 func (p *MercariSearchItemsReq) ReadField5(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.SellerID = &v
+	}
+	return nil
+}
+func (p *MercariSearchItemsReq) ReadField6(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -4440,7 +4472,7 @@ func (p *MercariSearchItemsReq) ReadField5(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariSearchItemsReq) ReadField6(iprot thrift.TProtocol) error {
+func (p *MercariSearchItemsReq) ReadField7(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadI32(); err != nil {
 		return err
@@ -4449,7 +4481,7 @@ func (p *MercariSearchItemsReq) ReadField6(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariSearchItemsReq) ReadField7(iprot thrift.TProtocol) error {
+func (p *MercariSearchItemsReq) ReadField8(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadI32(); err != nil {
 		return err
@@ -4458,7 +4490,7 @@ func (p *MercariSearchItemsReq) ReadField7(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariSearchItemsReq) ReadField8(iprot thrift.TProtocol) error {
+func (p *MercariSearchItemsReq) ReadField9(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadI32(); err != nil {
 		return err
@@ -4467,7 +4499,7 @@ func (p *MercariSearchItemsReq) ReadField8(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariSearchItemsReq) ReadField9(iprot thrift.TProtocol) error {
+func (p *MercariSearchItemsReq) ReadField10(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadI32(); err != nil {
 		return err
@@ -4476,7 +4508,7 @@ func (p *MercariSearchItemsReq) ReadField9(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariSearchItemsReq) ReadField10(iprot thrift.TProtocol) error {
+func (p *MercariSearchItemsReq) ReadField11(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadI32(); err != nil {
 		return err
@@ -4485,7 +4517,7 @@ func (p *MercariSearchItemsReq) ReadField10(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariSearchItemsReq) ReadField11(iprot thrift.TProtocol) error {
+func (p *MercariSearchItemsReq) ReadField12(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadI32(); err != nil {
 		return err
@@ -4494,7 +4526,7 @@ func (p *MercariSearchItemsReq) ReadField11(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariSearchItemsReq) ReadField12(iprot thrift.TProtocol) error {
+func (p *MercariSearchItemsReq) ReadField13(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadI32(); err != nil {
 		return err
@@ -4503,7 +4535,7 @@ func (p *MercariSearchItemsReq) ReadField12(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariSearchItemsReq) ReadField13(iprot thrift.TProtocol) error {
+func (p *MercariSearchItemsReq) ReadField14(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadI32(); err != nil {
 		return err
@@ -4512,7 +4544,7 @@ func (p *MercariSearchItemsReq) ReadField13(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariSearchItemsReq) ReadField14(iprot thrift.TProtocol) error {
+func (p *MercariSearchItemsReq) ReadField15(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -4521,7 +4553,7 @@ func (p *MercariSearchItemsReq) ReadField14(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariSearchItemsReq) ReadField15(iprot thrift.TProtocol) error {
+func (p *MercariSearchItemsReq) ReadField16(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadI32(); err != nil {
 		return err
@@ -4530,7 +4562,7 @@ func (p *MercariSearchItemsReq) ReadField15(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariSearchItemsReq) ReadField16(iprot thrift.TProtocol) error {
+func (p *MercariSearchItemsReq) ReadField17(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -4539,7 +4571,7 @@ func (p *MercariSearchItemsReq) ReadField16(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariSearchItemsReq) ReadField17(iprot thrift.TProtocol) error {
+func (p *MercariSearchItemsReq) ReadField18(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -4548,7 +4580,7 @@ func (p *MercariSearchItemsReq) ReadField17(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariSearchItemsReq) ReadField18(iprot thrift.TProtocol) error {
+func (p *MercariSearchItemsReq) ReadField19(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadI32(); err != nil {
 		return err
@@ -4557,7 +4589,7 @@ func (p *MercariSearchItemsReq) ReadField18(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariSearchItemsReq) ReadField19(iprot thrift.TProtocol) error {
+func (p *MercariSearchItemsReq) ReadField20(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadI32(); err != nil {
 		return err
@@ -4566,7 +4598,7 @@ func (p *MercariSearchItemsReq) ReadField19(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariSearchItemsReq) ReadField20(iprot thrift.TProtocol) error {
+func (p *MercariSearchItemsReq) ReadField21(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadBool(); err != nil {
 		return err
@@ -4575,7 +4607,7 @@ func (p *MercariSearchItemsReq) ReadField20(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariSearchItemsReq) ReadField21(iprot thrift.TProtocol) error {
+func (p *MercariSearchItemsReq) ReadField22(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadBool(); err != nil {
 		return err
@@ -4584,7 +4616,7 @@ func (p *MercariSearchItemsReq) ReadField21(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariSearchItemsReq) ReadField22(iprot thrift.TProtocol) error {
+func (p *MercariSearchItemsReq) ReadField23(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadBool(); err != nil {
 		return err
@@ -4688,6 +4720,10 @@ func (p *MercariSearchItemsReq) Write(oprot thrift.TProtocol) (err error) {
 			fieldId = 22
 			goto WriteFieldError
 		}
+		if err = p.writeField23(oprot); err != nil {
+			fieldId = 23
+			goto WriteFieldError
+		}
 	}
 	if err = oprot.WriteFieldStop(); err != nil {
 		goto WriteFieldStopError
@@ -4764,11 +4800,11 @@ WriteFieldEndError:
 }
 
 func (p *MercariSearchItemsReq) writeField4(oprot thrift.TProtocol) (err error) {
-	if p.IsSetSellerID() {
-		if err = oprot.WriteFieldBegin("seller_id", thrift.I32, 4); err != nil {
+	if p.IsSetBrandID() {
+		if err = oprot.WriteFieldBegin("brand_id", thrift.I32, 4); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI32(*p.SellerID); err != nil {
+		if err := oprot.WriteI32(*p.BrandID); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -4783,11 +4819,11 @@ WriteFieldEndError:
 }
 
 func (p *MercariSearchItemsReq) writeField5(oprot thrift.TProtocol) (err error) {
-	if p.IsSetShopID() {
-		if err = oprot.WriteFieldBegin("shop_id", thrift.STRING, 5); err != nil {
+	if p.IsSetSellerID() {
+		if err = oprot.WriteFieldBegin("seller_id", thrift.I32, 5); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(*p.ShopID); err != nil {
+		if err := oprot.WriteI32(*p.SellerID); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -4802,11 +4838,11 @@ WriteFieldEndError:
 }
 
 func (p *MercariSearchItemsReq) writeField6(oprot thrift.TProtocol) (err error) {
-	if p.IsSetSizeID() {
-		if err = oprot.WriteFieldBegin("size_id", thrift.I32, 6); err != nil {
+	if p.IsSetShopID() {
+		if err = oprot.WriteFieldBegin("shop_id", thrift.STRING, 6); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI32(*p.SizeID); err != nil {
+		if err := oprot.WriteString(*p.ShopID); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -4821,11 +4857,11 @@ WriteFieldEndError:
 }
 
 func (p *MercariSearchItemsReq) writeField7(oprot thrift.TProtocol) (err error) {
-	if p.IsSetColorID() {
-		if err = oprot.WriteFieldBegin("color_id", thrift.I32, 7); err != nil {
+	if p.IsSetSizeID() {
+		if err = oprot.WriteFieldBegin("size_id", thrift.I32, 7); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI32(*p.ColorID); err != nil {
+		if err := oprot.WriteI32(*p.SizeID); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -4840,11 +4876,11 @@ WriteFieldEndError:
 }
 
 func (p *MercariSearchItemsReq) writeField8(oprot thrift.TProtocol) (err error) {
-	if p.IsSetPriceMin() {
-		if err = oprot.WriteFieldBegin("price_min", thrift.I32, 8); err != nil {
+	if p.IsSetColorID() {
+		if err = oprot.WriteFieldBegin("color_id", thrift.I32, 8); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI32(*p.PriceMin); err != nil {
+		if err := oprot.WriteI32(*p.ColorID); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -4859,11 +4895,11 @@ WriteFieldEndError:
 }
 
 func (p *MercariSearchItemsReq) writeField9(oprot thrift.TProtocol) (err error) {
-	if p.IsSetPriceMax() {
-		if err = oprot.WriteFieldBegin("price_max", thrift.I32, 9); err != nil {
+	if p.IsSetPriceMin() {
+		if err = oprot.WriteFieldBegin("price_min", thrift.I32, 9); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI32(*p.PriceMax); err != nil {
+		if err := oprot.WriteI32(*p.PriceMin); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -4878,11 +4914,11 @@ WriteFieldEndError:
 }
 
 func (p *MercariSearchItemsReq) writeField10(oprot thrift.TProtocol) (err error) {
-	if p.IsSetCreatedBeforeDate() {
-		if err = oprot.WriteFieldBegin("created_before_date", thrift.I32, 10); err != nil {
+	if p.IsSetPriceMax() {
+		if err = oprot.WriteFieldBegin("price_max", thrift.I32, 10); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI32(*p.CreatedBeforeDate); err != nil {
+		if err := oprot.WriteI32(*p.PriceMax); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -4897,11 +4933,11 @@ WriteFieldEndError:
 }
 
 func (p *MercariSearchItemsReq) writeField11(oprot thrift.TProtocol) (err error) {
-	if p.IsSetCreatedAfterDate() {
-		if err = oprot.WriteFieldBegin("created_after_date", thrift.I32, 11); err != nil {
+	if p.IsSetCreatedBeforeDate() {
+		if err = oprot.WriteFieldBegin("created_before_date", thrift.I32, 11); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI32(*p.CreatedAfterDate); err != nil {
+		if err := oprot.WriteI32(*p.CreatedBeforeDate); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -4916,11 +4952,11 @@ WriteFieldEndError:
 }
 
 func (p *MercariSearchItemsReq) writeField12(oprot thrift.TProtocol) (err error) {
-	if p.IsSetItemConditionID() {
-		if err = oprot.WriteFieldBegin("item_condition_id", thrift.I32, 12); err != nil {
+	if p.IsSetCreatedAfterDate() {
+		if err = oprot.WriteFieldBegin("created_after_date", thrift.I32, 12); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI32(*p.ItemConditionID); err != nil {
+		if err := oprot.WriteI32(*p.CreatedAfterDate); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -4935,11 +4971,11 @@ WriteFieldEndError:
 }
 
 func (p *MercariSearchItemsReq) writeField13(oprot thrift.TProtocol) (err error) {
-	if p.IsSetShippingPayerID() {
-		if err = oprot.WriteFieldBegin("shipping_payer_id", thrift.I32, 13); err != nil {
+	if p.IsSetItemConditionID() {
+		if err = oprot.WriteFieldBegin("item_condition_id", thrift.I32, 13); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI32(*p.ShippingPayerID); err != nil {
+		if err := oprot.WriteI32(*p.ItemConditionID); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -4954,11 +4990,11 @@ WriteFieldEndError:
 }
 
 func (p *MercariSearchItemsReq) writeField14(oprot thrift.TProtocol) (err error) {
-	if p.IsSetStatus() {
-		if err = oprot.WriteFieldBegin("status", thrift.STRING, 14); err != nil {
+	if p.IsSetShippingPayerID() {
+		if err = oprot.WriteFieldBegin("shipping_payer_id", thrift.I32, 14); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(*p.Status); err != nil {
+		if err := oprot.WriteI32(*p.ShippingPayerID); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -4973,11 +5009,11 @@ WriteFieldEndError:
 }
 
 func (p *MercariSearchItemsReq) writeField15(oprot thrift.TProtocol) (err error) {
-	if p.IsSetMarketplace() {
-		if err = oprot.WriteFieldBegin("marketplace", thrift.I32, 15); err != nil {
+	if p.IsSetStatus() {
+		if err = oprot.WriteFieldBegin("status", thrift.STRING, 15); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI32(*p.Marketplace); err != nil {
+		if err := oprot.WriteString(*p.Status); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -4992,11 +5028,11 @@ WriteFieldEndError:
 }
 
 func (p *MercariSearchItemsReq) writeField16(oprot thrift.TProtocol) (err error) {
-	if p.IsSetSort() {
-		if err = oprot.WriteFieldBegin("sort", thrift.STRING, 16); err != nil {
+	if p.IsSetMarketplace() {
+		if err = oprot.WriteFieldBegin("marketplace", thrift.I32, 16); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(*p.Sort); err != nil {
+		if err := oprot.WriteI32(*p.Marketplace); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -5011,11 +5047,11 @@ WriteFieldEndError:
 }
 
 func (p *MercariSearchItemsReq) writeField17(oprot thrift.TProtocol) (err error) {
-	if p.IsSetOrder() {
-		if err = oprot.WriteFieldBegin("order", thrift.STRING, 17); err != nil {
+	if p.IsSetSort() {
+		if err = oprot.WriteFieldBegin("sort", thrift.STRING, 17); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(*p.Order); err != nil {
+		if err := oprot.WriteString(*p.Sort); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -5030,11 +5066,11 @@ WriteFieldEndError:
 }
 
 func (p *MercariSearchItemsReq) writeField18(oprot thrift.TProtocol) (err error) {
-	if p.IsSetPage() {
-		if err = oprot.WriteFieldBegin("page", thrift.I32, 18); err != nil {
+	if p.IsSetOrder() {
+		if err = oprot.WriteFieldBegin("order", thrift.STRING, 18); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI32(*p.Page); err != nil {
+		if err := oprot.WriteString(*p.Order); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -5049,11 +5085,11 @@ WriteFieldEndError:
 }
 
 func (p *MercariSearchItemsReq) writeField19(oprot thrift.TProtocol) (err error) {
-	if p.IsSetLimit() {
-		if err = oprot.WriteFieldBegin("limit", thrift.I32, 19); err != nil {
+	if p.IsSetPage() {
+		if err = oprot.WriteFieldBegin("page", thrift.I32, 19); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI32(*p.Limit); err != nil {
+		if err := oprot.WriteI32(*p.Page); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -5068,11 +5104,11 @@ WriteFieldEndError:
 }
 
 func (p *MercariSearchItemsReq) writeField20(oprot thrift.TProtocol) (err error) {
-	if p.IsSetItemAuthentication() {
-		if err = oprot.WriteFieldBegin("item_authentication", thrift.BOOL, 20); err != nil {
+	if p.IsSetLimit() {
+		if err = oprot.WriteFieldBegin("limit", thrift.I32, 20); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteBool(*p.ItemAuthentication); err != nil {
+		if err := oprot.WriteI32(*p.Limit); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -5087,11 +5123,11 @@ WriteFieldEndError:
 }
 
 func (p *MercariSearchItemsReq) writeField21(oprot thrift.TProtocol) (err error) {
-	if p.IsSetTimeSale() {
-		if err = oprot.WriteFieldBegin("time_sale", thrift.BOOL, 21); err != nil {
+	if p.IsSetItemAuthentication() {
+		if err = oprot.WriteFieldBegin("item_authentication", thrift.BOOL, 21); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteBool(*p.TimeSale); err != nil {
+		if err := oprot.WriteBool(*p.ItemAuthentication); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -5106,11 +5142,11 @@ WriteFieldEndError:
 }
 
 func (p *MercariSearchItemsReq) writeField22(oprot thrift.TProtocol) (err error) {
-	if p.IsSetWithOfferPricePromotion() {
-		if err = oprot.WriteFieldBegin("with_offer_price_promotion", thrift.BOOL, 22); err != nil {
+	if p.IsSetTimeSale() {
+		if err = oprot.WriteFieldBegin("time_sale", thrift.BOOL, 22); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteBool(*p.WithOfferPricePromotion); err != nil {
+		if err := oprot.WriteBool(*p.TimeSale); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -5122,6 +5158,25 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 22 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 22 end error: ", p), err)
+}
+
+func (p *MercariSearchItemsReq) writeField23(oprot thrift.TProtocol) (err error) {
+	if p.IsSetWithOfferPricePromotion() {
+		if err = oprot.WriteFieldBegin("with_offer_price_promotion", thrift.BOOL, 23); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteBool(*p.WithOfferPricePromotion); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 23 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 23 end error: ", p), err)
 }
 
 func (p *MercariSearchItemsReq) String() string {
