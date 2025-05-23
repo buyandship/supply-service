@@ -105,20 +105,27 @@ func (m *Mercari) PostTransactionReview(ctx context.Context, req *PostTransactio
 				ErrMsg:  string(respBody),
 			}
 		}
-		if httpRes.StatusCode != http.StatusOK && httpRes.StatusCode != http.StatusCreated {
-			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "post mercari transaction review error: %s", respBody)
-			return nil, backoff.Permanent(bizErr.BizError{
-				Status:  httpRes.StatusCode,
-				ErrCode: httpRes.StatusCode,
-				ErrMsg:  string(respBody),
-			})
-		}
+
 		resp := &PostTransactionReviewResponse{}
 		if err := json.NewDecoder(httpRes.Body).Decode(resp); err != nil {
 			hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
+
+		if httpRes.StatusCode != http.StatusOK && httpRes.StatusCode != http.StatusCreated {
+			errCode := httpRes.StatusCode
+			if e, ok := FailureDetailsCodeMap[resp.FailureDetails.Code]; ok {
+				errCode = e
+			}
+			respBody, _ := io.ReadAll(httpRes.Body)
+			hlog.CtxErrorf(ctx, "post mercari transaction review error: %s, trx_id: %s", respBody, req.TrxId)
+			return nil, backoff.Permanent(bizErr.BizError{
+				Status:  httpRes.StatusCode,
+				ErrCode: errCode,
+				ErrMsg:  string(respBody),
+			})
+		}
+
 		hlog.CtxInfof(ctx, "post mercari transaction review response: %+v", resp)
 		return resp, nil
 	}
