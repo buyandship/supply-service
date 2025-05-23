@@ -117,12 +117,11 @@ func (m *Mercari) PostTransactionReview(ctx context.Context, req *PostTransactio
 			if e, ok := FailureDetailsCodeMap[resp.FailureDetails.Code]; ok {
 				errCode = e
 			}
-			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "post mercari transaction review error: %s, trx_id: %s", respBody, req.TrxId)
+			hlog.CtxErrorf(ctx, "post mercari transaction review error: %s, trx_id: %s, request_id: %s", resp.FailureDetails.Reasons, req.TrxId, resp.RequestId)
 			return nil, backoff.Permanent(bizErr.BizError{
 				Status:  httpRes.StatusCode,
 				ErrCode: errCode,
-				ErrMsg:  string(respBody),
+				ErrMsg:  resp.FailureDetails.Reasons,
 			})
 		}
 
