@@ -21,6 +21,7 @@ import (
 
 var FailureDetailsCodeMap = map[string]int{
 	"F0017": 17,
+	"F1004": 1004,
 }
 
 type PurchaseItemRequest struct {
