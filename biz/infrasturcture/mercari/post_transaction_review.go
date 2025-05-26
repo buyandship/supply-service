@@ -14,6 +14,7 @@ import (
 	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/hertz-contrib/logger/zap"
 )
 
 type PostTransactionReviewRequest struct {
@@ -106,6 +107,21 @@ func (m *Mercari) PostTransactionReview(ctx context.Context, req *PostTransactio
 			}
 		}
 
+		if httpRes.StatusCode == http.StatusNotFound {
+			resp := &GenericErrorResponse{}
+			if err := json.NewDecoder(httpRes.Body).Decode(resp); err != nil {
+				hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
+				return nil, backoff.Permanent(bizErr.InternalError)
+			}
+			hlog.CtxErrorf(ctx, "http not found, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
+				httpRes.StatusCode, resp.Message, time.Now().Local())
+			return nil, backoff.Permanent(bizErr.BizError{
+				Status:  httpRes.StatusCode,
+				ErrCode: httpRes.StatusCode,
+				ErrMsg:  fmt.Sprintf("[error_message: %s, details: %+v, request_id: %s]", resp.Message, resp.Details, ctx.Value(zap.ExtraKey("X-Request-ID"))),
+			})
+		}
+
 		resp := &PostTransactionReviewResponse{}
 		if err := json.NewDecoder(httpRes.Body).Decode(resp); err != nil {
 			hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
@@ -121,7 +137,7 @@ func (m *Mercari) PostTransactionReview(ctx context.Context, req *PostTransactio
 			return nil, backoff.Permanent(bizErr.BizError{
 				Status:  httpRes.StatusCode,
 				ErrCode: errCode,
-				ErrMsg:  resp.FailureDetails.Reasons,
+				ErrMsg:  fmt.Sprintf("[error_message: %s, code: %+v, request_id: %s]", resp.FailureDetails.Reasons, resp.FailureDetails.Code, ctx.Value(zap.ExtraKey("X-Request-ID"))),
 			})
 		}
 
