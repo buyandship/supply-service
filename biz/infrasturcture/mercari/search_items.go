@@ -154,6 +154,9 @@ func (m *Mercari) SearchItems(ctx context.Context, req *supply.MercariSearchItem
 		if req.ExcludeKeyword != nil {
 			queryParams.Add("exclude_keyword", *req.ExcludeKeyword)
 		}
+		if req.BrandID != nil {
+			queryParams.Add("brand_id", strconv.Itoa(int(*req.BrandID)))
+		}
 		if req.CategoryID != nil {
 			queryParams.Add("category_id", strconv.Itoa(int(*req.CategoryID)))
 		}

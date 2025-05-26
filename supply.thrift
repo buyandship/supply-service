@@ -104,25 +104,26 @@ struct MercariSearchItemsReq {
     1: optional string keyword
     2: optional string exclude_keyword
     3: optional i32 category_id
-    4: optional i32 seller_id
-    5: optional string shop_id
-    6: optional i32 size_id
-    7: optional i32 color_id
-    8: optional i32 price_min
-    9: optional i32 price_max
-    10: optional i32 created_before_date
-    11: optional i32 created_after_date
-    12: optional i32 item_condition_id
-    13: optional i32 shipping_payer_id
-    14: optional string status
-    15: optional i32 marketplace
-    16: optional string sort
-    17: optional string order
-    18: optional i32 page
-    19: optional i32 limit
-    20: optional bool item_authentication
-    21: optional bool time_sale
-    22: optional bool with_offer_price_promotion
+    4: optional i32 brand_id
+    5: optional i32 seller_id
+    6: optional string shop_id
+    7: optional i32 size_id
+    8: optional i32 color_id
+    9: optional i32 price_min
+    10: optional i32 price_max
+    11: optional i32 created_before_date
+    12: optional i32 created_after_date
+    13: optional i32 item_condition_id
+    14: optional i32 shipping_payer_id
+    15: optional string status
+    16: optional i32 marketplace
+    17: optional string sort
+    18: optional string order
+    19: optional i32 page
+    20: optional i32 limit
+    21: optional bool item_authentication
+    22: optional bool time_sale
+    23: optional bool with_offer_price_promotion
 }
 
 
