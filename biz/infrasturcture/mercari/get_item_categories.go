@@ -91,7 +91,7 @@ func (m *Mercari) GetItemCategories(ctx context.Context) (*GetItemCategoriesResp
 
 		if httpRes.StatusCode != http.StatusOK {
 			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "get mercari item categories error: %s", respBody)
+			hlog.CtxInfof(ctx, "get mercari item categories error: %s", respBody)
 			return nil, backoff.Permanent(bizErr.BizError{
 				Status:  httpRes.StatusCode,
 				ErrCode: httpRes.StatusCode,
