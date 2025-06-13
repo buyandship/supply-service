@@ -103,20 +103,20 @@ struct MercariGetTodoListReq {
 struct MercariSearchItemsReq {
     1: optional string keyword
     2: optional string exclude_keyword
-    3: optional i32 category_id
-    4: optional i32 brand_id
-    5: optional i32 seller_id
+    3: optional string category_id
+    4: optional string brand_id
+    5: optional string seller_id
     6: optional string shop_id
-    7: optional i32 size_id
-    8: optional i32 color_id
+    7: optional string size_id
+    8: optional string color_id
     9: optional i32 price_min
     10: optional i32 price_max
     11: optional i32 created_before_date
     12: optional i32 created_after_date
-    13: optional i32 item_condition_id
-    14: optional i32 shipping_payer_id
+    13: optional string item_condition_id
+    14: optional string shipping_payer_id
     15: optional string status
-    16: optional i32 marketplace
+    16: optional string marketplace
     17: optional string sort
     18: optional string order
     19: optional i32 page

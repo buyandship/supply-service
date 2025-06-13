@@ -155,22 +155,22 @@ func (m *Mercari) SearchItems(ctx context.Context, req *supply.MercariSearchItem
 			queryParams.Add("exclude_keyword", *req.ExcludeKeyword)
 		}
 		if req.BrandID != nil {
-			queryParams.Add("brand_id", strconv.Itoa(int(*req.BrandID)))
+			queryParams.Add("brand_id", req.GetBrandID())
 		}
 		if req.CategoryID != nil {
-			queryParams.Add("category_id", strconv.Itoa(int(*req.CategoryID)))
+			queryParams.Add("category_id", req.GetCategoryID())
 		}
 		if req.SellerID != nil {
-			queryParams.Add("seller_id", strconv.Itoa(int(*req.SellerID)))
+			queryParams.Add("seller_id", req.GetSellerID())
 		}
 		if req.ShopID != nil {
 			queryParams.Add("shop_id", *req.ShopID)
 		}
 		if req.SizeID != nil {
-			queryParams.Add("size_id", strconv.Itoa(int(*req.SizeID)))
+			queryParams.Add("size_id", req.GetSizeID())
 		}
 		if req.ColorID != nil {
-			queryParams.Add("color_id", strconv.Itoa(int(*req.ColorID)))
+			queryParams.Add("color_id", req.GetColorID())
 		}
 		if req.PriceMin != nil {
 			queryParams.Add("price_min", strconv.Itoa(int(*req.PriceMin)))
@@ -185,16 +185,16 @@ func (m *Mercari) SearchItems(ctx context.Context, req *supply.MercariSearchItem
 			queryParams.Add("created_after_date", strconv.Itoa(int(*req.CreatedAfterDate)))
 		}
 		if req.ItemConditionID != nil {
-			queryParams.Add("item_condition_id", strconv.Itoa(int(*req.ItemConditionID)))
+			queryParams.Add("item_condition_id", req.GetItemConditionID())
 		}
 		if req.ShippingPayerID != nil {
-			queryParams.Add("shipping_payer_id", strconv.Itoa(int(*req.ShippingPayerID)))
+			queryParams.Add("shipping_payer_id", req.GetShippingPayerID())
 		}
 		if req.Status != nil {
 			queryParams.Add("status", *req.Status)
 		}
 		if req.Marketplace != nil {
-			queryParams.Add("marketplace", strconv.Itoa(int(*req.Marketplace)))
+			queryParams.Add("marketplace", req.GetMarketplace())
 		}
 		if req.Sort != nil {
 			queryParams.Add("sort", *req.Sort)
