@@ -125,7 +125,7 @@ type AnshinItemAuthentication struct {
 
 func (m *Mercari) SearchItems(ctx context.Context, req *supply.MercariSearchItemsReq) (*SearchItemsResponse, error) {
 	SearchItemsFunc := func() (*SearchItemsResponse, error) {
-		hlog.CtxInfof(ctx, "call /v1/items at %+v", time.Now().Local())
+		hlog.CtxInfof(ctx, "call /v3/items/search at %+v", time.Now().Local())
 
 		if err := m.GetToken(ctx); err != nil {
 			return nil, bizErr.InternalError
