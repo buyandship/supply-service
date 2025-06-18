@@ -12,8 +12,8 @@ import (
 	"time"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"gorm.io/gorm"
@@ -29,7 +29,7 @@ type RefreshTokenResponse struct {
 
 func (m *Mercari) GetToken(ctx context.Context) error {
 	// load from redis cache
-	if err := m.LoadTokenFromCache(ctx); err != nil {
+	if err := cache.GetHandler().Get(ctx, cache.TokenRedisKey, m.Token); err != nil {
 		hlog.CtxInfof(ctx, "load from cache failed, err:%v", err)
 		// Degrade to load from mysql
 		t, err := db.GetHandler().GetToken(ctx)
@@ -40,15 +40,11 @@ func (m *Mercari) GetToken(ctx context.Context) error {
 			return err
 		}
 		m.Token = t
-		js, err := json.Marshal(m.Token)
-		if err != nil {
-			hlog.CtxInfof(ctx, "marshal json failed, err:%v", err)
-		} else {
-			if err := redis.GetHandler().Set(ctx, redis.TokenRedisKey, string(js), 5*time.Minute); err != nil {
-				hlog.CtxErrorf(ctx, "redis set failed, err:%v", err)
-				return err
+		go func() {
+			if err := cache.GetHandler().Set(ctx, cache.TokenRedisKey, m.Token, 5*time.Minute); err != nil {
+				hlog.Warnf("redis set failed, err:%v", err)
 			}
-		}
+		}()
 	}
 	if m.TokenExpired() {
 		if err := m.RefreshToken(ctx); err != nil {
@@ -58,26 +54,11 @@ func (m *Mercari) GetToken(ctx context.Context) error {
 	return nil
 }
 
-func (m *Mercari) LoadTokenFromCache(ctx context.Context) error {
-	s, err := redis.GetHandler().Get(ctx, redis.TokenRedisKey)
-	if err != nil {
-		return err
-	}
-	if t, ok := s.(string); ok {
-		hlog.CtxInfof(ctx, "get token from cache %s", t)
-		if err := json.Unmarshal([]byte(t), m.Token); err != nil {
-			return bizErr.InternalError
-		}
-		return nil
-	}
-	return fmt.Errorf("get token from cache failed")
-}
-
 func (m *Mercari) RefreshToken(ctx context.Context) error {
 	if err := m.refreshToken(ctx); err != nil {
 		return err
 	}
-	if err := redis.GetHandler().Del(ctx, redis.TokenRedisKey); err != nil {
+	if err := cache.GetHandler().Del(ctx, cache.TokenRedisKey); err != nil {
 		return err
 	}
 	return nil
@@ -85,7 +66,7 @@ func (m *Mercari) RefreshToken(ctx context.Context) error {
 
 func (m *Mercari) refreshToken(ctx context.Context) error {
 	// Try to acquire lock
-	locked, err := redis.GetHandler().TryLock(ctx, "mercari_refresh_token")
+	locked, err := cache.GetHandler().TryLock(ctx, "mercari_refresh_token")
 	if err != nil {
 		hlog.CtxErrorf(ctx, "failed to acquire lock: %v", err)
 		return bizErr.InternalError
@@ -95,12 +76,12 @@ func (m *Mercari) refreshToken(ctx context.Context) error {
 		return bizErr.ConflictError
 	}
 	defer func() {
-		if err := redis.GetHandler().Unlock(ctx, "mercari_refresh_token"); err != nil {
+		if err := cache.GetHandler().Unlock(ctx, "mercari_refresh_token"); err != nil {
 			hlog.CtxErrorf(ctx, "failed to release lock: %v", err)
 		}
 	}()
 
-	if ok := redis.GetHandler().Limit(ctx); ok {
+	if ok := cache.GetHandler().Limit(ctx); ok {
 		hlog.CtxErrorf(ctx, "rate limit error")
 		return bizErr.RateLimitError
 	}

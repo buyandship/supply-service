@@ -12,7 +12,7 @@ import (
 	"time"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -131,7 +131,7 @@ func (m *Mercari) SearchItems(ctx context.Context, req *supply.MercariSearchItem
 			return nil, bizErr.InternalError
 		}
 
-		if ok := redis.GetHandler().Limit(ctx); ok {
+		if ok := cache.GetHandler().Limit(ctx); ok {
 			hlog.CtxErrorf(ctx, "hit rate limit")
 			return nil, bizErr.RateLimitError
 		}

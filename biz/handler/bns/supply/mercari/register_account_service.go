@@ -3,9 +3,11 @@ package mercari
 import (
 	"context"
 	"fmt"
+
+	"github.com/buyandship/supply-svr/biz/common/config"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -37,7 +39,7 @@ func RegisterAccountService(ctx context.Context, req *supply.MercariRegisterAcco
 		return nil, err
 	}
 	// delete cache
-	if err := redis.GetHandler().Del(ctx, fmt.Sprintf("buyer:%d", req.GetBuyerID())); err != nil {
+	if err := cache.GetHandler().Del(ctx, fmt.Sprintf(config.MercariAccountPrefix, req.GetBuyerID())); err != nil {
 		return nil, err
 	}
 

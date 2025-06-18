@@ -10,8 +10,8 @@ import (
 	"net/url"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	"github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -33,7 +33,7 @@ type GetTokenResponse struct {
 }
 
 func (m *Mercari) SetToken(ctx context.Context, req *supply.MercariLoginCallBackReq) error {
-	if ok := redis.GetHandler().Limit(ctx); ok {
+	if ok := cache.GetHandler().Limit(ctx); ok {
 		return bizErr.RateLimitError
 	}
 
@@ -98,7 +98,7 @@ func (m *Mercari) SetToken(ctx context.Context, req *supply.MercariLoginCallBack
 		return bizErr.InternalError
 	}
 
-	if err := redis.GetHandler().Del(ctx, redis.TokenRedisKey); err != nil {
+	if err := cache.GetHandler().Del(ctx, cache.TokenRedisKey); err != nil {
 		return err
 	}
 
