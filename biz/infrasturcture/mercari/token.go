@@ -88,17 +88,20 @@ func (m *Mercari) SetToken(ctx context.Context, req *supply.MercariLoginCallBack
 	hlog.CtxInfof(ctx, "get token success, resp: %+v", resp)
 
 	// insert token
+	// TODO: set account id
+	accountId := 0
 	if err := db.GetHandler().InsertTokenLog(ctx, &mercari.Token{
 		AccessToken:  resp.AccessToken,
 		RefreshToken: resp.RefreshToken,
 		ExpiresIn:    resp.ExpiresIn,
 		Scope:        resp.Scope,
 		TokenType:    resp.TokenType,
+		AccountID:    int32(accountId),
 	}); err != nil {
 		return bizErr.InternalError
 	}
 
-	if err := cache.GetHandler().Del(ctx, cache.TokenRedisKey); err != nil {
+	if err := cache.GetHandler().Del(ctx, fmt.Sprintf(cache.TokenRedisKeyPrefix, accountId)); err != nil {
 		return err
 	}
 

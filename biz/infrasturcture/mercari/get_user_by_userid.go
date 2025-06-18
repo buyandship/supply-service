@@ -11,6 +11,7 @@ import (
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
+	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
@@ -47,9 +48,8 @@ func (m *Mercari) GetUser(ctx context.Context, req *GetUserByUserIDRequest) (*Ge
 	getUserFunc := func() (*GetUserByUserIDResponse, error) {
 		hlog.CtxInfof(ctx, "call /v1/users at %+v", time.Now())
 
-		if err := m.GetToken(ctx); err != nil {
-			return nil, bizErr.InternalError
-		}
+		token := &model.Token{}
+		// TODO: get active token
 
 		if ok := cache.GetHandler().Limit(ctx); ok {
 			hlog.CtxErrorf(ctx, "hit rate limit")
@@ -58,7 +58,7 @@ func (m *Mercari) GetUser(ctx context.Context, req *GetUserByUserIDRequest) (*Ge
 
 		headers := map[string][]string{
 			"Accept":        {"application/json"},
-			"Authorization": {m.Token.AccessToken},
+			"Authorization": {token.AccessToken},
 		}
 		url := fmt.Sprintf("%s/v1/users/%s", m.OpenApiDomain, req.UserId)
 		httpReq, err := http.NewRequest("GET", url, nil)
@@ -82,7 +82,7 @@ func (m *Mercari) GetUser(ctx context.Context, req *GetUserByUserIDRequest) (*Ge
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
-			if err := m.RefreshToken(ctx); err != nil {
+			if err := m.RefreshToken(ctx, token); err != nil {
 				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
 				return nil, backoff.RetryAfter(1)
 			}

@@ -1,6 +1,10 @@
 package mercari
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Token struct {
 	gorm.Model
@@ -9,8 +13,20 @@ type Token struct {
 	ExpiresIn    int32  `gorm:"column:expires_in"`
 	Scope        string `gorm:"size:255"`
 	TokenType    string `gorm:"size:255"`
+	AccountID    int32  `gorm:"column:account_id;index"`
 }
 
 func (Token) TableName() string {
 	return "token"
+}
+
+func (m *Token) Expired() bool {
+	if m == nil {
+		return true
+	}
+	expiredTime := m.CreatedAt.Add(time.Duration(m.ExpiresIn-60) * time.Second)
+	if time.Now().After(expiredTime) {
+		return true
+	}
+	return false
 }

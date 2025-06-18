@@ -27,44 +27,45 @@ type RefreshTokenResponse struct {
 	TokenType    string `json:"token_type"`
 }
 
-func (m *Mercari) GetToken(ctx context.Context) error {
+func (m *Mercari) GetToken(ctx context.Context, accountId int32) (*mercari.Token, error) {
 	// load from redis cache
-	if err := cache.GetHandler().Get(ctx, cache.TokenRedisKey, m.Token); err != nil {
+	token := &mercari.Token{}
+	if err := cache.GetHandler().Get(ctx, fmt.Sprintf(cache.TokenRedisKeyPrefix, accountId), token); err != nil {
 		hlog.CtxInfof(ctx, "load from cache failed, err:%v", err)
 		// Degrade to load from mysql
 		t, err := db.GetHandler().GetToken(ctx)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return bizErr.UnloginError
+				return nil, bizErr.UnloginError
 			}
-			return err
+			return nil, err
 		}
-		m.Token = t
 		go func() {
-			if err := cache.GetHandler().Set(ctx, cache.TokenRedisKey, m.Token, 5*time.Minute); err != nil {
+			if err := cache.GetHandler().Set(context.Background(), fmt.Sprintf(cache.TokenRedisKeyPrefix, accountId), token, 5*time.Minute); err != nil {
 				hlog.Warnf("redis set failed, err:%v", err)
 			}
 		}()
+		return t, nil
 	}
-	if m.TokenExpired() {
-		if err := m.RefreshToken(ctx); err != nil {
-			return err
+	if token.Expired() {
+		if err := m.RefreshToken(ctx, token); err != nil {
+			return nil, err
 		}
 	}
+	return token, nil
+}
+
+func (m *Mercari) RefreshToken(ctx context.Context, token *mercari.Token) error {
+	if err := m.refreshToken(ctx, token); err != nil {
+		return err
+	}
+	if err := cache.GetHandler().Del(ctx, fmt.Sprintf(cache.TokenRedisKeyPrefix, token.AccountID)); err != nil {
+		return err
+	}
 	return nil
 }
 
-func (m *Mercari) RefreshToken(ctx context.Context) error {
-	if err := m.refreshToken(ctx); err != nil {
-		return err
-	}
-	if err := cache.GetHandler().Del(ctx, cache.TokenRedisKey); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *Mercari) refreshToken(ctx context.Context) error {
+func (m *Mercari) refreshToken(ctx context.Context, token *mercari.Token) error {
 	// Try to acquire lock
 	locked, err := cache.GetHandler().TryLock(ctx, "mercari_refresh_token")
 	if err != nil {
@@ -97,7 +98,7 @@ func (m *Mercari) refreshToken(ctx context.Context) error {
 	}
 
 	body := fmt.Sprintf("grant_type=%s&scope=%s&refresh_token=%s", "refresh_token",
-		url.QueryEscape(m.Token.Scope), m.Token.RefreshToken)
+		url.QueryEscape(token.Scope), token.RefreshToken)
 
 	data := bytes.NewBuffer([]byte(body))
 	url := fmt.Sprintf("%s/jp/v1/token", m.AuthServiceDomain)
@@ -144,12 +145,13 @@ func (m *Mercari) refreshToken(ctx context.Context) error {
 		return bizErr.InternalError
 	}
 
-	m.Token = &mercari.Token{
+	token = &mercari.Token{
 		AccessToken:  resp.AccessToken,
 		RefreshToken: resp.RefreshToken,
 		ExpiresIn:    resp.ExpiresIn,
 		Scope:        resp.Scope,
 		TokenType:    resp.TokenType,
+		AccountID:    token.AccountID,
 	}
 
 	return nil

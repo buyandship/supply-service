@@ -25,7 +25,7 @@ var FailureDetailsCodeMap = map[string]int{
 }
 
 type PurchaseItemRequest struct {
-	BuyerId            int32  `json:"buyer_id"`
+	AccountId          int32  `json:"account_id"`
 	ItemId             string `json:"item_id"`
 	FamilyName         string `json:"family_name"`
 	FirstName          string `json:"first_name"`
@@ -97,9 +97,8 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 	purchaseItemFunc := func() (*PurchaseItemResponse, error) {
 		hlog.CtxInfof(ctx, "call /v1/items/purchase at %+v", time.Now())
 
-		if err := m.GetToken(ctx); err != nil {
-			return nil, err
-		}
+		token := &model.Token{}
+		// TODO: get active token
 
 		if ok := cache.GetHandler().Limit(ctx); ok {
 			hlog.CtxErrorf(ctx, "hit rate limit")
@@ -109,7 +108,7 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 		headers := map[string][]string{
 			"Content-Type":  {"application/json"},
 			"Accept":        {"application/json"},
-			"Authorization": {m.Token.AccessToken},
+			"Authorization": {token.AccessToken},
 		}
 		reqBody, err := json.Marshal(req)
 		if err != nil {
@@ -139,7 +138,7 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
-			if err := m.RefreshToken(ctx); err != nil {
+			if err := m.RefreshToken(ctx, token); err != nil {
 				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
 				return nil, backoff.RetryAfter(1)
 			}

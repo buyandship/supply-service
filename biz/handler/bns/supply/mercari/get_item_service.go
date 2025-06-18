@@ -2,6 +2,7 @@ package mercari
 
 import (
 	"context"
+
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/handler/bns/supply/utils"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
@@ -26,7 +27,7 @@ func GetItemService(ctx context.Context, req *supply.MercariGetItemReq) (*mercar
 	h := mercari.GetHandler()
 
 	prefecture := ""
-	acc, err := utils.GetBuyer(ctx, req.GetBuyerID())
+	acc, err := utils.GetBuyer(ctx, 0)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "GetBuyer error: %v", err)
 	} else {

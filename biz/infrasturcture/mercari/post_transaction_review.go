@@ -12,6 +12,7 @@ import (
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
+	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/hertz-contrib/logger/zap"
@@ -36,9 +37,8 @@ func (m *Mercari) PostTransactionReview(ctx context.Context, req *PostTransactio
 	postTransactionReviewFunc := func() (*PostTransactionReviewResponse, error) {
 		hlog.CtxInfof(ctx, "call /v1/transactions/{transactionID}/post_review at %+v", time.Now())
 
-		if err := m.GetToken(ctx); err != nil {
-			return nil, bizErr.InternalError
-		}
+		token := &model.Token{}
+		// TODO: get active token
 
 		if ok := cache.GetHandler().Limit(ctx); ok {
 			hlog.CtxErrorf(ctx, "hit rate limit")
@@ -47,7 +47,7 @@ func (m *Mercari) PostTransactionReview(ctx context.Context, req *PostTransactio
 
 		headers := map[string][]string{
 			"Content-Type":  {"application/json"},
-			"Authorization": {m.Token.AccessToken},
+			"Authorization": {token.AccessToken},
 		}
 		jsonReq := map[string]string{
 			"fame":    req.Fame,
@@ -81,7 +81,7 @@ func (m *Mercari) PostTransactionReview(ctx context.Context, req *PostTransactio
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
-			if err := m.RefreshToken(ctx); err != nil {
+			if err := m.RefreshToken(ctx, token); err != nil {
 				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
 				return nil, backoff.RetryAfter(1)
 			}

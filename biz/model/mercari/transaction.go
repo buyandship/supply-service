@@ -23,6 +23,7 @@ type Transaction struct {
 	Currency         string         `gorm:"size:255"`
 	BuyerShippingFee string         `gorm:"size:255"`
 	DeliveryId       string         `gorm:"size:255"`
+	AccountID        int32          `gorm:"column:account_id;index"`
 }
 
 func (Transaction) TableName() string {

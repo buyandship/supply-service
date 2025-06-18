@@ -350,3 +350,18 @@ func MercariGetBrandsService(ctx context.Context, c *app.RequestContext) {
 
 	c.JSON(consts.StatusOK, resp)
 }
+
+// MercariGetAccountService .
+// @router /v1/supplysrv/internal/mercari/account/list [GET]
+func MercariGetAccountService(ctx context.Context, c *app.RequestContext) {
+	var err error
+
+	resp, err := mercari.GetAccountListService(ctx)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}

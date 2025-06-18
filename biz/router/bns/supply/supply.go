@@ -37,6 +37,10 @@ func Register(r *server.Hertz) {
 					_mercari.GET("/todo", append(_mercarigettodolistserviceMw(), supply.MercariGetTodoListService)...)
 					_mercari.GET("/token", append(_mercarigettokenserviceMw(), supply.MercariGetTokenService)...)
 					_mercari.GET("/tx", append(_mercarigettransactionbyitemidserviceMw(), supply.MercariGetTransactionByItemIdService)...)
+					{
+						_account := _mercari.Group("/account", _accountMw()...)
+						_account.GET("/list", append(_mercarigetaccountserviceMw(), supply.MercariGetAccountService)...)
+					}
 				}
 			}
 		}

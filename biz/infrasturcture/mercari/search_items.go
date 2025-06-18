@@ -14,6 +14,7 @@ import (
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
+	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
@@ -127,9 +128,7 @@ func (m *Mercari) SearchItems(ctx context.Context, req *supply.MercariSearchItem
 	SearchItemsFunc := func() (*SearchItemsResponse, error) {
 		hlog.CtxInfof(ctx, "call /v3/items/search at %+v", time.Now().Local())
 
-		if err := m.GetToken(ctx); err != nil {
-			return nil, bizErr.InternalError
-		}
+		token := &model.Token{}
 
 		if ok := cache.GetHandler().Limit(ctx); ok {
 			hlog.CtxErrorf(ctx, "hit rate limit")
@@ -138,7 +137,7 @@ func (m *Mercari) SearchItems(ctx context.Context, req *supply.MercariSearchItem
 
 		headers := map[string][]string{
 			"Accept":        {"application/json"},
-			"Authorization": {m.Token.AccessToken},
+			"Authorization": {token.AccessToken},
 		}
 
 		baseUrl, err := url.Parse(fmt.Sprintf("%s/v3/items/search", m.OpenApiDomain))
@@ -240,7 +239,7 @@ func (m *Mercari) SearchItems(ctx context.Context, req *supply.MercariSearchItem
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
-			if err := m.RefreshToken(ctx); err != nil {
+			if err := m.RefreshToken(ctx, token); err != nil {
 				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
 				return nil, backoff.RetryAfter(1)
 			}

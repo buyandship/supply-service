@@ -1,21 +1,14 @@
 package mercari
 
 import (
-	"context"
 	"encoding/base64"
-	"errors"
 	"fmt"
-	"time"
 
-	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cenkalti/backoff/v5"
-	"gorm.io/gorm"
 
 	"sync"
 
 	"github.com/buyandship/supply-svr/biz/common/config"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
 var (
@@ -29,7 +22,6 @@ type Mercari struct {
 	ClientID          string
 	ClientSecret      string
 	CallbackUrl       string
-	Token             *model.Token
 }
 
 func GetHandler() *Mercari {
@@ -43,22 +35,12 @@ func GetHandler() *Mercari {
 			url = "https://api.jp-mercari.com"
 		}
 
-		t, err := db.GetHandler().GetToken(context.Background())
-		if err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				hlog.Infof("Mercari token not found")
-			} else {
-				hlog.Fatal(err)
-			}
-		}
-
 		Handler = &Mercari{
 			AuthServiceDomain: authServiceDomain,
 			OpenApiDomain:     url,
 			ClientID:          config.GlobalServerConfig.Mercari.ClientId,
 			ClientSecret:      config.GlobalServerConfig.Mercari.ClientSecret,
 			CallbackUrl:       config.GlobalServerConfig.Mercari.CallbackUrl,
-			Token:             t,
 		}
 	})
 	return Handler
@@ -75,15 +57,4 @@ func (m *Mercari) GetRetryOpts() []backoff.RetryOption {
 	opts = append(opts, backoff.WithBackOff(backoff.NewExponentialBackOff()))
 	opts = append(opts, backoff.WithMaxTries(5))
 	return opts
-}
-
-func (m *Mercari) TokenExpired() bool {
-	if m.Token == nil {
-		return true
-	}
-	expiredTime := m.Token.CreatedAt.Add(time.Duration(m.Token.ExpiresIn-60) * time.Second)
-	if time.Now().After(expiredTime) {
-		return true
-	}
-	return false
 }

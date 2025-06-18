@@ -11,6 +11,7 @@ import (
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
+	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
@@ -35,15 +36,13 @@ func (m *Mercari) GetTransactionByItemID(ctx context.Context, itemId string) (*G
 	getItemFunc := func() (*GetTransactionByItemIDResponse, error) {
 		hlog.CtxInfof(ctx, "call /v2/transactions/{itemID} at %+v", time.Now().Local())
 
-		if err := m.GetToken(ctx); err != nil {
-			return nil, bizErr.InternalError
-		}
+		token := &model.Token{}
 
 		if ok := cache.GetHandler().Limit(ctx); ok {
 			return nil, bizErr.RateLimitError
 		}
 		headers := map[string][]string{
-			"Authorization": {m.Token.AccessToken},
+			"Authorization": {token.AccessToken},
 		}
 
 		url := fmt.Sprintf("%s/v2/transactions/%s", m.OpenApiDomain, itemId)
@@ -67,7 +66,7 @@ func (m *Mercari) GetTransactionByItemID(ctx context.Context, itemId string) (*G
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
-			if err := m.RefreshToken(ctx); err != nil {
+			if err := m.RefreshToken(ctx, token); err != nil {
 				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
 				return nil, backoff.RetryAfter(1)
 			}

@@ -119,3 +119,13 @@ func _mercarigetbrandsserviceMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _accountMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _mercarigetaccountserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

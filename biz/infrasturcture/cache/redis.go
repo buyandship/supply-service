@@ -15,9 +15,9 @@ import (
 )
 
 const (
-	TokenRedisKey = "mercari_token"
-	LockKeyPrefix = "lock:"
-	LockTTL       = 2 * time.Second
+	TokenRedisKeyPrefix = "supplysrv:v1:token:%d"
+	LockKeyPrefix       = "lock:"
+	LockTTL             = 2 * time.Second
 )
 
 var (

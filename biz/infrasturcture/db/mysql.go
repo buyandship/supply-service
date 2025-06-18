@@ -149,14 +149,14 @@ func (h *H) UpdateTransaction(ctx context.Context, cond *model.Transaction) (err
 	return
 }
 
-func (h *H) GetAccount(ctx context.Context, buyerID int32) (account *model.Account, err error) {
+func (h *H) GetAccount(ctx context.Context, id int32) (account *model.Account, err error) {
 	ctx, span := trace.StartDBOperation(ctx, "GetAccount")
 	defer trace.EndSpan(span, err)
 
 	err = h.cli.
 		WithContext(ctx).
 		Debug().
-		Where("buyer_id = ?", buyerID).
+		Where("id = ?", id).
 		First(&account).Error
 
 	if err != nil {
@@ -174,6 +174,21 @@ func (h *H) GetToken(ctx context.Context) (token *model.Token, err error) {
 		WithContext(ctx).
 		Order("created_at desc").
 		First(&token).Error
+
+	if err != nil {
+		return nil, err
+	}
+	return
+}
+
+func (h *H) GetAccountList(ctx context.Context) (accounts []*model.Account, err error) {
+	ctx, span := trace.StartDBOperation(ctx, "GetAccountList")
+	defer trace.EndSpan(span, err)
+
+	err = h.cli.
+		WithContext(ctx).
+		Debug().
+		Find(&accounts).Error
 
 	if err != nil {
 		return nil, err

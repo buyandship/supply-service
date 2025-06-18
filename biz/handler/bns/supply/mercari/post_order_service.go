@@ -81,7 +81,7 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 	// 2. get buyer
 
 	acc := &model.Account{}
-	acc, err := utils.GetBuyer(ctx, req.GetBuyerID())
+	acc, err := utils.GetBuyer(ctx, 0)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "GetBuyer error: %v", err)
 		return nil, bizErr.InternalError
@@ -142,7 +142,6 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 			ItemID:     req.GetItemID(),
 			ItemType:   resp.ItemType,
 			ItemDetail: jsonItemDetail,
-			BuyerID:    acc.BuyerID,
 			RefPrice:   req.GetRefPrice(),
 			Checksum:   req.GetChecksum(),
 			Currency:   req.GetRefCurrency(),
@@ -190,7 +189,7 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 
 	// 5. purchase item
 	if err := h.PurchaseItem(ctx, req.GetRefID(), &mercari.PurchaseItemRequest{
-		BuyerId:            req.GetBuyerID(),
+		AccountId:          int32(acc.ID),
 		ItemId:             req.GetItemID(),
 		FamilyName:         acc.FamilyName,
 		FirstName:          acc.FirstName,

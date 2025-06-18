@@ -12,6 +12,7 @@ import (
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
+	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
@@ -38,15 +39,14 @@ func (m *Mercari) GetTodoList(ctx context.Context, req *GetTodoListReq) (*GetTod
 	getItemFunc := func() (*GetTodoListResp, error) {
 		hlog.CtxInfof(ctx, "call /v1/todolist at %+v", time.Now())
 
-		if err := m.GetToken(ctx); err != nil {
-			return nil, bizErr.InternalError
-		}
+		token := &model.Token{}
+		// TODO: get active token
 
 		if ok := cache.GetHandler().Limit(ctx); ok {
 			return nil, bizErr.RateLimitError
 		}
 		headers := map[string][]string{
-			"Authorization": {m.Token.AccessToken},
+			"Authorization": {token.AccessToken},
 		}
 
 		reqBody, err := json.Marshal(req)
@@ -77,7 +77,7 @@ func (m *Mercari) GetTodoList(ctx context.Context, req *GetTodoListReq) (*GetTod
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
 			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
-			if err := m.RefreshToken(ctx); err != nil {
+			if err := m.RefreshToken(ctx, token); err != nil {
 				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
 				return nil, backoff.RetryAfter(1)
 			}
