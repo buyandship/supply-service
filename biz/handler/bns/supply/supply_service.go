@@ -365,3 +365,23 @@ func MercariGetAccountService(ctx context.Context, c *app.RequestContext) {
 
 	c.JSON(consts.StatusOK, resp)
 }
+
+// MercariManualSwitchAccountService .
+// @router /v1/supplysrv/public/mercari/switch_account [POST]
+func MercariManualSwitchAccountService(ctx context.Context, c *app.RequestContext) {
+
+	var req supply.MercariManualSwitchAccountReq
+
+	if err := c.BindAndValidate(&req); err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := mercari.ManualSwitchAccountService(ctx, &req); err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, "ok")
+}

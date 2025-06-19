@@ -61,6 +61,7 @@ func getResponse(tx *model.Transaction) *supply.MercariPostOrderResp {
 		BuyerShippingFee: int64(fee),
 		ItemID:           tx.ItemID,
 		Checksum:         tx.Checksum,
+		AccountID:        tx.AccountID,
 	}
 }
 

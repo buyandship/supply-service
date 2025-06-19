@@ -12,16 +12,12 @@ func GetTokenService(ctx context.Context) (*supply.MercariGetTokenResp, error) {
 	hlog.CtxInfof(ctx, "Getting token service")
 	h := mercari.GetHandler()
 
-	// TODO: get active account
-
-	token, err := h.GetToken(ctx, 0)
+	token, err := h.GetActiveToken(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	// TODO: get account from db
 	return &supply.MercariGetTokenResp{
-		Token:   token.AccessToken,
-		Account: nil,
+		Token: token.AccessToken,
 	}, nil
 }

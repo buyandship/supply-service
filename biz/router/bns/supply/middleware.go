@@ -129,3 +129,13 @@ func _mercarigetaccountserviceMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _publicMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _mercarimanualswitchaccountserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

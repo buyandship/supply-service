@@ -43,6 +43,13 @@ func Register(r *server.Hertz) {
 					}
 				}
 			}
+			{
+				_public := _supplysrv.Group("/public", _publicMw()...)
+				{
+					_mercari0 := _public.Group("/mercari", _mercari0Mw()...)
+					_mercari0.POST("/switch_account", append(_mercarimanualswitchaccountserviceMw(), supply.MercariManualSwitchAccountService)...)
+				}
+			}
 		}
 	}
 	{

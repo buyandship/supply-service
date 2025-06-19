@@ -8,6 +8,8 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
+	"strings"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
@@ -88,8 +90,24 @@ func (m *Mercari) SetToken(ctx context.Context, req *supply.MercariLoginCallBack
 	hlog.CtxInfof(ctx, "get token success, resp: %+v", resp)
 
 	// insert token
-	// TODO: set account id
-	accountId := 0
+	ExtractAccountIDFunc := func(s string) int32 {
+		parts := strings.SplitN(s, "-", 3)
+		if len(parts) >= 3 {
+			accountId, err := strconv.ParseInt(parts[1], 10, 32)
+			if err != nil {
+				return 0
+			}
+			return int32(accountId)
+		}
+		return 0
+	}
+
+	accountId := ExtractAccountIDFunc(req.State)
+	if accountId == 0 {
+		hlog.CtxErrorf(ctx, "invalid account id: %s", req.State)
+		return bizErr.InvalidParameterError
+	}
+
 	if err := db.GetHandler().InsertTokenLog(ctx, &mercari.Token{
 		AccessToken:  resp.AccessToken,
 		RefreshToken: resp.RefreshToken,

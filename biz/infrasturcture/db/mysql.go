@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-
 	"sync"
+	"time"
 
 	"github.com/buyandship/supply-svr/biz/common/config"
 	"github.com/buyandship/supply-svr/biz/common/trace"
@@ -66,6 +66,17 @@ func (h *H) UpsertAccount(ctx context.Context, account *model.Account) (err erro
 		Clauses(clause.OnConflict{
 			UpdateAll: true,
 		}).Create(&account).Error
+
+	return err
+}
+
+func (h *H) UpdateAccount(ctx context.Context, account *model.Account) (err error) {
+
+	err = h.cli.
+		WithContext(ctx).
+		Debug().
+		Where("id = ?", account.ID).
+		Updates(account).Error
 
 	return err
 }
@@ -189,10 +200,44 @@ func (h *H) GetAccountList(ctx context.Context) (accounts []*model.Account, err 
 	err = h.cli.
 		WithContext(ctx).
 		Debug().
+		Order("priority asc").
 		Find(&accounts).Error
 
 	if err != nil {
 		return nil, err
 	}
+	return
+}
+
+func (h *H) SwitchAccount(ctx context.Context, accountId int32) (err error) {
+	ctx, span := trace.StartDBOperation(ctx, "SwitchAccount")
+	defer trace.EndSpan(span, err)
+
+	tx := h.cli.WithContext(ctx).Begin()
+
+	now := time.Now()
+
+	if err := tx.
+		Model(&model.Account{}).
+		Where("active_at is not null").
+		Update("active_at", nil).Error; err != nil {
+		hlog.CtxErrorf(ctx, "failed to update account active_at: %v", err)
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.
+		Where("id = ?", accountId).
+		Updates(&model.Account{ActiveAt: &now}).Error; err != nil {
+		hlog.CtxErrorf(ctx, "failed to update account active_at: %v", err)
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		hlog.CtxErrorf(ctx, "failed to commit tx: %v", err)
+		return err
+	}
+
 	return
 }

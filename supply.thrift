@@ -81,7 +81,6 @@ struct MercariLoginCallBackReq {
 
 struct MercariGetTokenResp {
     1: string token
-    2: Account account
 }
 
 struct MercariGetTransactionByItemIdReq {
@@ -96,6 +95,7 @@ struct MercariPostOrderResp {
     5: i64 buyer_shipping_fee
     6: string item_id
     7: string checksum
+    8: i32 account_id
 }
 
 struct MercariPostTransactionReviewReq {
@@ -140,6 +140,10 @@ struct MercariGetAccountResp {
     1: list<Account> accounts
 }
 
+struct MercariManualSwitchAccountReq {
+    1: i32 account_id (api.json="account_id");
+}
+
 service SupplyService {
     string MercariGetItemService(1: MercariGetItemReq req) (api.get="/v1/supplysrv/internal/mercari/item");
     string MercariGetCategoriesService() (api.get="/v1/supplysrv/internal/mercari/categories")
@@ -150,6 +154,7 @@ service SupplyService {
     string MercariGetTodoListService(1: MercariPostTransactionReviewReq req) (api.get="/v1/supplysrv/internal/mercari/todo")
     string MercariSearchItemsService(1: MercariSearchItemsReq req) (api.get="/v1/supplysrv/internal/mercari/search")
     string MercariGetBrandsService() (api.get="/v1/supplysrv/internal/mercari/brands")
+    string MercariManualSwitchAccountService(1: MercariManualSwitchAccountReq req) (api.post="/v1/supplysrv/public/mercari/switch_account")
 
     MercariRegisterAccountResp MercariRegisterAccountService(1: MercariRegisterAccountReq req) (api.post="/v1/supplysrv/internal/mercari/register");
     MercariPostOrderResp MercariPostOrderService(1: MercariPostOrderReq req) (api.post="/v1/supplysrv/internal/mercari/order")

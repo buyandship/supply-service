@@ -208,6 +208,15 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 					errCode = e
 				}
 
+				if errCode == 17 {
+					// failover
+					if err := m.Failover(ctx, token.AccountID); err != nil {
+						hlog.CtxErrorf(ctx, "Failover error: %s", err.Error())
+						return nil, backoff.Permanent(bizErr.InternalError)
+					}
+					return nil, backoff.RetryAfter(1)
+				}
+
 				return nil, backoff.Permanent(bizErr.BizError{
 					Status:  httpRes.StatusCode,
 					ErrCode: errCode,

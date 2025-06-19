@@ -23,3 +23,9 @@ t2:
 	@echo "Restarting docker service on t2"
 	@ssh -i ~/.ssh/bns_mkp_dev.pem ec2-user@mkp-ssh2.buynship.com 'bash /home/ec2-user/build_supply_svr.sh'
 	@echo "Script execution completed on remote server"
+
+.PHONY: t1
+t1:
+	@echo "Restarting docker service on t1"
+	@ssh -i ~/.ssh/bns_mkp_dev.pem ec2-user@mkp-ssh1.buynship.com 'bash /home/ec2-user/build_supply_svr.sh'
+	@echo "Script execution completed on remote server"
