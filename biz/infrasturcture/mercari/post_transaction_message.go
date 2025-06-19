@@ -12,7 +12,6 @@ import (
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
-	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
@@ -20,6 +19,7 @@ import (
 type PostTransactionMessageRequest struct {
 	TransactionId string `json:"transactionID"`
 	Message       string `json:"message"`
+	AccountID     int32  `json:"account_id"`
 }
 
 type PostTransactionMessageResponse struct {
@@ -33,8 +33,11 @@ func (m *Mercari) PostTransactionMessage(ctx context.Context, req *PostTransacti
 	postTransactionMessageFunc := func() (*PostTransactionMessageResponse, error) {
 		hlog.CtxInfof(ctx, "call /v2/transactions at %+v", time.Now())
 
-		token := &model.Token{}
-		// TODO: get tx account token
+		token, err := m.GetToken(ctx, req.AccountID)
+		if err != nil {
+			hlog.CtxErrorf(ctx, "get token failed: %v", err)
+			return nil, err
+		}
 
 		if ok := cache.GetHandler().Limit(ctx); ok {
 			return nil, bizErr.RateLimitError

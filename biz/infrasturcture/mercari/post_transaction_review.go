@@ -12,16 +12,16 @@ import (
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
-	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/hertz-contrib/logger/zap"
 )
 
 type PostTransactionReviewRequest struct {
-	TrxId   string `json:"trx_id"`
-	Fame    string `json:"fame"`
-	Message string `json:"message"`
+	TrxId     string `json:"trx_id"`
+	Fame      string `json:"fame"`
+	Message   string `json:"message"`
+	AccountID int32  `json:"account_id"`
 }
 
 type PostTransactionReviewResponse struct {
@@ -37,8 +37,11 @@ func (m *Mercari) PostTransactionReview(ctx context.Context, req *PostTransactio
 	postTransactionReviewFunc := func() (*PostTransactionReviewResponse, error) {
 		hlog.CtxInfof(ctx, "call /v1/transactions/{transactionID}/post_review at %+v", time.Now())
 
-		token := &model.Token{}
-		// TODO: get active token
+		token, err := m.GetToken(ctx, req.AccountID)
+		if err != nil {
+			hlog.CtxErrorf(ctx, "get token failed: %v", err)
+			return nil, err
+		}
 
 		if ok := cache.GetHandler().Limit(ctx); ok {
 			hlog.CtxErrorf(ctx, "hit rate limit")

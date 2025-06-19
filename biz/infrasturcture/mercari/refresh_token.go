@@ -27,13 +27,42 @@ type RefreshTokenResponse struct {
 	TokenType    string `json:"token_type"`
 }
 
+func (m *Mercari) GetActiveToken(ctx context.Context) (*mercari.Token, error) {
+	accountId := 0
+	if err := cache.GetHandler().Get(ctx, cache.ActiveAccountId, &accountId); err != nil {
+		accs, err := db.GetHandler().GetAccountList(ctx)
+		if err != nil {
+			return nil, err
+		}
+		if len(accs) == 0 {
+			return nil, bizErr.InternalError
+		}
+		for _, acc := range accs {
+			if acc.ActiveAt != nil {
+				accountId = int(acc.ID)
+				break
+			}
+		}
+		if accountId == 0 {
+			return nil, bizErr.InternalError
+		}
+		go func() {
+			if err := cache.GetHandler().Set(context.Background(), cache.ActiveAccountId, accountId, time.Hour); err != nil {
+				hlog.Warnf("redis set failed, err:%v", err)
+			}
+		}()
+	}
+
+	return m.GetToken(ctx, int32(accountId))
+}
+
 func (m *Mercari) GetToken(ctx context.Context, accountId int32) (*mercari.Token, error) {
 	// load from redis cache
 	token := &mercari.Token{}
 	if err := cache.GetHandler().Get(ctx, fmt.Sprintf(cache.TokenRedisKeyPrefix, accountId), token); err != nil {
 		hlog.CtxInfof(ctx, "load from cache failed, err:%v", err)
 		// Degrade to load from mysql
-		t, err := db.GetHandler().GetToken(ctx)
+		t, err := db.GetHandler().GetToken(ctx, accountId)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return nil, bizErr.UnloginError

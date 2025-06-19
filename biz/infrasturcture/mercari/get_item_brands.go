@@ -11,7 +11,6 @@ import (
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
-	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
@@ -27,8 +26,10 @@ type GetBrandsResp struct {
 func (m *Mercari) GetBrands(ctx context.Context) (*GetBrandsResp, error) {
 	getBrandFunc := func() (*GetBrandsResp, error) {
 
-		token := &model.Token{}
-		// TODO: get active token
+		token, err := m.GetActiveToken(ctx)
+		if err != nil {
+			return nil, err
+		}
 
 		hlog.CtxInfof(ctx, "call /v1/master/item_brands at %+v", time.Now())
 

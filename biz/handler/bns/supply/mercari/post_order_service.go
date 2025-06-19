@@ -78,12 +78,16 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 
 	h := mercari.GetHandler()
 
-	// 2. get buyer
-
-	acc := &model.Account{}
-	acc, err := utils.GetBuyer(ctx, 0)
+	token, err := h.GetActiveToken(ctx)
 	if err != nil {
-		hlog.CtxErrorf(ctx, "GetBuyer error: %v", err)
+		hlog.CtxErrorf(ctx, "GetActiveToken error: %v", err)
+		return nil, bizErr.InternalError
+	}
+
+	// 2. get buyer
+	acc, err := utils.GetAccount(ctx, token.AccountID)
+	if err != nil {
+		hlog.CtxErrorf(ctx, "GetActiveAccount error: %v", err)
 		return nil, bizErr.InternalError
 	}
 
@@ -108,7 +112,9 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 	}
 
 	// 4. check if transaction with ref_id already exists.
-	tx, err := db.GetHandler().GetTransaction(ctx, req.GetRefID())
+	tx, err := db.GetHandler().GetTransaction(ctx, &model.Transaction{
+		RefID: req.GetRefID(),
+	})
 	if err != nil {
 		hlog.CtxErrorf(ctx, "get transaction error: %s", err.Error())
 		return nil, bizErr.InternalError
@@ -210,7 +216,9 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 		return nil, err
 	}
 
-	tx, err = db.GetHandler().GetTransaction(ctx, req.GetRefID())
+	tx, err = db.GetHandler().GetTransaction(ctx, &model.Transaction{
+		RefID: req.GetRefID(),
+	})
 	if err != nil {
 		hlog.CtxErrorf(ctx, "get transaction error: %s", err.Error())
 		return nil, bizErr.InternalError

@@ -94,13 +94,13 @@ func (h *H) InsertReview(ctx context.Context, review *model.Review) (err error) 
 	return
 }
 
-func (h *H) GetTransaction(ctx context.Context, trxId string) (trx *model.Transaction, err error) {
+func (h *H) GetTransaction(ctx context.Context, where *model.Transaction) (trx *model.Transaction, err error) {
 	ctx, span := trace.StartDBOperation(ctx, "GetTransaction")
 	defer trace.EndSpan(span, err)
 
 	err = h.cli.WithContext(ctx).
 		Debug().
-		Where("ref_id = ?", trxId).
+		Where(where).
 		First(&trx).Error
 
 	if err != nil {
@@ -166,12 +166,13 @@ func (h *H) GetAccount(ctx context.Context, id int32) (account *model.Account, e
 	return
 }
 
-func (h *H) GetToken(ctx context.Context) (token *model.Token, err error) {
+func (h *H) GetToken(ctx context.Context, accountId int32) (token *model.Token, err error) {
 	ctx, span := trace.StartDBOperation(ctx, "GetToken")
 	defer trace.EndSpan(span, err)
 
 	err = h.cli.
 		WithContext(ctx).
+		Where("account_id = ?", accountId).
 		Order("created_at desc").
 		First(&token).Error
 

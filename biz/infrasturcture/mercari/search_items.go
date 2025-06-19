@@ -14,7 +14,6 @@ import (
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
-	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
@@ -128,7 +127,10 @@ func (m *Mercari) SearchItems(ctx context.Context, req *supply.MercariSearchItem
 	SearchItemsFunc := func() (*SearchItemsResponse, error) {
 		hlog.CtxInfof(ctx, "call /v3/items/search at %+v", time.Now().Local())
 
-		token := &model.Token{}
+		token, err := m.GetActiveToken(ctx)
+		if err != nil {
+			return nil, err
+		}
 
 		if ok := cache.GetHandler().Limit(ctx); ok {
 			hlog.CtxErrorf(ctx, "hit rate limit")

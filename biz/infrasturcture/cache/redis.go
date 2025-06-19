@@ -15,6 +15,7 @@ import (
 )
 
 const (
+	ActiveAccountId     = "supplysrv:v1:active_account_id"
 	TokenRedisKeyPrefix = "supplysrv:v1:token:%d"
 	LockKeyPrefix       = "lock:"
 	LockTTL             = 2 * time.Second

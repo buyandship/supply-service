@@ -16,7 +16,7 @@ const (
 	DefaultBuyerId = 1
 )
 
-func GetBuyer(ctx context.Context, buyerId int32) (*mercari.Account, error) {
+func GetAccount(ctx context.Context, buyerId int32) (*mercari.Account, error) {
 
 	acc := &mercari.Account{}
 	if buyerId == 0 {

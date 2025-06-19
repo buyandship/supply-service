@@ -26,8 +26,13 @@ func GetItemService(ctx context.Context, req *supply.MercariGetItemReq) (*mercar
 
 	h := mercari.GetHandler()
 
+	token, err := h.GetActiveToken(ctx)
+	if err != nil {
+		hlog.CtxErrorf(ctx, "GetActiveToken error: %v", err)
+	}
+
 	prefecture := ""
-	acc, err := utils.GetBuyer(ctx, 0)
+	acc, err := utils.GetAccount(ctx, token.AccountID)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "GetBuyer error: %v", err)
 	} else {

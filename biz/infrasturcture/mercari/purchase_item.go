@@ -97,8 +97,10 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 	purchaseItemFunc := func() (*PurchaseItemResponse, error) {
 		hlog.CtxInfof(ctx, "call /v1/items/purchase at %+v", time.Now())
 
-		token := &model.Token{}
-		// TODO: get active token
+		token, err := m.GetActiveToken(ctx)
+		if err != nil {
+			return nil, err
+		}
 
 		if ok := cache.GetHandler().Limit(ctx); ok {
 			hlog.CtxErrorf(ctx, "hit rate limit")
@@ -175,7 +177,7 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 			}
 
 			// if we purchase item fails, query by item
-			getTxResp, err := m.GetTransactionByItemID(ctx, req.ItemId)
+			getTxResp, err := m.GetTransactionByItemID(ctx, req.ItemId, req.AccountId)
 			if err != nil {
 				// if query transaction by item_id return error, update the failure_reason.
 				hlog.CtxErrorf(ctx, "GetTransactionByItemID error: %s", err.Error())

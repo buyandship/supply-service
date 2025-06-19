@@ -11,7 +11,6 @@ import (
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
-	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
@@ -32,11 +31,14 @@ type GetTransactionByItemIDResponse struct {
 	} `json:"shipping_info"`
 }
 
-func (m *Mercari) GetTransactionByItemID(ctx context.Context, itemId string) (*GetTransactionByItemIDResponse, error) {
+func (m *Mercari) GetTransactionByItemID(ctx context.Context, itemId string, accountId int32) (*GetTransactionByItemIDResponse, error) {
 	getItemFunc := func() (*GetTransactionByItemIDResponse, error) {
 		hlog.CtxInfof(ctx, "call /v2/transactions/{itemID} at %+v", time.Now().Local())
 
-		token := &model.Token{}
+		token, err := m.GetToken(ctx, accountId)
+		if err != nil {
+			return nil, err
+		}
 
 		if ok := cache.GetHandler().Limit(ctx); ok {
 			return nil, bizErr.RateLimitError

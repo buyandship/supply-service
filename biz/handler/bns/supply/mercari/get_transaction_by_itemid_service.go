@@ -4,9 +4,11 @@ import (
 	"context"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
 	"github.com/buyandship/supply-svr/biz/mock"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
+	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
@@ -19,7 +21,15 @@ func GetTransactionByItemIdService(ctx context.Context, req *supply.MercariGetTr
 	}
 	h := mercari.GetHandler()
 
-	resp, err := h.GetTransactionByItemID(ctx, req.GetItemID())
+	trx, err := db.GetHandler().GetTransaction(ctx, &model.Transaction{
+		ItemID: req.GetItemID(),
+	})
+	if err != nil {
+		hlog.CtxErrorf(ctx, "get transaction failed: %v", err)
+		return nil, bizErr.InternalError
+	}
+
+	resp, err := h.GetTransactionByItemID(ctx, req.GetItemID(), trx.AccountID)
 	if err != nil {
 		return nil, err
 	}

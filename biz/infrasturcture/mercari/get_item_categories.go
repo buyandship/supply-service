@@ -11,7 +11,6 @@ import (
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
-	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
@@ -29,8 +28,10 @@ func (m *Mercari) GetItemCategories(ctx context.Context) (*GetItemCategoriesResp
 	getItemFunc := func() (*GetItemCategoriesResp, error) {
 		hlog.CtxInfof(ctx, "call /v1/master/item_categories at %+v", time.Now())
 
-		token := &model.Token{}
-		// TODO: get active token
+		token, err := m.GetActiveToken(ctx)
+		if err != nil {
+			return nil, err
+		}
 
 		if ok := cache.GetHandler().Limit(ctx); ok {
 			return nil, bizErr.RateLimitError
