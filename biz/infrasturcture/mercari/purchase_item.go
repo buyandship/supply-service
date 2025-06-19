@@ -212,9 +212,9 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 					// failover
 					if err := m.Failover(ctx, token.AccountID); err != nil {
 						hlog.CtxErrorf(ctx, "Failover error: %s", err.Error())
-						return nil, backoff.Permanent(bizErr.InternalError)
+						return nil, backoff.Permanent(err)
 					}
-					return nil, backoff.RetryAfter(1)
+					return nil, bizErr.ACLBanError
 				}
 
 				return nil, backoff.Permanent(bizErr.BizError{

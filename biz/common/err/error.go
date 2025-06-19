@@ -2,6 +2,7 @@ package err
 
 import (
 	"errors"
+
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
@@ -49,4 +50,5 @@ var (
 	RateLimitError            = BizError{Status: consts.StatusInternalServerError, ErrCode: 1006, ErrMsg: "rate limit"}
 	UnloginError              = BizError{Status: consts.StatusInternalServerError, ErrCode: 1007, ErrMsg: "mercari unlogin"}
 	UndefinedError            = BizError{Status: consts.StatusInternalServerError, ErrCode: 5678, ErrMsg: "undefined error"}
+	ACLBanError               = BizError{Status: consts.StatusForbidden, ErrCode: 17, ErrMsg: "acl ban"}
 )
