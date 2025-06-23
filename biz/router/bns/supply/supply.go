@@ -28,6 +28,7 @@ func Register(r *server.Hertz) {
 					_mercari.GET("/brands", append(_mercarigetbrandsserviceMw(), supply.MercariGetBrandsService)...)
 					_mercari.GET("/categories", append(_mercarigetcategoriesserviceMw(), supply.MercariGetCategoriesService)...)
 					_mercari.GET("/item", append(_mercarigetitemserviceMw(), supply.MercariGetItemService)...)
+					_mercari.POST("/keep_token_alive", append(_keeptokenaliveserviceMw(), supply.KeepTokenAliveService)...)
 					_mercari.POST("/message", append(_mercaripostmessageserviceMw(), supply.MercariPostMessageService)...)
 					_mercari.POST("/order", append(_mercaripostorderserviceMw(), supply.MercariPostOrderService)...)
 					_mercari.POST("/register", append(_mercariregisteraccountserviceMw(), supply.MercariRegisterAccountService)...)

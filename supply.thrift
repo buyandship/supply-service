@@ -157,11 +157,11 @@ service SupplyService {
     string MercariSearchItemsService(1: MercariSearchItemsReq req) (api.get="/v1/supplysrv/internal/mercari/search")
     string MercariGetBrandsService() (api.get="/v1/supplysrv/internal/mercari/brands")
     string MercariManualSwitchAccountService(1: MercariManualSwitchAccountReq req) (api.post="/v1/supplysrv/public/mercari/switch_account")
+    string KeepTokenAliveService() (api.post="/v1/supplysrv/internal/mercari/keep_token_alive")
 
     MercariRegisterAccountResp MercariRegisterAccountService(1: MercariRegisterAccountReq req) (api.post="/v1/supplysrv/internal/mercari/register");
     MercariPostOrderResp MercariPostOrderService(1: MercariPostOrderReq req) (api.post="/v1/supplysrv/internal/mercari/order")
     MercariPostMessageResp MercariPostMessageService(1: MercariPostMessageReq req) (api.post="/v1/supplysrv/internal/mercari/message")
     MercariGetTokenResp MercariGetTokenService() (api.get="/v1/supplysrv/internal/mercari/token")
     MercariGetAccountResp MercariGetAccountService() (api.get="/v1/supplysrv/internal/mercari/account/list")
-
 }

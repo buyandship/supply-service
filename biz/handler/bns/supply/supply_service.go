@@ -385,3 +385,15 @@ func MercariManualSwitchAccountService(ctx context.Context, c *app.RequestContex
 
 	c.JSON(consts.StatusOK, "ok")
 }
+
+// KeepTokenAliveService .
+// @router /v1/supplysrv/internal/mercari/keep_token_alive [POST]
+func KeepTokenAliveService(ctx context.Context, c *app.RequestContext) {
+	if err := mercari.KeepTokenAliveService(ctx); err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, "ok")
+}

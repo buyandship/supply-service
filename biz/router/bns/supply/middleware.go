@@ -139,3 +139,8 @@ func _mercarimanualswitchaccountserviceMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _keeptokenaliveserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
