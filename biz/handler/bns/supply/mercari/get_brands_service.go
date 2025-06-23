@@ -20,7 +20,7 @@ func GetBrandsService(ctx context.Context) (resp *mercari.GetBrandsResp, err err
 
 		go func() {
 			if err := cache.GetHandler().Set(context.Background(), config.MercariBrandsKey, resp, time.Hour); err != nil {
-				hlog.Warnf("set mercari_brands err: %v", err)
+				hlog.Warnf("[goroutine] set mercari_brands err: %v", err)
 			}
 		}()
 

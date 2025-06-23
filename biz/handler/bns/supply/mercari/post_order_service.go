@@ -66,7 +66,7 @@ func getResponse(tx *model.Transaction) *supply.MercariPostOrderResp {
 }
 
 func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*supply.MercariPostOrderResp, error) {
-	hlog.CtxInfof(ctx, "PostOrderService is called, req: %+v", req)
+	hlog.CtxInfof(ctx, "PostOrderService is called, item_id: %s, ref_id: %s, ref_price: %d, ref_currency: %s", req.GetItemID(), req.GetRefID(), req.GetRefPrice(), req.GetRefCurrency())
 	// 1. validation
 	if err := validateRequest(ctx, req); err != nil {
 		return nil, err
@@ -154,6 +154,7 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 			Currency:   req.GetRefCurrency(),
 			CouponID:   couponId,
 			DeliveryId: deliveryId,
+			AccountID:  int32(acc.ID),
 		}); err != nil {
 			return nil, bizErr.InternalError
 		}

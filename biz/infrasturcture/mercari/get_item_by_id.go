@@ -132,7 +132,6 @@ type GetItemByIDResponse struct {
 
 func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*GetItemByIDResponse, error) {
 	getItemFunc := func() (*GetItemByIDResponse, error) {
-		hlog.CtxInfof(ctx, "call /v1/items at %+v", time.Now().Local())
 
 		token, err := m.GetActiveToken(ctx)
 		if err != nil {
@@ -140,7 +139,7 @@ func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*Ge
 		}
 
 		if ok := cache.GetHandler().Limit(ctx); ok {
-			hlog.CtxErrorf(ctx, "hit rate limit")
+			hlog.CtxWarnf(ctx, "hit rate limit")
 			return nil, bizErr.RateLimitError
 		}
 
@@ -171,7 +170,7 @@ func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*Ge
 		}()
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
-			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
+			hlog.CtxInfof(ctx, "http unauthorized, refreshing token...")
 			if err := m.RefreshToken(ctx, token); err != nil {
 				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
 				return nil, backoff.RetryAfter(1)
@@ -181,11 +180,11 @@ func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*Ge
 
 		// retry code: 409, 429, 5xx
 		if httpRes.StatusCode == http.StatusTooManyRequests {
-			hlog.CtxErrorf(ctx, "http too many requests, retrying...")
+			hlog.CtxWarnf(ctx, "http too many requests, retrying...")
 			return nil, backoff.RetryAfter(1)
 		}
 		if httpRes.StatusCode == http.StatusConflict {
-			hlog.CtxErrorf(ctx, "http conflict, retrying...")
+			hlog.CtxWarnf(ctx, "http conflict, retrying...")
 			return nil, bizErr.ConflictError
 		}
 

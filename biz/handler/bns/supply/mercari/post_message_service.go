@@ -57,8 +57,9 @@ func PostMessageService(ctx context.Context, req *supply.MercariPostMessageReq) 
 	}
 
 	return &supply.MercariPostMessageResp{
-		TrxID: req.GetTrxID(),
-		Body:  mResp.Body,
-		ID:    mResp.Id,
+		TrxID:     req.GetTrxID(),
+		Body:      mResp.Body,
+		ID:        mResp.Id,
+		AccountID: mResp.AccountID,
 	}, nil
 }

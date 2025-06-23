@@ -27,6 +27,7 @@ struct MercariPostMessageResp {
     1: string trx_id
     2: string body
     3: string id
+    4: i32 account_id
 }
 
 struct MercariRegisterAccountReq {
@@ -102,6 +103,7 @@ struct MercariPostTransactionReviewReq {
     1: string trx_id
     2: string fame
     3: string review
+    4: i32 account_id
 }
 
 struct MercariGetTodoListReq {

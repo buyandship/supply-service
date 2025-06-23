@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/buyandship/supply-svr/biz/common/config"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
@@ -95,16 +96,14 @@ type GenericErrorResponse struct {
 
 func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseItemRequest) error {
 	purchaseItemFunc := func() (*PurchaseItemResponse, error) {
-		hlog.CtxInfof(ctx, "call /v1/items/purchase at %+v", time.Now())
-
 		token, err := m.GetActiveToken(ctx)
 		if err != nil {
 			return nil, err
 		}
 
 		if ok := cache.GetHandler().Limit(ctx); ok {
-			hlog.CtxErrorf(ctx, "hit rate limit")
-			return nil, bizErr.RateLimitError
+			hlog.CtxWarnf(ctx, "hit rate limit")
+			return nil, backoff.RetryAfter(1)
 		}
 
 		headers := map[string][]string{
@@ -126,10 +125,18 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 		}
 		httpReq.Header = headers
 
-		httpRes, err := HttpDo(ctx, httpReq)
-		if err != nil {
-			hlog.CtxErrorf(ctx, "http error, err: %v", err)
-			return nil, backoff.Permanent(bizErr.InternalError)
+		httpRes := &http.Response{}
+		if config.GlobalServerConfig.Env == "development" && token.AccountID == 4 {
+			// mock acl ban error
+			// delete after testing
+			httpRes.StatusCode = http.StatusForbidden
+			httpRes.Body = io.NopCloser(bytes.NewBufferString(`{"request_id": "08f40f07-f67c-42c4-a47c-b794a7d7aa76", "transaction_status": "failure", "failure_details": {"code": "F0017", "reasons": "The buyer is currently forbidden to purchase items due to ACL Ban"}}`))
+		} else {
+			httpRes, err = HttpDo(ctx, httpReq)
+			if err != nil {
+				hlog.CtxErrorf(ctx, "http error, err: %v", err)
+				return nil, backoff.Permanent(bizErr.InternalError)
+			}
 		}
 
 		defer func() {
@@ -139,26 +146,26 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 		}()
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
-			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
+			hlog.CtxInfof(ctx, "http unauthorized, refreshing token...")
 			if err := m.RefreshToken(ctx, token); err != nil {
-				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
+				hlog.CtxWarnf(ctx, "try to refresh token, but fails, err: %v", err)
 				return nil, backoff.RetryAfter(1)
 			}
 			return nil, bizErr.UnauthorisedError
 		}
 		// retry code: 409, 429, 5xx
 		if httpRes.StatusCode == http.StatusTooManyRequests {
-			hlog.CtxErrorf(ctx, "http too many requests, retrying...")
+			hlog.CtxWarnf(ctx, "http too many requests, retrying...")
 			return nil, backoff.RetryAfter(1)
 		}
 		if httpRes.StatusCode == http.StatusConflict {
-			hlog.CtxErrorf(ctx, "http conflict, retrying...")
+			hlog.CtxWarnf(ctx, "http conflict, retrying...")
 			return nil, bizErr.ConflictError
 		}
 
 		if httpRes.StatusCode >= 500 && httpRes.StatusCode < 600 {
 			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
+			hlog.CtxWarnf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
 				httpRes.StatusCode, respBody, time.Now().Local())
 			return nil, bizErr.BizError{
 				Status:  httpRes.StatusCode,
@@ -179,25 +186,26 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 			// if we purchase item fails, query by item
 			getTxResp, err := m.GetTransactionByItemID(ctx, req.ItemId, req.AccountId)
 			if err != nil {
-				// if query transaction by item_id return error, update the failure_reason.
-				hlog.CtxErrorf(ctx, "GetTransactionByItemID error: %s", err.Error())
 				if err := db.GetHandler().UpdateTransaction(ctx, &model.Transaction{
 					RefID:         refId,
 					FailureReason: fmt.Sprintf("%s|%s", errResp.RequestId, errResp.FailureDetails.Reasons),
+					AccountID:     req.AccountId,
 				}); err != nil {
 					hlog.CtxErrorf(ctx, "UpdateTransaction fail, [%s]", err.Error())
 					return nil, backoff.Permanent(bizErr.InternalError)
 				}
 				var errMsg string
 				if errResp.FailureDetails.Reasons == "" {
+					// if the failure_details.reasons is empty, try to get the error from the http response
 					errResp := &GenericErrorResponse{}
 					if err := json.NewDecoder(httpRes.Body).Decode(errResp); err != nil {
 						hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
-					}
-					if len(errResp.Details) > 0 {
-						errMsg = fmt.Sprintf("%s|Generic Error", errResp.Details[0].RequestId)
 					} else {
-						errMsg = fmt.Sprintf("%d", httpRes.StatusCode)
+						if len(errResp.Details) > 0 {
+							errMsg = fmt.Sprintf("%s|Generic Error", errResp.Details[0].RequestId)
+						} else {
+							errMsg = fmt.Sprintf("%d", httpRes.StatusCode)
+						}
 					}
 				} else {
 					errMsg = fmt.Sprintf("%s|%s", errResp.RequestId, errResp.FailureDetails.Reasons)
@@ -211,7 +219,7 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 				if errCode == 17 {
 					// failover
 					if err := m.Failover(ctx, token.AccountID); err != nil {
-						hlog.CtxErrorf(ctx, "Failover error: %s", err.Error())
+						hlog.CtxErrorf(ctx, "The account:[%d] is banned,try to failover but fails, error: %s", token.AccountID, err.Error())
 						return nil, backoff.Permanent(err)
 					}
 					return nil, bizErr.ACLBanError
@@ -231,6 +239,7 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 				Price:            getTxResp.Price,
 				TrxID:            getTxResp.Id,
 				BuyerShippingFee: getTxResp.ShippingInfo.BuyerShippingFee,
+				AccountID:        token.AccountID,
 			}); err != nil {
 				hlog.CtxErrorf(ctx, "UpdateTransaction fail, [%s]", err.Error())
 				return nil, backoff.Permanent(bizErr.InternalError)
@@ -244,7 +253,6 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 			hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
-		hlog.CtxInfof(ctx, "post mercari transaction message response: %+v", resp)
 		// purchasing successfully
 		trxId := strconv.FormatInt(resp.TransactionDetails.TrxId, 10)
 		if err := db.GetHandler().UpdateTransaction(ctx, &model.Transaction{
@@ -253,6 +261,7 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 			PaidPrice:        resp.TransactionDetails.PaidPrice,
 			Price:            resp.TransactionDetails.Price,
 			BuyerShippingFee: resp.TransactionDetails.BuyerShippingFee,
+			AccountID:        token.AccountID,
 		}); err != nil {
 			hlog.CtxErrorf(ctx, "UpdateTransaction fail, [%s]", err.Error())
 			return nil, backoff.Permanent(bizErr.InternalError)

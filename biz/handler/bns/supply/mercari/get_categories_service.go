@@ -19,7 +19,7 @@ func GetCategoriesService(ctx context.Context) (resp *mercari.GetItemCategoriesR
 			return nil, err
 		}
 		if err := cache.GetHandler().Set(context.Background(), config.MercariCategoriesKey, resp, time.Hour); err != nil {
-			hlog.Warnf("set mercari_categories err: %v", err)
+			hlog.Warnf("[goroutine] set mercari_categories err: %v", err)
 		}
 		return resp, nil
 	}

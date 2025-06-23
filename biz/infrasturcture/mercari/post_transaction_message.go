@@ -23,16 +23,15 @@ type PostTransactionMessageRequest struct {
 }
 
 type PostTransactionMessageResponse struct {
-	Id      string `json:"id"`
-	Body    string `json:"body"`
-	UserId  string `json:"user_id"`
-	Created int    `json:"created"`
+	Id        string `json:"id"`
+	Body      string `json:"body"`
+	UserId    string `json:"user_id"`
+	Created   int    `json:"created"`
+	AccountID int32  `json:"account_id"`
 }
 
 func (m *Mercari) PostTransactionMessage(ctx context.Context, req *PostTransactionMessageRequest) (*PostTransactionMessageResponse, error) {
 	postTransactionMessageFunc := func() (*PostTransactionMessageResponse, error) {
-		hlog.CtxInfof(ctx, "call /v2/transactions at %+v", time.Now())
-
 		token, err := m.GetToken(ctx, req.AccountID)
 		if err != nil {
 			hlog.CtxErrorf(ctx, "get token failed: %v", err)
@@ -78,25 +77,25 @@ func (m *Mercari) PostTransactionMessage(ctx context.Context, req *PostTransacti
 		}()
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
-			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
+			hlog.CtxInfof(ctx, "http unauthorized, refreshing token...")
 			if err := m.RefreshToken(ctx, token); err != nil {
-				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
+				hlog.CtxWarnf(ctx, "try to refresh token, but fails, err: %v", err)
 				return nil, backoff.RetryAfter(1)
 			}
 			return nil, bizErr.UnauthorisedError
 		}
 		// retry code: 409, 429, 5xx
 		if httpRes.StatusCode == http.StatusTooManyRequests {
-			hlog.CtxErrorf(ctx, "http too many requests, retrying...")
+			hlog.CtxWarnf(ctx, "http too many requests, retrying...")
 			return nil, backoff.RetryAfter(1)
 		}
 		if httpRes.StatusCode == http.StatusConflict {
-			hlog.CtxErrorf(ctx, "http conflict, retrying...")
+			hlog.CtxWarnf(ctx, "http conflict, retrying...")
 			return nil, bizErr.ConflictError
 		}
 		if httpRes.StatusCode >= 500 && httpRes.StatusCode < 600 {
 			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
+			hlog.CtxWarnf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
 				httpRes.StatusCode, respBody, time.Now().Local())
 			return nil, bizErr.BizError{
 				Status:  httpRes.StatusCode,
@@ -118,7 +117,6 @@ func (m *Mercari) PostTransactionMessage(ctx context.Context, req *PostTransacti
 			hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
-		hlog.CtxInfof(ctx, "post mercari transaction message response: %+v", resp)
 		return resp, nil
 	}
 
@@ -131,5 +129,7 @@ func (m *Mercari) PostTransactionMessage(ctx context.Context, req *PostTransacti
 		}
 		return nil, err
 	}
+
+	result.AccountID = req.AccountID
 	return result, nil
 }

@@ -61,7 +61,7 @@ func (m *Mercari) GetToken(ctx context.Context, accountId int32) (*mercari.Token
 	// load from redis cache
 	token := &mercari.Token{}
 	if err := cache.GetHandler().Get(ctx, fmt.Sprintf(cache.TokenRedisKeyPrefix, accountId), token); err != nil {
-		hlog.CtxInfof(ctx, "load from cache failed, err:%v", err)
+		hlog.CtxInfof(ctx, "the token is not in cache, load from mysql")
 		// Degrade to load from mysql
 		t, err := db.GetHandler().GetToken(ctx, accountId)
 		if err != nil {
@@ -72,7 +72,7 @@ func (m *Mercari) GetToken(ctx context.Context, accountId int32) (*mercari.Token
 		}
 		go func() {
 			if err := cache.GetHandler().Set(context.Background(), fmt.Sprintf(cache.TokenRedisKeyPrefix, accountId), t, 5*time.Minute); err != nil {
-				hlog.Warnf("redis set failed, err:%v", err)
+				hlog.Warnf("[goroutine] redis set failed, err:%v", err)
 			}
 		}()
 		return t, nil
@@ -86,77 +86,6 @@ func (m *Mercari) GetToken(ctx context.Context, accountId int32) (*mercari.Token
 }
 
 func (m *Mercari) RefreshToken(ctx context.Context, token *mercari.Token) error {
-	if err := m.refreshToken(ctx, token); err != nil {
-		return err
-	}
-	if err := cache.GetHandler().Del(ctx, fmt.Sprintf(cache.TokenRedisKeyPrefix, token.AccountID)); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *Mercari) Failover(ctx context.Context, accountId int32) error {
-	hlog.CtxInfof(ctx, "failover account: %d", accountId)
-	// set banned_at
-	now := time.Now()
-	if err := db.GetHandler().UpdateAccount(ctx, &model.Account{
-		Model: gorm.Model{
-			ID: uint(accountId),
-		},
-		BannedAt: &now,
-	}); err != nil {
-		return err
-	}
-
-	// get all accounts
-	accs, err := db.GetHandler().GetAccountList(ctx)
-	if err != nil {
-		return err
-	}
-
-	activeAccountId := 0
-	for _, acc := range accs {
-		if acc.BannedAt == nil && acc.Priority > 0 {
-			// set active_at
-			if err := db.GetHandler().UpdateAccount(ctx, &model.Account{
-				Model: gorm.Model{
-					ID: uint(acc.ID),
-				},
-				ActiveAt: &now,
-			}); err != nil {
-				return err
-			}
-			hlog.CtxInfof(ctx, "set active account: %d", acc.ID)
-			activeAccountId = int(acc.ID)
-			break
-		}
-	}
-
-	if activeAccountId == 0 {
-		// alert
-		hlog.CtxErrorf(ctx, "no active account found")
-		return bizErr.InternalError
-	}
-
-	if err := cache.GetHandler().Del(ctx, cache.ActiveAccountId); err != nil {
-		return err
-	}
-
-	// get token
-	token, err := m.GetToken(ctx, int32(activeAccountId))
-	if err != nil {
-		return err
-	}
-
-	if err := m.RefreshToken(ctx, token); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *Mercari) refreshToken(ctx context.Context, token *mercari.Token) error {
-	// Try to acquire lock
 	locked, err := cache.GetHandler().TryLock(ctx, "mercari_refresh_token")
 	if err != nil {
 		hlog.CtxErrorf(ctx, "failed to acquire lock: %v", err)
@@ -223,8 +152,6 @@ func (m *Mercari) refreshToken(ctx context.Context, token *mercari.Token) error 
 		return bizErr.InternalError
 	}
 
-	hlog.CtxInfof(ctx, "refresh token success, resp: %+v", resp)
-
 	token = &mercari.Token{
 		AccessToken:  resp.AccessToken,
 		RefreshToken: resp.RefreshToken,
@@ -235,7 +162,68 @@ func (m *Mercari) refreshToken(ctx context.Context, token *mercari.Token) error 
 	}
 
 	if err := db.GetHandler().InsertTokenLog(ctx, token); err != nil {
+		hlog.CtxErrorf(ctx, "insert token log failed, err: %v", err)
 		return bizErr.InternalError
+	}
+
+	if err := cache.GetHandler().Del(ctx, fmt.Sprintf(cache.TokenRedisKeyPrefix, token.AccountID)); err != nil {
+		hlog.CtxErrorf(ctx, "delete token from cache failed, err: %v", err)
+		return err
+	}
+	return nil
+}
+
+func (m *Mercari) Failover(ctx context.Context, accountId int32) error {
+	hlog.CtxInfof(ctx, "failover account: %d", accountId)
+	// set banned_at
+	now := time.Now()
+	if err := db.GetHandler().BanAccount(ctx, accountId); err != nil {
+		return err
+	}
+
+	// get all accounts
+	accs, err := db.GetHandler().GetAccountList(ctx)
+	if err != nil {
+		return err
+	}
+
+	activeAccountId := 0
+	for _, acc := range accs {
+		if acc.BannedAt == nil && acc.Priority > 0 {
+			// set active_at
+			if err := db.GetHandler().UpdateAccount(ctx, &model.Account{
+				Model: gorm.Model{
+					ID: uint(acc.ID),
+				},
+				ActiveAt: &now,
+			}); err != nil {
+				return err
+			}
+			hlog.CtxInfof(ctx, "set active account: %d", acc.ID)
+			activeAccountId = int(acc.ID)
+			break
+		}
+	}
+
+	if activeAccountId == 0 {
+		// alert
+		hlog.CtxErrorf(ctx, "no active account found")
+		return bizErr.InternalError
+	}
+
+	if err := cache.GetHandler().Set(ctx, cache.ActiveAccountId, activeAccountId, time.Hour); err != nil {
+		return err
+	}
+
+	// get token
+	token, err := m.GetToken(ctx, int32(activeAccountId))
+	if err != nil {
+		return err
+	}
+
+	// refresh token
+	if err := m.RefreshToken(ctx, token); err != nil {
+		return err
 	}
 
 	return nil

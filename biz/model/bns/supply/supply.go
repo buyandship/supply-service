@@ -813,9 +813,10 @@ func (p *MercariPostMessageReq) String() string {
 }
 
 type MercariPostMessageResp struct {
-	TrxID string `thrift:"trx_id,1" form:"trx_id" json:"trx_id" query:"trx_id"`
-	Body  string `thrift:"body,2" form:"body" json:"body" query:"body"`
-	ID    string `thrift:"id,3" form:"id" json:"id" query:"id"`
+	TrxID     string `thrift:"trx_id,1" form:"trx_id" json:"trx_id" query:"trx_id"`
+	Body      string `thrift:"body,2" form:"body" json:"body" query:"body"`
+	ID        string `thrift:"id,3" form:"id" json:"id" query:"id"`
+	AccountID int32  `thrift:"account_id,4" form:"account_id" json:"account_id" query:"account_id"`
 }
 
 func NewMercariPostMessageResp() *MercariPostMessageResp {
@@ -834,10 +835,15 @@ func (p *MercariPostMessageResp) GetID() (v string) {
 	return p.ID
 }
 
+func (p *MercariPostMessageResp) GetAccountID() (v int32) {
+	return p.AccountID
+}
+
 var fieldIDToName_MercariPostMessageResp = map[int16]string{
 	1: "trx_id",
 	2: "body",
 	3: "id",
+	4: "account_id",
 }
 
 func (p *MercariPostMessageResp) Read(iprot thrift.TProtocol) (err error) {
@@ -878,6 +884,14 @@ func (p *MercariPostMessageResp) Read(iprot thrift.TProtocol) (err error) {
 		case 3:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField3(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 4:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField4(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -939,6 +953,15 @@ func (p *MercariPostMessageResp) ReadField3(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
+func (p *MercariPostMessageResp) ReadField4(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.AccountID = v
+	}
+	return nil
+}
 
 func (p *MercariPostMessageResp) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
@@ -956,6 +979,10 @@ func (p *MercariPostMessageResp) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField3(oprot); err != nil {
 			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
 			goto WriteFieldError
 		}
 	}
@@ -1025,6 +1052,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
+func (p *MercariPostMessageResp) writeField4(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("account_id", thrift.I32, 4); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.AccountID); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
 }
 
 func (p *MercariPostMessageResp) String() string {
@@ -3814,9 +3858,10 @@ func (p *MercariPostOrderResp) String() string {
 }
 
 type MercariPostTransactionReviewReq struct {
-	TrxID  string `thrift:"trx_id,1" form:"trx_id" json:"trx_id" query:"trx_id"`
-	Fame   string `thrift:"fame,2" form:"fame" json:"fame" query:"fame"`
-	Review string `thrift:"review,3" form:"review" json:"review" query:"review"`
+	TrxID     string `thrift:"trx_id,1" form:"trx_id" json:"trx_id" query:"trx_id"`
+	Fame      string `thrift:"fame,2" form:"fame" json:"fame" query:"fame"`
+	Review    string `thrift:"review,3" form:"review" json:"review" query:"review"`
+	AccountID int32  `thrift:"account_id,4" form:"account_id" json:"account_id" query:"account_id"`
 }
 
 func NewMercariPostTransactionReviewReq() *MercariPostTransactionReviewReq {
@@ -3835,10 +3880,15 @@ func (p *MercariPostTransactionReviewReq) GetReview() (v string) {
 	return p.Review
 }
 
+func (p *MercariPostTransactionReviewReq) GetAccountID() (v int32) {
+	return p.AccountID
+}
+
 var fieldIDToName_MercariPostTransactionReviewReq = map[int16]string{
 	1: "trx_id",
 	2: "fame",
 	3: "review",
+	4: "account_id",
 }
 
 func (p *MercariPostTransactionReviewReq) Read(iprot thrift.TProtocol) (err error) {
@@ -3879,6 +3929,14 @@ func (p *MercariPostTransactionReviewReq) Read(iprot thrift.TProtocol) (err erro
 		case 3:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField3(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 4:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField4(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -3940,6 +3998,15 @@ func (p *MercariPostTransactionReviewReq) ReadField3(iprot thrift.TProtocol) err
 	}
 	return nil
 }
+func (p *MercariPostTransactionReviewReq) ReadField4(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.AccountID = v
+	}
+	return nil
+}
 
 func (p *MercariPostTransactionReviewReq) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
@@ -3957,6 +4024,10 @@ func (p *MercariPostTransactionReviewReq) Write(oprot thrift.TProtocol) (err err
 		}
 		if err = p.writeField3(oprot); err != nil {
 			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
 			goto WriteFieldError
 		}
 	}
@@ -4026,6 +4097,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
+func (p *MercariPostTransactionReviewReq) writeField4(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("account_id", thrift.I32, 4); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.AccountID); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
 }
 
 func (p *MercariPostTransactionReviewReq) String() string {
