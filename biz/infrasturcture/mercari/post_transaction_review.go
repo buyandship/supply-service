@@ -115,8 +115,6 @@ func (m *Mercari) PostTransactionReview(ctx context.Context, req *PostTransactio
 				hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
 				return nil, backoff.Permanent(bizErr.InternalError)
 			}
-			hlog.CtxErrorf(ctx, "http not found, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
-				httpRes.StatusCode, resp.Message, time.Now().Local())
 			return nil, backoff.Permanent(bizErr.BizError{
 				Status:  httpRes.StatusCode,
 				ErrCode: httpRes.StatusCode,

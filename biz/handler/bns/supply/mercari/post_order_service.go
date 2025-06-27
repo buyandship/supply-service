@@ -225,5 +225,10 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 		hlog.CtxErrorf(ctx, "get transaction error: %s", err.Error())
 		return nil, bizErr.InternalError
 	}
+
+	if tx.RefPrice < tx.PaidPrice {
+		hlog.CtxErrorf(ctx, "[Warning] price mismatch, ref_id: %s, ref_price: %d, paid_price: %d", req.GetRefID(), req.GetRefPrice(), tx.PaidPrice)
+	}
+
 	return getResponse(tx), err
 }
