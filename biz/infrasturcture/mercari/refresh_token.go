@@ -49,7 +49,7 @@ func (m *Mercari) GetActiveToken(ctx context.Context) (*mercari.Token, error) {
 		}
 		go func() {
 			if err := cache.GetHandler().Set(context.Background(), cache.ActiveAccountId, accountId, time.Hour); err != nil {
-				hlog.Warnf("redis set failed, err:%v", err)
+				hlog.Warnf("[goroutine] redis set failed, err:%v", err)
 			}
 		}()
 	}
@@ -75,7 +75,7 @@ func (m *Mercari) GetToken(ctx context.Context, accountId int32) (*mercari.Token
 				hlog.Warnf("[goroutine] redis set failed, err:%v", err)
 			}
 		}()
-		return t, nil
+		token = t
 	}
 	if token.Expired() {
 		if err := m.RefreshToken(ctx, token); err != nil {
@@ -216,13 +216,8 @@ func (m *Mercari) Failover(ctx context.Context, accountId int32) error {
 	}
 
 	// get token
-	token, err := m.GetToken(ctx, int32(activeAccountId))
+	_, err = m.GetToken(ctx, int32(activeAccountId))
 	if err != nil {
-		return err
-	}
-
-	// refresh token
-	if err := m.RefreshToken(ctx, token); err != nil {
 		return err
 	}
 
