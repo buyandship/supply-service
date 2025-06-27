@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/buyandship/supply-svr/biz/common/config"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
@@ -86,17 +87,17 @@ func (m *Mercari) GetToken(ctx context.Context, accountId int32) (*mercari.Token
 }
 
 func (m *Mercari) RefreshToken(ctx context.Context, token *mercari.Token) error {
-	locked, err := cache.GetHandler().TryLock(ctx, "mercari_refresh_token")
+	locked, err := cache.GetHandler().TryLock(ctx, config.MercariRefreshTokenLock)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "failed to acquire lock: %v", err)
 		return bizErr.InternalError
 	}
 	if !locked {
-		hlog.CtxErrorf(ctx, "failed to acquire lock: another refresh is in progress")
+		hlog.CtxInfof(ctx, "failed to acquire lock: another refresh is in progress")
 		return bizErr.ConflictError
 	}
 	defer func() {
-		if err := cache.GetHandler().Unlock(ctx, "mercari_refresh_token"); err != nil {
+		if err := cache.GetHandler().Unlock(ctx, config.MercariRefreshTokenLock); err != nil {
 			hlog.CtxErrorf(ctx, "failed to release lock: %v", err)
 		}
 	}()
@@ -175,6 +176,22 @@ func (m *Mercari) RefreshToken(ctx context.Context, token *mercari.Token) error 
 
 func (m *Mercari) Failover(ctx context.Context, accountId int32) error {
 	hlog.CtxInfof(ctx, "failover account: %d", accountId)
+
+	locked, err := cache.GetHandler().TryLock(ctx, config.MercariFailoverLock)
+	if err != nil {
+		hlog.CtxErrorf(ctx, "failed to acquire lock: %v", err)
+		return bizErr.InternalError
+	}
+	if !locked {
+		hlog.CtxInfof(ctx, "failed to acquire lock: another failover is in progress")
+		return bizErr.ConflictError
+	}
+	defer func() {
+		if err := cache.GetHandler().Unlock(ctx, config.MercariFailoverLock); err != nil {
+			hlog.CtxErrorf(ctx, "failed to release lock: %v", err)
+		}
+	}()
+
 	// set banned_at
 	now := time.Now()
 	if err := db.GetHandler().BanAccount(ctx, accountId); err != nil {
@@ -207,7 +224,7 @@ func (m *Mercari) Failover(ctx context.Context, accountId int32) error {
 
 	if activeAccountId == 0 {
 		// alert
-		hlog.CtxErrorf(ctx, "no active account found")
+		hlog.CtxErrorf(ctx, "[important] no active account found")
 		return bizErr.InternalError
 	}
 

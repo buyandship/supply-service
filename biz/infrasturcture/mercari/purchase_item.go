@@ -219,8 +219,8 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 				if errCode == 17 {
 					// failover
 					if err := m.Failover(ctx, token.AccountID); err != nil {
-						hlog.CtxErrorf(ctx, "The account:[%d] is banned,try to failover but fails, error: %s", token.AccountID, err.Error())
-						return nil, backoff.Permanent(err)
+						hlog.CtxWarnf(ctx, "The account:[%d] is banned,try to failover but fails, error: %s", token.AccountID, err.Error())
+						return nil, backoff.RetryAfter(1)
 					}
 					return nil, bizErr.ACLBanError
 				}
