@@ -16,7 +16,6 @@ import (
 	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/model/mercari"
-	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"gorm.io/gorm"
 )
@@ -193,7 +192,6 @@ func (m *Mercari) Failover(ctx context.Context, accountId int32) error {
 	}()
 
 	// set banned_at
-	now := time.Now()
 	if err := db.GetHandler().BanAccount(ctx, accountId); err != nil {
 		return err
 	}
@@ -208,12 +206,7 @@ func (m *Mercari) Failover(ctx context.Context, accountId int32) error {
 	for _, acc := range accs {
 		if acc.BannedAt == nil && acc.Priority > 0 {
 			// set active_at
-			if err := db.GetHandler().UpdateAccount(ctx, &model.Account{
-				Model: gorm.Model{
-					ID: uint(acc.ID),
-				},
-				ActiveAt: &now,
-			}); err != nil {
+			if err := db.GetHandler().SwitchAccount(ctx, int32(acc.ID)); err != nil {
 				return err
 			}
 			hlog.CtxInfof(ctx, "set active account: %d", acc.ID)

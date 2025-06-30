@@ -73,22 +73,6 @@ func (h *H) UpsertAccount(ctx context.Context, account *model.Account) (err erro
 	return err
 }
 
-func (h *H) UpdateAccount(ctx context.Context, account *model.Account) (err error) {
-	ctx, span := trace.StartDBOperation(ctx, "UpdateAccount")
-	defer trace.EndSpan(span, err)
-
-	sql := h.cli.WithContext(ctx)
-
-	if config.GlobalServerConfig.Env == "development" {
-		sql = sql.Debug()
-	}
-
-	err = sql.Where("id = ?", account.ID).
-		Updates(account).Error
-
-	return err
-}
-
 func (h *H) BanAccount(ctx context.Context, accountId int32) (err error) {
 	ctx, span := trace.StartDBOperation(ctx, "BanAccount")
 	defer trace.EndSpan(span, err)
@@ -101,7 +85,6 @@ func (h *H) BanAccount(ctx context.Context, accountId int32) (err error) {
 
 	updates := map[string]any{
 		"banned_at": time.Now(),
-		"active_at": nil,
 	}
 
 	return sql.Model(&model.Account{}).Where("id = ?", accountId).Updates(updates).Error
