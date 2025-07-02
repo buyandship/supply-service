@@ -11,9 +11,10 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/buyandship/supply-svr/biz/common/config"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"gorm.io/gorm"
@@ -27,80 +28,80 @@ type RefreshTokenResponse struct {
 	TokenType    string `json:"token_type"`
 }
 
-func (m *Mercari) GetToken(ctx context.Context) error {
+func (m *Mercari) GetActiveToken(ctx context.Context) (*mercari.Token, error) {
+	accountId := 0
+	if err := cache.GetHandler().Get(ctx, config.ActiveAccountId, &accountId); err != nil {
+		accs, err := db.GetHandler().GetAccountList(ctx)
+		if err != nil {
+			return nil, err
+		}
+		if len(accs) == 0 {
+			return nil, bizErr.InternalError
+		}
+		for _, acc := range accs {
+			if acc.ActiveAt != nil {
+				accountId = int(acc.ID)
+				break
+			}
+		}
+		if accountId == 0 {
+			return nil, bizErr.InternalError
+		}
+		go func() {
+			if err := cache.GetHandler().Set(context.Background(), config.ActiveAccountId, accountId, time.Hour); err != nil {
+				hlog.Warnf("[goroutine] redis set failed, err:%v", err)
+			}
+		}()
+	}
+
+	return m.GetToken(ctx, int32(accountId))
+}
+
+func (m *Mercari) GetToken(ctx context.Context, accountId int32) (*mercari.Token, error) {
 	// load from redis cache
-	if err := m.LoadTokenFromCache(ctx); err != nil {
-		hlog.CtxInfof(ctx, "load from cache failed, err:%v", err)
+	token := &mercari.Token{}
+	if err := cache.GetHandler().Get(ctx, fmt.Sprintf(config.TokenRedisKeyPrefix, accountId), token); err != nil {
+		hlog.CtxInfof(ctx, "the token is not in cache, load from mysql")
 		// Degrade to load from mysql
-		t, err := db.GetHandler().GetToken(ctx)
+		t, err := db.GetHandler().GetToken(ctx, accountId)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return bizErr.UnloginError
+				return nil, bizErr.UnloginError
 			}
-			return err
+			return nil, err
 		}
-		m.Token = t
-		js, err := json.Marshal(m.Token)
-		if err != nil {
-			hlog.CtxInfof(ctx, "marshal json failed, err:%v", err)
-		} else {
-			if err := redis.GetHandler().Set(ctx, redis.TokenRedisKey, string(js), 5*time.Minute); err != nil {
-				hlog.CtxErrorf(ctx, "redis set failed, err:%v", err)
-				return err
+		go func() {
+			if err := cache.GetHandler().Set(context.Background(), fmt.Sprintf(config.TokenRedisKeyPrefix, accountId), t, 5*time.Minute); err != nil {
+				hlog.Warnf("[goroutine] redis set failed, err:%v", err)
 			}
+		}()
+		token = t
+	}
+	if token.Expired() {
+		if err := m.RefreshToken(ctx, token); err != nil {
+			return nil, err
 		}
 	}
-	if m.TokenExpired() {
-		if err := m.RefreshToken(ctx); err != nil {
-			return err
-		}
-	}
-	return nil
+	return token, nil
 }
 
-func (m *Mercari) LoadTokenFromCache(ctx context.Context) error {
-	s, err := redis.GetHandler().Get(ctx, redis.TokenRedisKey)
-	if err != nil {
-		return err
-	}
-	if t, ok := s.(string); ok {
-		hlog.CtxInfof(ctx, "get token from cache %s", t)
-		if err := json.Unmarshal([]byte(t), m.Token); err != nil {
-			return bizErr.InternalError
-		}
-		return nil
-	}
-	return fmt.Errorf("get token from cache failed")
-}
-
-func (m *Mercari) RefreshToken(ctx context.Context) error {
-	if err := m.refreshToken(ctx); err != nil {
-		return err
-	}
-	if err := redis.GetHandler().Del(ctx, redis.TokenRedisKey); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *Mercari) refreshToken(ctx context.Context) error {
-	// Try to acquire lock
-	locked, err := redis.GetHandler().TryLock(ctx, "mercari_refresh_token")
+func (m *Mercari) RefreshToken(ctx context.Context, token *mercari.Token) error {
+	locked, err := cache.GetHandler().TryLock(ctx, config.MercariRefreshTokenLock)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "failed to acquire lock: %v", err)
 		return bizErr.InternalError
 	}
 	if !locked {
-		hlog.CtxErrorf(ctx, "failed to acquire lock: another refresh is in progress")
+		hlog.CtxInfof(ctx, "failed to acquire lock: another refresh is in progress")
 		return bizErr.ConflictError
 	}
 	defer func() {
-		if err := redis.GetHandler().Unlock(ctx, "mercari_refresh_token"); err != nil {
+		if err := cache.GetHandler().Unlock(ctx, config.MercariRefreshTokenLock); err != nil {
 			hlog.CtxErrorf(ctx, "failed to release lock: %v", err)
 		}
 	}()
 
-	if ok := redis.GetHandler().Limit(ctx); ok {
+	if ok := cache.GetHandler().Limit(ctx); ok {
 		hlog.CtxErrorf(ctx, "rate limit error")
 		return bizErr.RateLimitError
 	}
@@ -116,7 +117,7 @@ func (m *Mercari) refreshToken(ctx context.Context) error {
 	}
 
 	body := fmt.Sprintf("grant_type=%s&scope=%s&refresh_token=%s", "refresh_token",
-		url.QueryEscape(m.Token.Scope), m.Token.RefreshToken)
+		url.QueryEscape(token.Scope), token.RefreshToken)
 
 	data := bytes.NewBuffer([]byte(body))
 	url := fmt.Sprintf("%s/jp/v1/token", m.AuthServiceDomain)
@@ -151,24 +152,83 @@ func (m *Mercari) refreshToken(ctx context.Context) error {
 		return bizErr.InternalError
 	}
 
-	hlog.CtxInfof(ctx, "refresh token success, resp: %+v", resp)
-
-	if err := db.GetHandler().InsertTokenLog(ctx, &mercari.Token{
+	token = &mercari.Token{
 		AccessToken:  resp.AccessToken,
 		RefreshToken: resp.RefreshToken,
 		ExpiresIn:    resp.ExpiresIn,
 		Scope:        resp.Scope,
 		TokenType:    resp.TokenType,
-	}); err != nil {
+		AccountID:    token.AccountID,
+	}
+
+	if err := db.GetHandler().InsertTokenLog(ctx, token); err != nil {
+		hlog.CtxErrorf(ctx, "insert token log failed, err: %v", err)
 		return bizErr.InternalError
 	}
 
-	m.Token = &mercari.Token{
-		AccessToken:  resp.AccessToken,
-		RefreshToken: resp.RefreshToken,
-		ExpiresIn:    resp.ExpiresIn,
-		Scope:        resp.Scope,
-		TokenType:    resp.TokenType,
+	if err := cache.GetHandler().Del(ctx, fmt.Sprintf(config.TokenRedisKeyPrefix, token.AccountID)); err != nil {
+		hlog.CtxErrorf(ctx, "delete token from cache failed, err: %v", err)
+		return err
+	}
+	return nil
+}
+
+func (m *Mercari) Failover(ctx context.Context, accountId int32) error {
+	hlog.CtxInfof(ctx, "failover account: %d", accountId)
+
+	locked, err := cache.GetHandler().TryLock(ctx, config.MercariFailoverLock)
+	if err != nil {
+		hlog.CtxErrorf(ctx, "failed to acquire lock: %v", err)
+		return bizErr.InternalError
+	}
+	if !locked {
+		hlog.CtxInfof(ctx, "failed to acquire lock: another failover is in progress")
+		return bizErr.ConflictError
+	}
+	defer func() {
+		if err := cache.GetHandler().Unlock(ctx, config.MercariFailoverLock); err != nil {
+			hlog.CtxErrorf(ctx, "failed to release lock: %v", err)
+		}
+	}()
+
+	// set banned_at
+	if err := db.GetHandler().BanAccount(ctx, accountId); err != nil {
+		return err
+	}
+
+	// get all accounts
+	accs, err := db.GetHandler().GetAccountList(ctx)
+	if err != nil {
+		return err
+	}
+
+	activeAccountId := 0
+	for _, acc := range accs {
+		if acc.BannedAt == nil && acc.Priority > 0 {
+			// set active_at
+			if err := db.GetHandler().SwitchAccount(ctx, int32(acc.ID)); err != nil {
+				return err
+			}
+			hlog.CtxInfof(ctx, "set active account: %d", acc.ID)
+			activeAccountId = int(acc.ID)
+			break
+		}
+	}
+
+	if activeAccountId == 0 {
+		// alert
+		hlog.CtxErrorf(ctx, "[important] no active account found")
+		return bizErr.InternalError
+	}
+
+	if err := cache.GetHandler().Set(ctx, config.ActiveAccountId, activeAccountId, time.Hour); err != nil {
+		return err
+	}
+
+	// get token
+	_, err = m.GetToken(ctx, int32(activeAccountId))
+	if err != nil {
+		return err
 	}
 
 	return nil

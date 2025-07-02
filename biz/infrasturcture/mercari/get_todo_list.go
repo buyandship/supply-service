@@ -11,7 +11,7 @@ import (
 	"time"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
@@ -36,17 +36,16 @@ type GetTodoListResp struct {
 
 func (m *Mercari) GetTodoList(ctx context.Context, req *GetTodoListReq) (*GetTodoListResp, error) {
 	getItemFunc := func() (*GetTodoListResp, error) {
-		hlog.CtxInfof(ctx, "call /v1/todolist at %+v", time.Now())
-
-		if err := m.GetToken(ctx); err != nil {
-			return nil, bizErr.InternalError
+		token, err := m.GetActiveToken(ctx)
+		if err != nil {
+			return nil, err
 		}
 
-		if ok := redis.GetHandler().Limit(ctx); ok {
+		if ok := cache.GetHandler().Limit(ctx); ok {
 			return nil, bizErr.RateLimitError
 		}
 		headers := map[string][]string{
-			"Authorization": {m.Token.AccessToken},
+			"Authorization": {token.AccessToken},
 		}
 
 		reqBody, err := json.Marshal(req)
@@ -71,25 +70,25 @@ func (m *Mercari) GetTodoList(ctx context.Context, req *GetTodoListReq) (*GetTod
 
 		defer func() {
 			if err := httpRes.Body.Close(); err != nil {
-				hlog.CtxErrorf(ctx, "http close error: %s", err)
+				hlog.CtxWarnf(ctx, "http close error: %s", err)
 			}
 		}()
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
-			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
-			if err := m.RefreshToken(ctx); err != nil {
-				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
+			hlog.CtxInfof(ctx, "http unauthorized, refreshing token...")
+			if err := m.RefreshToken(ctx, token); err != nil {
+				hlog.CtxWarnf(ctx, "try to refresh token, but fails, err: %v", err)
 				return nil, backoff.RetryAfter(1)
 			}
 			return nil, bizErr.UnauthorisedError
 		}
 		// retry code: 409, 429, 5xx
 		if httpRes.StatusCode == http.StatusTooManyRequests {
-			hlog.CtxErrorf(ctx, "http too many requests, retrying...")
+			hlog.CtxWarnf(ctx, "http too many requests, retrying...")
 			return nil, backoff.RetryAfter(1)
 		}
 		if httpRes.StatusCode == http.StatusConflict {
-			hlog.CtxErrorf(ctx, "http conflict, retrying...")
+			hlog.CtxWarnf(ctx, "http conflict, retrying...")
 			return nil, bizErr.ConflictError
 		}
 		if httpRes.StatusCode >= 500 && httpRes.StatusCode < 600 {
@@ -105,7 +104,7 @@ func (m *Mercari) GetTodoList(ctx context.Context, req *GetTodoListReq) (*GetTod
 
 		if httpRes.StatusCode != http.StatusOK {
 			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "get mercari todo list error: %s", respBody)
+			hlog.CtxInfof(ctx, "get mercari todo list error: %s", respBody)
 			return nil, backoff.Permanent(bizErr.BizError{
 				Status:  httpRes.StatusCode,
 				ErrCode: httpRes.StatusCode,
@@ -118,7 +117,6 @@ func (m *Mercari) GetTodoList(ctx context.Context, req *GetTodoListReq) (*GetTod
 			hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
-		hlog.CtxInfof(ctx, "get item categories successfully")
 		return resp, nil
 	}
 	result, err := backoff.Retry(ctx, getItemFunc, m.GetRetryOpts()...)

@@ -12,7 +12,7 @@ import (
 	"time"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -125,20 +125,20 @@ type AnshinItemAuthentication struct {
 
 func (m *Mercari) SearchItems(ctx context.Context, req *supply.MercariSearchItemsReq) (*SearchItemsResponse, error) {
 	SearchItemsFunc := func() (*SearchItemsResponse, error) {
-		hlog.CtxInfof(ctx, "call /v3/items/search at %+v", time.Now().Local())
 
-		if err := m.GetToken(ctx); err != nil {
-			return nil, bizErr.InternalError
+		token, err := m.GetActiveToken(ctx)
+		if err != nil {
+			return nil, err
 		}
 
-		if ok := redis.GetHandler().Limit(ctx); ok {
+		if ok := cache.GetHandler().Limit(ctx); ok {
 			hlog.CtxErrorf(ctx, "hit rate limit")
 			return nil, bizErr.RateLimitError
 		}
 
 		headers := map[string][]string{
 			"Accept":        {"application/json"},
-			"Authorization": {m.Token.AccessToken},
+			"Authorization": {token.AccessToken},
 		}
 
 		baseUrl, err := url.Parse(fmt.Sprintf("%s/v3/items/search", m.OpenApiDomain))
@@ -148,74 +148,74 @@ func (m *Mercari) SearchItems(ctx context.Context, req *supply.MercariSearchItem
 		}
 
 		queryParams := url.Values{}
-		if req.Keyword != nil {
-			queryParams.Add("keyword", *req.Keyword)
+		if req.IsSetKeyword() {
+			queryParams.Add("keyword", req.GetKeyword())
 		}
-		if req.ExcludeKeyword != nil {
-			queryParams.Add("exclude_keyword", *req.ExcludeKeyword)
+		if req.IsSetExcludeKeyword() {
+			queryParams.Add("exclude_keyword", req.GetExcludeKeyword())
 		}
-		if req.BrandID != nil {
+		if req.IsSetBrandID() {
 			queryParams.Add("brand_id", req.GetBrandID())
 		}
-		if req.CategoryID != nil {
+		if req.IsSetCategoryID() {
 			queryParams.Add("category_id", req.GetCategoryID())
 		}
-		if req.SellerID != nil {
+		if req.IsSetSellerID() {
 			queryParams.Add("seller_id", req.GetSellerID())
 		}
-		if req.ShopID != nil {
-			queryParams.Add("shop_id", *req.ShopID)
+		if req.IsSetShopID() {
+			queryParams.Add("shop_id", req.GetShopID())
 		}
-		if req.SizeID != nil {
+		if req.IsSetSizeID() {
 			queryParams.Add("size_id", req.GetSizeID())
 		}
-		if req.ColorID != nil {
+		if req.IsSetColorID() {
 			queryParams.Add("color_id", req.GetColorID())
 		}
-		if req.PriceMin != nil {
-			queryParams.Add("price_min", strconv.Itoa(int(*req.PriceMin)))
+		if req.IsSetPriceMin() {
+			queryParams.Add("price_min", strconv.Itoa(int(req.GetPriceMin())))
 		}
-		if req.PriceMax != nil {
-			queryParams.Add("price_max", strconv.Itoa(int(*req.PriceMax)))
+		if req.IsSetPriceMax() {
+			queryParams.Add("price_max", strconv.Itoa(int(req.GetPriceMax())))
 		}
-		if req.CreatedBeforeDate != nil {
-			queryParams.Add("created_before_date", strconv.Itoa(int(*req.CreatedBeforeDate)))
+		if req.IsSetCreatedBeforeDate() {
+			queryParams.Add("created_before_date", strconv.Itoa(int(req.GetCreatedBeforeDate())))
 		}
-		if req.CreatedAfterDate != nil {
-			queryParams.Add("created_after_date", strconv.Itoa(int(*req.CreatedAfterDate)))
+		if req.IsSetCreatedAfterDate() {
+			queryParams.Add("created_after_date", strconv.Itoa(int(req.GetCreatedAfterDate())))
 		}
-		if req.ItemConditionID != nil {
+		if req.IsSetItemConditionID() {
 			queryParams.Add("item_condition_id", req.GetItemConditionID())
 		}
 		if req.ShippingPayerID != nil {
 			queryParams.Add("shipping_payer_id", req.GetShippingPayerID())
 		}
-		if req.Status != nil {
-			queryParams.Add("status", *req.Status)
+		if req.IsSetStatus() {
+			queryParams.Add("status", req.GetStatus())
 		}
-		if req.Marketplace != nil {
+		if req.IsSetMarketplace() {
 			queryParams.Add("marketplace", req.GetMarketplace())
 		}
-		if req.Sort != nil {
-			queryParams.Add("sort", *req.Sort)
+		if req.IsSetSort() {
+			queryParams.Add("sort", req.GetSort())
 		}
-		if req.Order != nil {
-			queryParams.Add("order", *req.Order)
+		if req.IsSetOrder() {
+			queryParams.Add("order", req.GetOrder())
 		}
-		if req.Page != nil {
-			queryParams.Add("page", strconv.Itoa(int(*req.Page)))
+		if req.IsSetPage() {
+			queryParams.Add("page", strconv.Itoa(int(req.GetPage())))
 		}
-		if req.Limit != nil {
-			queryParams.Add("limit", strconv.Itoa(int(*req.Limit)))
+		if req.IsSetLimit() {
+			queryParams.Add("limit", strconv.Itoa(int(req.GetLimit())))
 		}
-		if req.ItemAuthentication != nil {
-			queryParams.Add("item_authentication", strconv.FormatBool(*req.ItemAuthentication))
+		if req.IsSetItemAuthentication() {
+			queryParams.Add("item_authentication", strconv.FormatBool(req.GetItemAuthentication()))
 		}
-		if req.TimeSale != nil {
-			queryParams.Add("time_sale", strconv.FormatBool(*req.TimeSale))
+		if req.IsSetTimeSale() {
+			queryParams.Add("time_sale", strconv.FormatBool(req.GetTimeSale()))
 		}
-		if req.WithOfferPricePromotion != nil {
-			queryParams.Add("with_offer_price_promotion", strconv.FormatBool(*req.WithOfferPricePromotion))
+		if req.IsSetWithOfferPricePromotion() {
+			queryParams.Add("with_offer_price_promotion", strconv.FormatBool(req.GetWithOfferPricePromotion()))
 		}
 		baseUrl.RawQuery = queryParams.Encode()
 
@@ -239,8 +239,8 @@ func (m *Mercari) SearchItems(ctx context.Context, req *supply.MercariSearchItem
 		}()
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
-			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
-			if err := m.RefreshToken(ctx); err != nil {
+			hlog.CtxInfof(ctx, "http unauthorized, refreshing token...")
+			if err := m.RefreshToken(ctx, token); err != nil {
 				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
 				return nil, backoff.RetryAfter(1)
 			}

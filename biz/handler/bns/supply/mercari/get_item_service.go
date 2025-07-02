@@ -2,6 +2,7 @@ package mercari
 
 import (
 	"context"
+
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/handler/bns/supply/utils"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
@@ -11,8 +12,6 @@ import (
 )
 
 func GetItemService(ctx context.Context, req *supply.MercariGetItemReq) (*mercari.GetItemByIDResponse, error) {
-	hlog.CtxInfof(ctx, "GetItemService is called, item_id: %s", req.GetItemID())
-
 	if req.GetItemID() == "" {
 		hlog.CtxErrorf(ctx, "empty item_id")
 		return nil, bizErr.InvalidParameterError
@@ -25,17 +24,21 @@ func GetItemService(ctx context.Context, req *supply.MercariGetItemReq) (*mercar
 
 	h := mercari.GetHandler()
 
-	prefecture := ""
-	acc, err := utils.GetBuyer(ctx, req.GetBuyerID())
+	token, err := h.GetActiveToken(ctx)
+	if err != nil {
+		hlog.CtxErrorf(ctx, "GetActiveToken error: %v", err)
+		return nil, err
+	}
+
+	acc, err := utils.GetAccount(ctx, token.AccountID)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "GetBuyer error: %v", err)
-	} else {
-		prefecture = acc.Prefecture
+		return nil, err
 	}
 
 	resp, err := h.GetItemByID(ctx, &mercari.GetItemByIDRequest{
 		ItemId:     req.GetItemID(),
-		Prefecture: prefecture,
+		Prefecture: acc.Prefecture,
 	})
 
 	if err := mock.MockMercariItemResponse(resp); err != nil {

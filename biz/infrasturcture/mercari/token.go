@@ -8,10 +8,13 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
+	"strings"
 
+	"github.com/buyandship/supply-svr/biz/common/config"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	"github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -33,7 +36,7 @@ type GetTokenResponse struct {
 }
 
 func (m *Mercari) SetToken(ctx context.Context, req *supply.MercariLoginCallBackReq) error {
-	if ok := redis.GetHandler().Limit(ctx); ok {
+	if ok := cache.GetHandler().Limit(ctx); ok {
 		return bizErr.RateLimitError
 	}
 
@@ -88,17 +91,36 @@ func (m *Mercari) SetToken(ctx context.Context, req *supply.MercariLoginCallBack
 	hlog.CtxInfof(ctx, "get token success, resp: %+v", resp)
 
 	// insert token
+	ExtractAccountIDFunc := func(s string) int32 {
+		parts := strings.SplitN(s, "-", 3)
+		if len(parts) >= 3 {
+			accountId, err := strconv.ParseInt(parts[1], 10, 32)
+			if err != nil {
+				return 0
+			}
+			return int32(accountId)
+		}
+		return 0
+	}
+
+	accountId := ExtractAccountIDFunc(req.State)
+	if accountId == 0 {
+		hlog.CtxErrorf(ctx, "invalid account id: %s", req.State)
+		return bizErr.InvalidParameterError
+	}
+
 	if err := db.GetHandler().InsertTokenLog(ctx, &mercari.Token{
 		AccessToken:  resp.AccessToken,
 		RefreshToken: resp.RefreshToken,
 		ExpiresIn:    resp.ExpiresIn,
 		Scope:        resp.Scope,
 		TokenType:    resp.TokenType,
+		AccountID:    int32(accountId),
 	}); err != nil {
 		return bizErr.InternalError
 	}
 
-	if err := redis.GetHandler().Del(ctx, redis.TokenRedisKey); err != nil {
+	if err := cache.GetHandler().Del(ctx, fmt.Sprintf(config.TokenRedisKeyPrefix, accountId)); err != nil {
 		return err
 	}
 

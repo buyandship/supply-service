@@ -1,0 +1,38 @@
+package mercari
+
+import (
+	"context"
+	"time"
+
+	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
+)
+
+func KeepTokenAliveService(ctx context.Context) error {
+
+	// get account list from db
+	accounts, err := db.GetHandler().GetAccountList(ctx)
+	if err != nil {
+		return err
+	}
+
+	for _, account := range accounts {
+		token, err := db.GetHandler().GetToken(ctx, int32(account.ID))
+		if err != nil {
+			hlog.CtxErrorf(ctx, "get token error: %v", err)
+			continue
+		}
+
+		if token.CreatedAt.Before(time.Now().Add(-85 * time.Hour * 24)) {
+			// refresh token
+			if err := mercari.GetHandler().RefreshToken(ctx, token); err != nil {
+				hlog.CtxErrorf(ctx, "refresh token error: %v", err)
+				continue
+			}
+			hlog.CtxInfof(ctx, "refresh token success: %v", token)
+		}
+
+	}
+	return nil
+}

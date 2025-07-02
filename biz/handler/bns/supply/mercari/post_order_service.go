@@ -61,11 +61,12 @@ func getResponse(tx *model.Transaction) *supply.MercariPostOrderResp {
 		BuyerShippingFee: int64(fee),
 		ItemID:           tx.ItemID,
 		Checksum:         tx.Checksum,
+		AccountID:        tx.AccountID,
 	}
 }
 
 func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*supply.MercariPostOrderResp, error) {
-	hlog.CtxInfof(ctx, "PostOrderService is called, req: %+v", req)
+	hlog.CtxInfof(ctx, "PostOrderService is called, item_id: %s, ref_id: %s, ref_price: %d, ref_currency: %s", req.GetItemID(), req.GetRefID(), req.GetRefPrice(), req.GetRefCurrency())
 	// 1. validation
 	if err := validateRequest(ctx, req); err != nil {
 		return nil, err
@@ -78,12 +79,16 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 
 	h := mercari.GetHandler()
 
-	// 2. get buyer
-
-	acc := &model.Account{}
-	acc, err := utils.GetBuyer(ctx, req.GetBuyerID())
+	token, err := h.GetActiveToken(ctx)
 	if err != nil {
-		hlog.CtxErrorf(ctx, "GetBuyer error: %v", err)
+		hlog.CtxErrorf(ctx, "GetActiveToken error: %v", err)
+		return nil, bizErr.InternalError
+	}
+
+	// 2. get buyer
+	acc, err := utils.GetAccount(ctx, token.AccountID)
+	if err != nil {
+		hlog.CtxErrorf(ctx, "GetActiveAccount error: %v", err)
 		return nil, bizErr.InternalError
 	}
 
@@ -108,7 +113,9 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 	}
 
 	// 4. check if transaction with ref_id already exists.
-	tx, err := db.GetHandler().GetTransaction(ctx, req.GetRefID())
+	tx, err := db.GetHandler().GetTransaction(ctx, &model.Transaction{
+		RefID: req.GetRefID(),
+	})
 	if err != nil {
 		hlog.CtxErrorf(ctx, "get transaction error: %s", err.Error())
 		return nil, bizErr.InternalError
@@ -142,12 +149,12 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 			ItemID:     req.GetItemID(),
 			ItemType:   resp.ItemType,
 			ItemDetail: jsonItemDetail,
-			BuyerID:    acc.BuyerID,
 			RefPrice:   req.GetRefPrice(),
 			Checksum:   req.GetChecksum(),
 			Currency:   req.GetRefCurrency(),
 			CouponID:   couponId,
 			DeliveryId: deliveryId,
+			AccountID:  int32(acc.ID),
 		}); err != nil {
 			return nil, bizErr.InternalError
 		}
@@ -190,7 +197,7 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 
 	// 5. purchase item
 	if err := h.PurchaseItem(ctx, req.GetRefID(), &mercari.PurchaseItemRequest{
-		BuyerId:            req.GetBuyerID(),
+		AccountId:          int32(acc.ID),
 		ItemId:             req.GetItemID(),
 		FamilyName:         acc.FamilyName,
 		FirstName:          acc.FirstName,
@@ -211,10 +218,17 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 		return nil, err
 	}
 
-	tx, err = db.GetHandler().GetTransaction(ctx, req.GetRefID())
+	tx, err = db.GetHandler().GetTransaction(ctx, &model.Transaction{
+		RefID: req.GetRefID(),
+	})
 	if err != nil {
 		hlog.CtxErrorf(ctx, "get transaction error: %s", err.Error())
 		return nil, bizErr.InternalError
 	}
+
+	if tx.RefPrice < tx.PaidPrice {
+		hlog.CtxErrorf(ctx, "[Warning] price mismatch, ref_id: %s, ref_price: %d, paid_price: %d", req.GetRefID(), req.GetRefPrice(), tx.PaidPrice)
+	}
+
 	return getResponse(tx), err
 }

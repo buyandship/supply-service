@@ -11,16 +11,17 @@ import (
 	"time"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/hertz-contrib/logger/zap"
 )
 
 type PostTransactionReviewRequest struct {
-	TrxId   string `json:"trx_id"`
-	Fame    string `json:"fame"`
-	Message string `json:"message"`
+	TrxId     string `json:"trx_id"`
+	Fame      string `json:"fame"`
+	Message   string `json:"message"`
+	AccountID int32  `json:"account_id"`
 }
 
 type PostTransactionReviewResponse struct {
@@ -30,24 +31,25 @@ type PostTransactionReviewResponse struct {
 	} `json:"failure_details,omitempty"`
 	RequestId    string `json:"request_id"`
 	ReviewStatus string `json:"review_status"`
+	AccountID    int32  `json:"account_id"`
 }
 
 func (m *Mercari) PostTransactionReview(ctx context.Context, req *PostTransactionReviewRequest) (*PostTransactionReviewResponse, error) {
 	postTransactionReviewFunc := func() (*PostTransactionReviewResponse, error) {
-		hlog.CtxInfof(ctx, "call /v1/transactions/{transactionID}/post_review at %+v", time.Now())
-
-		if err := m.GetToken(ctx); err != nil {
-			return nil, bizErr.InternalError
+		token, err := m.GetToken(ctx, req.AccountID)
+		if err != nil {
+			hlog.CtxErrorf(ctx, "get token failed: %v", err)
+			return nil, err
 		}
 
-		if ok := redis.GetHandler().Limit(ctx); ok {
-			hlog.CtxErrorf(ctx, "hit rate limit")
+		if ok := cache.GetHandler().Limit(ctx); ok {
+			hlog.CtxWarnf(ctx, "hit rate limit")
 			return nil, bizErr.RateLimitError
 		}
 
 		headers := map[string][]string{
 			"Content-Type":  {"application/json"},
-			"Authorization": {m.Token.AccessToken},
+			"Authorization": {token.AccessToken},
 		}
 		jsonReq := map[string]string{
 			"fame":    req.Fame,
@@ -75,30 +77,30 @@ func (m *Mercari) PostTransactionReview(ctx context.Context, req *PostTransactio
 
 		defer func() {
 			if err := httpRes.Body.Close(); err != nil {
-				hlog.CtxErrorf(ctx, "http close error: %s", err)
+				hlog.CtxWarnf(ctx, "http close error: %s", err)
 			}
 		}()
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
-			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
-			if err := m.RefreshToken(ctx); err != nil {
-				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
+			hlog.CtxInfof(ctx, "http unauthorized, refreshing token...")
+			if err := m.RefreshToken(ctx, token); err != nil {
+				hlog.CtxWarnf(ctx, "try to refresh token, but fails, err: %v", err)
 				return nil, backoff.RetryAfter(1)
 			}
 			return nil, bizErr.UnauthorisedError
 		}
 		// retry code: 409, 429, 5xx
 		if httpRes.StatusCode == http.StatusTooManyRequests {
-			hlog.CtxErrorf(ctx, "http too many requests, retrying...")
+			hlog.CtxWarnf(ctx, "http too many requests, retrying...")
 			return nil, backoff.RetryAfter(1)
 		}
 		if httpRes.StatusCode == http.StatusConflict {
-			hlog.CtxErrorf(ctx, "http conflict, retrying...")
+			hlog.CtxWarnf(ctx, "http conflict, retrying...")
 			return nil, bizErr.ConflictError
 		}
 		if httpRes.StatusCode >= 500 && httpRes.StatusCode < 600 {
 			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
+			hlog.CtxWarnf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
 				httpRes.StatusCode, respBody, time.Now().Local())
 			return nil, bizErr.BizError{
 				Status:  httpRes.StatusCode,
@@ -113,8 +115,6 @@ func (m *Mercari) PostTransactionReview(ctx context.Context, req *PostTransactio
 				hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
 				return nil, backoff.Permanent(bizErr.InternalError)
 			}
-			hlog.CtxErrorf(ctx, "http not found, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
-				httpRes.StatusCode, resp.Message, time.Now().Local())
 			return nil, backoff.Permanent(bizErr.BizError{
 				Status:  httpRes.StatusCode,
 				ErrCode: httpRes.StatusCode,
@@ -141,7 +141,6 @@ func (m *Mercari) PostTransactionReview(ctx context.Context, req *PostTransactio
 			})
 		}
 
-		hlog.CtxInfof(ctx, "post mercari transaction review response: %+v", resp)
 		return resp, nil
 	}
 
@@ -154,5 +153,7 @@ func (m *Mercari) PostTransactionReview(ctx context.Context, req *PostTransactio
 		}
 		return nil, err
 	}
+
+	result.AccountID = req.AccountID
 	return result, nil
 }

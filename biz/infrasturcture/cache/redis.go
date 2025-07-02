@@ -1,7 +1,8 @@
-package redis
+package cache
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"sync"
 	"time"
@@ -14,7 +15,6 @@ import (
 )
 
 const (
-	TokenRedisKey = "mercari_token"
 	LockKeyPrefix = "lock:"
 	LockTTL       = 2 * time.Second
 )
@@ -65,24 +65,31 @@ func (h *H) Set(ctx context.Context, key string, value any, expiration time.Dura
 	ctx, span := trace.StartRedisOperation(ctx, "Set", key)
 	defer trace.EndSpan(span, err)
 
-	err = h.redisClient.Set(ctx, key, value, expiration).Err()
-	return
+	jsonValue, err := json.Marshal(value)
+	if err != nil {
+		return err
+	}
+
+	return h.redisClient.Set(ctx, key, jsonValue, expiration).Err()
 }
 
-func (h *H) Get(ctx context.Context, key string) (result any, err error) {
+func (h *H) Get(ctx context.Context, key string, value any) (err error) {
 	ctx, span := trace.StartRedisOperation(ctx, "Get", key)
 	defer trace.EndSpan(span, err)
 
-	result, err = h.redisClient.Get(ctx, key).Result()
-	return
+	result, err := h.redisClient.Get(ctx, key).Result()
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal([]byte(result), value)
 }
 
 func (h *H) Del(ctx context.Context, key string) (err error) {
 	ctx, span := trace.StartRedisOperation(ctx, "Del", key)
 	defer trace.EndSpan(span, err)
 
-	err = h.redisClient.Del(ctx, key).Err()
-	return
+	return h.redisClient.Del(ctx, key).Err()
 }
 
 func (h *H) TryLock(ctx context.Context, key string) (success bool, err error) {

@@ -41,10 +41,19 @@ func PostTransactionReviewService(ctx context.Context, req *supply.MercariPostTr
 		return nil, bizErr.InvalidParameterError
 	}
 
+	trx, err := db.GetHandler().GetTransaction(ctx, &model.Transaction{
+		TrxID: req.GetTrxID(),
+	})
+	if err != nil {
+		hlog.CtxErrorf(ctx, "get transaction failed: %v", err)
+		return nil, bizErr.InternalError
+	}
+
 	mResp, err := h.PostTransactionReview(ctx, &mercari.PostTransactionReviewRequest{
-		TrxId:   req.GetTrxID(),
-		Fame:    req.GetFame(),
-		Message: req.GetReview(),
+		TrxId:     req.GetTrxID(),
+		Fame:      req.GetFame(),
+		Message:   req.GetReview(),
+		AccountID: trx.AccountID,
 	})
 	if err != nil {
 		return nil, err

@@ -9,16 +9,11 @@ import (
 )
 
 type MercariGetItemReq struct {
-	BuyerID int32  `thrift:"buyer_id,1" form:"buyer_id" json:"buyer_id" query:"buyer_id"`
-	ItemID  string `thrift:"item_id,2" form:"item_id" json:"item_id" query:"item_id"`
+	ItemID string `thrift:"item_id,1" form:"item_id" json:"item_id" query:"item_id"`
 }
 
 func NewMercariGetItemReq() *MercariGetItemReq {
 	return &MercariGetItemReq{}
-}
-
-func (p *MercariGetItemReq) GetBuyerID() (v int32) {
-	return p.BuyerID
 }
 
 func (p *MercariGetItemReq) GetItemID() (v string) {
@@ -26,8 +21,7 @@ func (p *MercariGetItemReq) GetItemID() (v string) {
 }
 
 var fieldIDToName_MercariGetItemReq = map[int16]string{
-	1: "buyer_id",
-	2: "item_id",
+	1: "item_id",
 }
 
 func (p *MercariGetItemReq) Read(iprot thrift.TProtocol) (err error) {
@@ -50,16 +44,8 @@ func (p *MercariGetItemReq) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.I32 {
-				if err = p.ReadField1(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 2:
 			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField2(iprot); err != nil {
+				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -96,15 +82,6 @@ ReadStructEndError:
 
 func (p *MercariGetItemReq) ReadField1(iprot thrift.TProtocol) error {
 
-	if v, err := iprot.ReadI32(); err != nil {
-		return err
-	} else {
-		p.BuyerID = v
-	}
-	return nil
-}
-func (p *MercariGetItemReq) ReadField2(iprot thrift.TProtocol) error {
-
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
@@ -121,10 +98,6 @@ func (p *MercariGetItemReq) Write(oprot thrift.TProtocol) (err error) {
 	if p != nil {
 		if err = p.writeField1(oprot); err != nil {
 			fieldId = 1
-			goto WriteFieldError
-		}
-		if err = p.writeField2(oprot); err != nil {
-			fieldId = 2
 			goto WriteFieldError
 		}
 	}
@@ -146,24 +119,7 @@ WriteStructEndError:
 }
 
 func (p *MercariGetItemReq) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("buyer_id", thrift.I32, 1); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteI32(p.BuyerID); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
-}
-
-func (p *MercariGetItemReq) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("item_id", thrift.STRING, 2); err != nil {
+	if err = oprot.WriteFieldBegin("item_id", thrift.STRING, 1); err != nil {
 		goto WriteFieldBeginError
 	}
 	if err := oprot.WriteString(p.ItemID); err != nil {
@@ -174,9 +130,9 @@ func (p *MercariGetItemReq) writeField2(oprot thrift.TProtocol) (err error) {
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
 func (p *MercariGetItemReq) String() string {
@@ -323,21 +279,16 @@ func (p *MercariGetSellerReq) String() string {
 }
 
 type MercariPostOrderReq struct {
-	BuyerID     int32  `thrift:"buyer_id,1" form:"buyer_id" json:"buyer_id" query:"buyer_id"`
-	ItemID      string `thrift:"item_id,2" form:"item_id" json:"item_id" query:"item_id"`
-	RefPrice    int64  `thrift:"ref_price,3" form:"ref_price" json:"ref_price" query:"ref_price"`
-	RefCurrency string `thrift:"ref_currency,4" form:"ref_currency" json:"ref_currency" query:"ref_currency"`
-	Checksum    string `thrift:"checksum,5" form:"checksum" json:"checksum" query:"checksum"`
-	RefID       string `thrift:"ref_id,6" form:"ref_id" json:"ref_id" query:"ref_id"`
-	DeliveryID  string `thrift:"delivery_id,7" form:"delivery_id" json:"delivery_id" query:"delivery_id"`
+	ItemID      string `thrift:"item_id,1" form:"item_id" json:"item_id" query:"item_id"`
+	RefPrice    int64  `thrift:"ref_price,2" form:"ref_price" json:"ref_price" query:"ref_price"`
+	RefCurrency string `thrift:"ref_currency,3" form:"ref_currency" json:"ref_currency" query:"ref_currency"`
+	Checksum    string `thrift:"checksum,4" form:"checksum" json:"checksum" query:"checksum"`
+	RefID       string `thrift:"ref_id,5" form:"ref_id" json:"ref_id" query:"ref_id"`
+	DeliveryID  string `thrift:"delivery_id,6" form:"delivery_id" json:"delivery_id" query:"delivery_id"`
 }
 
 func NewMercariPostOrderReq() *MercariPostOrderReq {
 	return &MercariPostOrderReq{}
-}
-
-func (p *MercariPostOrderReq) GetBuyerID() (v int32) {
-	return p.BuyerID
 }
 
 func (p *MercariPostOrderReq) GetItemID() (v string) {
@@ -365,13 +316,12 @@ func (p *MercariPostOrderReq) GetDeliveryID() (v string) {
 }
 
 var fieldIDToName_MercariPostOrderReq = map[int16]string{
-	1: "buyer_id",
-	2: "item_id",
-	3: "ref_price",
-	4: "ref_currency",
-	5: "checksum",
-	6: "ref_id",
-	7: "delivery_id",
+	1: "item_id",
+	2: "ref_price",
+	3: "ref_currency",
+	4: "checksum",
+	5: "ref_id",
+	6: "delivery_id",
 }
 
 func (p *MercariPostOrderReq) Read(iprot thrift.TProtocol) (err error) {
@@ -394,7 +344,7 @@ func (p *MercariPostOrderReq) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.I32 {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -402,7 +352,7 @@ func (p *MercariPostOrderReq) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 2:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -410,7 +360,7 @@ func (p *MercariPostOrderReq) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 3:
-			if fieldTypeId == thrift.I64 {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -436,14 +386,6 @@ func (p *MercariPostOrderReq) Read(iprot thrift.TProtocol) (err error) {
 		case 6:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField6(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 7:
-			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField7(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -480,15 +422,6 @@ ReadStructEndError:
 
 func (p *MercariPostOrderReq) ReadField1(iprot thrift.TProtocol) error {
 
-	if v, err := iprot.ReadI32(); err != nil {
-		return err
-	} else {
-		p.BuyerID = v
-	}
-	return nil
-}
-func (p *MercariPostOrderReq) ReadField2(iprot thrift.TProtocol) error {
-
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
@@ -496,7 +429,7 @@ func (p *MercariPostOrderReq) ReadField2(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariPostOrderReq) ReadField3(iprot thrift.TProtocol) error {
+func (p *MercariPostOrderReq) ReadField2(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
@@ -505,7 +438,7 @@ func (p *MercariPostOrderReq) ReadField3(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariPostOrderReq) ReadField4(iprot thrift.TProtocol) error {
+func (p *MercariPostOrderReq) ReadField3(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -514,7 +447,7 @@ func (p *MercariPostOrderReq) ReadField4(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariPostOrderReq) ReadField5(iprot thrift.TProtocol) error {
+func (p *MercariPostOrderReq) ReadField4(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -523,7 +456,7 @@ func (p *MercariPostOrderReq) ReadField5(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariPostOrderReq) ReadField6(iprot thrift.TProtocol) error {
+func (p *MercariPostOrderReq) ReadField5(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -532,7 +465,7 @@ func (p *MercariPostOrderReq) ReadField6(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariPostOrderReq) ReadField7(iprot thrift.TProtocol) error {
+func (p *MercariPostOrderReq) ReadField6(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -572,10 +505,6 @@ func (p *MercariPostOrderReq) Write(oprot thrift.TProtocol) (err error) {
 			fieldId = 6
 			goto WriteFieldError
 		}
-		if err = p.writeField7(oprot); err != nil {
-			fieldId = 7
-			goto WriteFieldError
-		}
 	}
 	if err = oprot.WriteFieldStop(); err != nil {
 		goto WriteFieldStopError
@@ -595,10 +524,10 @@ WriteStructEndError:
 }
 
 func (p *MercariPostOrderReq) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("buyer_id", thrift.I32, 1); err != nil {
+	if err = oprot.WriteFieldBegin("item_id", thrift.STRING, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI32(p.BuyerID); err != nil {
+	if err := oprot.WriteString(p.ItemID); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -612,10 +541,10 @@ WriteFieldEndError:
 }
 
 func (p *MercariPostOrderReq) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("item_id", thrift.STRING, 2); err != nil {
+	if err = oprot.WriteFieldBegin("ref_price", thrift.I64, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.ItemID); err != nil {
+	if err := oprot.WriteI64(p.RefPrice); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -629,10 +558,10 @@ WriteFieldEndError:
 }
 
 func (p *MercariPostOrderReq) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("ref_price", thrift.I64, 3); err != nil {
+	if err = oprot.WriteFieldBegin("ref_currency", thrift.STRING, 3); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.RefPrice); err != nil {
+	if err := oprot.WriteString(p.RefCurrency); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -646,10 +575,10 @@ WriteFieldEndError:
 }
 
 func (p *MercariPostOrderReq) writeField4(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("ref_currency", thrift.STRING, 4); err != nil {
+	if err = oprot.WriteFieldBegin("checksum", thrift.STRING, 4); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.RefCurrency); err != nil {
+	if err := oprot.WriteString(p.Checksum); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -663,10 +592,10 @@ WriteFieldEndError:
 }
 
 func (p *MercariPostOrderReq) writeField5(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("checksum", thrift.STRING, 5); err != nil {
+	if err = oprot.WriteFieldBegin("ref_id", thrift.STRING, 5); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Checksum); err != nil {
+	if err := oprot.WriteString(p.RefID); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -680,24 +609,7 @@ WriteFieldEndError:
 }
 
 func (p *MercariPostOrderReq) writeField6(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("ref_id", thrift.STRING, 6); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.RefID); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 6 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 6 end error: ", p), err)
-}
-
-func (p *MercariPostOrderReq) writeField7(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("delivery_id", thrift.STRING, 7); err != nil {
+	if err = oprot.WriteFieldBegin("delivery_id", thrift.STRING, 6); err != nil {
 		goto WriteFieldBeginError
 	}
 	if err := oprot.WriteString(p.DeliveryID); err != nil {
@@ -708,9 +620,9 @@ func (p *MercariPostOrderReq) writeField7(oprot thrift.TProtocol) (err error) {
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 7 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 6 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 7 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 6 end error: ", p), err)
 }
 
 func (p *MercariPostOrderReq) String() string {
@@ -901,9 +813,10 @@ func (p *MercariPostMessageReq) String() string {
 }
 
 type MercariPostMessageResp struct {
-	TrxID string `thrift:"trx_id,1" form:"trx_id" json:"trx_id" query:"trx_id"`
-	Body  string `thrift:"body,2" form:"body" json:"body" query:"body"`
-	ID    string `thrift:"id,3" form:"id" json:"id" query:"id"`
+	TrxID     string `thrift:"trx_id,1" form:"trx_id" json:"trx_id" query:"trx_id"`
+	Body      string `thrift:"body,2" form:"body" json:"body" query:"body"`
+	ID        string `thrift:"id,3" form:"id" json:"id" query:"id"`
+	AccountID int32  `thrift:"account_id,4" form:"account_id" json:"account_id" query:"account_id"`
 }
 
 func NewMercariPostMessageResp() *MercariPostMessageResp {
@@ -922,10 +835,15 @@ func (p *MercariPostMessageResp) GetID() (v string) {
 	return p.ID
 }
 
+func (p *MercariPostMessageResp) GetAccountID() (v int32) {
+	return p.AccountID
+}
+
 var fieldIDToName_MercariPostMessageResp = map[int16]string{
 	1: "trx_id",
 	2: "body",
 	3: "id",
+	4: "account_id",
 }
 
 func (p *MercariPostMessageResp) Read(iprot thrift.TProtocol) (err error) {
@@ -966,6 +884,14 @@ func (p *MercariPostMessageResp) Read(iprot thrift.TProtocol) (err error) {
 		case 3:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField3(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 4:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField4(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -1027,6 +953,15 @@ func (p *MercariPostMessageResp) ReadField3(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
+func (p *MercariPostMessageResp) ReadField4(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.AccountID = v
+	}
+	return nil
+}
 
 func (p *MercariPostMessageResp) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
@@ -1044,6 +979,10 @@ func (p *MercariPostMessageResp) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField3(oprot); err != nil {
 			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
 			goto WriteFieldError
 		}
 	}
@@ -1115,6 +1054,23 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
+func (p *MercariPostMessageResp) writeField4(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("account_id", thrift.I32, 4); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.AccountID); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
+}
+
 func (p *MercariPostMessageResp) String() string {
 	if p == nil {
 		return "<nil>"
@@ -1124,27 +1080,26 @@ func (p *MercariPostMessageResp) String() string {
 }
 
 type MercariRegisterAccountReq struct {
-	BuyerID        int32  `thrift:"buyer_id,1" form:"buyer_id" json:"buyer_id" query:"buyer_id"`
-	Email          string `thrift:"email,2" form:"email" json:"email" query:"email"`
-	FamilyName     string `thrift:"family_name,3" form:"family_name" json:"family_name" query:"family_name"`
-	FirstName      string `thrift:"first_name,4" form:"first_name" json:"first_name" query:"first_name"`
-	FamilyNameKana string `thrift:"family_name_kana,5" form:"family_name_kana" json:"family_name_kana" query:"family_name_kana"`
-	FirstNameKana  string `thrift:"first_name_kana,6" form:"first_name_kana" json:"first_name_kana" query:"first_name_kana"`
-	Telephone      string `thrift:"telephone,7" form:"telephone" json:"telephone" query:"telephone"`
-	ZipCode1       string `thrift:"zip_code1,8" form:"zip_code1" json:"zip_code1" query:"zip_code1"`
-	ZipCode2       string `thrift:"zip_code2,9" form:"zip_code2" json:"zip_code2" query:"zip_code2"`
-	Prefecture     string `thrift:"prefecture,10" form:"prefecture" json:"prefecture" query:"prefecture"`
-	City           string `thrift:"city,11" form:"city" json:"city" query:"city"`
-	Address1       string `thrift:"address1,12" form:"address1" json:"address1" query:"address1"`
-	Address2       string `thrift:"address2,13" form:"address2" json:"address2" query:"address2"`
+	Email          string `thrift:"email,1" form:"email" json:"email" query:"email"`
+	FamilyName     string `thrift:"family_name,2" form:"family_name" json:"family_name" query:"family_name"`
+	FirstName      string `thrift:"first_name,3" form:"first_name" json:"first_name" query:"first_name"`
+	FamilyNameKana string `thrift:"family_name_kana,4" form:"family_name_kana" json:"family_name_kana" query:"family_name_kana"`
+	FirstNameKana  string `thrift:"first_name_kana,5" form:"first_name_kana" json:"first_name_kana" query:"first_name_kana"`
+	Telephone      string `thrift:"telephone,6" form:"telephone" json:"telephone" query:"telephone"`
+	ZipCode1       string `thrift:"zip_code1,7" form:"zip_code1" json:"zip_code1" query:"zip_code1"`
+	ZipCode2       string `thrift:"zip_code2,8" form:"zip_code2" json:"zip_code2" query:"zip_code2"`
+	Prefecture     string `thrift:"prefecture,9" form:"prefecture" json:"prefecture" query:"prefecture"`
+	City           string `thrift:"city,10" form:"city" json:"city" query:"city"`
+	Address1       string `thrift:"address1,11" form:"address1" json:"address1" query:"address1"`
+	Address2       string `thrift:"address2,12" form:"address2" json:"address2" query:"address2"`
+	Status         string `thrift:"status,13" form:"status" json:"status" query:"status"`
+	Priority       int32  `thrift:"priority,14" form:"priority" json:"priority" query:"priority"`
+	BannedAt       string `thrift:"banned_at,15" form:"banned_at" json:"banned_at" query:"banned_at"`
+	ActiveAt       string `thrift:"active_at,16" form:"active_at" json:"active_at" query:"active_at"`
 }
 
 func NewMercariRegisterAccountReq() *MercariRegisterAccountReq {
 	return &MercariRegisterAccountReq{}
-}
-
-func (p *MercariRegisterAccountReq) GetBuyerID() (v int32) {
-	return p.BuyerID
 }
 
 func (p *MercariRegisterAccountReq) GetEmail() (v string) {
@@ -1195,20 +1150,39 @@ func (p *MercariRegisterAccountReq) GetAddress2() (v string) {
 	return p.Address2
 }
 
+func (p *MercariRegisterAccountReq) GetStatus() (v string) {
+	return p.Status
+}
+
+func (p *MercariRegisterAccountReq) GetPriority() (v int32) {
+	return p.Priority
+}
+
+func (p *MercariRegisterAccountReq) GetBannedAt() (v string) {
+	return p.BannedAt
+}
+
+func (p *MercariRegisterAccountReq) GetActiveAt() (v string) {
+	return p.ActiveAt
+}
+
 var fieldIDToName_MercariRegisterAccountReq = map[int16]string{
-	1:  "buyer_id",
-	2:  "email",
-	3:  "family_name",
-	4:  "first_name",
-	5:  "family_name_kana",
-	6:  "first_name_kana",
-	7:  "telephone",
-	8:  "zip_code1",
-	9:  "zip_code2",
-	10: "prefecture",
-	11: "city",
-	12: "address1",
-	13: "address2",
+	1:  "email",
+	2:  "family_name",
+	3:  "first_name",
+	4:  "family_name_kana",
+	5:  "first_name_kana",
+	6:  "telephone",
+	7:  "zip_code1",
+	8:  "zip_code2",
+	9:  "prefecture",
+	10: "city",
+	11: "address1",
+	12: "address2",
+	13: "status",
+	14: "priority",
+	15: "banned_at",
+	16: "active_at",
 }
 
 func (p *MercariRegisterAccountReq) Read(iprot thrift.TProtocol) (err error) {
@@ -1231,7 +1205,7 @@ func (p *MercariRegisterAccountReq) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.I32 {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -1334,6 +1308,30 @@ func (p *MercariRegisterAccountReq) Read(iprot thrift.TProtocol) (err error) {
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
 			}
+		case 14:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField14(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 15:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField15(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 16:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField16(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
 		default:
 			if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
@@ -1365,10 +1363,10 @@ ReadStructEndError:
 
 func (p *MercariRegisterAccountReq) ReadField1(iprot thrift.TProtocol) error {
 
-	if v, err := iprot.ReadI32(); err != nil {
+	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.BuyerID = v
+		p.Email = v
 	}
 	return nil
 }
@@ -1377,7 +1375,7 @@ func (p *MercariRegisterAccountReq) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Email = v
+		p.FamilyName = v
 	}
 	return nil
 }
@@ -1386,7 +1384,7 @@ func (p *MercariRegisterAccountReq) ReadField3(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.FamilyName = v
+		p.FirstName = v
 	}
 	return nil
 }
@@ -1395,7 +1393,7 @@ func (p *MercariRegisterAccountReq) ReadField4(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.FirstName = v
+		p.FamilyNameKana = v
 	}
 	return nil
 }
@@ -1404,7 +1402,7 @@ func (p *MercariRegisterAccountReq) ReadField5(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.FamilyNameKana = v
+		p.FirstNameKana = v
 	}
 	return nil
 }
@@ -1413,7 +1411,7 @@ func (p *MercariRegisterAccountReq) ReadField6(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.FirstNameKana = v
+		p.Telephone = v
 	}
 	return nil
 }
@@ -1422,7 +1420,7 @@ func (p *MercariRegisterAccountReq) ReadField7(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Telephone = v
+		p.ZipCode1 = v
 	}
 	return nil
 }
@@ -1431,7 +1429,7 @@ func (p *MercariRegisterAccountReq) ReadField8(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.ZipCode1 = v
+		p.ZipCode2 = v
 	}
 	return nil
 }
@@ -1440,7 +1438,7 @@ func (p *MercariRegisterAccountReq) ReadField9(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.ZipCode2 = v
+		p.Prefecture = v
 	}
 	return nil
 }
@@ -1449,7 +1447,7 @@ func (p *MercariRegisterAccountReq) ReadField10(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Prefecture = v
+		p.City = v
 	}
 	return nil
 }
@@ -1458,7 +1456,7 @@ func (p *MercariRegisterAccountReq) ReadField11(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.City = v
+		p.Address1 = v
 	}
 	return nil
 }
@@ -1467,7 +1465,7 @@ func (p *MercariRegisterAccountReq) ReadField12(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Address1 = v
+		p.Address2 = v
 	}
 	return nil
 }
@@ -1476,7 +1474,34 @@ func (p *MercariRegisterAccountReq) ReadField13(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Address2 = v
+		p.Status = v
+	}
+	return nil
+}
+func (p *MercariRegisterAccountReq) ReadField14(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Priority = v
+	}
+	return nil
+}
+func (p *MercariRegisterAccountReq) ReadField15(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.BannedAt = v
+	}
+	return nil
+}
+func (p *MercariRegisterAccountReq) ReadField16(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.ActiveAt = v
 	}
 	return nil
 }
@@ -1539,6 +1564,18 @@ func (p *MercariRegisterAccountReq) Write(oprot thrift.TProtocol) (err error) {
 			fieldId = 13
 			goto WriteFieldError
 		}
+		if err = p.writeField14(oprot); err != nil {
+			fieldId = 14
+			goto WriteFieldError
+		}
+		if err = p.writeField15(oprot); err != nil {
+			fieldId = 15
+			goto WriteFieldError
+		}
+		if err = p.writeField16(oprot); err != nil {
+			fieldId = 16
+			goto WriteFieldError
+		}
 	}
 	if err = oprot.WriteFieldStop(); err != nil {
 		goto WriteFieldStopError
@@ -1558,10 +1595,10 @@ WriteStructEndError:
 }
 
 func (p *MercariRegisterAccountReq) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("buyer_id", thrift.I32, 1); err != nil {
+	if err = oprot.WriteFieldBegin("email", thrift.STRING, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI32(p.BuyerID); err != nil {
+	if err := oprot.WriteString(p.Email); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1575,10 +1612,10 @@ WriteFieldEndError:
 }
 
 func (p *MercariRegisterAccountReq) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("email", thrift.STRING, 2); err != nil {
+	if err = oprot.WriteFieldBegin("family_name", thrift.STRING, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Email); err != nil {
+	if err := oprot.WriteString(p.FamilyName); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1592,10 +1629,10 @@ WriteFieldEndError:
 }
 
 func (p *MercariRegisterAccountReq) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("family_name", thrift.STRING, 3); err != nil {
+	if err = oprot.WriteFieldBegin("first_name", thrift.STRING, 3); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.FamilyName); err != nil {
+	if err := oprot.WriteString(p.FirstName); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1609,10 +1646,10 @@ WriteFieldEndError:
 }
 
 func (p *MercariRegisterAccountReq) writeField4(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("first_name", thrift.STRING, 4); err != nil {
+	if err = oprot.WriteFieldBegin("family_name_kana", thrift.STRING, 4); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.FirstName); err != nil {
+	if err := oprot.WriteString(p.FamilyNameKana); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1626,10 +1663,10 @@ WriteFieldEndError:
 }
 
 func (p *MercariRegisterAccountReq) writeField5(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("family_name_kana", thrift.STRING, 5); err != nil {
+	if err = oprot.WriteFieldBegin("first_name_kana", thrift.STRING, 5); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.FamilyNameKana); err != nil {
+	if err := oprot.WriteString(p.FirstNameKana); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1643,10 +1680,10 @@ WriteFieldEndError:
 }
 
 func (p *MercariRegisterAccountReq) writeField6(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("first_name_kana", thrift.STRING, 6); err != nil {
+	if err = oprot.WriteFieldBegin("telephone", thrift.STRING, 6); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.FirstNameKana); err != nil {
+	if err := oprot.WriteString(p.Telephone); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1660,10 +1697,10 @@ WriteFieldEndError:
 }
 
 func (p *MercariRegisterAccountReq) writeField7(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("telephone", thrift.STRING, 7); err != nil {
+	if err = oprot.WriteFieldBegin("zip_code1", thrift.STRING, 7); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Telephone); err != nil {
+	if err := oprot.WriteString(p.ZipCode1); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1677,10 +1714,10 @@ WriteFieldEndError:
 }
 
 func (p *MercariRegisterAccountReq) writeField8(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("zip_code1", thrift.STRING, 8); err != nil {
+	if err = oprot.WriteFieldBegin("zip_code2", thrift.STRING, 8); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.ZipCode1); err != nil {
+	if err := oprot.WriteString(p.ZipCode2); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1694,10 +1731,10 @@ WriteFieldEndError:
 }
 
 func (p *MercariRegisterAccountReq) writeField9(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("zip_code2", thrift.STRING, 9); err != nil {
+	if err = oprot.WriteFieldBegin("prefecture", thrift.STRING, 9); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.ZipCode2); err != nil {
+	if err := oprot.WriteString(p.Prefecture); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1711,10 +1748,10 @@ WriteFieldEndError:
 }
 
 func (p *MercariRegisterAccountReq) writeField10(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("prefecture", thrift.STRING, 10); err != nil {
+	if err = oprot.WriteFieldBegin("city", thrift.STRING, 10); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Prefecture); err != nil {
+	if err := oprot.WriteString(p.City); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1728,10 +1765,10 @@ WriteFieldEndError:
 }
 
 func (p *MercariRegisterAccountReq) writeField11(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("city", thrift.STRING, 11); err != nil {
+	if err = oprot.WriteFieldBegin("address1", thrift.STRING, 11); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.City); err != nil {
+	if err := oprot.WriteString(p.Address1); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1745,10 +1782,10 @@ WriteFieldEndError:
 }
 
 func (p *MercariRegisterAccountReq) writeField12(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("address1", thrift.STRING, 12); err != nil {
+	if err = oprot.WriteFieldBegin("address2", thrift.STRING, 12); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Address1); err != nil {
+	if err := oprot.WriteString(p.Address2); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1762,10 +1799,10 @@ WriteFieldEndError:
 }
 
 func (p *MercariRegisterAccountReq) writeField13(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("address2", thrift.STRING, 13); err != nil {
+	if err = oprot.WriteFieldBegin("status", thrift.STRING, 13); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Address2); err != nil {
+	if err := oprot.WriteString(p.Status); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1778,6 +1815,57 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 13 end error: ", p), err)
 }
 
+func (p *MercariRegisterAccountReq) writeField14(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("priority", thrift.I32, 14); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.Priority); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 14 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 14 end error: ", p), err)
+}
+
+func (p *MercariRegisterAccountReq) writeField15(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("banned_at", thrift.STRING, 15); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.BannedAt); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 15 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 15 end error: ", p), err)
+}
+
+func (p *MercariRegisterAccountReq) writeField16(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("active_at", thrift.STRING, 16); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.ActiveAt); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 16 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 16 end error: ", p), err)
+}
+
 func (p *MercariRegisterAccountReq) String() string {
 	if p == nil {
 		return "<nil>"
@@ -1786,80 +1874,110 @@ func (p *MercariRegisterAccountReq) String() string {
 
 }
 
-type MercariRegisterAccountResp struct {
-	BuyerID        int32  `thrift:"buyer_id,1" form:"buyer_id" json:"buyer_id" query:"buyer_id"`
-	Email          string `thrift:"email,2" form:"email" json:"email" query:"email"`
-	FamilyName     string `thrift:"family_name,3" form:"family_name" json:"family_name" query:"family_name"`
-	FirstName      string `thrift:"first_name,4" form:"first_name" json:"first_name" query:"first_name"`
-	FamilyNameKana string `thrift:"family_name_kana,5" form:"family_name_kana" json:"family_name_kana" query:"family_name_kana"`
-	FirstNameKana  string `thrift:"first_name_kana,6" form:"first_name_kana" json:"first_name_kana" query:"first_name_kana"`
-	Telephone      string `thrift:"telephone,7" form:"telephone" json:"telephone" query:"telephone"`
-	ZipCode1       string `thrift:"zip_code1,8" form:"zip_code1" json:"zip_code1" query:"zip_code1"`
-	ZipCode2       string `thrift:"zip_code2,9" form:"zip_code2" json:"zip_code2" query:"zip_code2"`
-	Prefecture     string `thrift:"prefecture,10" form:"prefecture" json:"prefecture" query:"prefecture"`
-	City           string `thrift:"city,11" form:"city" json:"city" query:"city"`
-	Address1       string `thrift:"address1,12" form:"address1" json:"address1" query:"address1"`
-	Address2       string `thrift:"address2,13" form:"address2" json:"address2" query:"address2"`
+type Account struct {
+	ID             int32   `thrift:"id,1" form:"id" json:"id" query:"id"`
+	Email          string  `thrift:"email,2" form:"email" json:"email" query:"email"`
+	FamilyName     string  `thrift:"family_name,3" form:"family_name" json:"family_name" query:"family_name"`
+	FirstName      string  `thrift:"first_name,4" form:"first_name" json:"first_name" query:"first_name"`
+	FamilyNameKana string  `thrift:"family_name_kana,5" form:"family_name_kana" json:"family_name_kana" query:"family_name_kana"`
+	FirstNameKana  string  `thrift:"first_name_kana,6" form:"first_name_kana" json:"first_name_kana" query:"first_name_kana"`
+	Telephone      string  `thrift:"telephone,7" form:"telephone" json:"telephone" query:"telephone"`
+	ZipCode1       string  `thrift:"zip_code1,8" form:"zip_code1" json:"zip_code1" query:"zip_code1"`
+	ZipCode2       string  `thrift:"zip_code2,9" form:"zip_code2" json:"zip_code2" query:"zip_code2"`
+	Prefecture     string  `thrift:"prefecture,10" form:"prefecture" json:"prefecture" query:"prefecture"`
+	City           string  `thrift:"city,11" form:"city" json:"city" query:"city"`
+	Address1       string  `thrift:"address1,12" form:"address1" json:"address1" query:"address1"`
+	Address2       string  `thrift:"address2,13" form:"address2" json:"address2" query:"address2"`
+	Status         string  `thrift:"status,14" form:"status" json:"status" query:"status"`
+	Priority       int32   `thrift:"priority,15" form:"priority" json:"priority" query:"priority"`
+	BannedAt       *string `thrift:"banned_at,16,optional" form:"banned_at" json:"banned_at,omitempty" query:"banned_at"`
+	ActiveAt       *string `thrift:"active_at,17,optional" form:"active_at" json:"active_at,omitempty" query:"active_at"`
 }
 
-func NewMercariRegisterAccountResp() *MercariRegisterAccountResp {
-	return &MercariRegisterAccountResp{}
+func NewAccount() *Account {
+	return &Account{}
 }
 
-func (p *MercariRegisterAccountResp) GetBuyerID() (v int32) {
-	return p.BuyerID
+func (p *Account) GetID() (v int32) {
+	return p.ID
 }
 
-func (p *MercariRegisterAccountResp) GetEmail() (v string) {
+func (p *Account) GetEmail() (v string) {
 	return p.Email
 }
 
-func (p *MercariRegisterAccountResp) GetFamilyName() (v string) {
+func (p *Account) GetFamilyName() (v string) {
 	return p.FamilyName
 }
 
-func (p *MercariRegisterAccountResp) GetFirstName() (v string) {
+func (p *Account) GetFirstName() (v string) {
 	return p.FirstName
 }
 
-func (p *MercariRegisterAccountResp) GetFamilyNameKana() (v string) {
+func (p *Account) GetFamilyNameKana() (v string) {
 	return p.FamilyNameKana
 }
 
-func (p *MercariRegisterAccountResp) GetFirstNameKana() (v string) {
+func (p *Account) GetFirstNameKana() (v string) {
 	return p.FirstNameKana
 }
 
-func (p *MercariRegisterAccountResp) GetTelephone() (v string) {
+func (p *Account) GetTelephone() (v string) {
 	return p.Telephone
 }
 
-func (p *MercariRegisterAccountResp) GetZipCode1() (v string) {
+func (p *Account) GetZipCode1() (v string) {
 	return p.ZipCode1
 }
 
-func (p *MercariRegisterAccountResp) GetZipCode2() (v string) {
+func (p *Account) GetZipCode2() (v string) {
 	return p.ZipCode2
 }
 
-func (p *MercariRegisterAccountResp) GetPrefecture() (v string) {
+func (p *Account) GetPrefecture() (v string) {
 	return p.Prefecture
 }
 
-func (p *MercariRegisterAccountResp) GetCity() (v string) {
+func (p *Account) GetCity() (v string) {
 	return p.City
 }
 
-func (p *MercariRegisterAccountResp) GetAddress1() (v string) {
+func (p *Account) GetAddress1() (v string) {
 	return p.Address1
 }
 
-func (p *MercariRegisterAccountResp) GetAddress2() (v string) {
+func (p *Account) GetAddress2() (v string) {
 	return p.Address2
 }
 
-var fieldIDToName_MercariRegisterAccountResp = map[int16]string{
-	1:  "buyer_id",
+func (p *Account) GetStatus() (v string) {
+	return p.Status
+}
+
+func (p *Account) GetPriority() (v int32) {
+	return p.Priority
+}
+
+var Account_BannedAt_DEFAULT string
+
+func (p *Account) GetBannedAt() (v string) {
+	if !p.IsSetBannedAt() {
+		return Account_BannedAt_DEFAULT
+	}
+	return *p.BannedAt
+}
+
+var Account_ActiveAt_DEFAULT string
+
+func (p *Account) GetActiveAt() (v string) {
+	if !p.IsSetActiveAt() {
+		return Account_ActiveAt_DEFAULT
+	}
+	return *p.ActiveAt
+}
+
+var fieldIDToName_Account = map[int16]string{
+	1:  "id",
 	2:  "email",
 	3:  "family_name",
 	4:  "first_name",
@@ -1872,9 +1990,21 @@ var fieldIDToName_MercariRegisterAccountResp = map[int16]string{
 	11: "city",
 	12: "address1",
 	13: "address2",
+	14: "status",
+	15: "priority",
+	16: "banned_at",
+	17: "active_at",
 }
 
-func (p *MercariRegisterAccountResp) Read(iprot thrift.TProtocol) (err error) {
+func (p *Account) IsSetBannedAt() bool {
+	return p.BannedAt != nil
+}
+
+func (p *Account) IsSetActiveAt() bool {
+	return p.ActiveAt != nil
+}
+
+func (p *Account) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -1997,6 +2127,38 @@ func (p *MercariRegisterAccountResp) Read(iprot thrift.TProtocol) (err error) {
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
 			}
+		case 14:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField14(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 15:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField15(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 16:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField16(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 17:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField17(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
 		default:
 			if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
@@ -2016,7 +2178,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_MercariRegisterAccountResp[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_Account[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -2026,16 +2188,16 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *MercariRegisterAccountResp) ReadField1(iprot thrift.TProtocol) error {
+func (p *Account) ReadField1(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadI32(); err != nil {
 		return err
 	} else {
-		p.BuyerID = v
+		p.ID = v
 	}
 	return nil
 }
-func (p *MercariRegisterAccountResp) ReadField2(iprot thrift.TProtocol) error {
+func (p *Account) ReadField2(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -2044,7 +2206,7 @@ func (p *MercariRegisterAccountResp) ReadField2(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariRegisterAccountResp) ReadField3(iprot thrift.TProtocol) error {
+func (p *Account) ReadField3(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -2053,7 +2215,7 @@ func (p *MercariRegisterAccountResp) ReadField3(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariRegisterAccountResp) ReadField4(iprot thrift.TProtocol) error {
+func (p *Account) ReadField4(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -2062,7 +2224,7 @@ func (p *MercariRegisterAccountResp) ReadField4(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariRegisterAccountResp) ReadField5(iprot thrift.TProtocol) error {
+func (p *Account) ReadField5(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -2071,7 +2233,7 @@ func (p *MercariRegisterAccountResp) ReadField5(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariRegisterAccountResp) ReadField6(iprot thrift.TProtocol) error {
+func (p *Account) ReadField6(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -2080,7 +2242,7 @@ func (p *MercariRegisterAccountResp) ReadField6(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariRegisterAccountResp) ReadField7(iprot thrift.TProtocol) error {
+func (p *Account) ReadField7(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -2089,7 +2251,7 @@ func (p *MercariRegisterAccountResp) ReadField7(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariRegisterAccountResp) ReadField8(iprot thrift.TProtocol) error {
+func (p *Account) ReadField8(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -2098,7 +2260,7 @@ func (p *MercariRegisterAccountResp) ReadField8(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariRegisterAccountResp) ReadField9(iprot thrift.TProtocol) error {
+func (p *Account) ReadField9(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -2107,7 +2269,7 @@ func (p *MercariRegisterAccountResp) ReadField9(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariRegisterAccountResp) ReadField10(iprot thrift.TProtocol) error {
+func (p *Account) ReadField10(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -2116,7 +2278,7 @@ func (p *MercariRegisterAccountResp) ReadField10(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariRegisterAccountResp) ReadField11(iprot thrift.TProtocol) error {
+func (p *Account) ReadField11(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -2125,7 +2287,7 @@ func (p *MercariRegisterAccountResp) ReadField11(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariRegisterAccountResp) ReadField12(iprot thrift.TProtocol) error {
+func (p *Account) ReadField12(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -2134,7 +2296,7 @@ func (p *MercariRegisterAccountResp) ReadField12(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
-func (p *MercariRegisterAccountResp) ReadField13(iprot thrift.TProtocol) error {
+func (p *Account) ReadField13(iprot thrift.TProtocol) error {
 
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -2143,10 +2305,46 @@ func (p *MercariRegisterAccountResp) ReadField13(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
+func (p *Account) ReadField14(iprot thrift.TProtocol) error {
 
-func (p *MercariRegisterAccountResp) Write(oprot thrift.TProtocol) (err error) {
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Status = v
+	}
+	return nil
+}
+func (p *Account) ReadField15(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Priority = v
+	}
+	return nil
+}
+func (p *Account) ReadField16(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.BannedAt = &v
+	}
+	return nil
+}
+func (p *Account) ReadField17(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.ActiveAt = &v
+	}
+	return nil
+}
+
+func (p *Account) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("MercariRegisterAccountResp"); err != nil {
+	if err = oprot.WriteStructBegin("Account"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -2202,6 +2400,440 @@ func (p *MercariRegisterAccountResp) Write(oprot thrift.TProtocol) (err error) {
 			fieldId = 13
 			goto WriteFieldError
 		}
+		if err = p.writeField14(oprot); err != nil {
+			fieldId = 14
+			goto WriteFieldError
+		}
+		if err = p.writeField15(oprot); err != nil {
+			fieldId = 15
+			goto WriteFieldError
+		}
+		if err = p.writeField16(oprot); err != nil {
+			fieldId = 16
+			goto WriteFieldError
+		}
+		if err = p.writeField17(oprot); err != nil {
+			fieldId = 17
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *Account) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("id", thrift.I32, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.ID); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *Account) writeField2(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("email", thrift.STRING, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Email); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *Account) writeField3(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("family_name", thrift.STRING, 3); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.FamilyName); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
+func (p *Account) writeField4(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("first_name", thrift.STRING, 4); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.FirstName); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
+}
+
+func (p *Account) writeField5(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("family_name_kana", thrift.STRING, 5); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.FamilyNameKana); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
+}
+
+func (p *Account) writeField6(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("first_name_kana", thrift.STRING, 6); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.FirstNameKana); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 6 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 6 end error: ", p), err)
+}
+
+func (p *Account) writeField7(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("telephone", thrift.STRING, 7); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Telephone); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 7 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 7 end error: ", p), err)
+}
+
+func (p *Account) writeField8(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("zip_code1", thrift.STRING, 8); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.ZipCode1); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 end error: ", p), err)
+}
+
+func (p *Account) writeField9(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("zip_code2", thrift.STRING, 9); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.ZipCode2); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 end error: ", p), err)
+}
+
+func (p *Account) writeField10(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("prefecture", thrift.STRING, 10); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Prefecture); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 end error: ", p), err)
+}
+
+func (p *Account) writeField11(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("city", thrift.STRING, 11); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.City); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 11 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 11 end error: ", p), err)
+}
+
+func (p *Account) writeField12(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("address1", thrift.STRING, 12); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Address1); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 12 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 12 end error: ", p), err)
+}
+
+func (p *Account) writeField13(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("address2", thrift.STRING, 13); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Address2); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 13 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 13 end error: ", p), err)
+}
+
+func (p *Account) writeField14(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("status", thrift.STRING, 14); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Status); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 14 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 14 end error: ", p), err)
+}
+
+func (p *Account) writeField15(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("priority", thrift.I32, 15); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.Priority); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 15 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 15 end error: ", p), err)
+}
+
+func (p *Account) writeField16(oprot thrift.TProtocol) (err error) {
+	if p.IsSetBannedAt() {
+		if err = oprot.WriteFieldBegin("banned_at", thrift.STRING, 16); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.BannedAt); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 16 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 16 end error: ", p), err)
+}
+
+func (p *Account) writeField17(oprot thrift.TProtocol) (err error) {
+	if p.IsSetActiveAt() {
+		if err = oprot.WriteFieldBegin("active_at", thrift.STRING, 17); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.ActiveAt); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 17 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 17 end error: ", p), err)
+}
+
+func (p *Account) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("Account(%+v)", *p)
+
+}
+
+type MercariRegisterAccountResp struct {
+	Account *Account `thrift:"account,1" form:"account" json:"account" query:"account"`
+}
+
+func NewMercariRegisterAccountResp() *MercariRegisterAccountResp {
+	return &MercariRegisterAccountResp{}
+}
+
+var MercariRegisterAccountResp_Account_DEFAULT *Account
+
+func (p *MercariRegisterAccountResp) GetAccount() (v *Account) {
+	if !p.IsSetAccount() {
+		return MercariRegisterAccountResp_Account_DEFAULT
+	}
+	return p.Account
+}
+
+var fieldIDToName_MercariRegisterAccountResp = map[int16]string{
+	1: "account",
+}
+
+func (p *MercariRegisterAccountResp) IsSetAccount() bool {
+	return p.Account != nil
+}
+
+func (p *MercariRegisterAccountResp) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_MercariRegisterAccountResp[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *MercariRegisterAccountResp) ReadField1(iprot thrift.TProtocol) error {
+	p.Account = NewAccount()
+	if err := p.Account.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *MercariRegisterAccountResp) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("MercariRegisterAccountResp"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
 	}
 	if err = oprot.WriteFieldStop(); err != nil {
 		goto WriteFieldStopError
@@ -2221,10 +2853,10 @@ WriteStructEndError:
 }
 
 func (p *MercariRegisterAccountResp) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("buyer_id", thrift.I32, 1); err != nil {
+	if err = oprot.WriteFieldBegin("account", thrift.STRUCT, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI32(p.BuyerID); err != nil {
+	if err := p.Account.Write(oprot); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2235,210 +2867,6 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
-}
-
-func (p *MercariRegisterAccountResp) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("email", thrift.STRING, 2); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Email); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
-}
-
-func (p *MercariRegisterAccountResp) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("family_name", thrift.STRING, 3); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.FamilyName); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
-}
-
-func (p *MercariRegisterAccountResp) writeField4(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("first_name", thrift.STRING, 4); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.FirstName); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
-}
-
-func (p *MercariRegisterAccountResp) writeField5(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("family_name_kana", thrift.STRING, 5); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.FamilyNameKana); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
-}
-
-func (p *MercariRegisterAccountResp) writeField6(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("first_name_kana", thrift.STRING, 6); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.FirstNameKana); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 6 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 6 end error: ", p), err)
-}
-
-func (p *MercariRegisterAccountResp) writeField7(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("telephone", thrift.STRING, 7); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Telephone); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 7 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 7 end error: ", p), err)
-}
-
-func (p *MercariRegisterAccountResp) writeField8(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("zip_code1", thrift.STRING, 8); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.ZipCode1); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 8 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 8 end error: ", p), err)
-}
-
-func (p *MercariRegisterAccountResp) writeField9(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("zip_code2", thrift.STRING, 9); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.ZipCode2); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 9 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 9 end error: ", p), err)
-}
-
-func (p *MercariRegisterAccountResp) writeField10(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("prefecture", thrift.STRING, 10); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Prefecture); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 10 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 10 end error: ", p), err)
-}
-
-func (p *MercariRegisterAccountResp) writeField11(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("city", thrift.STRING, 11); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.City); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 11 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 11 end error: ", p), err)
-}
-
-func (p *MercariRegisterAccountResp) writeField12(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("address1", thrift.STRING, 12); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Address1); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 12 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 12 end error: ", p), err)
-}
-
-func (p *MercariRegisterAccountResp) writeField13(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("address2", thrift.STRING, 13); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Address2); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 13 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 13 end error: ", p), err)
 }
 
 func (p *MercariRegisterAccountResp) String() string {
@@ -2852,16 +3280,11 @@ func (p *MercariGetTokenResp) String() string {
 }
 
 type MercariGetTransactionByItemIdReq struct {
-	BuyerID int32  `thrift:"buyer_id,1" form:"buyer_id" json:"buyer_id" query:"buyer_id"`
-	ItemID  string `thrift:"item_id,2" form:"item_id" json:"item_id" query:"item_id"`
+	ItemID string `thrift:"item_id,1" form:"item_id" json:"item_id" query:"item_id"`
 }
 
 func NewMercariGetTransactionByItemIdReq() *MercariGetTransactionByItemIdReq {
 	return &MercariGetTransactionByItemIdReq{}
-}
-
-func (p *MercariGetTransactionByItemIdReq) GetBuyerID() (v int32) {
-	return p.BuyerID
 }
 
 func (p *MercariGetTransactionByItemIdReq) GetItemID() (v string) {
@@ -2869,8 +3292,7 @@ func (p *MercariGetTransactionByItemIdReq) GetItemID() (v string) {
 }
 
 var fieldIDToName_MercariGetTransactionByItemIdReq = map[int16]string{
-	1: "buyer_id",
-	2: "item_id",
+	1: "item_id",
 }
 
 func (p *MercariGetTransactionByItemIdReq) Read(iprot thrift.TProtocol) (err error) {
@@ -2893,16 +3315,8 @@ func (p *MercariGetTransactionByItemIdReq) Read(iprot thrift.TProtocol) (err err
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.I32 {
-				if err = p.ReadField1(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 2:
 			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField2(iprot); err != nil {
+				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -2939,15 +3353,6 @@ ReadStructEndError:
 
 func (p *MercariGetTransactionByItemIdReq) ReadField1(iprot thrift.TProtocol) error {
 
-	if v, err := iprot.ReadI32(); err != nil {
-		return err
-	} else {
-		p.BuyerID = v
-	}
-	return nil
-}
-func (p *MercariGetTransactionByItemIdReq) ReadField2(iprot thrift.TProtocol) error {
-
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
@@ -2964,10 +3369,6 @@ func (p *MercariGetTransactionByItemIdReq) Write(oprot thrift.TProtocol) (err er
 	if p != nil {
 		if err = p.writeField1(oprot); err != nil {
 			fieldId = 1
-			goto WriteFieldError
-		}
-		if err = p.writeField2(oprot); err != nil {
-			fieldId = 2
 			goto WriteFieldError
 		}
 	}
@@ -2989,24 +3390,7 @@ WriteStructEndError:
 }
 
 func (p *MercariGetTransactionByItemIdReq) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("buyer_id", thrift.I32, 1); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteI32(p.BuyerID); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
-}
-
-func (p *MercariGetTransactionByItemIdReq) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("item_id", thrift.STRING, 2); err != nil {
+	if err = oprot.WriteFieldBegin("item_id", thrift.STRING, 1); err != nil {
 		goto WriteFieldBeginError
 	}
 	if err := oprot.WriteString(p.ItemID); err != nil {
@@ -3017,9 +3401,9 @@ func (p *MercariGetTransactionByItemIdReq) writeField2(oprot thrift.TProtocol) (
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
 func (p *MercariGetTransactionByItemIdReq) String() string {
@@ -3038,6 +3422,7 @@ type MercariPostOrderResp struct {
 	BuyerShippingFee int64  `thrift:"buyer_shipping_fee,5" form:"buyer_shipping_fee" json:"buyer_shipping_fee" query:"buyer_shipping_fee"`
 	ItemID           string `thrift:"item_id,6" form:"item_id" json:"item_id" query:"item_id"`
 	Checksum         string `thrift:"checksum,7" form:"checksum" json:"checksum" query:"checksum"`
+	AccountID        int32  `thrift:"account_id,8" form:"account_id" json:"account_id" query:"account_id"`
 }
 
 func NewMercariPostOrderResp() *MercariPostOrderResp {
@@ -3072,6 +3457,10 @@ func (p *MercariPostOrderResp) GetChecksum() (v string) {
 	return p.Checksum
 }
 
+func (p *MercariPostOrderResp) GetAccountID() (v int32) {
+	return p.AccountID
+}
+
 var fieldIDToName_MercariPostOrderResp = map[int16]string{
 	1: "trx_id",
 	2: "coupon_id",
@@ -3080,6 +3469,7 @@ var fieldIDToName_MercariPostOrderResp = map[int16]string{
 	5: "buyer_shipping_fee",
 	6: "item_id",
 	7: "checksum",
+	8: "account_id",
 }
 
 func (p *MercariPostOrderResp) Read(iprot thrift.TProtocol) (err error) {
@@ -3152,6 +3542,14 @@ func (p *MercariPostOrderResp) Read(iprot thrift.TProtocol) (err error) {
 		case 7:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField7(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 8:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField8(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -3249,6 +3647,15 @@ func (p *MercariPostOrderResp) ReadField7(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
+func (p *MercariPostOrderResp) ReadField8(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.AccountID = v
+	}
+	return nil
+}
 
 func (p *MercariPostOrderResp) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
@@ -3282,6 +3689,10 @@ func (p *MercariPostOrderResp) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField7(oprot); err != nil {
 			fieldId = 7
+			goto WriteFieldError
+		}
+		if err = p.writeField8(oprot); err != nil {
+			fieldId = 8
 			goto WriteFieldError
 		}
 	}
@@ -3421,6 +3832,23 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 7 end error: ", p), err)
 }
 
+func (p *MercariPostOrderResp) writeField8(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("account_id", thrift.I32, 8); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.AccountID); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 end error: ", p), err)
+}
+
 func (p *MercariPostOrderResp) String() string {
 	if p == nil {
 		return "<nil>"
@@ -3430,9 +3858,10 @@ func (p *MercariPostOrderResp) String() string {
 }
 
 type MercariPostTransactionReviewReq struct {
-	TrxID  string `thrift:"trx_id,1" form:"trx_id" json:"trx_id" query:"trx_id"`
-	Fame   string `thrift:"fame,2" form:"fame" json:"fame" query:"fame"`
-	Review string `thrift:"review,3" form:"review" json:"review" query:"review"`
+	TrxID     string `thrift:"trx_id,1" form:"trx_id" json:"trx_id" query:"trx_id"`
+	Fame      string `thrift:"fame,2" form:"fame" json:"fame" query:"fame"`
+	Review    string `thrift:"review,3" form:"review" json:"review" query:"review"`
+	AccountID int32  `thrift:"account_id,4" form:"account_id" json:"account_id" query:"account_id"`
 }
 
 func NewMercariPostTransactionReviewReq() *MercariPostTransactionReviewReq {
@@ -3451,10 +3880,15 @@ func (p *MercariPostTransactionReviewReq) GetReview() (v string) {
 	return p.Review
 }
 
+func (p *MercariPostTransactionReviewReq) GetAccountID() (v int32) {
+	return p.AccountID
+}
+
 var fieldIDToName_MercariPostTransactionReviewReq = map[int16]string{
 	1: "trx_id",
 	2: "fame",
 	3: "review",
+	4: "account_id",
 }
 
 func (p *MercariPostTransactionReviewReq) Read(iprot thrift.TProtocol) (err error) {
@@ -3495,6 +3929,14 @@ func (p *MercariPostTransactionReviewReq) Read(iprot thrift.TProtocol) (err erro
 		case 3:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField3(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 4:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField4(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -3556,6 +3998,15 @@ func (p *MercariPostTransactionReviewReq) ReadField3(iprot thrift.TProtocol) err
 	}
 	return nil
 }
+func (p *MercariPostTransactionReviewReq) ReadField4(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.AccountID = v
+	}
+	return nil
+}
 
 func (p *MercariPostTransactionReviewReq) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
@@ -3573,6 +4024,10 @@ func (p *MercariPostTransactionReviewReq) Write(oprot thrift.TProtocol) (err err
 		}
 		if err = p.writeField3(oprot); err != nil {
 			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
 			goto WriteFieldError
 		}
 	}
@@ -3642,6 +4097,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
+func (p *MercariPostTransactionReviewReq) writeField4(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("account_id", thrift.I32, 4); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.AccountID); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
 }
 
 func (p *MercariPostTransactionReviewReq) String() string {
@@ -5187,6 +5659,294 @@ func (p *MercariSearchItemsReq) String() string {
 
 }
 
+type MercariGetAccountResp struct {
+	Accounts []*Account `thrift:"accounts,1" form:"accounts" json:"accounts" query:"accounts"`
+}
+
+func NewMercariGetAccountResp() *MercariGetAccountResp {
+	return &MercariGetAccountResp{}
+}
+
+func (p *MercariGetAccountResp) GetAccounts() (v []*Account) {
+	return p.Accounts
+}
+
+var fieldIDToName_MercariGetAccountResp = map[int16]string{
+	1: "accounts",
+}
+
+func (p *MercariGetAccountResp) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.LIST {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_MercariGetAccountResp[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *MercariGetAccountResp) ReadField1(iprot thrift.TProtocol) error {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
+		return err
+	}
+	p.Accounts = make([]*Account, 0, size)
+	for i := 0; i < size; i++ {
+		_elem := NewAccount()
+		if err := _elem.Read(iprot); err != nil {
+			return err
+		}
+
+		p.Accounts = append(p.Accounts, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *MercariGetAccountResp) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("MercariGetAccountResp"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *MercariGetAccountResp) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("accounts", thrift.LIST, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteListBegin(thrift.STRUCT, len(p.Accounts)); err != nil {
+		return err
+	}
+	for _, v := range p.Accounts {
+		if err := v.Write(oprot); err != nil {
+			return err
+		}
+	}
+	if err := oprot.WriteListEnd(); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *MercariGetAccountResp) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("MercariGetAccountResp(%+v)", *p)
+
+}
+
+type MercariManualSwitchAccountReq struct {
+	AccountID int32 `thrift:"account_id,1" form:"account_id" json:"account_id" query:"account_id"`
+}
+
+func NewMercariManualSwitchAccountReq() *MercariManualSwitchAccountReq {
+	return &MercariManualSwitchAccountReq{}
+}
+
+func (p *MercariManualSwitchAccountReq) GetAccountID() (v int32) {
+	return p.AccountID
+}
+
+var fieldIDToName_MercariManualSwitchAccountReq = map[int16]string{
+	1: "account_id",
+}
+
+func (p *MercariManualSwitchAccountReq) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_MercariManualSwitchAccountReq[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *MercariManualSwitchAccountReq) ReadField1(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.AccountID = v
+	}
+	return nil
+}
+
+func (p *MercariManualSwitchAccountReq) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("MercariManualSwitchAccountReq"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *MercariManualSwitchAccountReq) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("account_id", thrift.I32, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.AccountID); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *MercariManualSwitchAccountReq) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("MercariManualSwitchAccountReq(%+v)", *p)
+
+}
+
 type SupplyService interface {
 	MercariGetItemService(ctx context.Context, req *MercariGetItemReq) (r string, err error)
 
@@ -5206,6 +5966,10 @@ type SupplyService interface {
 
 	MercariGetBrandsService(ctx context.Context) (r string, err error)
 
+	MercariManualSwitchAccountService(ctx context.Context, req *MercariManualSwitchAccountReq) (r string, err error)
+
+	KeepTokenAliveService(ctx context.Context) (r string, err error)
+
 	MercariRegisterAccountService(ctx context.Context, req *MercariRegisterAccountReq) (r *MercariRegisterAccountResp, err error)
 
 	MercariPostOrderService(ctx context.Context, req *MercariPostOrderReq) (r *MercariPostOrderResp, err error)
@@ -5213,6 +5977,8 @@ type SupplyService interface {
 	MercariPostMessageService(ctx context.Context, req *MercariPostMessageReq) (r *MercariPostMessageResp, err error)
 
 	MercariGetTokenService(ctx context.Context) (r *MercariGetTokenResp, err error)
+
+	MercariGetAccountService(ctx context.Context) (r *MercariGetAccountResp, err error)
 }
 
 type SupplyServiceClient struct {
@@ -5320,6 +6086,23 @@ func (p *SupplyServiceClient) MercariGetBrandsService(ctx context.Context) (r st
 	}
 	return _result.GetSuccess(), nil
 }
+func (p *SupplyServiceClient) MercariManualSwitchAccountService(ctx context.Context, req *MercariManualSwitchAccountReq) (r string, err error) {
+	var _args SupplyServiceMercariManualSwitchAccountServiceArgs
+	_args.Req = req
+	var _result SupplyServiceMercariManualSwitchAccountServiceResult
+	if err = p.Client_().Call(ctx, "MercariManualSwitchAccountService", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+func (p *SupplyServiceClient) KeepTokenAliveService(ctx context.Context) (r string, err error) {
+	var _args SupplyServiceKeepTokenAliveServiceArgs
+	var _result SupplyServiceKeepTokenAliveServiceResult
+	if err = p.Client_().Call(ctx, "KeepTokenAliveService", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
 func (p *SupplyServiceClient) MercariRegisterAccountService(ctx context.Context, req *MercariRegisterAccountReq) (r *MercariRegisterAccountResp, err error) {
 	var _args SupplyServiceMercariRegisterAccountServiceArgs
 	_args.Req = req
@@ -5355,6 +6138,14 @@ func (p *SupplyServiceClient) MercariGetTokenService(ctx context.Context) (r *Me
 	}
 	return _result.GetSuccess(), nil
 }
+func (p *SupplyServiceClient) MercariGetAccountService(ctx context.Context) (r *MercariGetAccountResp, err error) {
+	var _args SupplyServiceMercariGetAccountServiceArgs
+	var _result SupplyServiceMercariGetAccountServiceResult
+	if err = p.Client_().Call(ctx, "MercariGetAccountService", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
 
 type SupplyServiceProcessor struct {
 	processorMap map[string]thrift.TProcessorFunction
@@ -5385,10 +6176,13 @@ func NewSupplyServiceProcessor(handler SupplyService) *SupplyServiceProcessor {
 	self.AddToProcessorMap("MercariGetTodoListService", &supplyServiceProcessorMercariGetTodoListService{handler: handler})
 	self.AddToProcessorMap("MercariSearchItemsService", &supplyServiceProcessorMercariSearchItemsService{handler: handler})
 	self.AddToProcessorMap("MercariGetBrandsService", &supplyServiceProcessorMercariGetBrandsService{handler: handler})
+	self.AddToProcessorMap("MercariManualSwitchAccountService", &supplyServiceProcessorMercariManualSwitchAccountService{handler: handler})
+	self.AddToProcessorMap("KeepTokenAliveService", &supplyServiceProcessorKeepTokenAliveService{handler: handler})
 	self.AddToProcessorMap("MercariRegisterAccountService", &supplyServiceProcessorMercariRegisterAccountService{handler: handler})
 	self.AddToProcessorMap("MercariPostOrderService", &supplyServiceProcessorMercariPostOrderService{handler: handler})
 	self.AddToProcessorMap("MercariPostMessageService", &supplyServiceProcessorMercariPostMessageService{handler: handler})
 	self.AddToProcessorMap("MercariGetTokenService", &supplyServiceProcessorMercariGetTokenService{handler: handler})
+	self.AddToProcessorMap("MercariGetAccountService", &supplyServiceProcessorMercariGetAccountService{handler: handler})
 	return self
 }
 func (p *SupplyServiceProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -5841,6 +6635,102 @@ func (p *supplyServiceProcessorMercariGetBrandsService) Process(ctx context.Cont
 	return true, err
 }
 
+type supplyServiceProcessorMercariManualSwitchAccountService struct {
+	handler SupplyService
+}
+
+func (p *supplyServiceProcessorMercariManualSwitchAccountService) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := SupplyServiceMercariManualSwitchAccountServiceArgs{}
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+		oprot.WriteMessageBegin("MercariManualSwitchAccountService", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return false, err
+	}
+
+	iprot.ReadMessageEnd()
+	var err2 error
+	result := SupplyServiceMercariManualSwitchAccountServiceResult{}
+	var retval string
+	if retval, err2 = p.handler.MercariManualSwitchAccountService(ctx, args.Req); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing MercariManualSwitchAccountService: "+err2.Error())
+		oprot.WriteMessageBegin("MercariManualSwitchAccountService", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return true, err2
+	} else {
+		result.Success = &retval
+	}
+	if err2 = oprot.WriteMessageBegin("MercariManualSwitchAccountService", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 = result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
+}
+
+type supplyServiceProcessorKeepTokenAliveService struct {
+	handler SupplyService
+}
+
+func (p *supplyServiceProcessorKeepTokenAliveService) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := SupplyServiceKeepTokenAliveServiceArgs{}
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+		oprot.WriteMessageBegin("KeepTokenAliveService", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return false, err
+	}
+
+	iprot.ReadMessageEnd()
+	var err2 error
+	result := SupplyServiceKeepTokenAliveServiceResult{}
+	var retval string
+	if retval, err2 = p.handler.KeepTokenAliveService(ctx); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing KeepTokenAliveService: "+err2.Error())
+		oprot.WriteMessageBegin("KeepTokenAliveService", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return true, err2
+	} else {
+		result.Success = &retval
+	}
+	if err2 = oprot.WriteMessageBegin("KeepTokenAliveService", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 = result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
+}
+
 type supplyServiceProcessorMercariRegisterAccountService struct {
 	handler SupplyService
 }
@@ -6016,6 +6906,54 @@ func (p *supplyServiceProcessorMercariGetTokenService) Process(ctx context.Conte
 		result.Success = retval
 	}
 	if err2 = oprot.WriteMessageBegin("MercariGetTokenService", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 = result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
+}
+
+type supplyServiceProcessorMercariGetAccountService struct {
+	handler SupplyService
+}
+
+func (p *supplyServiceProcessorMercariGetAccountService) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := SupplyServiceMercariGetAccountServiceArgs{}
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+		oprot.WriteMessageBegin("MercariGetAccountService", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return false, err
+	}
+
+	iprot.ReadMessageEnd()
+	var err2 error
+	result := SupplyServiceMercariGetAccountServiceResult{}
+	var retval *MercariGetAccountResp
+	if retval, err2 = p.handler.MercariGetAccountService(ctx); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing MercariGetAccountService: "+err2.Error())
+		oprot.WriteMessageBegin("MercariGetAccountService", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return true, err2
+	} else {
+		result.Success = retval
+	}
+	if err2 = oprot.WriteMessageBegin("MercariGetAccountService", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -8501,6 +9439,520 @@ func (p *SupplyServiceMercariGetBrandsServiceResult) String() string {
 
 }
 
+type SupplyServiceMercariManualSwitchAccountServiceArgs struct {
+	Req *MercariManualSwitchAccountReq `thrift:"req,1"`
+}
+
+func NewSupplyServiceMercariManualSwitchAccountServiceArgs() *SupplyServiceMercariManualSwitchAccountServiceArgs {
+	return &SupplyServiceMercariManualSwitchAccountServiceArgs{}
+}
+
+var SupplyServiceMercariManualSwitchAccountServiceArgs_Req_DEFAULT *MercariManualSwitchAccountReq
+
+func (p *SupplyServiceMercariManualSwitchAccountServiceArgs) GetReq() (v *MercariManualSwitchAccountReq) {
+	if !p.IsSetReq() {
+		return SupplyServiceMercariManualSwitchAccountServiceArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+var fieldIDToName_SupplyServiceMercariManualSwitchAccountServiceArgs = map[int16]string{
+	1: "req",
+}
+
+func (p *SupplyServiceMercariManualSwitchAccountServiceArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *SupplyServiceMercariManualSwitchAccountServiceArgs) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_SupplyServiceMercariManualSwitchAccountServiceArgs[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariManualSwitchAccountServiceArgs) ReadField1(iprot thrift.TProtocol) error {
+	p.Req = NewMercariManualSwitchAccountReq()
+	if err := p.Req.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *SupplyServiceMercariManualSwitchAccountServiceArgs) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("MercariManualSwitchAccountService_args"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariManualSwitchAccountServiceArgs) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.Req.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariManualSwitchAccountServiceArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SupplyServiceMercariManualSwitchAccountServiceArgs(%+v)", *p)
+
+}
+
+type SupplyServiceMercariManualSwitchAccountServiceResult struct {
+	Success *string `thrift:"success,0,optional"`
+}
+
+func NewSupplyServiceMercariManualSwitchAccountServiceResult() *SupplyServiceMercariManualSwitchAccountServiceResult {
+	return &SupplyServiceMercariManualSwitchAccountServiceResult{}
+}
+
+var SupplyServiceMercariManualSwitchAccountServiceResult_Success_DEFAULT string
+
+func (p *SupplyServiceMercariManualSwitchAccountServiceResult) GetSuccess() (v string) {
+	if !p.IsSetSuccess() {
+		return SupplyServiceMercariManualSwitchAccountServiceResult_Success_DEFAULT
+	}
+	return *p.Success
+}
+
+var fieldIDToName_SupplyServiceMercariManualSwitchAccountServiceResult = map[int16]string{
+	0: "success",
+}
+
+func (p *SupplyServiceMercariManualSwitchAccountServiceResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *SupplyServiceMercariManualSwitchAccountServiceResult) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 0:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField0(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_SupplyServiceMercariManualSwitchAccountServiceResult[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariManualSwitchAccountServiceResult) ReadField0(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Success = &v
+	}
+	return nil
+}
+
+func (p *SupplyServiceMercariManualSwitchAccountServiceResult) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("MercariManualSwitchAccountService_result"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField0(oprot); err != nil {
+			fieldId = 0
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariManualSwitchAccountServiceResult) writeField0(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSuccess() {
+		if err = oprot.WriteFieldBegin("success", thrift.STRING, 0); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Success); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariManualSwitchAccountServiceResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SupplyServiceMercariManualSwitchAccountServiceResult(%+v)", *p)
+
+}
+
+type SupplyServiceKeepTokenAliveServiceArgs struct {
+}
+
+func NewSupplyServiceKeepTokenAliveServiceArgs() *SupplyServiceKeepTokenAliveServiceArgs {
+	return &SupplyServiceKeepTokenAliveServiceArgs{}
+}
+
+var fieldIDToName_SupplyServiceKeepTokenAliveServiceArgs = map[int16]string{}
+
+func (p *SupplyServiceKeepTokenAliveServiceArgs) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		if err = iprot.Skip(fieldTypeId); err != nil {
+			goto SkipFieldTypeError
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+SkipFieldTypeError:
+	return thrift.PrependError(fmt.Sprintf("%T skip field type %d error", p, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *SupplyServiceKeepTokenAliveServiceArgs) Write(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteStructBegin("KeepTokenAliveService_args"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *SupplyServiceKeepTokenAliveServiceArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SupplyServiceKeepTokenAliveServiceArgs(%+v)", *p)
+
+}
+
+type SupplyServiceKeepTokenAliveServiceResult struct {
+	Success *string `thrift:"success,0,optional"`
+}
+
+func NewSupplyServiceKeepTokenAliveServiceResult() *SupplyServiceKeepTokenAliveServiceResult {
+	return &SupplyServiceKeepTokenAliveServiceResult{}
+}
+
+var SupplyServiceKeepTokenAliveServiceResult_Success_DEFAULT string
+
+func (p *SupplyServiceKeepTokenAliveServiceResult) GetSuccess() (v string) {
+	if !p.IsSetSuccess() {
+		return SupplyServiceKeepTokenAliveServiceResult_Success_DEFAULT
+	}
+	return *p.Success
+}
+
+var fieldIDToName_SupplyServiceKeepTokenAliveServiceResult = map[int16]string{
+	0: "success",
+}
+
+func (p *SupplyServiceKeepTokenAliveServiceResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *SupplyServiceKeepTokenAliveServiceResult) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 0:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField0(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_SupplyServiceKeepTokenAliveServiceResult[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *SupplyServiceKeepTokenAliveServiceResult) ReadField0(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Success = &v
+	}
+	return nil
+}
+
+func (p *SupplyServiceKeepTokenAliveServiceResult) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("KeepTokenAliveService_result"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField0(oprot); err != nil {
+			fieldId = 0
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *SupplyServiceKeepTokenAliveServiceResult) writeField0(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSuccess() {
+		if err = oprot.WriteFieldBegin("success", thrift.STRING, 0); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Success); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
+}
+
+func (p *SupplyServiceKeepTokenAliveServiceResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SupplyServiceKeepTokenAliveServiceResult(%+v)", *p)
+
+}
+
 type SupplyServiceMercariRegisterAccountServiceArgs struct {
 	Req *MercariRegisterAccountReq `thrift:"req,1"`
 }
@@ -9580,5 +11032,229 @@ func (p *SupplyServiceMercariGetTokenServiceResult) String() string {
 		return "<nil>"
 	}
 	return fmt.Sprintf("SupplyServiceMercariGetTokenServiceResult(%+v)", *p)
+
+}
+
+type SupplyServiceMercariGetAccountServiceArgs struct {
+}
+
+func NewSupplyServiceMercariGetAccountServiceArgs() *SupplyServiceMercariGetAccountServiceArgs {
+	return &SupplyServiceMercariGetAccountServiceArgs{}
+}
+
+var fieldIDToName_SupplyServiceMercariGetAccountServiceArgs = map[int16]string{}
+
+func (p *SupplyServiceMercariGetAccountServiceArgs) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		if err = iprot.Skip(fieldTypeId); err != nil {
+			goto SkipFieldTypeError
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+SkipFieldTypeError:
+	return thrift.PrependError(fmt.Sprintf("%T skip field type %d error", p, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariGetAccountServiceArgs) Write(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteStructBegin("MercariGetAccountService_args"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariGetAccountServiceArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SupplyServiceMercariGetAccountServiceArgs(%+v)", *p)
+
+}
+
+type SupplyServiceMercariGetAccountServiceResult struct {
+	Success *MercariGetAccountResp `thrift:"success,0,optional"`
+}
+
+func NewSupplyServiceMercariGetAccountServiceResult() *SupplyServiceMercariGetAccountServiceResult {
+	return &SupplyServiceMercariGetAccountServiceResult{}
+}
+
+var SupplyServiceMercariGetAccountServiceResult_Success_DEFAULT *MercariGetAccountResp
+
+func (p *SupplyServiceMercariGetAccountServiceResult) GetSuccess() (v *MercariGetAccountResp) {
+	if !p.IsSetSuccess() {
+		return SupplyServiceMercariGetAccountServiceResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+var fieldIDToName_SupplyServiceMercariGetAccountServiceResult = map[int16]string{
+	0: "success",
+}
+
+func (p *SupplyServiceMercariGetAccountServiceResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *SupplyServiceMercariGetAccountServiceResult) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 0:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField0(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_SupplyServiceMercariGetAccountServiceResult[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariGetAccountServiceResult) ReadField0(iprot thrift.TProtocol) error {
+	p.Success = NewMercariGetAccountResp()
+	if err := p.Success.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *SupplyServiceMercariGetAccountServiceResult) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("MercariGetAccountService_result"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField0(oprot); err != nil {
+			fieldId = 0
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariGetAccountServiceResult) writeField0(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSuccess() {
+		if err = oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.Success.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
+}
+
+func (p *SupplyServiceMercariGetAccountServiceResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SupplyServiceMercariGetAccountServiceResult(%+v)", *p)
 
 }

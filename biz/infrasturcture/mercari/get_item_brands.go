@@ -10,7 +10,7 @@ import (
 	"time"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
@@ -25,18 +25,19 @@ type GetBrandsResp struct {
 
 func (m *Mercari) GetBrands(ctx context.Context) (*GetBrandsResp, error) {
 	getBrandFunc := func() (*GetBrandsResp, error) {
-		hlog.CtxInfof(ctx, "call /v1/master/item_brands at %+v", time.Now())
 
-		if err := m.GetToken(ctx); err != nil {
-			return nil, bizErr.InternalError
+		token, err := m.GetActiveToken(ctx)
+		if err != nil {
+			return nil, err
 		}
 
-		if ok := redis.GetHandler().Limit(ctx); ok {
+		if ok := cache.GetHandler().Limit(ctx); ok {
+			hlog.CtxWarnf(ctx, "hit rate limit")
 			return nil, bizErr.RateLimitError
 		}
 		headers := map[string][]string{
 			"Accept":        {"application/json"},
-			"Authorization": {m.Token.AccessToken},
+			"Authorization": {token.AccessToken},
 		}
 
 		url := fmt.Sprintf("%s/v1/master/item_brands", m.OpenApiDomain)
@@ -61,8 +62,8 @@ func (m *Mercari) GetBrands(ctx context.Context) (*GetBrandsResp, error) {
 		}()
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
-			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
-			if err := m.RefreshToken(ctx); err != nil {
+			hlog.CtxInfof(ctx, "http unauthorized, refreshing token...")
+			if err := m.RefreshToken(ctx, token); err != nil {
 				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
 				return nil, backoff.RetryAfter(1)
 			}
@@ -70,16 +71,16 @@ func (m *Mercari) GetBrands(ctx context.Context) (*GetBrandsResp, error) {
 		}
 		// retry code: 409, 429, 5xx
 		if httpRes.StatusCode == http.StatusTooManyRequests {
-			hlog.CtxErrorf(ctx, "http too many requests, retrying...")
+			hlog.CtxWarnf(ctx, "http too many requests, retrying...")
 			return nil, backoff.RetryAfter(1)
 		}
 		if httpRes.StatusCode == http.StatusConflict {
-			hlog.CtxErrorf(ctx, "http conflict, retrying...")
+			hlog.CtxWarnf(ctx, "http conflict, retrying...")
 			return nil, bizErr.ConflictError
 		}
 		if httpRes.StatusCode >= 500 && httpRes.StatusCode < 600 {
 			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
+			hlog.CtxWarnf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
 				httpRes.StatusCode, respBody, time.Now().Local())
 			return nil, bizErr.BizError{
 				Status:  httpRes.StatusCode,
@@ -103,7 +104,6 @@ func (m *Mercari) GetBrands(ctx context.Context) (*GetBrandsResp, error) {
 			hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
-		hlog.CtxInfof(ctx, "get item categories successfully")
 		return resp, nil
 	}
 	result, err := backoff.Retry(ctx, getBrandFunc, m.GetRetryOpts()...)

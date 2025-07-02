@@ -11,7 +11,7 @@ import (
 	"time"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
@@ -132,20 +132,20 @@ type GetItemByIDResponse struct {
 
 func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*GetItemByIDResponse, error) {
 	getItemFunc := func() (*GetItemByIDResponse, error) {
-		hlog.CtxInfof(ctx, "call /v1/items at %+v", time.Now().Local())
 
-		if err := m.GetToken(ctx); err != nil {
-			return nil, bizErr.InternalError
+		token, err := m.GetActiveToken(ctx)
+		if err != nil {
+			return nil, err
 		}
 
-		if ok := redis.GetHandler().Limit(ctx); ok {
-			hlog.CtxErrorf(ctx, "hit rate limit")
+		if ok := cache.GetHandler().Limit(ctx); ok {
+			hlog.CtxWarnf(ctx, "hit rate limit")
 			return nil, bizErr.RateLimitError
 		}
 
 		headers := map[string][]string{
 			"Accept":        {"application/json"},
-			"Authorization": {m.Token.AccessToken},
+			"Authorization": {token.AccessToken},
 		}
 
 		url := fmt.Sprintf("%s/v1/items/%s?prefecture=%s", m.OpenApiDomain, req.ItemId, url.QueryEscape(req.Prefecture))
@@ -170,8 +170,8 @@ func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*Ge
 		}()
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
-			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
-			if err := m.RefreshToken(ctx); err != nil {
+			hlog.CtxInfof(ctx, "http unauthorized, refreshing token...")
+			if err := m.RefreshToken(ctx, token); err != nil {
 				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
 				return nil, backoff.RetryAfter(1)
 			}
@@ -180,11 +180,11 @@ func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*Ge
 
 		// retry code: 409, 429, 5xx
 		if httpRes.StatusCode == http.StatusTooManyRequests {
-			hlog.CtxErrorf(ctx, "http too many requests, retrying...")
+			hlog.CtxWarnf(ctx, "http too many requests, retrying...")
 			return nil, backoff.RetryAfter(1)
 		}
 		if httpRes.StatusCode == http.StatusConflict {
-			hlog.CtxErrorf(ctx, "http conflict, retrying...")
+			hlog.CtxWarnf(ctx, "http conflict, retrying...")
 			return nil, bizErr.ConflictError
 		}
 

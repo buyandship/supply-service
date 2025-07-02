@@ -10,7 +10,7 @@ import (
 	"time"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/redis"
+	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
@@ -29,21 +29,21 @@ type GetTransactionByItemIDResponse struct {
 		Status             string `json:"status"`
 		BuyerShippingFee   string `json:"buyer_shipping_fee"`
 	} `json:"shipping_info"`
+	AccountID int32 `json:"account_id"`
 }
 
-func (m *Mercari) GetTransactionByItemID(ctx context.Context, itemId string) (*GetTransactionByItemIDResponse, error) {
+func (m *Mercari) GetTransactionByItemID(ctx context.Context, itemId string, accountId int32) (*GetTransactionByItemIDResponse, error) {
 	getItemFunc := func() (*GetTransactionByItemIDResponse, error) {
-		hlog.CtxInfof(ctx, "call /v2/transactions/{itemID} at %+v", time.Now().Local())
-
-		if err := m.GetToken(ctx); err != nil {
-			return nil, bizErr.InternalError
+		token, err := m.GetToken(ctx, accountId)
+		if err != nil {
+			return nil, err
 		}
 
-		if ok := redis.GetHandler().Limit(ctx); ok {
+		if ok := cache.GetHandler().Limit(ctx); ok {
 			return nil, bizErr.RateLimitError
 		}
 		headers := map[string][]string{
-			"Authorization": {m.Token.AccessToken},
+			"Authorization": {token.AccessToken},
 		}
 
 		url := fmt.Sprintf("%s/v2/transactions/%s", m.OpenApiDomain, itemId)
@@ -66,25 +66,25 @@ func (m *Mercari) GetTransactionByItemID(ctx context.Context, itemId string) (*G
 		}()
 
 		if httpRes.StatusCode == http.StatusUnauthorized {
-			hlog.CtxErrorf(ctx, "http unauthorized, refreshing token...")
-			if err := m.RefreshToken(ctx); err != nil {
-				hlog.CtxErrorf(ctx, "try to refresh token, but fails, err: %v", err)
+			hlog.CtxInfof(ctx, "http unauthorized, refreshing token...")
+			if err := m.RefreshToken(ctx, token); err != nil {
+				hlog.CtxWarnf(ctx, "try to refresh token, but fails, err: %v", err)
 				return nil, backoff.RetryAfter(1)
 			}
 			return nil, bizErr.UnauthorisedError
 		}
 		// retry code: 409, 429, 5xx
 		if httpRes.StatusCode == http.StatusTooManyRequests {
-			hlog.CtxErrorf(ctx, "http too many requests, retrying...")
+			hlog.CtxWarnf(ctx, "http too many requests, retrying...")
 			return nil, backoff.RetryAfter(1)
 		}
 		if httpRes.StatusCode == http.StatusConflict {
-			hlog.CtxErrorf(ctx, "http conflict, retrying...")
+			hlog.CtxWarnf(ctx, "http conflict, retrying...")
 			return nil, bizErr.ConflictError
 		}
 		if httpRes.StatusCode >= 500 && httpRes.StatusCode < 600 {
 			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
+			hlog.CtxWarnf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
 				httpRes.StatusCode, respBody, time.Now().Local())
 			return nil, bizErr.BizError{
 				Status:  httpRes.StatusCode,
@@ -108,7 +108,6 @@ func (m *Mercari) GetTransactionByItemID(ctx context.Context, itemId string) (*G
 			hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
-		hlog.CtxInfof(ctx, "get item by id successfully")
 		return resp, nil
 	}
 	result, err := backoff.Retry(ctx, getItemFunc, m.GetRetryOpts()...)
@@ -120,5 +119,6 @@ func (m *Mercari) GetTransactionByItemID(ctx context.Context, itemId string) (*G
 		}
 		return nil, err
 	}
+	result.AccountID = accountId
 	return result, nil
 }

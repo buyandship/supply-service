@@ -85,16 +85,6 @@ func _internalMw() []app.HandlerFunc {
 	return nil
 }
 
-func _supplysrcMw() []app.HandlerFunc {
-	// your code...
-	return nil
-}
-
-func _webhookMw() []app.HandlerFunc {
-	// your code...
-	return nil
-}
-
 func _mercari0Mw() []app.HandlerFunc {
 	// your code...
 	return nil
@@ -116,6 +106,31 @@ func _mercarisearchitemsserviceMw() []app.HandlerFunc {
 }
 
 func _mercarigetbrandsserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _accountMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _mercarigetaccountserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _publicMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _mercarimanualswitchaccountserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _keeptokenaliveserviceMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
