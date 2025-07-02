@@ -182,7 +182,7 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 				return nil, backoff.Permanent(bizErr.InternalError)
 			}
 
-			hlog.CtxInfof(ctx, "purchase item error, error_code: [%d], error_msg: [%s]", httpRes.StatusCode, errResp.FailureDetails.Reasons)
+			hlog.CtxWarnf(ctx, "purchase item error, error_code: [%d], error_msg: [%s]", httpRes.StatusCode, errResp.FailureDetails.Reasons)
 
 			// if we purchase item fails, query by item
 			getTxResp, err := m.GetTransactionByItemID(ctx, req.ItemId, req.AccountId)
