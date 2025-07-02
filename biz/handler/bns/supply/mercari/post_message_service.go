@@ -49,8 +49,9 @@ func PostMessageService(ctx context.Context, req *supply.MercariPostMessageReq) 
 		return nil, err
 	}
 	if err := db.GetHandler().InsertMessage(ctx, &model.Message{
-		TrxID:   req.GetTrxID(),
-		Message: req.GetMsg(),
+		TrxID:     req.GetTrxID(),
+		Message:   req.GetMsg(),
+		AccountID: trx.AccountID,
 	}); err != nil {
 		hlog.CtxErrorf(ctx, "Insert message failed: %v", err)
 		return nil, bizErr.InternalError

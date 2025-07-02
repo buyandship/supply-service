@@ -60,9 +60,10 @@ func PostTransactionReviewService(ctx context.Context, req *supply.MercariPostTr
 	}
 
 	if err := db.GetHandler().InsertReview(ctx, &model.Review{
-		TrxID:  req.GetTrxID(),
-		Fame:   req.GetFame(),
-		Review: req.GetReview(),
+		TrxID:     req.GetTrxID(),
+		Fame:      req.GetFame(),
+		Review:    req.GetReview(),
+		AccountID: trx.AccountID,
 	}); err != nil {
 		hlog.CtxErrorf(ctx, "Insert review failed: %v", err)
 		return nil, bizErr.InternalError
