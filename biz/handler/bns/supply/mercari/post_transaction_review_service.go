@@ -46,7 +46,7 @@ func PostTransactionReviewService(ctx context.Context, req *supply.MercariPostTr
 	})
 	if err != nil {
 		hlog.CtxErrorf(ctx, "get transaction failed: %v", err)
-		return nil, bizErr.InternalError
+		return nil, bizErr.NotFoundError
 	}
 
 	mResp, err := h.PostTransactionReview(ctx, &mercari.PostTransactionReviewRequest{

@@ -24,7 +24,7 @@ func GetTransactionByItemIdService(ctx context.Context, req *supply.MercariGetTr
 	})
 	if err != nil {
 		hlog.CtxErrorf(ctx, "get transaction failed: %v", err)
-		return nil, bizErr.InternalError
+		return nil, bizErr.NotFoundError
 	}
 
 	resp, err := h.GetTransactionByItemID(ctx, req.GetItemID(), trx.AccountID)

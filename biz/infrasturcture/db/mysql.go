@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -13,7 +12,6 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 var (
@@ -66,11 +64,24 @@ func (h *H) UpsertAccount(ctx context.Context, account *model.Account) (err erro
 		sql = sql.Debug()
 	}
 
-	err = sql.Clauses(clause.OnConflict{
-		UpdateAll: true,
-	}).Create(&account).Error
+	var existingAccount model.Account
+	if err := sql.Where("email = ?", account.Email).First(&existingAccount).Error; err != nil {
+		if err != gorm.ErrRecordNotFound {
+			return err
+		}
+		return sql.Create(&account).Error
+	}
 
-	return err
+	if existingAccount.ID > 0 {
+		if err := sql.Model(&model.Account{}).Where("id = ?", existingAccount.ID).Updates(account).Error; err != nil {
+			return err
+		}
+		if err := sql.Where("id = ?", existingAccount.ID).First(&account).Error; err != nil {
+			return err
+		}
+		return nil
+	}
+	return nil
 }
 
 func (h *H) BanAccount(ctx context.Context, accountId int32) (err error) {
@@ -129,9 +140,7 @@ func (h *H) GetTransaction(ctx context.Context, where *model.Transaction) (trx *
 	err = sql.Where(where).First(&trx).Error
 
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil
-		}
+		hlog.CtxErrorf(ctx, "get transaction error: %s", err.Error())
 		return nil, err
 	}
 	return

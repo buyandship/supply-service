@@ -3,6 +3,7 @@ package mercari
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"strconv"
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
@@ -13,6 +14,7 @@ import (
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"gorm.io/gorm"
 )
 
 const priceThreshold = 0.49
@@ -116,9 +118,8 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 	tx, err := db.GetHandler().GetTransaction(ctx, &model.Transaction{
 		RefID: req.GetRefID(),
 	})
-	if err != nil {
-		hlog.CtxErrorf(ctx, "get transaction error: %s", err.Error())
-		return nil, bizErr.InternalError
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		hlog.CtxErrorf(ctx, "get transaction error before purchase: %s", err.Error())
 	}
 
 	if tx == nil {
@@ -223,7 +224,7 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 	})
 	if err != nil {
 		hlog.CtxErrorf(ctx, "get transaction error: %s", err.Error())
-		return nil, bizErr.InternalError
+		return nil, bizErr.NotFoundError
 	}
 
 	if tx.RefPrice < tx.PaidPrice {

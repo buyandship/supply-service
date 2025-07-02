@@ -28,6 +28,7 @@ func RegisterAccountService(ctx context.Context, req *supply.MercariRegisterAcco
 		City:           req.GetCity(),
 		Address1:       req.GetAddress1(),
 		Address2:       req.GetAddress2(),
+		Priority:       int(req.GetPriority()),
 	}
 
 	if err := db.GetHandler().UpsertAccount(ctx, acc); err != nil {

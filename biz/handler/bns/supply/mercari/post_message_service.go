@@ -37,7 +37,7 @@ func PostMessageService(ctx context.Context, req *supply.MercariPostMessageReq) 
 	})
 	if err != nil {
 		hlog.CtxErrorf(ctx, "Get transaction failed: %v", err)
-		return nil, bizErr.InternalError
+		return nil, bizErr.NotFoundError
 	}
 
 	mResp, err := h.PostTransactionMessage(ctx, &mercari.PostTransactionMessageRequest{
