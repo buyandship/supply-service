@@ -140,7 +140,6 @@ func (h *H) GetTransaction(ctx context.Context, where *model.Transaction) (trx *
 	err = sql.Where(where).First(&trx).Error
 
 	if err != nil {
-		hlog.CtxErrorf(ctx, "get transaction error: %s", err.Error())
 		return nil, err
 	}
 	return
