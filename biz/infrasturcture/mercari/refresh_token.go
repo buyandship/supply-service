@@ -30,7 +30,7 @@ type RefreshTokenResponse struct {
 
 func (m *Mercari) GetActiveToken(ctx context.Context) (*mercari.Token, error) {
 	accountId := 0
-	if err := cache.GetHandler().Get(ctx, cache.ActiveAccountId, &accountId); err != nil {
+	if err := cache.GetHandler().Get(ctx, config.ActiveAccountId, &accountId); err != nil {
 		accs, err := db.GetHandler().GetAccountList(ctx)
 		if err != nil {
 			return nil, err
@@ -48,7 +48,7 @@ func (m *Mercari) GetActiveToken(ctx context.Context) (*mercari.Token, error) {
 			return nil, bizErr.InternalError
 		}
 		go func() {
-			if err := cache.GetHandler().Set(context.Background(), cache.ActiveAccountId, accountId, time.Hour); err != nil {
+			if err := cache.GetHandler().Set(context.Background(), config.ActiveAccountId, accountId, time.Hour); err != nil {
 				hlog.Warnf("[goroutine] redis set failed, err:%v", err)
 			}
 		}()
@@ -60,7 +60,7 @@ func (m *Mercari) GetActiveToken(ctx context.Context) (*mercari.Token, error) {
 func (m *Mercari) GetToken(ctx context.Context, accountId int32) (*mercari.Token, error) {
 	// load from redis cache
 	token := &mercari.Token{}
-	if err := cache.GetHandler().Get(ctx, fmt.Sprintf(cache.TokenRedisKeyPrefix, accountId), token); err != nil {
+	if err := cache.GetHandler().Get(ctx, fmt.Sprintf(config.TokenRedisKeyPrefix, accountId), token); err != nil {
 		hlog.CtxInfof(ctx, "the token is not in cache, load from mysql")
 		// Degrade to load from mysql
 		t, err := db.GetHandler().GetToken(ctx, accountId)
@@ -71,7 +71,7 @@ func (m *Mercari) GetToken(ctx context.Context, accountId int32) (*mercari.Token
 			return nil, err
 		}
 		go func() {
-			if err := cache.GetHandler().Set(context.Background(), fmt.Sprintf(cache.TokenRedisKeyPrefix, accountId), t, 5*time.Minute); err != nil {
+			if err := cache.GetHandler().Set(context.Background(), fmt.Sprintf(config.TokenRedisKeyPrefix, accountId), t, 5*time.Minute); err != nil {
 				hlog.Warnf("[goroutine] redis set failed, err:%v", err)
 			}
 		}()
@@ -166,7 +166,7 @@ func (m *Mercari) RefreshToken(ctx context.Context, token *mercari.Token) error 
 		return bizErr.InternalError
 	}
 
-	if err := cache.GetHandler().Del(ctx, fmt.Sprintf(cache.TokenRedisKeyPrefix, token.AccountID)); err != nil {
+	if err := cache.GetHandler().Del(ctx, fmt.Sprintf(config.TokenRedisKeyPrefix, token.AccountID)); err != nil {
 		hlog.CtxErrorf(ctx, "delete token from cache failed, err: %v", err)
 		return err
 	}
@@ -221,7 +221,7 @@ func (m *Mercari) Failover(ctx context.Context, accountId int32) error {
 		return bizErr.InternalError
 	}
 
-	if err := cache.GetHandler().Set(ctx, cache.ActiveAccountId, activeAccountId, time.Hour); err != nil {
+	if err := cache.GetHandler().Set(ctx, config.ActiveAccountId, activeAccountId, time.Hour); err != nil {
 		return err
 	}
 

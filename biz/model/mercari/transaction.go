@@ -13,7 +13,6 @@ type Transaction struct {
 	ItemID           string         `gorm:"size:255"`                        // `item_id` field
 	ItemType         string         `gorm:"size:255"`                        // `item_type` field
 	ItemDetail       datatypes.JSON `gorm:"type:json"`                       // `item_detail` field
-	BuyerID          int32          `gorm:"size:255"`                        // `buyer_id` field
 	Price            int64          `gorm:"type:decimal(10,2);default:null"` // `price` field
 	PaidPrice        int64          `gorm:"type:decimal(10,2);default:null"` // `paid_price` field
 	RefPrice         int64          `gorm:"type:decimal(10,2);default:null"` // `ref_price` field

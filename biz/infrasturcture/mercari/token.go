@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/buyandship/supply-svr/biz/common/config"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
@@ -119,7 +120,7 @@ func (m *Mercari) SetToken(ctx context.Context, req *supply.MercariLoginCallBack
 		return bizErr.InternalError
 	}
 
-	if err := cache.GetHandler().Del(ctx, fmt.Sprintf(cache.TokenRedisKeyPrefix, accountId)); err != nil {
+	if err := cache.GetHandler().Del(ctx, fmt.Sprintf(config.TokenRedisKeyPrefix, accountId)); err != nil {
 		return err
 	}
 

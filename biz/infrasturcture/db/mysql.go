@@ -266,6 +266,7 @@ func (h *H) SwitchAccount(ctx context.Context, accountId int32) (err error) {
 
 	if err := tx.Commit().Error; err != nil {
 		hlog.CtxErrorf(ctx, "failed to commit tx: %v", err)
+		tx.Rollback()
 		return err
 	}
 
