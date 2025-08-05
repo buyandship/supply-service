@@ -4,6 +4,7 @@ import (
 	"github.com/buyandship/supply-svr/biz/common/config"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
+	"github.com/google/uuid"
 )
 
 func MockMercariGetItemError(itemId string) error {
@@ -414,6 +415,9 @@ func MockMercariGetTransactionByItemId(resp *mercari.GetTransactionByItemIDRespo
 		"m67570147112": "522790123456",
 		"m42339612386": "522801234567",
 		"m24477724560": "522912345678",
+		"m84912732956": "random_tracking_number",
+		"m23552581043": "522912345670",
+		"m21398498724": "",
 	}
 
 	// Case 2: Transactions without tracking numbers
@@ -439,6 +443,10 @@ func MockMercariGetTransactionByItemId(resp *mercari.GetTransactionByItemIDRespo
 		"m91470723883": true,
 	}
 
+	waitShippingCases := map[string]string{
+		"m87457435408": "random_tracking_number",
+	}
+
 	// Case 3: Error cases
 	errorCases := map[string]error{
 		"m54081840575": bizErr.UndefinedError,
@@ -450,7 +458,11 @@ func MockMercariGetTransactionByItemId(resp *mercari.GetTransactionByItemIDRespo
 	}
 
 	if trackingNumber, ok := trackingNumberCases[resp.ItemId]; ok {
-		resp.ShippingInfo.TrackingNumber = trackingNumber
+		if trackingNumber == "random_tracking_number" {
+			resp.ShippingInfo.TrackingNumber = uuid.NewString()
+		} else {
+			resp.ShippingInfo.TrackingNumber = trackingNumber
+		}
 		resp.Status = "wait_review"
 		return nil
 	}
@@ -458,6 +470,16 @@ func MockMercariGetTransactionByItemId(resp *mercari.GetTransactionByItemIDRespo
 	if _, ok := noTrackingCases[resp.ItemId]; ok {
 		resp.ShippingInfo.TrackingNumber = ""
 		resp.Status = "wait_review"
+		return nil
+	}
+
+	if trackingNumber, ok := waitShippingCases[resp.ItemId]; ok {
+		if trackingNumber == "random_tracking_number" {
+			resp.ShippingInfo.TrackingNumber = uuid.NewString()
+		} else {
+			resp.ShippingInfo.TrackingNumber = trackingNumber
+		}
+		resp.Status = "wait_shipping"
 		return nil
 	}
 
