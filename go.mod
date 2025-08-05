@@ -8,7 +8,7 @@ replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
 
 require (
 	github.com/apache/thrift v0.13.0
-	github.com/buyandship/bns-golib/log v0.0.5
+	github.com/buyandship/bns-golib/log v0.0.8
 	github.com/cenkalti/backoff/v5 v5.0.1
 	github.com/cloudwego/hertz v0.9.5
 	github.com/google/uuid v1.6.0
