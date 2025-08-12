@@ -134,3 +134,13 @@ func _keeptokenaliveserviceMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _mercarifetchitemsserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _mercarigetsimilaritemsserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

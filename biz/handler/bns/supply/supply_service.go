@@ -397,3 +397,45 @@ func KeepTokenAliveService(ctx context.Context, c *app.RequestContext) {
 
 	c.JSON(consts.StatusOK, "ok")
 }
+
+// MercariFetchItemsService .
+// @router /v1/supplysrv/internal/mercari/fetch_items [POST]
+func MercariFetchItemsService(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req supply.MercariFetchItemsReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp, err := mercari.FetchItemsService(ctx, &req)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// MercariGetSimilarItemsService .
+// @router /v1/supplysrv/internal/mercari/similar_items [GET]
+func MercariGetSimilarItemsService(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req supply.MercariGetSimilarItemsReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp, err := mercari.GetSimilarItemsService(ctx, &req)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}

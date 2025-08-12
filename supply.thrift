@@ -146,6 +146,14 @@ struct MercariManualSwitchAccountReq {
     1: i32 account_id (api.json="account_id");
 }
 
+struct MercariFetchItemsReq {
+    1: list<string> item_ids (api.json="item_ids");
+}
+
+struct MercariGetSimilarItemsReq {
+    1: string item_id (api.json="item_id");
+}
+
 service SupplyService {
     string MercariGetItemService(1: MercariGetItemReq req) (api.get="/v1/supplysrv/internal/mercari/item");
     string MercariGetCategoriesService() (api.get="/v1/supplysrv/internal/mercari/categories")
@@ -164,4 +172,6 @@ service SupplyService {
     MercariPostMessageResp MercariPostMessageService(1: MercariPostMessageReq req) (api.post="/v1/supplysrv/internal/mercari/message")
     MercariGetTokenResp MercariGetTokenService() (api.get="/v1/supplysrv/internal/mercari/token")
     MercariGetAccountResp MercariGetAccountService() (api.get="/v1/supplysrv/internal/mercari/account/list")
+    string MercariFetchItemsService(1: MercariFetchItemsReq req) (api.get="/v1/supplysrv/internal/mercari/fetch_items")
+    string MercariGetSimilarItemsService(1: MercariGetSimilarItemsReq req) (api.get="/v1/supplysrv/internal/mercari/similar_items")
 }
