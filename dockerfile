@@ -9,7 +9,7 @@ WORKDIR /app
 COPY ./supply-svr /app/supply-svr
 
 # Copy the config.yaml file
-COPY ./config.test.yml /app/config.yaml
+COPY ./config.yaml /app/config.yaml
 
 # Set the environment variable for the port
 ENV PORT=$PORT

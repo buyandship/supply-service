@@ -1,16 +1,16 @@
 env: "development"
 mysql:
-  username: "root"
-  password: ""
-  addr: "localhost:3306"
+  username: "bns_test"
+  password: "sees7&ch@nting"
+  addr: "test-mysql.ctgaq8igsgen.ap-southeast-1.rds.amazonaws.com:3306"
   db_name: "mercari"
 redis:
-  addr: "localhost:6379"
+  addr: "bso-redis:6379"
 mercari:
   client_id: "NUSnaBnbqRGy1sndWIYZUQJFnwousvRh"
-  client_secret: "lyQCWHIurdhwqTEjk492VwxBhyO0P6YG"
+  client_secret: "7D0mXAF7VsfRswFSckwwb1NoGBU6J7N0"
   callback_url: "https://b4u-req-api-test.buynship.com/api/callback/mercari/login/"
 hmac_secret: "utmtuacz-hhme-fht4-gba6-3lg4vi8fzpu6"
+b4u_token: "y7CgIr0j9TNidRv64hRqPlLffO4RePxp"
 otel:
   endpoint: "ec2-user-tempo-1:4317"
-

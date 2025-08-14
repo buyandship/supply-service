@@ -37,6 +37,7 @@ type ServerConfig struct {
 	Redis      RedisConfig   `mapstructure:"redis"`
 	Mercari    MercariConfig `mapstructure:"mercari"`
 	HmacSecret string        `mapstructure:"hmac_secret"`
+	B4uToken   string        `mapstructure:"b4u_token"`
 	Otel       OtelConfig    `mapstructure:"otel"`
 }
 
