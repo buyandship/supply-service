@@ -15,6 +15,7 @@ import (
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
+	b4uhttp "github.com/buyandship/supply-svr/biz/infrasturcture/http"
 	"github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"gorm.io/gorm"
@@ -209,6 +210,17 @@ func (m *Mercari) Failover(ctx context.Context, accountId int32) error {
 			if err := db.GetHandler().SwitchAccount(ctx, int32(acc.ID)); err != nil {
 				return err
 			}
+			// notify
+			go func() {
+				if err := b4uhttp.GetNotifier().Notify(ctx, mercari.SwitchAccountInfo{
+					FromAccountID: accountId,
+					ToAccountID:   int32(acc.ID),
+					Reason:        "failover",
+				}); err != nil {
+					hlog.CtxErrorf(ctx, "failed to notify b4u: %v", err)
+				}
+			}()
+
 			hlog.CtxInfof(ctx, "set active account: %d", acc.ID)
 			activeAccountId = int(acc.ID)
 			break

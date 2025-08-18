@@ -73,3 +73,9 @@ func (a *Account) Thrift() *supply.Account {
 	}
 	return account
 }
+
+type SwitchAccountInfo struct {
+	FromAccountID int32  `json:"from_account_id"`
+	ToAccountID   int32  `json:"to_account_id"`
+	Reason        string `json:"reason"`
+}
