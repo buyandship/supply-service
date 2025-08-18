@@ -89,7 +89,7 @@ func (m *Mercari) GetSimilarItems(ctx context.Context, req *supply.MercariGetSim
 
 		if httpRes.StatusCode >= 500 && httpRes.StatusCode < 600 {
 			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
+			hlog.CtxInfof(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
 				httpRes.StatusCode, respBody, time.Now().Local())
 			return nil, bizErr.BizError{
 				Status:  httpRes.StatusCode,
@@ -120,9 +120,11 @@ func (m *Mercari) GetSimilarItems(ctx context.Context, req *supply.MercariGetSim
 	if err != nil {
 		pErr := &backoff.PermanentError{}
 		if errors.As(err, &pErr) {
+			hlog.CtxErrorf(ctx, "get similar mercari items error: %v", err)
 			berr := pErr.Unwrap()
 			return nil, berr
 		}
+		hlog.CtxErrorf(ctx, "get similar mercari items error: %v", err)
 		return nil, err
 	}
 	return result, nil

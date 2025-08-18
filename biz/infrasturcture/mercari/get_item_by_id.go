@@ -190,7 +190,7 @@ func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*Ge
 
 		if httpRes.StatusCode >= 500 && httpRes.StatusCode < 600 {
 			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
+			hlog.CtxWarnf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
 				httpRes.StatusCode, respBody, time.Now().Local())
 			return nil, bizErr.BizError{
 				Status:  httpRes.StatusCode,
@@ -211,7 +211,7 @@ func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*Ge
 
 		resp := &GetItemByIDResponse{}
 		if err := json.NewDecoder(httpRes.Body).Decode(resp); err != nil {
-			hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
+			hlog.CtxInfof(ctx, "decode http response error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
 
@@ -221,9 +221,11 @@ func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*Ge
 	if err != nil {
 		pErr := &backoff.PermanentError{}
 		if errors.As(err, &pErr) {
+			hlog.CtxErrorf(ctx, "get mercari item error: %v", err)
 			berr := pErr.Unwrap()
 			return nil, berr
 		}
+		hlog.CtxErrorf(ctx, "get mercari item error: %v", err)
 		return nil, err
 	}
 	return result, nil

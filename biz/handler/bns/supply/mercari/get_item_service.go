@@ -26,7 +26,7 @@ func GetItemService(ctx context.Context, req *supply.MercariGetItemReq) (*mercar
 
 	token, err := h.GetActiveToken(ctx)
 	if err != nil {
-		hlog.CtxErrorf(ctx, "GetActiveToken error: %v", err)
+		hlog.CtxInfof(ctx, "GetActiveToken error: %v", err)
 		return nil, err
 	}
 

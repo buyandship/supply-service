@@ -87,7 +87,7 @@ func (m *Mercari) FetchItems(ctx context.Context, req *supply.MercariFetchItemsR
 
 		if httpRes.StatusCode >= 500 && httpRes.StatusCode < 600 {
 			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
+			hlog.CtxWarnf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
 				httpRes.StatusCode, respBody, time.Now().Local())
 			return nil, bizErr.BizError{
 				Status:  httpRes.StatusCode,
@@ -118,9 +118,11 @@ func (m *Mercari) FetchItems(ctx context.Context, req *supply.MercariFetchItemsR
 	if err != nil {
 		pErr := &backoff.PermanentError{}
 		if errors.As(err, &pErr) {
+			hlog.CtxErrorf(ctx, "fetch mercari items error: %v", err)
 			berr := pErr.Unwrap()
 			return nil, berr
 		}
+		hlog.CtxErrorf(ctx, "fetch mercari items error: %v", err)
 		return nil, err
 	}
 	return result, nil

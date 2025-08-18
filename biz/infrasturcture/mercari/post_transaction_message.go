@@ -114,7 +114,7 @@ func (m *Mercari) PostTransactionMessage(ctx context.Context, req *PostTransacti
 		}
 		resp := &PostTransactionMessageResponse{}
 		if err := json.NewDecoder(httpRes.Body).Decode(resp); err != nil {
-			hlog.CtxErrorf(ctx, "decode http response error, err: %v", err)
+			hlog.CtxInfof(ctx, "decode http response error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
 		return resp, nil
@@ -124,9 +124,11 @@ func (m *Mercari) PostTransactionMessage(ctx context.Context, req *PostTransacti
 	if err != nil {
 		pErr := &backoff.PermanentError{}
 		if errors.As(err, &pErr) {
+			hlog.CtxErrorf(ctx, "post mercari transaction message error: %v", err)
 			berr := pErr.Unwrap()
 			return nil, berr
 		}
+		hlog.CtxErrorf(ctx, "post mercari transaction message error: %v", err)
 		return nil, err
 	}
 

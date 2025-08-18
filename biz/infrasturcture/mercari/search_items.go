@@ -228,7 +228,7 @@ func (m *Mercari) SearchItems(ctx context.Context, req *supply.MercariSearchItem
 
 		httpRes, err := HttpDo(ctx, httpReq)
 		if err != nil {
-			hlog.CtxErrorf(ctx, "http error, err: %v", err)
+			hlog.CtxInfof(ctx, "http error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)
 		}
 
@@ -249,17 +249,17 @@ func (m *Mercari) SearchItems(ctx context.Context, req *supply.MercariSearchItem
 
 		// retry code: 409, 429, 5xx
 		if httpRes.StatusCode == http.StatusTooManyRequests {
-			hlog.CtxErrorf(ctx, "http too many requests, retrying...")
+			hlog.CtxInfof(ctx, "http too many requests, retrying...")
 			return nil, backoff.RetryAfter(1)
 		}
 		if httpRes.StatusCode == http.StatusConflict {
-			hlog.CtxErrorf(ctx, "http conflict, retrying...")
+			hlog.CtxInfof(ctx, "http conflict, retrying...")
 			return nil, bizErr.ConflictError
 		}
 
 		if httpRes.StatusCode >= 500 && httpRes.StatusCode < 600 {
 			respBody, _ := io.ReadAll(httpRes.Body)
-			hlog.CtxErrorf(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
+			hlog.CtxInfof(ctx, "http error, error_code: [%d], error_msg: [%s], retrying at [%+v]...",
 				httpRes.StatusCode, respBody, time.Now().Local())
 			return nil, bizErr.BizError{
 				Status:  httpRes.StatusCode,
@@ -290,9 +290,11 @@ func (m *Mercari) SearchItems(ctx context.Context, req *supply.MercariSearchItem
 	if err != nil {
 		pErr := &backoff.PermanentError{}
 		if errors.As(err, &pErr) {
+			hlog.CtxErrorf(ctx, "search mercari items error: %v", err)
 			berr := pErr.Unwrap()
 			return nil, berr
 		}
+		hlog.CtxErrorf(ctx, "search mercari items error: %v", err)
 		return nil, err
 	}
 	return result, nil

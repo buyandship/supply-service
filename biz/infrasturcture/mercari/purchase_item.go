@@ -275,9 +275,11 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 	if err != nil {
 		pErr := &backoff.PermanentError{}
 		if errors.As(err, &pErr) {
+			hlog.CtxErrorf(ctx, "purchase item error: %v", err)
 			berr := pErr.Unwrap()
 			return berr
 		}
+		hlog.CtxErrorf(ctx, "purchase item error: %v", err)
 		return err
 	}
 

@@ -148,9 +148,11 @@ func (m *Mercari) PostTransactionReview(ctx context.Context, req *PostTransactio
 	if err != nil {
 		pErr := &backoff.PermanentError{}
 		if errors.As(err, &pErr) {
+			hlog.CtxErrorf(ctx, "post mercari transaction review error: %v", err)
 			berr := pErr.Unwrap()
 			return nil, berr
 		}
+		hlog.CtxErrorf(ctx, "post mercari transaction review error: %v", err)
 		return nil, err
 	}
 

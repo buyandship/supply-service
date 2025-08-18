@@ -128,9 +128,11 @@ func (m *Mercari) GetUser(ctx context.Context, req *GetUserByUserIDRequest) (*Ge
 	if err != nil {
 		pErr := &backoff.PermanentError{}
 		if errors.As(err, &pErr) {
+			hlog.CtxErrorf(ctx, "get mercari user error: %v", err)
 			berr := pErr.Unwrap()
 			return nil, berr
 		}
+		hlog.CtxErrorf(ctx, "get mercari user error: %v", err)
 		return nil, err
 	}
 	return result, nil
