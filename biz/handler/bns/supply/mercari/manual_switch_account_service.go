@@ -29,24 +29,22 @@ func ManualSwitchAccountService(ctx context.Context, req *supply.MercariManualSw
 		return err
 	}
 
-	go func() {
-		var activeAccountId int32
-		if err := cache.GetHandler().Get(ctx, config.ActiveAccountId, &activeAccountId); err != nil {
-			hlog.CtxErrorf(ctx, "failed to get active account id: %v", err)
-			return
-		}
-
-		if err := http.GetNotifier().Notify(ctx, mercari.SwitchAccountInfo{
-			FromAccountID: activeAccountId,
-			ToAccountID:   req.AccountID,
-			Reason:        "manual switch account",
-		}); err != nil {
-			hlog.CtxErrorf(ctx, "failed to notify b4u: %v", err)
-		}
-	}()
-
 	if err := cache.GetHandler().Set(ctx, config.ActiveAccountId, req.AccountID, time.Hour); err != nil {
 		hlog.CtxErrorf(ctx, "failed to set active account id: %v", err)
+	}
+
+	var activeAccountId int32
+	if err := cache.GetHandler().Get(ctx, config.ActiveAccountId, &activeAccountId); err != nil {
+		hlog.CtxErrorf(ctx, "failed to get active account id: %v", err)
+		return err
+	}
+
+	if err := http.GetNotifier().Notify(ctx, mercari.SwitchAccountInfo{
+		FromAccountID: activeAccountId,
+		ToAccountID:   req.AccountID,
+		Reason:        "manual switch account",
+	}); err != nil {
+		hlog.CtxErrorf(ctx, "failed to notify b4u: %v", err)
 	}
 
 	return nil
