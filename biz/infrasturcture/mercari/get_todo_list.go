@@ -123,11 +123,11 @@ func (m *Mercari) GetTodoList(ctx context.Context, req *GetTodoListReq) (*GetTod
 	if err != nil {
 		pErr := &backoff.PermanentError{}
 		if errors.As(err, &pErr) {
-			hlog.CtxErrorf(ctx, "get mercari todo list error: %v", err)
+			hlog.CtxInfof(ctx, "get mercari todo list error: %v", err)
 			berr := pErr.Unwrap()
 			return nil, berr
 		}
-		hlog.CtxErrorf(ctx, "get mercari todo list error: %v", err)
+		hlog.CtxInfof(ctx, "get mercari todo list error: %v", err)
 		return nil, err
 	}
 	return result, nil

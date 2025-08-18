@@ -114,11 +114,11 @@ func (m *Mercari) GetTransactionByItemID(ctx context.Context, itemId string, acc
 	if err != nil {
 		pErr := &backoff.PermanentError{}
 		if errors.As(err, &pErr) {
-			hlog.CtxErrorf(ctx, "get mercari transaction by itemid error: %v", err)
+			hlog.CtxInfof(ctx, "get mercari transaction by itemid error: %v", err)
 			berr := pErr.Unwrap()
 			return nil, berr
 		}
-		hlog.CtxErrorf(ctx, "get mercari transaction by itemid error: %v", err)
+		hlog.CtxInfof(ctx, "get mercari transaction by itemid error: %v", err)
 		return nil, err
 	}
 	result.AccountID = accountId

@@ -221,11 +221,11 @@ func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*Ge
 	if err != nil {
 		pErr := &backoff.PermanentError{}
 		if errors.As(err, &pErr) {
-			hlog.CtxErrorf(ctx, "get mercari item error: %v", err)
+			hlog.CtxInfof(ctx, "get mercari item error: %v", err)
 			berr := pErr.Unwrap()
 			return nil, berr
 		}
-		hlog.CtxErrorf(ctx, "get mercari item error: %v", err)
+		hlog.CtxInfof(ctx, "get mercari item error: %v", err)
 		return nil, err
 	}
 	return result, nil

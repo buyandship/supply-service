@@ -290,11 +290,11 @@ func (m *Mercari) SearchItems(ctx context.Context, req *supply.MercariSearchItem
 	if err != nil {
 		pErr := &backoff.PermanentError{}
 		if errors.As(err, &pErr) {
-			hlog.CtxErrorf(ctx, "search mercari items error: %v", err)
+			hlog.CtxInfof(ctx, "search mercari items error: %v", err)
 			berr := pErr.Unwrap()
 			return nil, berr
 		}
-		hlog.CtxErrorf(ctx, "search mercari items error: %v", err)
+		hlog.CtxInfof(ctx, "search mercari items error: %v", err)
 		return nil, err
 	}
 	return result, nil

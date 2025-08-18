@@ -110,11 +110,11 @@ func (m *Mercari) GetItemCategories(ctx context.Context) (*GetItemCategoriesResp
 	if err != nil {
 		pErr := &backoff.PermanentError{}
 		if errors.As(err, &pErr) {
-			hlog.CtxErrorf(ctx, "get mercari item categories error: %v", err)
+			hlog.CtxInfof(ctx, "get mercari item categories error: %v", err)
 			berr := pErr.Unwrap()
 			return nil, berr
 		}
-		hlog.CtxErrorf(ctx, "get mercari item categories error: %v", err)
+		hlog.CtxInfof(ctx, "get mercari item categories error: %v", err)
 		return nil, err
 	}
 	return result, nil

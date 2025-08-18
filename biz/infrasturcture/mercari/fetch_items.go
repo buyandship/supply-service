@@ -118,11 +118,11 @@ func (m *Mercari) FetchItems(ctx context.Context, req *supply.MercariFetchItemsR
 	if err != nil {
 		pErr := &backoff.PermanentError{}
 		if errors.As(err, &pErr) {
-			hlog.CtxErrorf(ctx, "fetch mercari items error: %v", err)
+			hlog.CtxInfof(ctx, "fetch mercari items error: %v", err)
 			berr := pErr.Unwrap()
 			return nil, berr
 		}
-		hlog.CtxErrorf(ctx, "fetch mercari items error: %v", err)
+		hlog.CtxInfof(ctx, "fetch mercari items error: %v", err)
 		return nil, err
 	}
 	return result, nil
