@@ -132,7 +132,7 @@ func (m *Mercari) SearchItems(ctx context.Context, req *supply.MercariSearchItem
 		}
 
 		if ok := cache.GetHandler().Limit(ctx); ok {
-			hlog.CtxErrorf(ctx, "hit rate limit")
+			hlog.CtxWarnf(ctx, "hit rate limit")
 			return nil, bizErr.RateLimitError
 		}
 
