@@ -24,5 +24,4 @@ func HealthCheck(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	c.JSON(consts.StatusOK, "ok")
-	return
 }

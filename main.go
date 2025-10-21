@@ -45,7 +45,6 @@ func main() {
 		provider.WithServiceName("supply-svr"),
 		provider.WithExportEndpoint(config.GlobalServerConfig.Otel.Endpoint),
 		provider.WithInsecure(),
-		provider.WithEnableMetrics(false),
 	)
 	defer p.Shutdown(context.Background())
 
