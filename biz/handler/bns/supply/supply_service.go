@@ -7,6 +7,7 @@ import (
 
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/handler/bns/supply/mercari"
+	"github.com/buyandship/supply-svr/biz/handler/bns/supply/yahoo"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -431,6 +432,27 @@ func MercariGetSimilarItemsService(ctx context.Context, c *app.RequestContext) {
 	}
 
 	resp, err := mercari.GetSimilarItemsService(ctx, &req)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// YahooBuyoutService .
+// @router /v1/supplysrv/internal/yahoo/buyout [POST]
+func YahooBuyoutService(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req supply.YahooBuyoutReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp, err := yahoo.BuyoutService(ctx, &req)
 	if err != nil {
 		cerr := bizErr.ConvertErr(err)
 		c.AbortWithStatusJSON(cerr.Status, cerr)

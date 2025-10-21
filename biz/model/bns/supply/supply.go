@@ -6238,6 +6238,86 @@ func (p *MercariGetSimilarItemsReq) String() string {
 
 }
 
+type YahooBuyoutReq struct {
+}
+
+func NewYahooBuyoutReq() *YahooBuyoutReq {
+	return &YahooBuyoutReq{}
+}
+
+var fieldIDToName_YahooBuyoutReq = map[int16]string{}
+
+func (p *YahooBuyoutReq) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		if err = iprot.Skip(fieldTypeId); err != nil {
+			goto SkipFieldTypeError
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+SkipFieldTypeError:
+	return thrift.PrependError(fmt.Sprintf("%T skip field type %d error", p, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *YahooBuyoutReq) Write(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteStructBegin("YahooBuyoutReq"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *YahooBuyoutReq) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("YahooBuyoutReq(%+v)", *p)
+
+}
+
 type SupplyService interface {
 	MercariGetItemService(ctx context.Context, req *MercariGetItemReq) (r string, err error)
 
@@ -6274,6 +6354,8 @@ type SupplyService interface {
 	MercariFetchItemsService(ctx context.Context, req *MercariFetchItemsReq) (r string, err error)
 
 	MercariGetSimilarItemsService(ctx context.Context, req *MercariGetSimilarItemsReq) (r string, err error)
+
+	YahooBuyoutService(ctx context.Context, req *YahooBuyoutReq) (r string, err error)
 }
 
 type SupplyServiceClient struct {
@@ -6459,6 +6541,15 @@ func (p *SupplyServiceClient) MercariGetSimilarItemsService(ctx context.Context,
 	}
 	return _result.GetSuccess(), nil
 }
+func (p *SupplyServiceClient) YahooBuyoutService(ctx context.Context, req *YahooBuyoutReq) (r string, err error) {
+	var _args SupplyServiceYahooBuyoutServiceArgs
+	_args.Req = req
+	var _result SupplyServiceYahooBuyoutServiceResult
+	if err = p.Client_().Call(ctx, "YahooBuyoutService", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
 
 type SupplyServiceProcessor struct {
 	processorMap map[string]thrift.TProcessorFunction
@@ -6498,6 +6589,7 @@ func NewSupplyServiceProcessor(handler SupplyService) *SupplyServiceProcessor {
 	self.AddToProcessorMap("MercariGetAccountService", &supplyServiceProcessorMercariGetAccountService{handler: handler})
 	self.AddToProcessorMap("MercariFetchItemsService", &supplyServiceProcessorMercariFetchItemsService{handler: handler})
 	self.AddToProcessorMap("MercariGetSimilarItemsService", &supplyServiceProcessorMercariGetSimilarItemsService{handler: handler})
+	self.AddToProcessorMap("YahooBuyoutService", &supplyServiceProcessorYahooBuyoutService{handler: handler})
 	return self
 }
 func (p *SupplyServiceProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -7365,6 +7457,54 @@ func (p *supplyServiceProcessorMercariGetSimilarItemsService) Process(ctx contex
 		result.Success = &retval
 	}
 	if err2 = oprot.WriteMessageBegin("MercariGetSimilarItemsService", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 = result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
+}
+
+type supplyServiceProcessorYahooBuyoutService struct {
+	handler SupplyService
+}
+
+func (p *supplyServiceProcessorYahooBuyoutService) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := SupplyServiceYahooBuyoutServiceArgs{}
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+		oprot.WriteMessageBegin("YahooBuyoutService", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return false, err
+	}
+
+	iprot.ReadMessageEnd()
+	var err2 error
+	result := SupplyServiceYahooBuyoutServiceResult{}
+	var retval string
+	if retval, err2 = p.handler.YahooBuyoutService(ctx, args.Req); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing YahooBuyoutService: "+err2.Error())
+		oprot.WriteMessageBegin("YahooBuyoutService", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return true, err2
+	} else {
+		result.Success = &retval
+	}
+	if err2 = oprot.WriteMessageBegin("YahooBuyoutService", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -12243,5 +12383,293 @@ func (p *SupplyServiceMercariGetSimilarItemsServiceResult) String() string {
 		return "<nil>"
 	}
 	return fmt.Sprintf("SupplyServiceMercariGetSimilarItemsServiceResult(%+v)", *p)
+
+}
+
+type SupplyServiceYahooBuyoutServiceArgs struct {
+	Req *YahooBuyoutReq `thrift:"req,1"`
+}
+
+func NewSupplyServiceYahooBuyoutServiceArgs() *SupplyServiceYahooBuyoutServiceArgs {
+	return &SupplyServiceYahooBuyoutServiceArgs{}
+}
+
+var SupplyServiceYahooBuyoutServiceArgs_Req_DEFAULT *YahooBuyoutReq
+
+func (p *SupplyServiceYahooBuyoutServiceArgs) GetReq() (v *YahooBuyoutReq) {
+	if !p.IsSetReq() {
+		return SupplyServiceYahooBuyoutServiceArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+var fieldIDToName_SupplyServiceYahooBuyoutServiceArgs = map[int16]string{
+	1: "req",
+}
+
+func (p *SupplyServiceYahooBuyoutServiceArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *SupplyServiceYahooBuyoutServiceArgs) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_SupplyServiceYahooBuyoutServiceArgs[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *SupplyServiceYahooBuyoutServiceArgs) ReadField1(iprot thrift.TProtocol) error {
+	p.Req = NewYahooBuyoutReq()
+	if err := p.Req.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *SupplyServiceYahooBuyoutServiceArgs) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("YahooBuyoutService_args"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *SupplyServiceYahooBuyoutServiceArgs) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.Req.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *SupplyServiceYahooBuyoutServiceArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SupplyServiceYahooBuyoutServiceArgs(%+v)", *p)
+
+}
+
+type SupplyServiceYahooBuyoutServiceResult struct {
+	Success *string `thrift:"success,0,optional"`
+}
+
+func NewSupplyServiceYahooBuyoutServiceResult() *SupplyServiceYahooBuyoutServiceResult {
+	return &SupplyServiceYahooBuyoutServiceResult{}
+}
+
+var SupplyServiceYahooBuyoutServiceResult_Success_DEFAULT string
+
+func (p *SupplyServiceYahooBuyoutServiceResult) GetSuccess() (v string) {
+	if !p.IsSetSuccess() {
+		return SupplyServiceYahooBuyoutServiceResult_Success_DEFAULT
+	}
+	return *p.Success
+}
+
+var fieldIDToName_SupplyServiceYahooBuyoutServiceResult = map[int16]string{
+	0: "success",
+}
+
+func (p *SupplyServiceYahooBuyoutServiceResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *SupplyServiceYahooBuyoutServiceResult) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 0:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField0(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_SupplyServiceYahooBuyoutServiceResult[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *SupplyServiceYahooBuyoutServiceResult) ReadField0(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Success = &v
+	}
+	return nil
+}
+
+func (p *SupplyServiceYahooBuyoutServiceResult) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("YahooBuyoutService_result"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField0(oprot); err != nil {
+			fieldId = 0
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *SupplyServiceYahooBuyoutServiceResult) writeField0(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSuccess() {
+		if err = oprot.WriteFieldBegin("success", thrift.STRING, 0); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Success); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
+}
+
+func (p *SupplyServiceYahooBuyoutServiceResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SupplyServiceYahooBuyoutServiceResult(%+v)", *p)
 
 }

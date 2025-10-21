@@ -154,6 +154,10 @@ struct MercariGetSimilarItemsReq {
     1: string item_id (api.json="item_id");
 }
 
+
+struct YahooBuyoutReq {
+}
+
 service SupplyService {
     string MercariGetItemService(1: MercariGetItemReq req) (api.get="/v1/supplysrv/internal/mercari/item");
     string MercariGetCategoriesService() (api.get="/v1/supplysrv/internal/mercari/categories")
@@ -174,4 +178,7 @@ service SupplyService {
     MercariGetAccountResp MercariGetAccountService() (api.get="/v1/supplysrv/internal/mercari/account/list")
     string MercariFetchItemsService(1: MercariFetchItemsReq req) (api.get="/v1/supplysrv/internal/mercari/fetch_items")
     string MercariGetSimilarItemsService(1: MercariGetSimilarItemsReq req) (api.get="/v1/supplysrv/internal/mercari/similar_items")
+
+
+    string YahooBuyoutService(1: YahooBuyoutReq req) (api.post="/v1/supplysrv/internal/yahoo/buyout")
 }

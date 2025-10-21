@@ -144,3 +144,16 @@ func _mercarigetsimilaritemsserviceMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _yahooMw() []app.HandlerFunc {
+	// your code...
+	// TODO: add authentication middleware
+	var opt []app.HandlerFunc
+	opt = append(opt, middleware.HmacValidator())
+	return opt
+}
+
+func _yahoobuyoutserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
