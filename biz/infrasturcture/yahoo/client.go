@@ -34,7 +34,6 @@ type Client struct {
 	apiKey     string
 	secretKey  string
 	httpClient *bnsHttp.Client
-	retryOpts  *RetryOptions
 }
 
 // NewClient creates a new Yahoo Auction Bridge client
@@ -45,18 +44,7 @@ func NewClient(baseURL, apiKey, secretKey string) *Client {
 		apiKey:     apiKey,
 		secretKey:  secretKey,
 		httpClient: client,
-		retryOpts: &RetryOptions{
-			MaxRetries:      3,
-			InitialInterval: 1 * time.Second,
-			MaxInterval:     30 * time.Second,
-		},
 	}
-}
-
-// WithRetryOptions configures retry options for the client
-func (c *Client) WithRetryOptions(opts *RetryOptions) *Client {
-	c.retryOpts = opts
-	return c
 }
 
 // Authentication types
