@@ -132,7 +132,7 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 			httpRes.StatusCode = http.StatusForbidden
 			httpRes.Body = io.NopCloser(bytes.NewBufferString(`{"request_id": "08f40f07-f67c-42c4-a47c-b794a7d7aa76", "transaction_status": "failure", "failure_details": {"code": "F0017", "reasons": "The buyer is currently forbidden to purchase items due to ACL Ban"}}`))
 		} else {
-			httpRes, err = HttpDo(ctx, httpReq)
+			httpRes, err = m.Client.Do(ctx, httpReq)
 			if err != nil {
 				hlog.CtxErrorf(ctx, "http error, err: %v", err)
 				return nil, backoff.Permanent(bizErr.InternalError)

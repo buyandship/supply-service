@@ -157,7 +157,7 @@ func (m *Mercari) GetItemByID(ctx context.Context, req *GetItemByIDRequest) (*Ge
 		}
 		httpReq.Header = headers
 
-		httpRes, err := HttpDo(ctx, httpReq)
+		httpRes, err := m.Client.Do(ctx, httpReq)
 		if err != nil {
 			hlog.CtxErrorf(ctx, "http error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)

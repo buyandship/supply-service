@@ -54,7 +54,7 @@ func (m *Mercari) FetchItems(ctx context.Context, req *supply.MercariFetchItemsR
 		}
 		httpReq.Header = headers
 
-		httpRes, err := HttpDo(ctx, httpReq)
+		httpRes, err := m.Client.Do(ctx, httpReq)
 		if err != nil {
 			hlog.CtxErrorf(ctx, "http error, err: %v", err)
 			return nil, backoff.Permanent(bizErr.InternalError)

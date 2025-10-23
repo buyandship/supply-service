@@ -61,7 +61,7 @@ func (m *Mercari) SetToken(ctx context.Context, req *supply.MercariLoginCallBack
 	}
 	httpReq.Header = headers
 
-	httpRes, err := HttpDo(ctx, httpReq)
+	httpRes, err := m.Client.Do(ctx, httpReq)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "http error, err: %v", err)
 		return bizErr.InternalError

@@ -8,6 +8,7 @@ import (
 
 	"sync"
 
+	"github.com/buyandship/bns-golib/http"
 	"github.com/buyandship/supply-svr/biz/common/config"
 )
 
@@ -22,18 +23,21 @@ type Mercari struct {
 	ClientID          string
 	ClientSecret      string
 	CallbackUrl       string
+	Client            *http.Client
 }
 
 func GetHandler() *Mercari {
 	once.Do(func() {
 		var url, authServiceDomain string
-		if config.GlobalServerConfig.Env == "development" {
+		switch config.GlobalServerConfig.Env {
+		case "development":
 			authServiceDomain = "https://auth-sandbox.mercari.com"
 			url = "https://api.mercari-sandbox.com"
-		} else if config.GlobalServerConfig.Env == "production" {
+		case "production":
 			authServiceDomain = "https://auth.mercari.com"
 			url = "https://api.jp-mercari.com"
 		}
+		client := http.NewClient()
 
 		Handler = &Mercari{
 			AuthServiceDomain: authServiceDomain,
@@ -41,6 +45,7 @@ func GetHandler() *Mercari {
 			ClientID:          config.GlobalServerConfig.Mercari.ClientId,
 			ClientSecret:      config.GlobalServerConfig.Mercari.ClientSecret,
 			CallbackUrl:       config.GlobalServerConfig.Mercari.CallbackUrl,
+			Client:            client,
 		}
 	})
 	return Handler
