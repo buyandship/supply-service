@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/buyandship/bns-golib/cache"
+	"github.com/buyandship/bns-golib/retry"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -120,7 +121,7 @@ func (m *Mercari) PostTransactionMessage(ctx context.Context, req *PostTransacti
 		return resp, nil
 	}
 
-	result, err := backoff.Retry(ctx, postTransactionMessageFunc, m.GetRetryOpts()...)
+	result, err := backoff.Retry(ctx, postTransactionMessageFunc, retry.GetDefaultRetryOpts()...)
 	if err != nil {
 		pErr := &backoff.PermanentError{}
 		if errors.As(err, &pErr) {

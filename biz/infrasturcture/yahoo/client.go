@@ -16,7 +16,17 @@ import (
 	"net/http"
 
 	bnsHttp "github.com/buyandship/bns-golib/http"
+	"github.com/buyandship/bns-golib/retry"
+	"github.com/cenkalti/backoff/v5"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
+
+// RetryOptions configures retry behavior
+type RetryOptions struct {
+	MaxRetries      int
+	InitialInterval time.Duration
+	MaxInterval     time.Duration
+}
 
 // Client represents the Yahoo Auction Bridge API client
 type Client struct {
@@ -24,6 +34,7 @@ type Client struct {
 	apiKey     string
 	secretKey  string
 	httpClient *bnsHttp.Client
+	retryOpts  *RetryOptions
 }
 
 // NewClient creates a new Yahoo Auction Bridge client
@@ -34,7 +45,18 @@ func NewClient(baseURL, apiKey, secretKey string) *Client {
 		apiKey:     apiKey,
 		secretKey:  secretKey,
 		httpClient: client,
+		retryOpts: &RetryOptions{
+			MaxRetries:      3,
+			InitialInterval: 1 * time.Second,
+			MaxInterval:     30 * time.Second,
+		},
 	}
+}
+
+// WithRetryOptions configures retry options for the client
+func (c *Client) WithRetryOptions(opts *RetryOptions) *Client {
+	c.retryOpts = opts
+	return c
 }
 
 // Authentication types
@@ -181,10 +203,42 @@ func (c *Client) makeRequest(ctx context.Context, method, path string, params ur
 		req.Header.Set("Content-Type", "application/json")
 	}
 
-	// Make request
-	resp, err := c.httpClient.Do(ctx, req)
+	// Make request with retry mechanism
+	var resp *http.Response
+	operation := func() (*http.Response, error) {
+		var err error
+		resp, err = c.httpClient.Do(ctx, req)
+		if err != nil {
+			hlog.CtxErrorf(ctx, "http error, err: %v", err)
+			return nil, backoff.Permanent(err)
+		}
+
+		defer func() {
+			if err := resp.Body.Close(); err != nil {
+				hlog.CtxErrorf(ctx, "http close error: %s", err)
+			}
+		}()
+
+		if resp.StatusCode != http.StatusOK {
+			respBody, _ := io.ReadAll(resp.Body)
+			hlog.CtxWarnf(ctx, "http error, error_code: [%d], error_msg: [%s]",
+				resp.StatusCode, string(respBody))
+		}
+
+		// TODO: retrable error
+
+		if resp.StatusCode >= 500 {
+			// non-retryable error
+			return nil, backoff.Permanent(fmt.Errorf("server error: %d", resp.StatusCode))
+		}
+
+		return resp, nil
+	}
+
+	resp, err = backoff.Retry(ctx, operation, retry.GetDefaultRetryOpts()...)
 	if err != nil {
-		return nil, fmt.Errorf("failed to send request: %w", err)
+		hlog.CtxErrorf(ctx, "failed to send request after retries: %v", err)
+		return nil, fmt.Errorf("failed to send request after retries: %w", err)
 	}
 
 	return resp, nil

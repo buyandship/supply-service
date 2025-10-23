@@ -112,6 +112,8 @@ github.com/buyandship/bns-golib/monitor v0.0.0-20240430080408-55e5a0a2e995 h1:JH
 github.com/buyandship/bns-golib/monitor v0.0.0-20240430080408-55e5a0a2e995/go.mod h1:Ghw8spA2sOeUmzpy+LVgV61fFHzRS45kE/zjE1W590k=
 github.com/buyandship/bns-golib/registry v0.0.0-20240430080408-55e5a0a2e995 h1:rkA1wjiIa8MvG5awn3hD7Ygx+b4eDGHS+fS4BVZs2GA=
 github.com/buyandship/bns-golib/registry v0.0.0-20240430080408-55e5a0a2e995/go.mod h1:ODwuWNeaSzSq425p4A8vb1LMzcPiKqBomtIa74X/108=
+github.com/buyandship/bns-golib/retry v1.0.0 h1:teaz7C4Cc10/i8Rw3rAylQNrE3XnLfdvG8kgI+HJpCY=
+github.com/buyandship/bns-golib/retry v1.0.0/go.mod h1:vsYNZYc03mSgZlo2ejN1U3tp9c2K3MRexn16VvAPb6U=
 github.com/buyandship/bns-golib/seqno v1.0.1 h1:/jE1pdQqW8YzOy8oyuVu/+FRmKUdWjOepxLtNiHhAog=
 github.com/buyandship/bns-golib/seqno v1.0.1/go.mod h1:pVEnO3d1qDX+5PaHlYNgUliYbfAiVUseBlzaSbQy20g=
 github.com/buyandship/bns-golib/trace v0.0.1 h1:wjhBZ1PVhwH/YUT09nQ1IzIYq7yrRlGxjXiqWddSkEU=

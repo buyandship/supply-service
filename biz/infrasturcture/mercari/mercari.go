@@ -4,8 +4,6 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/cenkalti/backoff/v5"
-
 	"sync"
 
 	"github.com/buyandship/bns-golib/http"
@@ -55,11 +53,4 @@ func (m *Mercari) GenerateSecret() (string, error) {
 	basicSecret := base64.StdEncoding.EncodeToString(
 		[]byte(fmt.Sprintf("%s:%s", m.ClientID, m.ClientSecret)))
 	return basicSecret, nil
-}
-
-func (m *Mercari) GetRetryOpts() []backoff.RetryOption {
-	var opts []backoff.RetryOption
-	opts = append(opts, backoff.WithBackOff(backoff.NewExponentialBackOff()))
-	opts = append(opts, backoff.WithMaxTries(5))
-	return opts
 }

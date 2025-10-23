@@ -16,9 +16,11 @@ require (
 	github.com/buyandship/bns-golib/cache v1.0.2
 	github.com/buyandship/bns-golib/http v1.0.1
 	github.com/buyandship/bns-golib/log v0.0.8
+	github.com/buyandship/bns-golib/retry v1.0.0
 	github.com/buyandship/bns-golib/trace v0.0.1
 	github.com/cenkalti/backoff/v5 v5.0.3
 	github.com/cloudwego/hertz v0.10.3
+	github.com/cloudwego/kitex v0.15.2
 	github.com/google/uuid v1.6.0
 	github.com/hertz-contrib/logger/zap v1.1.0
 	github.com/hertz-contrib/obs-opentelemetry/provider v0.3.0
@@ -62,7 +64,6 @@ require (
 	github.com/cloudwego/fastpb v0.0.5 // indirect
 	github.com/cloudwego/frugal v0.3.0 // indirect
 	github.com/cloudwego/gopkg v0.1.6 // indirect
-	github.com/cloudwego/kitex v0.15.2 // indirect
 	github.com/cloudwego/localsession v0.1.2 // indirect
 	github.com/cloudwego/netpoll v0.7.2 // indirect
 	github.com/cloudwego/runtimex v0.1.1 // indirect

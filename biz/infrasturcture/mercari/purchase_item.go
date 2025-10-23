@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/buyandship/bns-golib/cache"
+	"github.com/buyandship/bns-golib/retry"
 	"github.com/buyandship/supply-svr/biz/common/config"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
@@ -271,7 +272,7 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 		return nil, nil
 	}
 
-	_, err := backoff.Retry(ctx, purchaseItemFunc, m.GetRetryOpts()...)
+	_, err := backoff.Retry(ctx, purchaseItemFunc, retry.GetDefaultRetryOpts()...)
 	if err != nil {
 		pErr := &backoff.PermanentError{}
 		if errors.As(err, &pErr) {
