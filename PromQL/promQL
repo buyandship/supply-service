@@ -1,0 +1,137 @@
+# ========================================
+# Service Metrics PromQL Queries
+# ========================================
+
+# 1. QPS (Queries Per Second)
+# Rate of requests over 1 minute
+rate(http_server_request_count_total[1m])
+
+# QPS over 5 minutes (more stable)
+rate(http_server_request_count_total[5m])
+
+# ========================================
+# 2. ERROR METRICS
+# ========================================
+
+# Error Rate (assuming 5xx status codes are errors)
+# You'll need to add status code labels to your metrics
+rate(http_server_request_count_total{status=~"5.."}[1m]) / rate(http_server_request_count_total[1m])
+
+# Error Count (absolute number of errors)
+rate(http_server_request_count_total{status=~"5.."}[1m])
+
+# 4xx Error Rate (client errors)
+rate(http_server_request_count_total{status=~"4.."}[1m]) / rate(http_server_request_count_total[1m])
+
+# ========================================
+# 3. LATENCY/DURATION METRICS
+# ========================================
+
+# Average Response Time (in milliseconds)
+rate(http_server_duration_milliseconds_sum[1m]) / rate(http_server_duration_milliseconds_count[1m])
+
+# 50th Percentile (P50) - Median
+histogram_quantile(0.5, rate(http_server_duration_milliseconds_bucket[1m]))
+
+# 90th Percentile (P90)
+histogram_quantile(0.9, rate(http_server_duration_milliseconds_bucket[1m]))
+
+# 95th Percentile (P95)
+histogram_quantile(0.95, rate(http_server_duration_milliseconds_bucket[1m]))
+
+# 99th Percentile (P99)
+histogram_quantile(0.99, rate(http_server_duration_milliseconds_bucket[1m]))
+
+# 99th Percentile by HTTP Route
+histogram_quantile(0.99, sum by (le, http_route) (rate(http_server_duration_milliseconds_bucket[1m])))
+
+# Maximum Response Time
+max_over_time(http_server_duration_milliseconds_sum[1m]) / max_over_time(http_server_duration_milliseconds_count[1m])
+
+# ========================================
+# 4. THROUGHPUT METRICS
+# ========================================
+
+# Total Requests per Second (all methods)
+sum(rate(http_server_request_count_total[1m]))
+
+# Requests per Second by Method (if you have method labels)
+sum by (method) (rate(http_server_request_count_total[1m]))
+
+# Requests per Second by Endpoint (if you have path labels)
+sum by (path) (rate(http_server_request_count_total[1m]))
+
+# ========================================
+# 5. AVAILABILITY METRICS
+# ========================================
+
+# Success Rate (assuming 2xx status codes are success)
+rate(http_server_request_count_total{status=~"2.."}[1m]) / rate(http_server_request_count_total[1m])
+
+# Availability Percentage
+(rate(http_server_request_count_total{status=~"2.."}[1m]) / rate(http_server_request_count_total[1m])) * 100
+
+# ========================================
+# 6. TREND ANALYSIS
+# ========================================
+
+# Request Rate Trend (1 hour)
+rate(http_server_request_count_total[1h])
+
+# Average Response Time Trend (1 hour)
+rate(http_server_duration_milliseconds_sum[1h]) / rate(http_server_duration_milliseconds_count[1h])
+
+# ========================================
+# 7. ALERTING QUERIES
+# ========================================
+
+# High Error Rate Alert (>5% errors)
+(rate(http_server_request_count_total{status=~"5.."}[5m]) / rate(http_server_request_count_total[5m])) > 0.05
+
+# High Latency Alert (P95 > 1000ms)
+histogram_quantile(0.95, rate(http_server_duration_milliseconds_bucket[5m])) > 1000
+
+# Low QPS Alert (<10 requests/second)
+rate(http_server_request_count_total[5m]) < 10
+
+# ========================================
+# 8. DASHBOARD QUERIES
+# ========================================
+
+# Top 5 Slowest Endpoints
+topk(5, histogram_quantile(0.95, rate(http_server_duration_milliseconds_bucket[5m])))
+
+# Top 5 Most Requested Endpoints
+topk(5, sum by (path) (rate(http_server_request_count_total[5m])))
+
+# Error Rate by Endpoint
+sum by (path) (rate(http_server_request_count_total{status=~"5.."}[5m])) / sum by (path) (rate(http_server_request_count_total[5m]))
+
+# ========================================
+# 9. CAPACITY PLANNING
+# ========================================
+
+# Peak QPS (last 24 hours)
+max_over_time(rate(http_server_request_count_total[1m])[24h:1m])
+
+# Peak Response Time (last 24 hours)
+max_over_time(histogram_quantile(0.95, rate(http_server_duration_milliseconds_bucket[1m]))[24h:1m])
+
+# ========================================
+# 10. SLI/SLO QUERIES
+# ========================================
+
+# Request Success Rate (for SLO)
+sum(rate(http_server_request_count_total{status=~"2.."}[5m])) / sum(rate(http_server_request_count_total[5m]))
+
+# Request Latency (P99 for SLO)
+histogram_quantile(0.99, rate(http_server_duration_milliseconds_bucket[5m]))
+
+# ========================================
+# NOTES:
+# ========================================
+# 1. Replace {status=~"5.."} with your actual error status code pattern
+# 2. Add method, path, and other labels to your metrics for better filtering
+# 3. Adjust time ranges ([1m], [5m], [1h]) based on your monitoring needs
+# 4. Use these queries in Grafana dashboards or Prometheus alerts
+# 5. Consider adding more labels like service_name, instance, etc.
