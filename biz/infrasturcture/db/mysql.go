@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/buyandship/bns-golib/trace"
 	"github.com/buyandship/supply-svr/biz/common/config"
-	"github.com/buyandship/supply-svr/biz/common/trace"
 	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"gorm.io/driver/mysql"

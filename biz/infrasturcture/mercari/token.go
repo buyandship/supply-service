@@ -11,9 +11,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/buyandship/bns-golib/cache"
 	"github.com/buyandship/supply-svr/biz/common/config"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	"github.com/buyandship/supply-svr/biz/model/mercari"
@@ -36,7 +36,7 @@ type GetTokenResponse struct {
 }
 
 func (m *Mercari) SetToken(ctx context.Context, req *supply.MercariLoginCallBackReq) error {
-	if ok := cache.GetHandler().Limit(ctx); ok {
+	if ok := cache.GetRedisClient().Limit(ctx); ok {
 		return bizErr.RateLimitError
 	}
 
@@ -120,7 +120,7 @@ func (m *Mercari) SetToken(ctx context.Context, req *supply.MercariLoginCallBack
 		return bizErr.InternalError
 	}
 
-	if err := cache.GetHandler().Del(ctx, fmt.Sprintf(config.TokenRedisKeyPrefix, accountId)); err != nil {
+	if err := cache.GetRedisClient().Del(ctx, fmt.Sprintf(config.TokenRedisKeyPrefix, accountId)); err != nil {
 		return err
 	}
 

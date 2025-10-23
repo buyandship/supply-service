@@ -2,16 +2,20 @@ package yahoo
 
 import (
 	"bytes"
+	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 	"net/url"
 	"strconv"
 	"time"
+
+	"net/http"
+
+	bnsHttp "github.com/buyandship/bns-golib/http"
 )
 
 // Client represents the Yahoo Auction Bridge API client
@@ -19,18 +23,17 @@ type Client struct {
 	baseURL    string
 	apiKey     string
 	secretKey  string
-	httpClient *http.Client
+	httpClient *bnsHttp.Client
 }
 
 // NewClient creates a new Yahoo Auction Bridge client
 func NewClient(baseURL, apiKey, secretKey string) *Client {
+	client := bnsHttp.NewClient()
 	return &Client{
-		baseURL:   baseURL,
-		apiKey:    apiKey,
-		secretKey: secretKey,
-		httpClient: &http.Client{
-			Timeout: 30 * time.Second,
-		},
+		baseURL:    baseURL,
+		apiKey:     apiKey,
+		secretKey:  secretKey,
+		httpClient: client,
 	}
 }
 
@@ -138,7 +141,7 @@ func (c *Client) generateHMACSignature(timestamp, method, path, body string) str
 }
 
 // Helper method to make authenticated requests
-func (c *Client) makeRequest(method, path string, params url.Values, body interface{}, authType AuthType) (*http.Response, error) {
+func (c *Client) makeRequest(ctx context.Context, method, path string, params url.Values, body interface{}, authType AuthType) (*http.Response, error) {
 	// Build URL
 	fullURL := c.baseURL + path
 	if len(params) > 0 {
@@ -158,7 +161,7 @@ func (c *Client) makeRequest(method, path string, params url.Values, body interf
 	}
 
 	// Create request
-	req, err := http.NewRequest(method, fullURL, bodyReader)
+	req, err := http.NewRequestWithContext(ctx, method, fullURL, bodyReader)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
@@ -179,7 +182,7 @@ func (c *Client) makeRequest(method, path string, params url.Values, body interf
 	}
 
 	// Make request
-	resp, err := c.httpClient.Do(req)
+	resp, err := c.httpClient.Do(ctx, req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to send request: %w", err)
 	}
@@ -190,42 +193,42 @@ func (c *Client) makeRequest(method, path string, params url.Values, body interf
 // API Methods
 
 // Authorize initiates Yahoo OAuth 2.0 authorization flow
-func (c *Client) Authorize(req OAuthAuthorizeRequest) (*http.Response, error) {
+func (c *Client) Authorize(ctx context.Context, req OAuthAuthorizeRequest) (*http.Response, error) {
 	params := url.Values{}
 	params.Set("yahoo_account_id", req.YahooAccountID)
 
-	return c.makeRequest("GET", "/auth/authorize", params, nil, AuthTypeNone)
+	return c.makeRequest(ctx, "GET", "/auth/authorize", params, nil, AuthTypeNone)
 }
 
 // OAuthCallback handles OAuth callback
-func (c *Client) OAuthCallback(code, state string) (*http.Response, error) {
+func (c *Client) OAuthCallback(ctx context.Context, code, state string) (*http.Response, error) {
 	params := url.Values{}
 	params.Set("code", code)
 	params.Set("state", state)
 
-	return c.makeRequest("GET", "/auth/callback", params, nil, AuthTypeNone)
+	return c.makeRequest(ctx, "GET", "/auth/callback", params, nil, AuthTypeNone)
 }
 
 // GetTokenStatus gets OAuth token status
-func (c *Client) GetTokenStatus(yahooAccountID string) (*http.Response, error) {
+func (c *Client) GetTokenStatus(ctx context.Context, yahooAccountID string) (*http.Response, error) {
 	path := fmt.Sprintf("/auth/token/status/%s", yahooAccountID)
-	return c.makeRequest("GET", path, nil, nil, AuthTypeNone)
+	return c.makeRequest(ctx, "GET", path, nil, nil, AuthTypeNone)
 }
 
 // RefreshToken refreshes OAuth token
-func (c *Client) RefreshToken(req TokenRefreshRequest) (*http.Response, error) {
+func (c *Client) RefreshToken(ctx context.Context, req TokenRefreshRequest) (*http.Response, error) {
 	path := fmt.Sprintf("/auth/token/refresh/%s", req.YahooAccountID)
-	return c.makeRequest("POST", path, nil, nil, AuthTypeNone)
+	return c.makeRequest(ctx, "POST", path, nil, nil, AuthTypeNone)
 }
 
 // RevokeToken revokes OAuth token
-func (c *Client) RevokeToken(yahooAccountID string) (*http.Response, error) {
+func (c *Client) RevokeToken(ctx context.Context, yahooAccountID string) (*http.Response, error) {
 	path := fmt.Sprintf("/auth/token/%s", yahooAccountID)
-	return c.makeRequest("DELETE", path, nil, nil, AuthTypeNone)
+	return c.makeRequest(ctx, "DELETE", path, nil, nil, AuthTypeNone)
 }
 
 // PlaceBidPreview gets bid preview with signature
-func (c *Client) PlaceBidPreview(req PlaceBidPreviewRequest) (*http.Response, error) {
+func (c *Client) PlaceBidPreview(ctx context.Context, req PlaceBidPreviewRequest) (*http.Response, error) {
 	params := url.Values{}
 	params.Set("yahoo_account_id", req.YahooAccountID)
 	params.Set("ys_ref_id", req.YsRefID)
@@ -240,11 +243,11 @@ func (c *Client) PlaceBidPreview(req PlaceBidPreviewRequest) (*http.Response, er
 		params.Set("partial", "true")
 	}
 
-	return c.makeRequest("POST", "/api/v1/placeBidPreview", params, nil, AuthTypeHMAC)
+	return c.makeRequest(ctx, "POST", "/api/v1/placeBidPreview", params, nil, AuthTypeHMAC)
 }
 
 // PlaceBid executes a bid on Yahoo Auction
-func (c *Client) PlaceBid(req PlaceBidRequest) (*http.Response, error) {
+func (c *Client) PlaceBid(ctx context.Context, req PlaceBidRequest) (*http.Response, error) {
 	params := url.Values{}
 	params.Set("yahoo_account_id", req.YahooAccountID)
 	params.Set("ys_ref_id", req.YsRefID)
@@ -260,22 +263,22 @@ func (c *Client) PlaceBid(req PlaceBidRequest) (*http.Response, error) {
 		params.Set("partial", "true")
 	}
 
-	return c.makeRequest("POST", "/api/v1/placeBid", params, nil, AuthTypeHMAC)
+	return c.makeRequest(ctx, "POST", "/api/v1/placeBid", params, nil, AuthTypeHMAC)
 }
 
 // GetAuctionItem gets auction item information (public API)
-func (c *Client) GetAuctionItem(req AuctionItemRequest) (*http.Response, error) {
+func (c *Client) GetAuctionItem(ctx context.Context, req AuctionItemRequest) (*http.Response, error) {
 	params := url.Values{}
 	params.Set("auctionID", req.AuctionID)
 	if req.AppID != "" {
 		params.Set("appid", req.AppID)
 	}
 
-	return c.makeRequest("GET", "/api/v1/auctionItem", params, nil, AuthTypeNone)
+	return c.makeRequest(ctx, "GET", "/api/v1/auctionItem", params, nil, AuthTypeNone)
 }
 
 // GetAuctionItemAuth gets authenticated auction item information
-func (c *Client) GetAuctionItemAuth(req AuctionItemRequest, yahooAccountID string) (*http.Response, error) {
+func (c *Client) GetAuctionItemAuth(ctx context.Context, req AuctionItemRequest, yahooAccountID string) (*http.Response, error) {
 	params := url.Values{}
 	params.Set("auctionID", req.AuctionID)
 	params.Set("yahoo_account_id", yahooAccountID)
@@ -283,11 +286,11 @@ func (c *Client) GetAuctionItemAuth(req AuctionItemRequest, yahooAccountID strin
 		params.Set("appid", req.AppID)
 	}
 
-	return c.makeRequest("GET", "/api/v1/auctionItemAuth", params, nil, AuthTypeHMAC)
+	return c.makeRequest(ctx, "GET", "/api/v1/auctionItemAuth", params, nil, AuthTypeHMAC)
 }
 
 // SearchTransactions searches for transactions
-func (c *Client) SearchTransactions(req TransactionSearchRequest) (*http.Response, error) {
+func (c *Client) SearchTransactions(ctx context.Context, req TransactionSearchRequest) (*http.Response, error) {
 	params := url.Values{}
 	params.Set("yahoo_account_id", req.YahooAccountID)
 
@@ -307,20 +310,20 @@ func (c *Client) SearchTransactions(req TransactionSearchRequest) (*http.Respons
 		params.Set("offset", strconv.Itoa(req.Offset))
 	}
 
-	return c.makeRequest("GET", "/api/v1/transactions", params, nil, AuthTypeHMAC)
+	return c.makeRequest(ctx, "GET", "/api/v1/transactions", params, nil, AuthTypeHMAC)
 }
 
 // GetTransaction gets specific transaction details
-func (c *Client) GetTransaction(transactionID, yahooAccountID string) (*http.Response, error) {
+func (c *Client) GetTransaction(ctx context.Context, transactionID, yahooAccountID string) (*http.Response, error) {
 	path := fmt.Sprintf("/api/v1/transactions/%s", transactionID)
 	params := url.Values{}
 	params.Set("yahoo_account_id", yahooAccountID)
 
-	return c.makeRequest("GET", path, params, nil, AuthTypeHMAC)
+	return c.makeRequest(ctx, "GET", path, params, nil, AuthTypeHMAC)
 }
 
 // ExportTransactionsCSV exports transactions as CSV
-func (c *Client) ExportTransactionsCSV(req TransactionSearchRequest) (*http.Response, error) {
+func (c *Client) ExportTransactionsCSV(ctx context.Context, req TransactionSearchRequest) (*http.Response, error) {
 	params := url.Values{}
 	params.Set("yahoo_account_id", req.YahooAccountID)
 
@@ -334,17 +337,17 @@ func (c *Client) ExportTransactionsCSV(req TransactionSearchRequest) (*http.Resp
 		params.Set("status", req.Status)
 	}
 
-	return c.makeRequest("GET", "/api/v1/transactions/export/csv", params, nil, AuthTypeHMAC)
+	return c.makeRequest(ctx, "GET", "/api/v1/transactions/export/csv", params, nil, AuthTypeHMAC)
 }
 
 // Health check
 func (c *Client) HealthCheck() (*http.Response, error) {
-	return c.makeRequest("GET", "/health", nil, nil, AuthTypeNone)
+	return c.makeRequest(context.Background(), "GET", "/health", nil, nil, AuthTypeNone)
 }
 
 // Get API info
 func (c *Client) GetAPIInfo() (*http.Response, error) {
-	return c.makeRequest("GET", "/", nil, nil, AuthTypeNone)
+	return c.makeRequest(context.Background(), "GET", "/", nil, nil, AuthTypeNone)
 }
 
 // Helper method to parse error response

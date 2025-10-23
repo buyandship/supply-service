@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/buyandship/bns-golib/cache"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
@@ -31,7 +31,7 @@ func (m *Mercari) GetBrands(ctx context.Context) (*GetBrandsResp, error) {
 			return nil, err
 		}
 
-		if ok := cache.GetHandler().Limit(ctx); ok {
+		if ok := cache.GetRedisClient().Limit(ctx); ok {
 			hlog.CtxWarnf(ctx, "hit rate limit")
 			return nil, bizErr.RateLimitError
 		}

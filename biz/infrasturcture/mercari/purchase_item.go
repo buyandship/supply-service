@@ -11,9 +11,9 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/buyandship/bns-golib/cache"
 	"github.com/buyandship/supply-svr/biz/common/config"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cenkalti/backoff/v5"
@@ -101,7 +101,7 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 			return nil, err
 		}
 
-		if ok := cache.GetHandler().Limit(ctx); ok {
+		if ok := cache.GetRedisClient().Limit(ctx); ok {
 			hlog.CtxWarnf(ctx, "hit rate limit")
 			return nil, backoff.RetryAfter(1)
 		}

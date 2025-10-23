@@ -10,8 +10,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/buyandship/bns-golib/cache"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
@@ -41,7 +41,7 @@ func (m *Mercari) GetTodoList(ctx context.Context, req *GetTodoListReq) (*GetTod
 			return nil, err
 		}
 
-		if ok := cache.GetHandler().Limit(ctx); ok {
+		if ok := cache.GetRedisClient().Limit(ctx); ok {
 			return nil, bizErr.RateLimitError
 		}
 		headers := map[string][]string{

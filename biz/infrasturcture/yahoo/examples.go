@@ -1,6 +1,7 @@
 package yahoo
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"log"
@@ -34,7 +35,7 @@ func ExampleUsage() {
 		AppID:     "your-app-id",
 	}
 
-	resp, err = client.GetAuctionItem(auctionReq)
+	resp, err = client.GetAuctionItem(context.Background(), auctionReq)
 	if err != nil {
 		log.Printf("Get auction item failed: %v", err)
 		return
@@ -60,7 +61,7 @@ func ExampleUsage() {
 		YahooAccountID: "account123",
 	}
 
-	resp, err = client.Authorize(authReq)
+	resp, err = client.Authorize(context.Background(), authReq)
 	if err != nil {
 		log.Printf("Authorization failed: %v", err)
 		return
@@ -82,7 +83,7 @@ func ExampleUsage() {
 		Partial:         false,
 	}
 
-	resp, err = client.PlaceBidPreview(previewReq)
+	resp, err = client.PlaceBidPreview(context.Background(), previewReq)
 	if err != nil {
 		log.Printf("Bid preview failed: %v", err)
 		return
@@ -105,7 +106,7 @@ func ExampleUsage() {
 		Partial:         false,
 	}
 
-	resp, err = client.PlaceBid(bidReq)
+	resp, err = client.PlaceBid(context.Background(), bidReq)
 	if err != nil {
 		log.Printf("Place bid failed: %v", err)
 		return
@@ -126,7 +127,7 @@ func ExampleUsage() {
 		Offset:         0,
 	}
 
-	resp, err = client.SearchTransactions(searchReq)
+	resp, err = client.SearchTransactions(context.Background(), searchReq)
 	if err != nil {
 		log.Printf("Search transactions failed: %v", err)
 		return
@@ -138,7 +139,7 @@ func ExampleUsage() {
 
 	// Example 7: Get Specific Transaction
 	fmt.Println("\n=== Get Transaction ===")
-	resp, err = client.GetTransaction("transaction123", "account123")
+	resp, err = client.GetTransaction(context.Background(), "transaction123", "account123")
 	if err != nil {
 		log.Printf("Get transaction failed: %v", err)
 		return
@@ -157,7 +158,7 @@ func ExampleUsage() {
 		Status:         "completed",
 	}
 
-	resp, err = client.ExportTransactionsCSV(exportReq)
+	resp, err = client.ExportTransactionsCSV(context.Background(), exportReq)
 	if err != nil {
 		log.Printf("Export transactions failed: %v", err)
 		return
@@ -182,7 +183,7 @@ func ExampleBiddingFlow() {
 		AuctionID: "x12345",
 	}
 
-	resp, err := client.GetAuctionItem(auctionReq)
+	resp, err := client.GetAuctionItem(context.Background(), auctionReq)
 	if err != nil {
 		log.Printf("Failed to get auction item: %v", err)
 		return
@@ -216,7 +217,7 @@ func ExampleBiddingFlow() {
 		Partial:         false,
 	}
 
-	resp, err = client.PlaceBidPreview(previewReq)
+	resp, err = client.PlaceBidPreview(context.Background(), previewReq)
 	if err != nil {
 		log.Printf("Failed to get bid preview: %v", err)
 		return
@@ -243,7 +244,7 @@ func ExampleBiddingFlow() {
 		Partial:         false,
 	}
 
-	resp, err = client.PlaceBid(bidReq)
+	resp, err = client.PlaceBid(context.Background(), bidReq)
 	if err != nil {
 		log.Printf("Failed to place bid: %v", err)
 		return

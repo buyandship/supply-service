@@ -7,10 +7,10 @@ import (
 	"io"
 	"os"
 
+	"github.com/buyandship/bns-golib/cache"
 	"github.com/buyandship/bns-golib/log"
 	"github.com/buyandship/bns-golib/log/rollwriter"
 	"github.com/buyandship/supply-svr/biz/common/config"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
 	"github.com/cloudwego/hertz/pkg/app/server"
@@ -29,7 +29,7 @@ func Init() {
 	// Connect Mysql
 	db.GetHandler()
 	// Connect Redis
-	cache.GetHandler()
+	cache.GetRedisClient()
 	// Get mercari setting
 	mercari.GetHandler()
 }

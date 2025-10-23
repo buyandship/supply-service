@@ -6,7 +6,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
+	"github.com/buyandship/bns-golib/cache"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -19,7 +19,7 @@ func HealthCheck(ctx context.Context, c *app.RequestContext) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, "can not connect to db.")
 		return
 	}
-	if err := cache.GetHandler().HealthCheck(); err != nil {
+	if err := cache.GetRedisClient().HealthCheck(); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, "can not connect to redis.")
 		return
 	}
