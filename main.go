@@ -8,9 +8,9 @@ import (
 	"os"
 
 	"github.com/buyandship/bns-golib/cache"
+	"github.com/buyandship/bns-golib/config"
 	"github.com/buyandship/bns-golib/log"
 	"github.com/buyandship/bns-golib/log/rollwriter"
-	"github.com/buyandship/supply-svr/biz/common/config"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
 	"github.com/cloudwego/hertz/pkg/app/server"
@@ -43,7 +43,7 @@ func main() {
 	Init()
 	p := provider.NewOpenTelemetryProvider(
 		provider.WithServiceName("supply-svr"),
-		provider.WithExportEndpoint(config.GlobalServerConfig.Otel.Endpoint),
+		provider.WithExportEndpoint(config.GlobalAppConfig.Otel.Endpoint),
 		provider.WithInsecure(),
 	)
 	defer p.Shutdown(context.Background())

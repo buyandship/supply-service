@@ -157,3 +157,8 @@ func _yahoobuyoutserviceMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _yahooplacebidserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

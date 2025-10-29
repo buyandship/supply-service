@@ -46,7 +46,7 @@ func Register(r *server.Hertz) {
 				}
 				{
 					_yahoo := _internal.Group("/yahoo", _yahooMw()...)
-					_yahoo.POST("/buyout", append(_yahoobuyoutserviceMw(), supply.YahooBuyoutService)...)
+					_yahoo.POST("/placeBid", append(_yahooplacebidserviceMw(), supply.YahooPlaceBidService)...)
 				}
 			}
 			{

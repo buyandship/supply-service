@@ -11,22 +11,23 @@ import (
 	"io"
 	"net/url"
 	"strconv"
+	"sync"
 	"time"
 
 	"net/http"
 
 	bnsHttp "github.com/buyandship/bns-golib/http"
 	"github.com/buyandship/bns-golib/retry"
+	"github.com/buyandship/supply-svr/biz/common/config"
+	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
-// RetryOptions configures retry behavior
-type RetryOptions struct {
-	MaxRetries      int
-	InitialInterval time.Duration
-	MaxInterval     time.Duration
-}
+var (
+	once    sync.Once
+	Handler *Client
+)
 
 // Client represents the Yahoo Auction Bridge API client
 type Client struct {
@@ -37,14 +38,28 @@ type Client struct {
 }
 
 // NewClient creates a new Yahoo Auction Bridge client
-func NewClient(baseURL, apiKey, secretKey string) *Client {
-	client := bnsHttp.NewClient()
-	return &Client{
-		baseURL:    baseURL,
-		apiKey:     apiKey,
-		secretKey:  secretKey,
-		httpClient: client,
-	}
+func GetClient() *Client {
+	once.Do(func() {
+		client := bnsHttp.NewClient(
+			bnsHttp.WithTimeout(10 * time.Second), // TODO: change to actual timeout
+		)
+		var baseURL string
+		switch config.GlobalServerConfig.Env {
+		case "development":
+			baseURL = "https://internal-stagin20251027043053843000000001-645109195.ap-northeast-1.elb.amazonaws.com" // TODO: change to actual url
+		case "production":
+			baseURL = "https://mock-api.yahoo-auction.jp" // TODO: change to actual url
+		}
+		apiKey := config.GlobalServerConfig.Yahoo.ApiKey
+		secretKey := config.GlobalServerConfig.Yahoo.SecretKey
+		Handler = &Client{
+			baseURL:    baseURL,
+			apiKey:     apiKey,
+			secretKey:  secretKey,
+			httpClient: client,
+		}
+	})
+	return Handler
 }
 
 // Authentication types
@@ -70,6 +85,9 @@ type PlaceBidRequest struct {
 	Partial         bool   `json:"partial,omitempty"`
 }
 
+type PlaceBidResponse struct {
+}
+
 // PlaceBidPreviewRequest represents a bid preview request
 type PlaceBidPreviewRequest struct {
 	YahooAccountID  string `json:"yahoo_account_id"`
@@ -79,6 +97,9 @@ type PlaceBidPreviewRequest struct {
 	Price           int    `json:"price"`
 	Quantity        int    `json:"quantity,omitempty"`
 	Partial         bool   `json:"partial,omitempty"`
+}
+
+type PlaceBidPreviewResponse struct {
 }
 
 // AuctionItemRequest represents a request for auction item information
@@ -233,6 +254,18 @@ func (c *Client) makeRequest(ctx context.Context, method, path string, params ur
 }
 
 // API Methods
+func (c *Client) parseResponse(resp *http.Response, v interface{}) error {
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(body, v); err != nil {
+		return fmt.Errorf("failed to parse response: %w", err)
+	}
+
+	return nil
+}
 
 // Authorize initiates Yahoo OAuth 2.0 authorization flow
 func (c *Client) Authorize(ctx context.Context, req OAuthAuthorizeRequest) (*http.Response, error) {
@@ -270,7 +303,7 @@ func (c *Client) RevokeToken(ctx context.Context, yahooAccountID string) (*http.
 }
 
 // PlaceBidPreview gets bid preview with signature
-func (c *Client) PlaceBidPreview(ctx context.Context, req PlaceBidPreviewRequest) (*http.Response, error) {
+func (c *Client) PlaceBidPreview(ctx context.Context, req *PlaceBidPreviewRequest) (*PlaceBidPreviewResponse, error) {
 	params := url.Values{}
 	params.Set("yahoo_account_id", req.YahooAccountID)
 	params.Set("ys_ref_id", req.YsRefID)
@@ -285,11 +318,21 @@ func (c *Client) PlaceBidPreview(ctx context.Context, req PlaceBidPreviewRequest
 		params.Set("partial", "true")
 	}
 
-	return c.makeRequest(ctx, "POST", "/api/v1/placeBidPreview", params, nil, AuthTypeHMAC)
+	resp, err := c.makeRequest(ctx, "POST", "/api/v1/placeBidPreview", params, nil, AuthTypeHMAC)
+	if err != nil {
+		return nil, err
+	}
+
+	var placeBidPreviewResponse PlaceBidPreviewResponse
+	if err := c.parseResponse(resp, &placeBidPreviewResponse); err != nil {
+		return nil, err
+	}
+
+	return &placeBidPreviewResponse, nil
 }
 
 // PlaceBid executes a bid on Yahoo Auction
-func (c *Client) PlaceBid(ctx context.Context, req PlaceBidRequest) (*http.Response, error) {
+func (c *Client) PlaceBid(ctx context.Context, req *PlaceBidRequest) (*supply.YahooPlaceBidResp, error) {
 	params := url.Values{}
 	params.Set("yahoo_account_id", req.YahooAccountID)
 	params.Set("ys_ref_id", req.YsRefID)
@@ -305,7 +348,21 @@ func (c *Client) PlaceBid(ctx context.Context, req PlaceBidRequest) (*http.Respo
 		params.Set("partial", "true")
 	}
 
-	return c.makeRequest(ctx, "POST", "/api/v1/placeBid", params, nil, AuthTypeHMAC)
+	resp, err := c.makeRequest(ctx, "POST", "/api/v1/placeBid", params, nil, AuthTypeHMAC)
+	if err != nil {
+		return nil, err
+	}
+
+	placeBidResponse := supply.YahooPlaceBidResp{}
+	if err := c.parseResponse(resp, &placeBidResponse); err != nil {
+		return nil, err
+	}
+
+	return &placeBidResponse, nil
+}
+
+func (c *Client) MockPlaceBid(ctx context.Context, req *PlaceBidRequest) (*supply.YahooPlaceBidResp, error) {
+	return nil, nil
 }
 
 // GetAuctionItem gets auction item information (public API)
