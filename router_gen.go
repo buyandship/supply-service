@@ -3,12 +3,38 @@
 package main
 
 import (
+	"context"
+
+	"github.com/buyandship/bns-golib/config"
 	router "github.com/buyandship/supply-svr/biz/router"
+	"github.com/buyandship/supply-svr/docs"
+	_ "github.com/buyandship/supply-svr/docs"
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/hertz-contrib/swagger"
+	swaggerFiles "github.com/swaggo/files"
+	"github.com/swaggo/swag"
 )
 
 // register registers all routers.
 func register(r *server.Hertz) {
+
+	// swagger
+	if config.GlobalAppConfig.Env == "dev" {
+		// Serve swagger doc.json from embedded docs
+		r.GET("/v1/supplysrv/swagger/doc.json", func(ctx context.Context, c *app.RequestContext) {
+			doc, err := swag.ReadDoc(docs.SwaggerInfo.InstanceName())
+			if err != nil {
+				c.String(500, "Failed to read swagger doc: %v", err)
+				return
+			}
+			c.Data(200, "application/json; charset=utf-8", []byte(doc))
+		})
+
+		// Serve swagger UI
+		url := swagger.URL("/v1/supplysrv/swagger/doc.json")
+		r.GET("/v1/supplysrv/swagger/*any", swagger.WrapHandler(swaggerFiles.Handler, url))
+	}
 
 	router.GeneratedRegister(r)
 

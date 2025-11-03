@@ -67,7 +67,10 @@ func _mercarigettokenserviceMw() []app.HandlerFunc {
 
 func _v1Mw() []app.HandlerFunc {
 	// your code...
-	return nil
+	// add request id
+	var opt []app.HandlerFunc
+	opt = append(opt, middleware.RequestIDValidator())
+	return opt
 }
 
 func _supplysrvMw() []app.HandlerFunc {
@@ -159,6 +162,31 @@ func _yahoobuyoutserviceMw() []app.HandlerFunc {
 }
 
 func _yahooplacebidserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _yahoogettransactionserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _yahoogetauctionitemserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _yahoogetauctionitemauthserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _yahoogettransactionsserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _transactionMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }

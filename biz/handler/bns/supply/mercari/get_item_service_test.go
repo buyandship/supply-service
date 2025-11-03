@@ -7,7 +7,6 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/buyandship/supply-svr/biz/common/config"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	"github.com/cloudwego/hertz/pkg/app/client"
@@ -18,7 +17,6 @@ import (
 
 func TestGetItem_Concurrent(t *testing.T) {
 	// Load test config
-	config.LoadTestConfig()
 
 	// Create HTTP client
 	c, err := client.NewClient()

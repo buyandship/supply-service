@@ -1,4 +1,4 @@
-env: "development"
+env: "dev"
 mysql:
   username: "bns_test"
   password: "sees7&ch@nting"

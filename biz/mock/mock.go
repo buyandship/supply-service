@@ -1,14 +1,14 @@
 package mock
 
 import (
-	"github.com/buyandship/supply-svr/biz/common/config"
+	"github.com/buyandship/bns-golib/config"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
 	"github.com/google/uuid"
 )
 
 func MockMercariGetItemError(itemId string) error {
-	if config.GlobalServerConfig.Env != "development" {
+	if config.GlobalAppConfig.Env != "dev" {
 		return nil
 	}
 	if itemId == "m92155064693" {
@@ -55,9 +55,10 @@ func MockMercariGetItemError(itemId string) error {
 }
 
 func MockMercariPostOrderError(itemId string) error {
-	if config.GlobalServerConfig.Env != "development" {
+	if config.GlobalAppConfig.Env != "dev" {
 		return nil
 	}
+
 	if itemId == "m62418751854" {
 		return bizErr.BadRequestError
 	}
@@ -114,7 +115,7 @@ func MockMercariPostOrderError(itemId string) error {
 }
 
 func MockMercariPostMessageError(itemId string) error {
-	if config.GlobalServerConfig.Env != "development" {
+	if config.GlobalAppConfig.Env != "dev" {
 		return nil
 	}
 
@@ -147,7 +148,7 @@ func MockMercariPostMessageError(itemId string) error {
 
 func MockMercariSellerError(sellerId string) error {
 
-	if config.GlobalServerConfig.Env != "development" {
+	if config.GlobalAppConfig.Env != "dev" {
 		return nil
 	}
 
@@ -203,7 +204,7 @@ func MockMercariSellerError(sellerId string) error {
 }
 
 func MockMercariItemResponse(resp *mercari.GetItemByIDResponse) error {
-	if config.GlobalServerConfig.Env != "development" {
+	if config.GlobalAppConfig.Env != "dev" {
 		return nil
 	}
 
@@ -348,7 +349,7 @@ func MockMercariItemResponse(resp *mercari.GetItemByIDResponse) error {
 }
 
 func MockMercariCategory(cid string) error {
-	if config.GlobalServerConfig.Env != "development" {
+	if config.GlobalAppConfig.Env != "dev" {
 		return nil
 	}
 
@@ -380,7 +381,7 @@ func MockMercariCategory(cid string) error {
 }
 
 func MockMercariGetTransactionByItemId(resp *mercari.GetTransactionByItemIDResponse) error {
-	if config.GlobalServerConfig.Env != "development" {
+	if config.GlobalAppConfig.Env != "dev" {
 		return nil
 	}
 

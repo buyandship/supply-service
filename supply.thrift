@@ -156,10 +156,86 @@ struct MercariGetSimilarItemsReq {
 
 
 struct YahooPlaceBidReq {
+    1: string ys_ref_id (api.json="ys_ref_id")
+    2: string transaction_type (api.json="transaction_type")
+    3: string auction_id (api.json="auction_id")
+    4: i32 price (api.json="price")
+    5: i32 quantity (api.json="quantity")
 }
 
 struct YahooPlaceBidResp {
+    1: string status (api.json="status" go.tag="example:\"Success\"");
+    2: string bid_id (api.json="bid_id" go.tag="example:\"bid_12345\"");
+    3: string auction_id (api.json="auction_id" go.tag="example:\"x12345\"");
+    4: i32 price (api.json="price" go.tag="example:\"1000\"");
+    5: i32 quantity (api.json="quantity" go.tag="example:\"1\"");
+    6: i32 total_price (api.json="total_price" go.tag="example:\"1100\"");
+    7: string bid_time (api.json="bid_time" go.tag="example:\"2025-10-22T12:00:00Z\"");
 }
+
+struct YahooGetTransactionReq {
+    1: string transaction_id (api.query="transaction_id" go.tag="validate:\"required\"");
+}
+
+struct YahooTransaction {
+    1: string transaction_id (api.json="transaction_id" go.tag="example:\"txn_abc123\"");
+    2: string ys_ref_id (api.json="ys_ref_id" go.tag="example:\"YS-REF-001\"");
+    3: string auction_id (api.json="auction_id" go.tag="example:\"x12345\"");
+    4: i64 current_price (api.json="current_price" go.tag="example:\"1000\"");
+    5: string transaction_type (api.json="transaction_type" go.tag="example:\"BID\"");
+    6: string status (api.json="status" go.tag="example:\"completed\"");
+    7: i64 req_price (api.json="req_price" go.tag="example:\"1000\"");
+}
+
+// struct YahooGetTransactionsReq {
+//    1: string transaction_id (api.query="transaction_id");
+//    2: string ys_ref_id (api.query="ys_ref_id");
+//    3: string auction_id (api.query="auction_id");
+//}
+
+struct YahooGetTransactionsResp {
+    1: list<YahooTransaction> transactions (api.json="transactions");
+}
+
+struct YahooGetAuctionItemReq {
+    1: string auction_id (api.query="auction_id" go.tag="validate:\"required\"");
+}
+
+struct Seller {
+    1: string id (api.json="id" go.tag="example:\"seller123\"");
+    2: double rating (api.json="rating" go.tag="example:\"98.5\"");
+}
+
+struct YahooGetAuctionItemResp {
+    1: string auction_id (api.json="auction_id" go.tag="example:\"x12345\"");
+    2: string title (api.json="title" go.tag="example:\"Sample Item Title\"");
+    3: string description (api.json="description" go.tag="example:\"Item description...\"");
+    4: i64 current_price (api.json="current_price" go.tag="example:\"1000\"");
+    5: i64 start_price (api.json="start_price" go.tag="example:\"500\"");
+    6: i32 bids (api.json="bids" go.tag="example:\"5\"");
+    7: string item_status (api.json="item_status" go.tag="example:\"open\"");
+    8: string end_time (api.json="end_time" go.tag="example:\"2025-10-30T23:59:59Z\"");
+    9: string start_time (api.json="start_time" go.tag="example:\"2025-10-22T00:00:00Z\"");
+    10: Seller seller (api.json="seller");
+    11: string image (api.json="image" go.tag="example:\"https://example.com/image.jpg\"");
+}
+
+struct YahooGetAuctionItemAuthReq {
+    1: string auction_id (api.query="auction_id" go.tag="validate:\"required\"");
+}
+
+struct BidStatus {
+    1: bool has_bid (api.json="has_bid" go.tag="example:\"true\"");
+    2: i64 my_highest_bid (api.json="my_highest_bid" go.tag="example:\"950\"");
+    3: bool is_winning (api.json="is_winning" go.tag="example:\"false\"");
+}
+
+struct YahooGetAuctionItemAuthResp {
+    1: YahooGetAuctionItemResp auction_item (api.json="auction_item")
+    2: bool is_watching (api.json="is_watching" go.tag="example:\"true\"");
+    3: BidStatus bid_status (api.json="bid_status");
+}
+
 
 service SupplyService {
     string MercariGetItemService(1: MercariGetItemReq req) (api.get="/v1/supplysrv/internal/mercari/item");
@@ -183,5 +259,10 @@ service SupplyService {
     string MercariGetSimilarItemsService(1: MercariGetSimilarItemsReq req) (api.get="/v1/supplysrv/internal/mercari/similar_items")
 
 
+    // YahooPlaceBidPreviewResp YahooPlaceBidPreviewService(1: YahooPlaceBidPreviewReq req) (api.post="/v1/supplysrv/internal/yahoo/placeBidPreview")
     YahooPlaceBidResp YahooPlaceBidService(1: YahooPlaceBidReq req) (api.post="/v1/supplysrv/internal/yahoo/placeBid")
+    YahooTransaction YahooGetTransactionService(1: YahooGetTransactionReq req) (api.get="/v1/supplysrv/internal/yahoo/transaction")
+    // YahooGetTransactionsResp YahooGetTransactionsService(1: YahooGetTransactionsReq req) (api.get="/v1/supplysrv/internal/yahoo/transactions")
+    YahooGetAuctionItemResp YahooGetAuctionItemService(1: YahooGetAuctionItemReq req) (api.get="/v1/supplysrv/internal/yahoo/auctionItem")
+    YahooGetAuctionItemAuthResp YahooGetAuctionItemAuthService(1: YahooGetAuctionItemAuthReq req) (api.get="/v1/supplysrv/internal/yahoo/auctionItemAuth")
 }

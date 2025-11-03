@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/buyandship/bns-golib/cache"
+	"github.com/buyandship/bns-golib/config"
 	"github.com/buyandship/bns-golib/retry"
-	"github.com/buyandship/supply-svr/biz/common/config"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
 	model "github.com/buyandship/supply-svr/biz/model/mercari"
@@ -127,7 +127,7 @@ func (m *Mercari) PurchaseItem(ctx context.Context, refId string, req *PurchaseI
 		httpReq.Header = headers
 
 		httpRes := &http.Response{}
-		if config.GlobalServerConfig.Env == "development" && token.AccountID == 4 {
+		if config.GlobalAppConfig.Env == "dev" && token.AccountID == 4 {
 			// mock acl ban error
 			// delete after testing
 			httpRes.StatusCode = http.StatusForbidden

@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/buyandship/supply-svr/biz/common/config"
+	"github.com/buyandship/bns-golib/config"
 )
 
 type Notifier struct {
@@ -18,10 +18,10 @@ type Notifier struct {
 
 func GetNotifier() *Notifier {
 	endpoint := "https://b4u-admin-test.buynship.com"
-	if config.GlobalServerConfig.Env == "production" {
+	if config.GlobalAppConfig.Env == "prod" {
 		endpoint = "https://b4u-admin.buynship.com"
 	}
-	token := config.GlobalServerConfig.B4uToken
+	token := config.GlobalAppConfig.GetString("b4u_token")
 	return &Notifier{
 		Endpoint: endpoint,
 		Token:    token,

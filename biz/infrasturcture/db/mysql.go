@@ -2,15 +2,13 @@ package db
 
 import (
 	"context"
-	"fmt"
 	"sync"
 	"time"
 
+	"github.com/buyandship/bns-golib/db"
 	"github.com/buyandship/bns-golib/trace"
-	"github.com/buyandship/supply-svr/biz/common/config"
 	model "github.com/buyandship/supply-svr/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
@@ -25,33 +23,14 @@ type H struct {
 
 func GetHandler() *H {
 	once.Do(func() {
-		c, err := gorm.Open(mysql.New(
-			mysql.Config{
-				DSN: fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
-					config.GlobalServerConfig.Mysql.Username,
-					config.GlobalServerConfig.Mysql.Password,
-					config.GlobalServerConfig.Mysql.Address,
-					config.GlobalServerConfig.Mysql.DBName,
-				),
-			},
-		), &gorm.Config{})
-		if err != nil {
-			hlog.Fatal("mysql init err:", err)
-		}
+		c := db.MysqlClient()
 		Handler = &H{cli: c}
 	})
 	return Handler
 }
 
 func (h *H) HealthCheck() error {
-	sqlDB, err := h.cli.DB()
-	if err != nil {
-		return err
-	}
-	if err := sqlDB.Ping(); err != nil {
-		return err
-	}
-	return nil
+	return db.HealthCheck()
 }
 
 func (h *H) UpsertAccount(ctx context.Context, account *model.Account) (err error) {
@@ -59,11 +38,6 @@ func (h *H) UpsertAccount(ctx context.Context, account *model.Account) (err erro
 	defer trace.EndSpan(span, err)
 
 	sql := h.cli.WithContext(ctx)
-
-	if config.GlobalServerConfig.Env == "development" {
-		sql = sql.Debug()
-	}
-
 	var existingAccount model.Account
 	if err := sql.Where("email = ?", account.Email).First(&existingAccount).Error; err != nil {
 		if err != gorm.ErrRecordNotFound {
@@ -90,10 +64,6 @@ func (h *H) BanAccount(ctx context.Context, accountId int32) (err error) {
 
 	sql := h.cli.WithContext(ctx)
 
-	if config.GlobalServerConfig.Env == "development" {
-		sql = sql.Debug()
-	}
-
 	updates := map[string]any{
 		"banned_at": time.Now(),
 	}
@@ -107,10 +77,6 @@ func (h *H) InsertMessage(ctx context.Context, message *model.Message) (err erro
 
 	sql := h.cli.WithContext(ctx)
 
-	if config.GlobalServerConfig.Env == "development" {
-		sql = sql.Debug()
-	}
-
 	return sql.Create(&message).Error
 }
 
@@ -120,10 +86,6 @@ func (h *H) InsertReview(ctx context.Context, review *model.Review) (err error) 
 
 	sql := h.cli.WithContext(ctx)
 
-	if config.GlobalServerConfig.Env == "development" {
-		sql = sql.Debug()
-	}
-
 	return sql.Create(&review).Error
 }
 
@@ -132,10 +94,6 @@ func (h *H) GetTransaction(ctx context.Context, where *model.Transaction) (trx *
 	defer trace.EndSpan(span, err)
 
 	sql := h.cli.WithContext(ctx)
-
-	if config.GlobalServerConfig.Env == "development" {
-		sql = sql.Debug()
-	}
 
 	err = sql.Where(where).First(&trx).Error
 
@@ -151,10 +109,6 @@ func (h *H) InsertTransaction(ctx context.Context, transaction *model.Transactio
 
 	sql := h.cli.WithContext(ctx)
 
-	if config.GlobalServerConfig.Env == "development" {
-		sql = sql.Debug()
-	}
-
 	return sql.Create(&transaction).Error
 }
 
@@ -163,10 +117,6 @@ func (h *H) InsertTokenLog(ctx context.Context, token *model.Token) (err error) 
 	defer trace.EndSpan(span, err)
 
 	sql := h.cli.WithContext(ctx)
-
-	if config.GlobalServerConfig.Env == "development" {
-		sql = sql.Debug()
-	}
 
 	return sql.Create(&token).Error
 }
@@ -177,10 +127,6 @@ func (h *H) UpdateTransaction(ctx context.Context, cond *model.Transaction) (err
 
 	sql := h.cli.WithContext(ctx)
 
-	if config.GlobalServerConfig.Env == "development" {
-		sql = sql.Debug()
-	}
-
 	return sql.Where("ref_id = ?", cond.RefID).Updates(cond).Error
 }
 
@@ -189,10 +135,6 @@ func (h *H) GetAccount(ctx context.Context, id int32) (account *model.Account, e
 	defer trace.EndSpan(span, err)
 
 	sql := h.cli.WithContext(ctx)
-
-	if config.GlobalServerConfig.Env == "development" {
-		sql = sql.Debug()
-	}
 
 	err = sql.Where("id = ?", id).First(&account).Error
 
@@ -208,10 +150,6 @@ func (h *H) GetToken(ctx context.Context, accountId int32) (token *model.Token, 
 	defer trace.EndSpan(span, err)
 
 	sql := h.cli.WithContext(ctx)
-
-	if config.GlobalServerConfig.Env == "development" {
-		sql = sql.Debug()
-	}
 
 	err = sql.Where("account_id = ?", accountId).
 		Order("created_at desc").
@@ -229,10 +167,6 @@ func (h *H) GetAccountList(ctx context.Context) (accounts []*model.Account, err 
 
 	sql := h.cli.WithContext(ctx)
 
-	if config.GlobalServerConfig.Env == "development" {
-		sql = sql.Debug()
-	}
-
 	err = sql.Order("priority asc").Find(&accounts).Error
 
 	if err != nil {
@@ -246,10 +180,6 @@ func (h *H) SwitchAccount(ctx context.Context, accountId int32) (err error) {
 	defer trace.EndSpan(span, err)
 
 	sql := h.cli.WithContext(ctx)
-
-	if config.GlobalServerConfig.Env == "development" {
-		sql = sql.Debug()
-	}
 
 	tx := sql.Begin()
 

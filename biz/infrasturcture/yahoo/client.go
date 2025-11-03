@@ -16,9 +16,9 @@ import (
 
 	"net/http"
 
+	"github.com/buyandship/bns-golib/config"
 	bnsHttp "github.com/buyandship/bns-golib/http"
 	"github.com/buyandship/bns-golib/retry"
-	"github.com/buyandship/supply-svr/biz/common/config"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -44,14 +44,14 @@ func GetClient() *Client {
 			bnsHttp.WithTimeout(10 * time.Second), // TODO: change to actual timeout
 		)
 		var baseURL string
-		switch config.GlobalServerConfig.Env {
-		case "development":
-			baseURL = "https://internal-stagin20251027043053843000000001-645109195.ap-northeast-1.elb.amazonaws.com" // TODO: change to actual url
-		case "production":
+		switch config.GlobalAppConfig.Env {
+		case "dev":
+			baseURL = "http://staging.yahoo-bridge.internal.com" // TODO: change to actual url
+		case "prod":
 			baseURL = "https://mock-api.yahoo-auction.jp" // TODO: change to actual url
 		}
-		apiKey := config.GlobalServerConfig.Yahoo.ApiKey
-		secretKey := config.GlobalServerConfig.Yahoo.SecretKey
+		apiKey := config.GlobalAppConfig.GetString("yahoo.api_key")
+		secretKey := config.GlobalAppConfig.GetString("yahoo.secret_key")
 		Handler = &Client{
 			baseURL:    baseURL,
 			apiKey:     apiKey,
@@ -85,7 +85,38 @@ type PlaceBidRequest struct {
 	Partial         bool   `json:"partial,omitempty"`
 }
 
+type PlaceBidResult struct {
+	Status     string `json:"Status" example:"Success"`
+	BidID      string `json:"BidID" example:"bid_12345"`
+	AuctionID  string `json:"AuctionID" example:"x12345"`
+	Price      int    `json:"Price" example:"1000"`
+	Quantity   int    `json:"Quantity" example:"1"`
+	TotalPrice int    `json:"TotalPrice" example:"1100"`
+	BidTime    string `json:"BidTime" example:"2025-10-22T12:00:00Z"`
+}
+
 type PlaceBidResponse struct {
+	Result    PlaceBidResult `json:"Result"`
+	ResultSet struct {
+		Result PlaceBidResult `json:"Result"`
+	} `json:"ResultSet"`
+}
+
+type PlaceBidPreviewResult struct {
+	Signature       string `json:"Signature"`
+	BidPrice        int    `json:"BidPrice"`
+	Tax             int    `json:"Tax"`
+	Fee             int    `json:"Fee"`
+	TotalPrice      int    `json:"TotalPrice"`
+	CurrentPrice    int    `json:"CurrentPrice"`
+	IsRestricted    bool   `json:"IsRestricted"`
+	SignatureExpiry string `json:"SignatureExpiry"`
+}
+
+type PlaceBidPreviewResponse struct {
+	ResultSet struct {
+		Result PlaceBidPreviewResult `json:"Result"`
+	} `json:"ResultSet"`
 }
 
 // PlaceBidPreviewRequest represents a bid preview request
@@ -97,9 +128,6 @@ type PlaceBidPreviewRequest struct {
 	Price           int    `json:"price"`
 	Quantity        int    `json:"quantity,omitempty"`
 	Partial         bool   `json:"partial,omitempty"`
-}
-
-type PlaceBidPreviewResponse struct {
 }
 
 // AuctionItemRequest represents a request for auction item information
@@ -123,27 +151,61 @@ type OAuthAuthorizeRequest struct {
 	YahooAccountID string `json:"yahoo_account_id"`
 }
 
+type Transaction struct {
+	TransactionID    string                  `json:"transaction_id"`
+	RequestGroupID   string                  `json:"request_group_id"`
+	RetryCount       int                     `json:"retry_count"`
+	YsRefID          string                  `json:"ys_ref_id"`
+	YahooAccountID   string                  `json:"yahoo_account_id"`
+	AuctionID        string                  `json:"auction_id"`
+	CurrentPrice     int64                   `json:"current_price"`
+	TransactionType  string                  `json:"transaction_type"`
+	Status           string                  `json:"status"`
+	APIEndpoint      string                  `json:"api_endpoint"`
+	HTTPStatus       int                     `json:"http_status"`
+	ProcessingTimeMS int                     `json:"processing_time_ms"`
+	ReqPrice         int64                   `json:"req_price"`
+	CreatedAt        string                  `json:"created_at"`
+	UpdatedAt        string                  `json:"updated_at"`
+	RequestData      supply.YahooPlaceBidReq `json:"request_data"`
+	ResponseData     PlaceBidResponse        `json:"response_data"`
+}
+
+type GetTransactionResponse struct {
+	Transactions []Transaction `json:"transactions"`
+}
+
 // TokenRefreshRequest represents token refresh request
 type TokenRefreshRequest struct {
 	YahooAccountID string `json:"yahoo_account_id"`
 }
 
+type BidStatus struct {
+	HasBid       bool `json:"HasBid"`
+	MyHighestBid int  `json:"MyHighestBid"`
+	IsWinning    bool `json:"IsWinning"`
+}
+
+type AuctionItemResult struct {
+	AuctionID    string    `json:"AuctionID"`
+	Title        string    `json:"Title"`
+	Description  string    `json:"Description"`
+	CurrentPrice int       `json:"CurrentPrice"`
+	StartPrice   int       `json:"StartPrice"`
+	Bids         int       `json:"Bids"`
+	ItemStatus   string    `json:"ItemStatus"`
+	EndTime      string    `json:"EndTime"`
+	StartTime    string    `json:"StartTime"`
+	Seller       Seller    `json:"Seller"`
+	Image        string    `json:"Image"`
+	IsWatching   bool      `json:"IsWatching,omitempty"`
+	MyBidStatus  BidStatus `json:"MyBidStatus,omitempty"`
+}
+
 // Response models
 type AuctionItemResponse struct {
 	ResultSet struct {
-		Result struct {
-			AuctionID    string `json:"AuctionID"`
-			Title        string `json:"Title"`
-			Description  string `json:"Description"`
-			CurrentPrice int    `json:"CurrentPrice"`
-			StartPrice   int    `json:"StartPrice"`
-			Bids         int    `json:"Bids"`
-			ItemStatus   string `json:"ItemStatus"`
-			EndTime      string `json:"EndTime"`
-			StartTime    string `json:"StartTime"`
-			Seller       Seller `json:"Seller"`
-			Image        string `json:"Image"`
-		} `json:"Result"`
+		Result AuctionItemResult `json:"Result"`
 	} `json:"ResultSet"`
 }
 
@@ -173,6 +235,7 @@ func (c *Client) generateHMACSignature(timestamp, method, path, body string) str
 
 // Helper method to make authenticated requests
 func (c *Client) makeRequest(ctx context.Context, method, path string, params url.Values, body interface{}, authType AuthType) (*http.Response, error) {
+	hlog.CtxDebugf(ctx, "makeRequest: %s %s %s %v", method, path, params.Encode(), body)
 	// Build URL
 	fullURL := c.baseURL + path
 	if len(params) > 0 {
@@ -260,6 +323,8 @@ func (c *Client) parseResponse(resp *http.Response, v interface{}) error {
 		return err
 	}
 
+	hlog.Debugf("parseResponse: %s", string(body))
+
 	if err := json.Unmarshal(body, v); err != nil {
 		return fmt.Errorf("failed to parse response: %w", err)
 	}
@@ -331,8 +396,21 @@ func (c *Client) PlaceBidPreview(ctx context.Context, req *PlaceBidPreviewReques
 	return &placeBidPreviewResponse, nil
 }
 
+func (c *Client) MockPlaceBidPreview(ctx context.Context, req *PlaceBidPreviewRequest) (*PlaceBidPreviewResponse, error) {
+	placeBidPreviewResponse := PlaceBidPreviewResponse{
+		ResultSet: struct {
+			Result PlaceBidPreviewResult `json:"Result"`
+		}{
+			Result: PlaceBidPreviewResult{
+				Signature: "abc123def456...",
+			},
+		},
+	}
+	return &placeBidPreviewResponse, nil
+}
+
 // PlaceBid executes a bid on Yahoo Auction
-func (c *Client) PlaceBid(ctx context.Context, req *PlaceBidRequest) (*supply.YahooPlaceBidResp, error) {
+func (c *Client) PlaceBid(ctx context.Context, req *PlaceBidRequest) (*PlaceBidResponse, error) {
 	params := url.Values{}
 	params.Set("yahoo_account_id", req.YahooAccountID)
 	params.Set("ys_ref_id", req.YsRefID)
@@ -353,31 +431,80 @@ func (c *Client) PlaceBid(ctx context.Context, req *PlaceBidRequest) (*supply.Ya
 		return nil, err
 	}
 
-	placeBidResponse := supply.YahooPlaceBidResp{}
+	placeBidResponse := PlaceBidResponse{}
 	if err := c.parseResponse(resp, &placeBidResponse); err != nil {
 		return nil, err
 	}
 
+	hlog.CtxDebugf(ctx, "placeBidResponse: %+v", placeBidResponse)
+
 	return &placeBidResponse, nil
 }
 
-func (c *Client) MockPlaceBid(ctx context.Context, req *PlaceBidRequest) (*supply.YahooPlaceBidResp, error) {
-	return nil, nil
+func (c *Client) MockPlaceBid(ctx context.Context, req *PlaceBidRequest) (*PlaceBidResponse, error) {
+	placeBidResponse := PlaceBidResponse{
+		Result: PlaceBidResult{
+			Status:     "Success",
+			BidID:      "bid_12345",
+			AuctionID:  req.AuctionID,
+			Price:      req.Price,
+			Quantity:   req.Quantity,
+			TotalPrice: req.Price * req.Quantity,
+			BidTime:    time.Now().Format(time.RFC3339),
+		},
+	}
+	return &placeBidResponse, nil
 }
 
 // GetAuctionItem gets auction item information (public API)
-func (c *Client) GetAuctionItem(ctx context.Context, req AuctionItemRequest) (*http.Response, error) {
+func (c *Client) GetAuctionItem(ctx context.Context, req AuctionItemRequest) (*AuctionItemResponse, error) {
 	params := url.Values{}
 	params.Set("auctionID", req.AuctionID)
 	if req.AppID != "" {
 		params.Set("appid", req.AppID)
 	}
 
-	return c.makeRequest(ctx, "GET", "/api/v1/auctionItem", params, nil, AuthTypeNone)
+	resp, err := c.makeRequest(ctx, "GET", "/api/v1/auctionItem", params, nil, AuthTypeNone)
+	if err != nil {
+		return nil, err
+	}
+
+	var auctionItemResponse AuctionItemResponse
+	if err := c.parseResponse(resp, &auctionItemResponse); err != nil {
+		return nil, err
+	}
+
+	return &auctionItemResponse, nil
+}
+
+func (c *Client) MockGetAuctionItem(ctx context.Context, req AuctionItemRequest) (*AuctionItemResponse, error) {
+	auctionItemResponse := AuctionItemResponse{
+		ResultSet: struct {
+			Result AuctionItemResult `json:"Result"`
+		}{
+			Result: AuctionItemResult{
+				AuctionID:    req.AuctionID,
+				Title:        "Mock Title",
+				Description:  "Mock description...",
+				CurrentPrice: 1000,
+				StartPrice:   500,
+				Bids:         5,
+				ItemStatus:   "open",
+				EndTime:      time.Now().Add(7 * 24 * time.Hour).Format(time.RFC3339),
+				StartTime:    time.Now().Format(time.RFC3339),
+				Seller: Seller{
+					ID:     "MockSeller",
+					Rating: 98.5,
+				},
+				Image: "https://example.com/image.jpg",
+			},
+		},
+	}
+	return &auctionItemResponse, nil
 }
 
 // GetAuctionItemAuth gets authenticated auction item information
-func (c *Client) GetAuctionItemAuth(ctx context.Context, req AuctionItemRequest, yahooAccountID string) (*http.Response, error) {
+func (c *Client) GetAuctionItemAuth(ctx context.Context, req AuctionItemRequest, yahooAccountID string) (*AuctionItemResponse, error) {
 	params := url.Values{}
 	params.Set("auctionID", req.AuctionID)
 	params.Set("yahoo_account_id", yahooAccountID)
@@ -385,7 +512,49 @@ func (c *Client) GetAuctionItemAuth(ctx context.Context, req AuctionItemRequest,
 		params.Set("appid", req.AppID)
 	}
 
-	return c.makeRequest(ctx, "GET", "/api/v1/auctionItemAuth", params, nil, AuthTypeHMAC)
+	resp, err := c.makeRequest(ctx, "GET", "/api/v1/auctionItemAuth", params, nil, AuthTypeHMAC)
+	if err != nil {
+		return nil, err
+	}
+
+	var auctionItemAuthResponse AuctionItemResponse
+	if err := c.parseResponse(resp, &auctionItemAuthResponse); err != nil {
+		return nil, err
+	}
+
+	return &auctionItemAuthResponse, nil
+}
+
+func (c *Client) MockGetAuctionItemAuth(ctx context.Context, req AuctionItemRequest, yahooAccountID string) (*AuctionItemResponse, error) {
+	auctionItemResponse := AuctionItemResponse{
+		ResultSet: struct {
+			Result AuctionItemResult `json:"Result"`
+		}{
+			Result: AuctionItemResult{
+				AuctionID:    req.AuctionID,
+				Title:        "Mock Title",
+				Description:  "Mock description...",
+				CurrentPrice: 1000,
+				StartPrice:   500,
+				Bids:         5,
+				ItemStatus:   "open",
+				EndTime:      time.Now().Add(7 * 24 * time.Hour).Format(time.RFC3339),
+				StartTime:    time.Now().Format(time.RFC3339),
+				Seller: Seller{
+					ID:     "MockSeller",
+					Rating: 98.5,
+				},
+				Image:      "https://example.com/image.jpg",
+				IsWatching: true,
+				MyBidStatus: BidStatus{
+					HasBid:       true,
+					MyHighestBid: 950,
+					IsWinning:    false,
+				},
+			},
+		},
+	}
+	return &auctionItemResponse, nil
 }
 
 // SearchTransactions searches for transactions
@@ -413,12 +582,53 @@ func (c *Client) SearchTransactions(ctx context.Context, req TransactionSearchRe
 }
 
 // GetTransaction gets specific transaction details
-func (c *Client) GetTransaction(ctx context.Context, transactionID, yahooAccountID string) (*http.Response, error) {
-	path := fmt.Sprintf("/api/v1/transactions/%s", transactionID)
+func (c *Client) GetTransaction(ctx context.Context, req *supply.YahooGetTransactionReq, yahooAccountID string) (*Transaction, error) {
+	path := fmt.Sprintf("/api/v1/transactions/%s", req.TransactionID)
 	params := url.Values{}
 	params.Set("yahoo_account_id", yahooAccountID)
 
-	return c.makeRequest(ctx, "GET", path, params, nil, AuthTypeHMAC)
+	resp, err := c.makeRequest(ctx, "GET", path, params, nil, AuthTypeHMAC)
+	if err != nil {
+		return nil, err
+	}
+
+	var tx Transaction
+	if err := c.parseResponse(resp, &tx); err != nil {
+		return nil, err
+	}
+
+	return &tx, nil
+}
+
+func (c *Client) MockGetTransaction(ctx context.Context, req *supply.YahooGetTransactionReq, yahooAccountID string) (*Transaction, error) {
+	resp := Transaction{
+		TransactionID:   req.TransactionID,
+		YsRefID:         "YS-REF-001",
+		AuctionID:       "x12345",
+		CurrentPrice:    1000,
+		TransactionType: "BID",
+		Status:          "completed",
+		ReqPrice:        1000,
+		CreatedAt:       "2025-10-22T12:00:00Z",
+		UpdatedAt:       "2025-10-22T12:00:01Z",
+		RequestData:     supply.YahooPlaceBidReq{},
+		ResponseData: PlaceBidResponse{
+			ResultSet: struct {
+				Result PlaceBidResult `json:"Result"`
+			}{
+				Result: PlaceBidResult{
+					Status:     "Success",
+					BidID:      "bid_12345",
+					AuctionID:  "x12345",
+					Price:      1000,
+					Quantity:   1,
+					TotalPrice: 1100,
+					BidTime:    "2025-10-22T12:00:00Z",
+				},
+			},
+		},
+	}
+	return &resp, nil
 }
 
 // ExportTransactionsCSV exports transactions as CSV
