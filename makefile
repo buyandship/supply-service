@@ -35,3 +35,7 @@ swag:
 	@echo "Generating swagger docs"
 	@swag init -g main.go --parseDependency --parseInternal -o ./docs
 	@echo "Swagger docs generated successfully"
+
+.PHONY: thrift
+thrift:
+	@hz update --thrift-plugins validator -idl supply.thrift

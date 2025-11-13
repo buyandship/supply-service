@@ -121,6 +121,12 @@ definitions:
       name:
         type: string
     type: object
+  github_com_buyandship_supply-svr_biz_model_yahoo.Transaction:
+    properties:
+      TransactionID:
+        example: txn_abc123
+        type: string
+    type: object
   mercari.FetchItemsResponse:
     properties:
       items:
@@ -555,18 +561,6 @@ definitions:
       zip_code2:
         type: string
     type: object
-  supply.BidStatus:
-    properties:
-      has_bid:
-        example: true
-        type: boolean
-      is_winning:
-        example: false
-        type: boolean
-      my_highest_bid:
-        example: 950
-        type: integer
-    type: object
   supply.MercariFetchItemsReq:
     properties:
       item_ids:
@@ -694,64 +688,12 @@ definitions:
       account:
         $ref: '#/definitions/supply.Account'
     type: object
-  supply.Seller:
-    properties:
-      id:
-        example: seller123
-        type: string
-      rating:
-        example: 98.5
-        type: number
-    type: object
-  supply.YahooGetAuctionItemAuthResp:
-    properties:
-      auction_item:
-        $ref: '#/definitions/supply.YahooGetAuctionItemResp'
-      bid_status:
-        $ref: '#/definitions/supply.BidStatus'
-      is_watching:
-        example: true
-        type: boolean
-    type: object
-  supply.YahooGetAuctionItemResp:
-    properties:
-      auction_id:
-        example: x12345
-        type: string
-      bids:
-        example: 5
-        type: integer
-      current_price:
-        example: 1000
-        type: integer
-      description:
-        example: Item description...
-        type: string
-      end_time:
-        example: "2025-10-30T23:59:59Z"
-        type: string
-      image:
-        example: https://example.com/image.jpg
-        type: string
-      item_status:
-        example: open
-        type: string
-      seller:
-        $ref: '#/definitions/supply.Seller'
-      start_price:
-        example: 500
-        type: integer
-      start_time:
-        example: "2025-10-22T00:00:00Z"
-        type: string
-      title:
-        example: Sample Item Title
-        type: string
-    type: object
   supply.YahooPlaceBidReq:
     properties:
       auction_id:
         type: string
+      partial:
+        type: boolean
       price:
         type: integer
       quantity:
@@ -761,53 +703,942 @@ definitions:
       ys_ref_id:
         type: string
     type: object
-  supply.YahooPlaceBidResp:
+  yahoo.AuctionItemDetail:
     properties:
-      auction_id:
-        example: x12345
-        type: string
-      bid_id:
-        example: bid_12345
-        type: string
-      bid_time:
-        example: "2025-10-22T12:00:00Z"
-        type: string
-      price:
-        example: 1000
+      AnsweredQAndANum:
+        example: 3
         type: integer
-      quantity:
+      ArticleNumber:
+        example: "1234567890123"
+        type: string
+      AucUserIdContactUrl:
+        example: https://auctions.yahoo.co.jp/jp/show/contact?aID=x123456789
+        type: string
+      AuctionID:
+        example: x123456789
+        type: string
+      AuctionItemUrl:
+        example: https://page.auctions.yahoo.co.jp/jp/auction/x123456789
+        type: string
+      AvailableQuantity:
         example: 1
         type: integer
-      status:
-        example: Success
+      BaggageInfo:
+        $ref: '#/definitions/yahoo.BaggageInfo'
+      BidInfo:
+        $ref: '#/definitions/yahoo.BidInfo'
+      BiddingViaCpa:
+        example: true
+        type: boolean
+      Bidorbuy:
+        example: 5000
+        type: integer
+      Bids:
+        example: 5
+        type: integer
+      BlindBusiness:
+        example: impossible
         type: string
-      total_price:
-        example: 1100
+      BrandLineIDPath:
+        example: brand123|line456
+        type: string
+      BrandLineNamePath:
+        example: サンプルブランド|サンプルライン
+        type: string
+      CancelsInfo:
+        $ref: '#/definitions/yahoo.CancelsInfo'
+      Car:
+        $ref: '#/definitions/yahoo.Car'
+      CatalogId:
+        example: catalog_12345
+        type: string
+      CategoryFarm:
+        example: 2
+        type: integer
+      CategoryID:
+        example: "22216"
+        type: string
+      CategoryIdPath:
+        example: 0,2084005403,22216
+        type: string
+      CategoryInsuranceType:
+        example: 1
+        type: integer
+      CategoryPath:
+        example: オークション > 音楽 > CD > R&B、ソウル
+        type: string
+      ChargeForShipping:
+        example: seller
+        type: string
+      CharityOption:
+        $ref: '#/definitions/yahoo.CharityOption'
+      CpaRate:
+        example: 5
+        type: integer
+      Description:
+        example: <![CDATA[新品未開封のCDアルバムです。限定版となります。<br>送料無料でお届けします。]]>
+        type: string
+      Description_input_type:
+        example: html
+        type: string
+      EasyPaymentInfo:
+        $ref: '#/definitions/yahoo.EasyPaymentInfo'
+      EndTime:
+        example: "2025-02-15T23:59:59+09:00"
+        type: string
+      ExternalFleaMarketInfo:
+        $ref: '#/definitions/yahoo.ExternalFleaMarketInfo'
+      HasOfferAccept:
+        example: false
+        type: boolean
+      HighestBidders:
+        $ref: '#/definitions/yahoo.HighestBidders'
+      Img:
+        $ref: '#/definitions/yahoo.Images'
+      ImgColor:
+        example: red
+        type: string
+      Initprice:
+        example: 1000
+        type: integer
+      IsAdult:
+        example: false
+        type: boolean
+      IsAutomaticExtension:
+        example: true
+        type: boolean
+      IsBidCreditRestrictions:
+        example: true
+        type: boolean
+      IsBidderRestrictions:
+        example: true
+        type: boolean
+      IsCharity:
+        example: false
+        type: boolean
+      IsCharityCategory:
+        example: false
+        type: boolean
+      IsCreature:
+        example: false
+        type: boolean
+      IsDsk:
+        example: true
+        type: boolean
+      IsEarlyClosing:
+        example: false
+        type: boolean
+      IsJPOfficialDelivery:
+        example: true
+        type: boolean
+      IsOffer:
+        example: true
+        type: boolean
+      IsPrivacyDeliveryAvailable:
+        example: true
+        type: boolean
+      IsSpecificCategory:
+        example: false
+        type: boolean
+      IsWatched:
+        example: true
+        type: boolean
+      IsWorldwide:
+        example: true
+        type: boolean
+      IsYahunekoPack:
+        example: true
+        type: boolean
+      ItemDescriptionURL:
+        example: https://pageX.auctions.yahoo.co.jp/jp/show/description?aID=x123456789&plainview=1
+        type: string
+      ItemReturnable:
+        $ref: '#/definitions/yahoo.ItemReturnable'
+      ItemSpec:
+        $ref: '#/definitions/yahoo.ItemSpec'
+      ItemStatus:
+        $ref: '#/definitions/yahoo.ItemStatus'
+      ItemTagList:
+        $ref: '#/definitions/yahoo.ItemTagList'
+      LastInitprice:
+        example: 1200
+        type: integer
+      Location:
+        example: 東京都
+        type: string
+      ManualStartTime:
+        example: "2025-01-15T10:00:00+09:00"
+        type: string
+      NotifyID:
+        example: notify_abc123
+        type: string
+      OfferInfo:
+        $ref: '#/definitions/yahoo.OfferInfo'
+      OfferNum:
+        example: 2
+        type: integer
+      Option:
+        $ref: '#/definitions/yahoo.Option'
+      Payment:
+        $ref: '#/definitions/yahoo.Payment'
+      Price:
+        example: 2480
+        type: integer
+      ProductName:
+        example: サンプルCD アルバム
+        type: string
+      Quantity:
+        example: 2
+        type: integer
+      ReservesInfo:
+        $ref: '#/definitions/yahoo.ReservesInfo'
+      Seller:
+        $ref: '#/definitions/yahoo.SellerInfo'
+      SellingInfo:
+        $ref: '#/definitions/yahoo.SellingInfo'
+      SeoKeywords:
+        example: CD,R&B,ソウル,新品,未開封
+        type: string
+      SevenElevenReceive:
+        example: impossible
+        type: string
+      ShipSchedule:
+        example: 1
+        type: integer
+      ShipTime:
+        example: after
+        type: string
+      Shipping:
+        $ref: '#/definitions/yahoo.Shipping'
+      ShippingInput:
+        example: now
+        type: string
+      ShoppingItem:
+        $ref: '#/definitions/yahoo.ShoppingItem'
+      ShoppingItemCode:
+        example: shopping_item_abc123
+        type: string
+      ShoppingSpecs:
+        $ref: '#/definitions/yahoo.ShoppingSpecs'
+      StartTime:
+        example: "2025-01-15T10:00:00+09:00"
+        type: string
+      Status:
+        example: open
+        type: string
+      StorePayment:
+        $ref: '#/definitions/yahoo.StorePayment'
+      StoreSearchKeywords:
+        example: CD,音楽,限定版
+        type: string
+      TaxRate:
+        example: 8
+        type: integer
+      TaxinBidorbuy:
+        example: 5400
+        type: number
+      TaxinPrice:
+        example: 2678.4
+        type: number
+      TaxinStartPrice:
+        example: 1080
+        type: number
+      Thumbnails:
+        $ref: '#/definitions/yahoo.Thumbnails'
+      Title:
+        example: 【新品未開封】サンプルCD アルバム 限定版
+        type: string
+      WatchListNum:
+        example: 42
+        type: integer
+      WinnersInfo:
+        $ref: '#/definitions/yahoo.WinnersInfo'
+      YPoint:
+        example: 10
+        type: integer
+      isBidderRatioRestrictions:
+        example: false
+        type: boolean
+    type: object
+  yahoo.BaggageInfo:
+    properties:
+      Size:
+        type: string
+      SizeIndex:
+        type: integer
+      Weight:
+        type: string
+      WeightIndex:
         type: integer
     type: object
-  supply.YahooTransaction:
+  yahoo.BankMethod:
     properties:
-      auction_id:
+      bank_id:
+        type: string
+      name:
+        type: string
+    type: object
+  yahoo.BankPayment:
+    properties:
+      Method:
+        items:
+          $ref: '#/definitions/yahoo.BankMethod'
+        type: array
+      totalBankMethodAvailable:
+        type: integer
+    type: object
+  yahoo.BidInfo:
+    properties:
+      IsDeletedWinner:
+        type: boolean
+      IsHighestBidder:
+        type: boolean
+      IsNextWinner:
+        type: boolean
+      IsWinner:
+        type: boolean
+      LastBid:
+        $ref: '#/definitions/yahoo.LastBid'
+      NextBid:
+        $ref: '#/definitions/yahoo.NextBid'
+    type: object
+  yahoo.Bidder:
+    properties:
+      AucUserId:
+        type: string
+      AucUserIdItemListURL:
+        type: string
+      AucUserIdRatingURL:
+        type: string
+      DisplayName:
+        type: string
+      IconUrl128:
+        type: string
+      IconUrl256:
+        type: string
+      IconUrl512:
+        type: string
+      IsStore:
+        type: boolean
+      Rating:
+        $ref: '#/definitions/yahoo.Rating'
+    type: object
+  yahoo.Cancel:
+    type: object
+  yahoo.CancelsInfo:
+    properties:
+      Cancel:
+        items:
+          $ref: '#/definitions/yahoo.Cancel'
+        type: array
+      CancelsNum:
+        type: integer
+    type: object
+  yahoo.Car:
+    properties:
+      ContactReceptionTime:
+        type: string
+      ContactTelNumber:
+        type: string
+      ContactUrl:
+        type: string
+      LegalCosts:
+        type: integer
+      Options:
+        $ref: '#/definitions/yahoo.CarOptions'
+      OverheadCosts:
+        type: integer
+      Regist:
+        $ref: '#/definitions/yahoo.CarRegist'
+      TaxinOverheadCosts:
+        type: integer
+      TaxinTotalBidorbuyPrice:
+        type: integer
+      TaxinTotalCosts:
+        type: integer
+      TaxinTotalPrice:
+        type: integer
+      TotalAmountComment:
+        type: string
+      TotalBidorbuyPrice:
+        type: integer
+      TotalCosts:
+        type: integer
+      TotalPrice:
+        type: integer
+    type: object
+  yahoo.CarOptions:
+    properties:
+      Item:
+        items:
+          type: string
+        type: array
+    type: object
+  yahoo.CarRegist:
+    properties:
+      Model:
+        type: string
+    type: object
+  yahoo.Category:
+    properties:
+      CategoryId:
+        example: 23336
+        type: integer
+      CategoryIdPath:
+        example: 0,23336
+        type: string
+      CategoryName:
+        example: コンピュータ
+        type: string
+      CategoryPath:
+        example: オークション > コンピュータ
+        type: string
+      ChildCategory:
+        items:
+          $ref: '#/definitions/yahoo.Category'
+        type: array
+      ChildCategoryNum:
+        example: 15
+        type: integer
+      Depth:
+        example: 1
+        type: integer
+      IsAdult:
+        example: false
+        type: boolean
+      IsLeaf:
+        example: false
+        type: boolean
+      IsLeafToLink:
+        description: Only present in child categories
+        example: false
+        type: boolean
+      IsLink:
+        example: false
+        type: boolean
+      Order:
+        example: 0
+        type: integer
+      ParentCategoryId:
+        type: integer
+    type: object
+  yahoo.CharityOption:
+    properties:
+      Proportion:
+        type: integer
+    type: object
+  yahoo.EasyPayment:
+    properties:
+      AllowInstallment:
+        type: boolean
+      IsCreditCard:
+        type: boolean
+      IsPayPay:
+        type: boolean
+      SafeKeepingPayment:
+        type: string
+    type: object
+  yahoo.EasyPaymentDetail:
+    properties:
+      AucUserId:
+        type: string
+      LimitTime:
+        type: integer
+      Status:
+        type: string
+      UpdateTime:
+        type: integer
+    type: object
+  yahoo.EasyPaymentInfo:
+    properties:
+      EasyPayment:
+        $ref: '#/definitions/yahoo.EasyPaymentDetail'
+    type: object
+  yahoo.ExternalFleaMarketInfo:
+    properties:
+      IsWinner:
+        type: boolean
+    type: object
+  yahoo.HighestBidders:
+    properties:
+      Bidder:
+        items:
+          $ref: '#/definitions/yahoo.Bidder'
+        type: array
+      IsMore:
+        type: boolean
+      totalHighestBidders:
+        type: integer
+    type: object
+  yahoo.ImageInfo:
+    properties:
+      alt:
+        example: Sample User Image
+        type: string
+      height:
+        example: 450
+        type: integer
+      url:
+        example: https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-img600x450-1234567890abc.jpg
+        type: string
+      width:
+        example: 600
+        type: integer
+    type: object
+  yahoo.Images:
+    properties:
+      Image1:
+        $ref: '#/definitions/yahoo.ImageInfo'
+      Image2:
+        $ref: '#/definitions/yahoo.ImageInfo'
+      Image3:
+        $ref: '#/definitions/yahoo.ImageInfo'
+    type: object
+  yahoo.ItemReturnable:
+    properties:
+      Allowed:
+        type: boolean
+      Comment:
+        type: string
+    type: object
+  yahoo.ItemSpec:
+    properties:
+      Segment:
+        type: string
+      Size:
+        type: string
+    type: object
+  yahoo.ItemStatus:
+    properties:
+      Comment:
+        type: string
+      Condition:
+        type: string
+    type: object
+  yahoo.ItemTagList:
+    properties:
+      Tag:
+        items:
+          type: string
+        type: array
+      totalItemTagList:
+        type: integer
+    type: object
+  yahoo.LastBid:
+    properties:
+      IsFnaviBundledDeal:
+        type: boolean
+      Partial:
+        type: boolean
+      Price:
+        type: integer
+      Quantity:
+        type: integer
+      TaxinPrice:
+        type: number
+    type: object
+  yahoo.NextBid:
+    properties:
+      LimitQuantity:
+        type: integer
+      Price:
+        type: integer
+      UnitPrice:
+        type: integer
+    type: object
+  yahoo.OfferInfo:
+    properties:
+      BidderOfferredPrice:
+        type: integer
+      OfferCondition:
+        type: integer
+      RemainingOfferNum:
+        type: integer
+      SellerOfferredPrice:
+        type: integer
+    type: object
+  yahoo.Option:
+    properties:
+      EasyPaymentIcon:
+        type: string
+      FeaturedIcon:
+        type: string
+      FreeshippingIcon:
+        type: string
+      IsTradingNaviAuction:
+        type: boolean
+      NewItemIcon:
+        type: string
+      StoreIcon:
+        type: string
+    type: object
+  yahoo.OtherPayment:
+    properties:
+      Method:
+        items:
+          type: string
+        type: array
+      totalOtherMethodAvailable:
+        type: integer
+    type: object
+  yahoo.Payment:
+    properties:
+      Bank:
+        $ref: '#/definitions/yahoo.BankPayment'
+      CashOnDelivery:
+        type: string
+      CashRegistration:
+        type: string
+      EasyPayment:
+        $ref: '#/definitions/yahoo.EasyPayment'
+      Other:
+        $ref: '#/definitions/yahoo.OtherPayment'
+      PostalOrder:
+        type: string
+      PostalTransfer:
+        type: string
+      YBank:
+        additionalProperties: true
+        type: object
+    type: object
+  yahoo.PlaceBidResult:
+    properties:
+      AuctionID:
         example: x12345
         type: string
-      current_price:
-        example: 1000
+      AuctionItemUrl:
+        example: https://page.auctions.yahoo.co.jp/jp/auction/x12345678
+        type: string
+      AuctionUrl:
+        example: https://auctions.yahooapis.jp/AuctionWebService/V2/auctionItem?auctionID=x12345678
+        type: string
+      CurrentPrice:
+        example: 1300
         type: integer
-      req_price:
-        example: 1000
+      IsBuyBid:
+        example: false
+        type: boolean
+      IsCurrentWinner:
+        example: false
+        type: boolean
+      IsNewBid:
+        example: true
+        type: boolean
+      NextBidPrice:
+        example: 1400
         type: integer
-      status:
-        example: completed
+      Signature:
+        example: 4mYveHoMr0fad9AS.Seqc6ys2BdqMyWTxA2VG_RJDbDyZjtIU5MX8k_xqg--
         type: string
-      transaction_id:
-        example: txn_abc123
+      Title:
+        example: 商品名１
         type: string
-      transaction_type:
-        example: BID
+      UnderReserved:
+        example: false
+        type: boolean
+      UnitOfBidPrice:
+        example: JPY
         type: string
-      ys_ref_id:
-        example: YS-REF-001
+    type: object
+  yahoo.Rating:
+    properties:
+      IsDeleted:
+        example: false
+        type: boolean
+      IsSuspended:
+        example: false
+        type: boolean
+      Point:
+        example: 150
+        type: integer
+      SellerTotalBadRating:
+        example: 1
+        type: integer
+      SellerTotalGoodRating:
+        example: 120
+        type: integer
+      SellerTotalNormalRating:
+        example: 2
+        type: integer
+      TotalBadRating:
+        example: 2
+        type: integer
+      TotalGoodRating:
+        example: 145
+        type: integer
+      TotalNormalRating:
+        example: 3
+        type: integer
+    type: object
+  yahoo.Reserve:
+    properties:
+      AucUserId:
         type: string
+      DisplayName:
+        type: string
+      IconUrl128:
+        type: string
+      IconUrl256:
+        type: string
+      IconUrl512:
+        type: string
+      IsStore:
+        type: boolean
+      LastBidPrice:
+        type: integer
+      LastBidQuantity:
+        type: integer
+      LastBidTime:
+        type: integer
+      Rating:
+        $ref: '#/definitions/yahoo.ReserveRating'
+      TaxinLastBidPrice:
+        type: number
+    type: object
+  yahoo.ReserveRating:
+    properties:
+      IsDeleted:
+        type: boolean
+      IsSuspended:
+        type: boolean
+      Point:
+        type: integer
+    type: object
+  yahoo.ReservesInfo:
+    properties:
+      Reserve:
+        items:
+          $ref: '#/definitions/yahoo.Reserve'
+        type: array
+      ReservesNum:
+        type: integer
+    type: object
+  yahoo.SellerInfo:
+    properties:
+      AucUserId:
+        example: sample_seller_123
+        type: string
+      AucUserIdItemListURL:
+        example: https://auctions.yahooapis.jp/AuctionWebService/V2/sellingList?appid=xxxxx&ItemListAucUserIdUrl=sample_seller_123
+        type: string
+      AucUserIdRatingURL:
+        example: https://auctions.yahooapis.jp/AuctionWebService/V1/ShowRating?appid=xxxxx&RatingAucUserIdUrl=sample_seller_123
+        type: string
+      DisplayName:
+        example: サンプルセラー
+        type: string
+      IconUrl128:
+        example: https://s.yimg.jp/images/auct/profile/icon/128/sample_seller_123.jpg
+        type: string
+      IconUrl256:
+        example: https://s.yimg.jp/images/auct/profile/icon/256/sample_seller_123.jpg
+        type: string
+      IconUrl512:
+        example: https://s.yimg.jp/images/auct/profile/icon/512/sample_seller_123.jpg
+        type: string
+      IsStore:
+        example: true
+        type: boolean
+      Performance:
+        additionalProperties: true
+        type: object
+      Rating:
+        $ref: '#/definitions/yahoo.Rating'
+      ShoppingSellerId:
+        example: store_12345
+        type: string
+      StoreName:
+        example: サンプルストア
+        type: string
+    type: object
+  yahoo.SellingInfo:
+    properties:
+      AffiliateRatio:
+        type: integer
+      AnsweredQAndANum:
+        type: integer
+      AutoResubmitAvailableCount:
+        type: integer
+      BidQuantityLimit:
+        type: integer
+      BidsFromAff:
+        type: integer
+      Duration:
+        type: integer
+      FeaturedDpd:
+        type: string
+      FirstAutoResubmitAvailableCount:
+        type: integer
+      IsFirstSubmit:
+        type: boolean
+      IsNoResubmit:
+        type: boolean
+      IsWon:
+        type: boolean
+      OfferNum:
+        type: integer
+      PageView:
+        type: integer
+      PageViewFromAff:
+        type: integer
+      ReportedViolationNum:
+        type: integer
+      ResubmitPriceDownRatio:
+        type: integer
+      UnansweredOfferNum:
+        type: integer
+      UnansweredQAndANum:
+        type: integer
+      WatchListNum:
+        type: integer
+      WatchListNumFromAff:
+        type: integer
+    type: object
+  yahoo.Shipping:
+    properties:
+      LowestIndex:
+        type: integer
+      Method:
+        items:
+          $ref: '#/definitions/yahoo.ShippingMethod'
+        type: array
+      totalShippingMethodAvailable:
+        type: integer
+    type: object
+  yahoo.ShippingMethod:
+    properties:
+      DeliveryFeeSize:
+        type: string
+      Index:
+        type: integer
+      IsOfficialDelivery:
+        type: boolean
+      IsPrivacyDeliveryAvailable:
+        type: boolean
+      Name:
+        type: string
+      PriceURL:
+        type: string
+      ServiceCode:
+        type: string
+      SinglePrice:
+        type: integer
+      type:
+        type: string
+    type: object
+  yahoo.ShoppingItem:
+    properties:
+      IsOptionEnabled:
+        type: boolean
+      ItemWeight:
+        type: integer
+      LeadTimeId:
+        type: integer
+      PostageId:
+        type: integer
+      PostageSetId:
+        type: integer
+    type: object
+  yahoo.ShoppingSpec:
+    properties:
+      ID:
+        type: integer
+      ValueID:
+        type: integer
+    type: object
+  yahoo.ShoppingSpecs:
+    properties:
+      Spec:
+        items:
+          $ref: '#/definitions/yahoo.ShoppingSpec'
+        type: array
+      totalShoppingSpecs:
+        type: integer
+    type: object
+  yahoo.StorePayment:
+    properties:
+      Method:
+        items:
+          type: string
+        type: array
+      UpdateTime:
+        type: integer
+      totalStorePaymentMethodAvailable:
+        type: integer
+    type: object
+  yahoo.Thumbnails:
+    properties:
+      Thumbnail1:
+        example: https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890abc.jpg
+        type: string
+      Thumbnail2:
+        example: https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890def.jpg
+        type: string
+      Thumbnail3:
+        example: https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890ghi.jpg
+        type: string
+    type: object
+  yahoo.Winner:
+    properties:
+      AucUserId:
+        type: string
+      BuyTime:
+        type: string
+      DisplayName:
+        type: string
+      IconUrl128:
+        type: string
+      IconUrl256:
+        type: string
+      IconUrl512:
+        type: string
+      IsFnaviBundledDeal:
+        type: boolean
+      IsRemovable:
+        type: boolean
+      IsStore:
+        type: boolean
+      LastBidQuantity:
+        type: integer
+      LastBidTime:
+        type: integer
+      Rating:
+        $ref: '#/definitions/yahoo.WinnerRating'
+      RemovableLimitTime:
+        type: integer
+      ShoppingInfo:
+        $ref: '#/definitions/yahoo.WinnerShoppingInfo'
+      TaxinWonPrice:
+        type: number
+      WonPrice:
+        type: integer
+      WonQuantity:
+        type: integer
+    type: object
+  yahoo.WinnerRating:
+    properties:
+      IsDeleted:
+        type: boolean
+      IsNotRated:
+        type: boolean
+      IsSuspended:
+        type: boolean
+      Point:
+        type: integer
+    type: object
+  yahoo.WinnerShoppingInfo:
+    properties:
+      OrderId:
+        type: string
+    type: object
+  yahoo.WinnersInfo:
+    properties:
+      Winner:
+        items:
+          $ref: '#/definitions/yahoo.Winner'
+        type: array
+      WinnersNum:
+        type: integer
     type: object
 info:
   contact: {}
@@ -1298,7 +2129,7 @@ paths:
         "200":
           description: Successfully retrieved auction item
           schema:
-            $ref: '#/definitions/supply.YahooGetAuctionItemResp'
+            $ref: '#/definitions/yahoo.AuctionItemDetail'
         "400":
           description: Invalid parameter
           schema:
@@ -1310,11 +2141,11 @@ paths:
       summary: Get Yahoo Auction item
       tags:
       - Yahoo
-  /v1/supplysrv/internal/yahoo/auctionItemAuth:
+  /v1/supplysrv/internal/yahoo/categoryTree:
     get:
       consumes:
       - application/json
-      description: Get detailed information about a Yahoo Auction item with user authentication
+      description: Get category tree from Yahoo Auction
       parameters:
       - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
         in: header
@@ -1332,16 +2163,21 @@ paths:
         required: true
         type: string
       - in: query
-        name: auction_id
-        required: true
+        name: adf
+        type: string
+      - in: query
+        name: category
+        type: string
+      - in: query
+        name: is_fnavi_only
         type: string
       produces:
       - application/json
       responses:
         "200":
-          description: Successfully retrieved authenticated auction item
+          description: Successfully retrieved category tree
           schema:
-            $ref: '#/definitions/supply.YahooGetAuctionItemAuthResp'
+            $ref: '#/definitions/yahoo.Category'
         "400":
           description: Invalid parameter
           schema:
@@ -1350,7 +2186,7 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/err.BizError'
-      summary: Get Yahoo Auction item with authentication
+      summary: Get Yahoo Auction category tree
       tags:
       - Yahoo
   /v1/supplysrv/internal/yahoo/placeBid:
@@ -1386,7 +2222,7 @@ paths:
         "200":
           description: Bid placed successfully
           schema:
-            $ref: '#/definitions/supply.YahooPlaceBidResp'
+            $ref: '#/definitions/yahoo.PlaceBidResult'
         "400":
           description: Invalid parameter
           schema:
@@ -1430,7 +2266,7 @@ paths:
         "200":
           description: Successfully retrieved transaction
           schema:
-            $ref: '#/definitions/supply.YahooTransaction'
+            $ref: '#/definitions/github_com_buyandship_supply-svr_biz_model_yahoo.Transaction'
         "400":
           description: Invalid parameter
           schema:

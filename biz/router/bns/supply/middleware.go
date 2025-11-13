@@ -190,3 +190,8 @@ func _transactionMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _yahoogetcategorytreeserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

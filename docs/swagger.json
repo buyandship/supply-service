@@ -761,7 +761,7 @@
                     "200": {
                         "description": "Successfully retrieved auction item",
                         "schema": {
-                            "$ref": "#/definitions/supply.YahooGetAuctionItemResp"
+                            "$ref": "#/definitions/yahoo.AuctionItemDetail"
                         }
                     },
                     "400": {
@@ -779,9 +779,9 @@
                 }
             }
         },
-        "/v1/supplysrv/internal/yahoo/auctionItemAuth": {
+        "/v1/supplysrv/internal/yahoo/categoryTree": {
             "get": {
-                "description": "Get detailed information about a Yahoo Auction item with user authentication",
+                "description": "Get category tree from Yahoo Auction",
                 "consumes": [
                     "application/json"
                 ],
@@ -791,7 +791,7 @@
                 "tags": [
                     "Yahoo"
                 ],
-                "summary": "Get Yahoo Auction item with authentication",
+                "summary": "Get Yahoo Auction category tree",
                 "parameters": [
                     {
                         "type": "string",
@@ -816,16 +816,25 @@
                     },
                     {
                         "type": "string",
-                        "name": "auction_id",
-                        "in": "query",
-                        "required": true
+                        "name": "adf",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "category",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "is_fnavi_only",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successfully retrieved authenticated auction item",
+                        "description": "Successfully retrieved category tree",
                         "schema": {
-                            "$ref": "#/definitions/supply.YahooGetAuctionItemAuthResp"
+                            "$ref": "#/definitions/yahoo.Category"
                         }
                     },
                     "400": {
@@ -892,7 +901,7 @@
                     "200": {
                         "description": "Bid placed successfully",
                         "schema": {
-                            "$ref": "#/definitions/supply.YahooPlaceBidResp"
+                            "$ref": "#/definitions/yahoo.PlaceBidResult"
                         }
                     },
                     "400": {
@@ -957,7 +966,7 @@
                     "200": {
                         "description": "Successfully retrieved transaction",
                         "schema": {
-                            "$ref": "#/definitions/supply.YahooTransaction"
+                            "$ref": "#/definitions/github_com_buyandship_supply-svr_biz_model_yahoo.Transaction"
                         }
                     },
                     "400": {
@@ -1296,6 +1305,15 @@
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "github_com_buyandship_supply-svr_biz_model_yahoo.Transaction": {
+            "type": "object",
+            "properties": {
+                "TransactionID": {
+                    "type": "string",
+                    "example": "txn_abc123"
                 }
             }
         },
@@ -1970,23 +1988,6 @@
                 }
             }
         },
-        "supply.BidStatus": {
-            "type": "object",
-            "properties": {
-                "has_bid": {
-                    "type": "boolean",
-                    "example": true
-                },
-                "is_winning": {
-                    "type": "boolean",
-                    "example": false
-                },
-                "my_highest_bid": {
-                    "type": "integer",
-                    "example": 950
-                }
-            }
-        },
         "supply.MercariFetchItemsReq": {
             "type": "object",
             "properties": {
@@ -2183,88 +2184,15 @@
                 }
             }
         },
-        "supply.Seller": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string",
-                    "example": "seller123"
-                },
-                "rating": {
-                    "type": "number",
-                    "example": 98.5
-                }
-            }
-        },
-        "supply.YahooGetAuctionItemAuthResp": {
-            "type": "object",
-            "properties": {
-                "auction_item": {
-                    "$ref": "#/definitions/supply.YahooGetAuctionItemResp"
-                },
-                "bid_status": {
-                    "$ref": "#/definitions/supply.BidStatus"
-                },
-                "is_watching": {
-                    "type": "boolean",
-                    "example": true
-                }
-            }
-        },
-        "supply.YahooGetAuctionItemResp": {
-            "type": "object",
-            "properties": {
-                "auction_id": {
-                    "type": "string",
-                    "example": "x12345"
-                },
-                "bids": {
-                    "type": "integer",
-                    "example": 5
-                },
-                "current_price": {
-                    "type": "integer",
-                    "example": 1000
-                },
-                "description": {
-                    "type": "string",
-                    "example": "Item description..."
-                },
-                "end_time": {
-                    "type": "string",
-                    "example": "2025-10-30T23:59:59Z"
-                },
-                "image": {
-                    "type": "string",
-                    "example": "https://example.com/image.jpg"
-                },
-                "item_status": {
-                    "type": "string",
-                    "example": "open"
-                },
-                "seller": {
-                    "$ref": "#/definitions/supply.Seller"
-                },
-                "start_price": {
-                    "type": "integer",
-                    "example": 500
-                },
-                "start_time": {
-                    "type": "string",
-                    "example": "2025-10-22T00:00:00Z"
-                },
-                "title": {
-                    "type": "string",
-                    "example": "Sample Item Title"
-                }
-            }
-        },
         "supply.YahooPlaceBidReq": {
             "type": "object",
             "properties": {
                 "auction_id": {
                     "type": "string"
                 },
+                "partial": {
+                    "type": "boolean"
+                },
                 "price": {
                     "type": "integer"
                 },
@@ -2279,69 +2207,1372 @@
                 }
             }
         },
-        "supply.YahooPlaceBidResp": {
+        "yahoo.AuctionItemDetail": {
             "type": "object",
             "properties": {
-                "auction_id": {
-                    "type": "string",
-                    "example": "x12345"
-                },
-                "bid_id": {
-                    "type": "string",
-                    "example": "bid_12345"
-                },
-                "bid_time": {
-                    "type": "string",
-                    "example": "2025-10-22T12:00:00Z"
-                },
-                "price": {
+                "AnsweredQAndANum": {
                     "type": "integer",
-                    "example": 1000
+                    "example": 3
                 },
-                "quantity": {
+                "ArticleNumber": {
+                    "type": "string",
+                    "example": "1234567890123"
+                },
+                "AucUserIdContactUrl": {
+                    "type": "string",
+                    "example": "https://auctions.yahoo.co.jp/jp/show/contact?aID=x123456789"
+                },
+                "AuctionID": {
+                    "type": "string",
+                    "example": "x123456789"
+                },
+                "AuctionItemUrl": {
+                    "type": "string",
+                    "example": "https://page.auctions.yahoo.co.jp/jp/auction/x123456789"
+                },
+                "AvailableQuantity": {
                     "type": "integer",
                     "example": 1
                 },
-                "status": {
-                    "type": "string",
-                    "example": "Success"
+                "BaggageInfo": {
+                    "$ref": "#/definitions/yahoo.BaggageInfo"
                 },
-                "total_price": {
+                "BidInfo": {
+                    "$ref": "#/definitions/yahoo.BidInfo"
+                },
+                "BiddingViaCpa": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "Bidorbuy": {
                     "type": "integer",
-                    "example": 1100
+                    "example": 5000
+                },
+                "Bids": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "BlindBusiness": {
+                    "type": "string",
+                    "example": "impossible"
+                },
+                "BrandLineIDPath": {
+                    "type": "string",
+                    "example": "brand123|line456"
+                },
+                "BrandLineNamePath": {
+                    "type": "string",
+                    "example": "サンプルブランド|サンプルライン"
+                },
+                "CancelsInfo": {
+                    "$ref": "#/definitions/yahoo.CancelsInfo"
+                },
+                "Car": {
+                    "$ref": "#/definitions/yahoo.Car"
+                },
+                "CatalogId": {
+                    "type": "string",
+                    "example": "catalog_12345"
+                },
+                "CategoryFarm": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "CategoryID": {
+                    "type": "string",
+                    "example": "22216"
+                },
+                "CategoryIdPath": {
+                    "type": "string",
+                    "example": "0,2084005403,22216"
+                },
+                "CategoryInsuranceType": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "CategoryPath": {
+                    "type": "string",
+                    "example": "オークション \u003e 音楽 \u003e CD \u003e R\u0026B、ソウル"
+                },
+                "ChargeForShipping": {
+                    "type": "string",
+                    "example": "seller"
+                },
+                "CharityOption": {
+                    "$ref": "#/definitions/yahoo.CharityOption"
+                },
+                "CpaRate": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "Description": {
+                    "type": "string",
+                    "example": "\u003c![CDATA[新品未開封のCDアルバムです。限定版となります。\u003cbr\u003e送料無料でお届けします。]]\u003e"
+                },
+                "Description_input_type": {
+                    "type": "string",
+                    "example": "html"
+                },
+                "EasyPaymentInfo": {
+                    "$ref": "#/definitions/yahoo.EasyPaymentInfo"
+                },
+                "EndTime": {
+                    "type": "string",
+                    "example": "2025-02-15T23:59:59+09:00"
+                },
+                "ExternalFleaMarketInfo": {
+                    "$ref": "#/definitions/yahoo.ExternalFleaMarketInfo"
+                },
+                "HasOfferAccept": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "HighestBidders": {
+                    "$ref": "#/definitions/yahoo.HighestBidders"
+                },
+                "Img": {
+                    "$ref": "#/definitions/yahoo.Images"
+                },
+                "ImgColor": {
+                    "type": "string",
+                    "example": "red"
+                },
+                "Initprice": {
+                    "type": "integer",
+                    "example": 1000
+                },
+                "IsAdult": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "IsAutomaticExtension": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "IsBidCreditRestrictions": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "IsBidderRestrictions": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "IsCharity": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "IsCharityCategory": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "IsCreature": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "IsDsk": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "IsEarlyClosing": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "IsJPOfficialDelivery": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "IsOffer": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "IsPrivacyDeliveryAvailable": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "IsSpecificCategory": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "IsWatched": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "IsWorldwide": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "IsYahunekoPack": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "ItemDescriptionURL": {
+                    "type": "string",
+                    "example": "https://pageX.auctions.yahoo.co.jp/jp/show/description?aID=x123456789\u0026plainview=1"
+                },
+                "ItemReturnable": {
+                    "$ref": "#/definitions/yahoo.ItemReturnable"
+                },
+                "ItemSpec": {
+                    "$ref": "#/definitions/yahoo.ItemSpec"
+                },
+                "ItemStatus": {
+                    "$ref": "#/definitions/yahoo.ItemStatus"
+                },
+                "ItemTagList": {
+                    "$ref": "#/definitions/yahoo.ItemTagList"
+                },
+                "LastInitprice": {
+                    "type": "integer",
+                    "example": 1200
+                },
+                "Location": {
+                    "type": "string",
+                    "example": "東京都"
+                },
+                "ManualStartTime": {
+                    "type": "string",
+                    "example": "2025-01-15T10:00:00+09:00"
+                },
+                "NotifyID": {
+                    "type": "string",
+                    "example": "notify_abc123"
+                },
+                "OfferInfo": {
+                    "$ref": "#/definitions/yahoo.OfferInfo"
+                },
+                "OfferNum": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "Option": {
+                    "$ref": "#/definitions/yahoo.Option"
+                },
+                "Payment": {
+                    "$ref": "#/definitions/yahoo.Payment"
+                },
+                "Price": {
+                    "type": "integer",
+                    "example": 2480
+                },
+                "ProductName": {
+                    "type": "string",
+                    "example": "サンプルCD アルバム"
+                },
+                "Quantity": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "ReservesInfo": {
+                    "$ref": "#/definitions/yahoo.ReservesInfo"
+                },
+                "Seller": {
+                    "$ref": "#/definitions/yahoo.SellerInfo"
+                },
+                "SellingInfo": {
+                    "$ref": "#/definitions/yahoo.SellingInfo"
+                },
+                "SeoKeywords": {
+                    "type": "string",
+                    "example": "CD,R\u0026B,ソウル,新品,未開封"
+                },
+                "SevenElevenReceive": {
+                    "type": "string",
+                    "example": "impossible"
+                },
+                "ShipSchedule": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "ShipTime": {
+                    "type": "string",
+                    "example": "after"
+                },
+                "Shipping": {
+                    "$ref": "#/definitions/yahoo.Shipping"
+                },
+                "ShippingInput": {
+                    "type": "string",
+                    "example": "now"
+                },
+                "ShoppingItem": {
+                    "$ref": "#/definitions/yahoo.ShoppingItem"
+                },
+                "ShoppingItemCode": {
+                    "type": "string",
+                    "example": "shopping_item_abc123"
+                },
+                "ShoppingSpecs": {
+                    "$ref": "#/definitions/yahoo.ShoppingSpecs"
+                },
+                "StartTime": {
+                    "type": "string",
+                    "example": "2025-01-15T10:00:00+09:00"
+                },
+                "Status": {
+                    "type": "string",
+                    "example": "open"
+                },
+                "StorePayment": {
+                    "$ref": "#/definitions/yahoo.StorePayment"
+                },
+                "StoreSearchKeywords": {
+                    "type": "string",
+                    "example": "CD,音楽,限定版"
+                },
+                "TaxRate": {
+                    "type": "integer",
+                    "example": 8
+                },
+                "TaxinBidorbuy": {
+                    "type": "number",
+                    "example": 5400
+                },
+                "TaxinPrice": {
+                    "type": "number",
+                    "example": 2678.4
+                },
+                "TaxinStartPrice": {
+                    "type": "number",
+                    "example": 1080
+                },
+                "Thumbnails": {
+                    "$ref": "#/definitions/yahoo.Thumbnails"
+                },
+                "Title": {
+                    "type": "string",
+                    "example": "【新品未開封】サンプルCD アルバム 限定版"
+                },
+                "WatchListNum": {
+                    "type": "integer",
+                    "example": 42
+                },
+                "WinnersInfo": {
+                    "$ref": "#/definitions/yahoo.WinnersInfo"
+                },
+                "YPoint": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "isBidderRatioRestrictions": {
+                    "type": "boolean",
+                    "example": false
                 }
             }
         },
-        "supply.YahooTransaction": {
+        "yahoo.BaggageInfo": {
             "type": "object",
             "properties": {
-                "auction_id": {
+                "Size": {
+                    "type": "string"
+                },
+                "SizeIndex": {
+                    "type": "integer"
+                },
+                "Weight": {
+                    "type": "string"
+                },
+                "WeightIndex": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.BankMethod": {
+            "type": "object",
+            "properties": {
+                "bank_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "yahoo.BankPayment": {
+            "type": "object",
+            "properties": {
+                "Method": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/yahoo.BankMethod"
+                    }
+                },
+                "totalBankMethodAvailable": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.BidInfo": {
+            "type": "object",
+            "properties": {
+                "IsDeletedWinner": {
+                    "type": "boolean"
+                },
+                "IsHighestBidder": {
+                    "type": "boolean"
+                },
+                "IsNextWinner": {
+                    "type": "boolean"
+                },
+                "IsWinner": {
+                    "type": "boolean"
+                },
+                "LastBid": {
+                    "$ref": "#/definitions/yahoo.LastBid"
+                },
+                "NextBid": {
+                    "$ref": "#/definitions/yahoo.NextBid"
+                }
+            }
+        },
+        "yahoo.Bidder": {
+            "type": "object",
+            "properties": {
+                "AucUserId": {
+                    "type": "string"
+                },
+                "AucUserIdItemListURL": {
+                    "type": "string"
+                },
+                "AucUserIdRatingURL": {
+                    "type": "string"
+                },
+                "DisplayName": {
+                    "type": "string"
+                },
+                "IconUrl128": {
+                    "type": "string"
+                },
+                "IconUrl256": {
+                    "type": "string"
+                },
+                "IconUrl512": {
+                    "type": "string"
+                },
+                "IsStore": {
+                    "type": "boolean"
+                },
+                "Rating": {
+                    "$ref": "#/definitions/yahoo.Rating"
+                }
+            }
+        },
+        "yahoo.Cancel": {
+            "type": "object"
+        },
+        "yahoo.CancelsInfo": {
+            "type": "object",
+            "properties": {
+                "Cancel": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/yahoo.Cancel"
+                    }
+                },
+                "CancelsNum": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.Car": {
+            "type": "object",
+            "properties": {
+                "ContactReceptionTime": {
+                    "type": "string"
+                },
+                "ContactTelNumber": {
+                    "type": "string"
+                },
+                "ContactUrl": {
+                    "type": "string"
+                },
+                "LegalCosts": {
+                    "type": "integer"
+                },
+                "Options": {
+                    "$ref": "#/definitions/yahoo.CarOptions"
+                },
+                "OverheadCosts": {
+                    "type": "integer"
+                },
+                "Regist": {
+                    "$ref": "#/definitions/yahoo.CarRegist"
+                },
+                "TaxinOverheadCosts": {
+                    "type": "integer"
+                },
+                "TaxinTotalBidorbuyPrice": {
+                    "type": "integer"
+                },
+                "TaxinTotalCosts": {
+                    "type": "integer"
+                },
+                "TaxinTotalPrice": {
+                    "type": "integer"
+                },
+                "TotalAmountComment": {
+                    "type": "string"
+                },
+                "TotalBidorbuyPrice": {
+                    "type": "integer"
+                },
+                "TotalCosts": {
+                    "type": "integer"
+                },
+                "TotalPrice": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.CarOptions": {
+            "type": "object",
+            "properties": {
+                "Item": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "yahoo.CarRegist": {
+            "type": "object",
+            "properties": {
+                "Model": {
+                    "type": "string"
+                }
+            }
+        },
+        "yahoo.Category": {
+            "type": "object",
+            "properties": {
+                "CategoryId": {
+                    "type": "integer",
+                    "example": 23336
+                },
+                "CategoryIdPath": {
+                    "type": "string",
+                    "example": "0,23336"
+                },
+                "CategoryName": {
+                    "type": "string",
+                    "example": "コンピュータ"
+                },
+                "CategoryPath": {
+                    "type": "string",
+                    "example": "オークション \u003e コンピュータ"
+                },
+                "ChildCategory": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/yahoo.Category"
+                    }
+                },
+                "ChildCategoryNum": {
+                    "type": "integer",
+                    "example": 15
+                },
+                "Depth": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "IsAdult": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "IsLeaf": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "IsLeafToLink": {
+                    "description": "Only present in child categories",
+                    "type": "boolean",
+                    "example": false
+                },
+                "IsLink": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "Order": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "ParentCategoryId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.CharityOption": {
+            "type": "object",
+            "properties": {
+                "Proportion": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.EasyPayment": {
+            "type": "object",
+            "properties": {
+                "AllowInstallment": {
+                    "type": "boolean"
+                },
+                "IsCreditCard": {
+                    "type": "boolean"
+                },
+                "IsPayPay": {
+                    "type": "boolean"
+                },
+                "SafeKeepingPayment": {
+                    "type": "string"
+                }
+            }
+        },
+        "yahoo.EasyPaymentDetail": {
+            "type": "object",
+            "properties": {
+                "AucUserId": {
+                    "type": "string"
+                },
+                "LimitTime": {
+                    "type": "integer"
+                },
+                "Status": {
+                    "type": "string"
+                },
+                "UpdateTime": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.EasyPaymentInfo": {
+            "type": "object",
+            "properties": {
+                "EasyPayment": {
+                    "$ref": "#/definitions/yahoo.EasyPaymentDetail"
+                }
+            }
+        },
+        "yahoo.ExternalFleaMarketInfo": {
+            "type": "object",
+            "properties": {
+                "IsWinner": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "yahoo.HighestBidders": {
+            "type": "object",
+            "properties": {
+                "Bidder": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/yahoo.Bidder"
+                    }
+                },
+                "IsMore": {
+                    "type": "boolean"
+                },
+                "totalHighestBidders": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.ImageInfo": {
+            "type": "object",
+            "properties": {
+                "alt": {
+                    "type": "string",
+                    "example": "Sample User Image"
+                },
+                "height": {
+                    "type": "integer",
+                    "example": 450
+                },
+                "url": {
+                    "type": "string",
+                    "example": "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-img600x450-1234567890abc.jpg"
+                },
+                "width": {
+                    "type": "integer",
+                    "example": 600
+                }
+            }
+        },
+        "yahoo.Images": {
+            "type": "object",
+            "properties": {
+                "Image1": {
+                    "$ref": "#/definitions/yahoo.ImageInfo"
+                },
+                "Image2": {
+                    "$ref": "#/definitions/yahoo.ImageInfo"
+                },
+                "Image3": {
+                    "$ref": "#/definitions/yahoo.ImageInfo"
+                }
+            }
+        },
+        "yahoo.ItemReturnable": {
+            "type": "object",
+            "properties": {
+                "Allowed": {
+                    "type": "boolean"
+                },
+                "Comment": {
+                    "type": "string"
+                }
+            }
+        },
+        "yahoo.ItemSpec": {
+            "type": "object",
+            "properties": {
+                "Segment": {
+                    "type": "string"
+                },
+                "Size": {
+                    "type": "string"
+                }
+            }
+        },
+        "yahoo.ItemStatus": {
+            "type": "object",
+            "properties": {
+                "Comment": {
+                    "type": "string"
+                },
+                "Condition": {
+                    "type": "string"
+                }
+            }
+        },
+        "yahoo.ItemTagList": {
+            "type": "object",
+            "properties": {
+                "Tag": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "totalItemTagList": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.LastBid": {
+            "type": "object",
+            "properties": {
+                "IsFnaviBundledDeal": {
+                    "type": "boolean"
+                },
+                "Partial": {
+                    "type": "boolean"
+                },
+                "Price": {
+                    "type": "integer"
+                },
+                "Quantity": {
+                    "type": "integer"
+                },
+                "TaxinPrice": {
+                    "type": "number"
+                }
+            }
+        },
+        "yahoo.NextBid": {
+            "type": "object",
+            "properties": {
+                "LimitQuantity": {
+                    "type": "integer"
+                },
+                "Price": {
+                    "type": "integer"
+                },
+                "UnitPrice": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.OfferInfo": {
+            "type": "object",
+            "properties": {
+                "BidderOfferredPrice": {
+                    "type": "integer"
+                },
+                "OfferCondition": {
+                    "type": "integer"
+                },
+                "RemainingOfferNum": {
+                    "type": "integer"
+                },
+                "SellerOfferredPrice": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.Option": {
+            "type": "object",
+            "properties": {
+                "EasyPaymentIcon": {
+                    "type": "string"
+                },
+                "FeaturedIcon": {
+                    "type": "string"
+                },
+                "FreeshippingIcon": {
+                    "type": "string"
+                },
+                "IsTradingNaviAuction": {
+                    "type": "boolean"
+                },
+                "NewItemIcon": {
+                    "type": "string"
+                },
+                "StoreIcon": {
+                    "type": "string"
+                }
+            }
+        },
+        "yahoo.OtherPayment": {
+            "type": "object",
+            "properties": {
+                "Method": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "totalOtherMethodAvailable": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.Payment": {
+            "type": "object",
+            "properties": {
+                "Bank": {
+                    "$ref": "#/definitions/yahoo.BankPayment"
+                },
+                "CashOnDelivery": {
+                    "type": "string"
+                },
+                "CashRegistration": {
+                    "type": "string"
+                },
+                "EasyPayment": {
+                    "$ref": "#/definitions/yahoo.EasyPayment"
+                },
+                "Other": {
+                    "$ref": "#/definitions/yahoo.OtherPayment"
+                },
+                "PostalOrder": {
+                    "type": "string"
+                },
+                "PostalTransfer": {
+                    "type": "string"
+                },
+                "YBank": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "yahoo.PlaceBidResult": {
+            "type": "object",
+            "properties": {
+                "AuctionID": {
                     "type": "string",
                     "example": "x12345"
                 },
-                "current_price": {
+                "AuctionItemUrl": {
+                    "type": "string",
+                    "example": "https://page.auctions.yahoo.co.jp/jp/auction/x12345678"
+                },
+                "AuctionUrl": {
+                    "type": "string",
+                    "example": "https://auctions.yahooapis.jp/AuctionWebService/V2/auctionItem?auctionID=x12345678"
+                },
+                "CurrentPrice": {
                     "type": "integer",
-                    "example": 1000
+                    "example": 1300
                 },
-                "req_price": {
+                "IsBuyBid": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "IsCurrentWinner": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "IsNewBid": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "NextBidPrice": {
                     "type": "integer",
-                    "example": 1000
+                    "example": 1400
                 },
-                "status": {
+                "Signature": {
                     "type": "string",
-                    "example": "completed"
+                    "example": "4mYveHoMr0fad9AS.Seqc6ys2BdqMyWTxA2VG_RJDbDyZjtIU5MX8k_xqg--"
                 },
-                "transaction_id": {
+                "Title": {
                     "type": "string",
-                    "example": "txn_abc123"
+                    "example": "商品名１"
                 },
-                "transaction_type": {
-                    "type": "string",
-                    "example": "BID"
+                "UnderReserved": {
+                    "type": "boolean",
+                    "example": false
                 },
-                "ys_ref_id": {
+                "UnitOfBidPrice": {
                     "type": "string",
-                    "example": "YS-REF-001"
+                    "example": "JPY"
+                }
+            }
+        },
+        "yahoo.Rating": {
+            "type": "object",
+            "properties": {
+                "IsDeleted": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "IsSuspended": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "Point": {
+                    "type": "integer",
+                    "example": 150
+                },
+                "SellerTotalBadRating": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "SellerTotalGoodRating": {
+                    "type": "integer",
+                    "example": 120
+                },
+                "SellerTotalNormalRating": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "TotalBadRating": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "TotalGoodRating": {
+                    "type": "integer",
+                    "example": 145
+                },
+                "TotalNormalRating": {
+                    "type": "integer",
+                    "example": 3
+                }
+            }
+        },
+        "yahoo.Reserve": {
+            "type": "object",
+            "properties": {
+                "AucUserId": {
+                    "type": "string"
+                },
+                "DisplayName": {
+                    "type": "string"
+                },
+                "IconUrl128": {
+                    "type": "string"
+                },
+                "IconUrl256": {
+                    "type": "string"
+                },
+                "IconUrl512": {
+                    "type": "string"
+                },
+                "IsStore": {
+                    "type": "boolean"
+                },
+                "LastBidPrice": {
+                    "type": "integer"
+                },
+                "LastBidQuantity": {
+                    "type": "integer"
+                },
+                "LastBidTime": {
+                    "type": "integer"
+                },
+                "Rating": {
+                    "$ref": "#/definitions/yahoo.ReserveRating"
+                },
+                "TaxinLastBidPrice": {
+                    "type": "number"
+                }
+            }
+        },
+        "yahoo.ReserveRating": {
+            "type": "object",
+            "properties": {
+                "IsDeleted": {
+                    "type": "boolean"
+                },
+                "IsSuspended": {
+                    "type": "boolean"
+                },
+                "Point": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.ReservesInfo": {
+            "type": "object",
+            "properties": {
+                "Reserve": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/yahoo.Reserve"
+                    }
+                },
+                "ReservesNum": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.SellerInfo": {
+            "type": "object",
+            "properties": {
+                "AucUserId": {
+                    "type": "string",
+                    "example": "sample_seller_123"
+                },
+                "AucUserIdItemListURL": {
+                    "type": "string",
+                    "example": "https://auctions.yahooapis.jp/AuctionWebService/V2/sellingList?appid=xxxxx\u0026ItemListAucUserIdUrl=sample_seller_123"
+                },
+                "AucUserIdRatingURL": {
+                    "type": "string",
+                    "example": "https://auctions.yahooapis.jp/AuctionWebService/V1/ShowRating?appid=xxxxx\u0026RatingAucUserIdUrl=sample_seller_123"
+                },
+                "DisplayName": {
+                    "type": "string",
+                    "example": "サンプルセラー"
+                },
+                "IconUrl128": {
+                    "type": "string",
+                    "example": "https://s.yimg.jp/images/auct/profile/icon/128/sample_seller_123.jpg"
+                },
+                "IconUrl256": {
+                    "type": "string",
+                    "example": "https://s.yimg.jp/images/auct/profile/icon/256/sample_seller_123.jpg"
+                },
+                "IconUrl512": {
+                    "type": "string",
+                    "example": "https://s.yimg.jp/images/auct/profile/icon/512/sample_seller_123.jpg"
+                },
+                "IsStore": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "Performance": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "Rating": {
+                    "$ref": "#/definitions/yahoo.Rating"
+                },
+                "ShoppingSellerId": {
+                    "type": "string",
+                    "example": "store_12345"
+                },
+                "StoreName": {
+                    "type": "string",
+                    "example": "サンプルストア"
+                }
+            }
+        },
+        "yahoo.SellingInfo": {
+            "type": "object",
+            "properties": {
+                "AffiliateRatio": {
+                    "type": "integer"
+                },
+                "AnsweredQAndANum": {
+                    "type": "integer"
+                },
+                "AutoResubmitAvailableCount": {
+                    "type": "integer"
+                },
+                "BidQuantityLimit": {
+                    "type": "integer"
+                },
+                "BidsFromAff": {
+                    "type": "integer"
+                },
+                "Duration": {
+                    "type": "integer"
+                },
+                "FeaturedDpd": {
+                    "type": "string"
+                },
+                "FirstAutoResubmitAvailableCount": {
+                    "type": "integer"
+                },
+                "IsFirstSubmit": {
+                    "type": "boolean"
+                },
+                "IsNoResubmit": {
+                    "type": "boolean"
+                },
+                "IsWon": {
+                    "type": "boolean"
+                },
+                "OfferNum": {
+                    "type": "integer"
+                },
+                "PageView": {
+                    "type": "integer"
+                },
+                "PageViewFromAff": {
+                    "type": "integer"
+                },
+                "ReportedViolationNum": {
+                    "type": "integer"
+                },
+                "ResubmitPriceDownRatio": {
+                    "type": "integer"
+                },
+                "UnansweredOfferNum": {
+                    "type": "integer"
+                },
+                "UnansweredQAndANum": {
+                    "type": "integer"
+                },
+                "WatchListNum": {
+                    "type": "integer"
+                },
+                "WatchListNumFromAff": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.Shipping": {
+            "type": "object",
+            "properties": {
+                "LowestIndex": {
+                    "type": "integer"
+                },
+                "Method": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/yahoo.ShippingMethod"
+                    }
+                },
+                "totalShippingMethodAvailable": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.ShippingMethod": {
+            "type": "object",
+            "properties": {
+                "DeliveryFeeSize": {
+                    "type": "string"
+                },
+                "Index": {
+                    "type": "integer"
+                },
+                "IsOfficialDelivery": {
+                    "type": "boolean"
+                },
+                "IsPrivacyDeliveryAvailable": {
+                    "type": "boolean"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "PriceURL": {
+                    "type": "string"
+                },
+                "ServiceCode": {
+                    "type": "string"
+                },
+                "SinglePrice": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "yahoo.ShoppingItem": {
+            "type": "object",
+            "properties": {
+                "IsOptionEnabled": {
+                    "type": "boolean"
+                },
+                "ItemWeight": {
+                    "type": "integer"
+                },
+                "LeadTimeId": {
+                    "type": "integer"
+                },
+                "PostageId": {
+                    "type": "integer"
+                },
+                "PostageSetId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.ShoppingSpec": {
+            "type": "object",
+            "properties": {
+                "ID": {
+                    "type": "integer"
+                },
+                "ValueID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.ShoppingSpecs": {
+            "type": "object",
+            "properties": {
+                "Spec": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/yahoo.ShoppingSpec"
+                    }
+                },
+                "totalShoppingSpecs": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.StorePayment": {
+            "type": "object",
+            "properties": {
+                "Method": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "UpdateTime": {
+                    "type": "integer"
+                },
+                "totalStorePaymentMethodAvailable": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.Thumbnails": {
+            "type": "object",
+            "properties": {
+                "Thumbnail1": {
+                    "type": "string",
+                    "example": "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890abc.jpg"
+                },
+                "Thumbnail2": {
+                    "type": "string",
+                    "example": "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890def.jpg"
+                },
+                "Thumbnail3": {
+                    "type": "string",
+                    "example": "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890ghi.jpg"
+                }
+            }
+        },
+        "yahoo.Winner": {
+            "type": "object",
+            "properties": {
+                "AucUserId": {
+                    "type": "string"
+                },
+                "BuyTime": {
+                    "type": "string"
+                },
+                "DisplayName": {
+                    "type": "string"
+                },
+                "IconUrl128": {
+                    "type": "string"
+                },
+                "IconUrl256": {
+                    "type": "string"
+                },
+                "IconUrl512": {
+                    "type": "string"
+                },
+                "IsFnaviBundledDeal": {
+                    "type": "boolean"
+                },
+                "IsRemovable": {
+                    "type": "boolean"
+                },
+                "IsStore": {
+                    "type": "boolean"
+                },
+                "LastBidQuantity": {
+                    "type": "integer"
+                },
+                "LastBidTime": {
+                    "type": "integer"
+                },
+                "Rating": {
+                    "$ref": "#/definitions/yahoo.WinnerRating"
+                },
+                "RemovableLimitTime": {
+                    "type": "integer"
+                },
+                "ShoppingInfo": {
+                    "$ref": "#/definitions/yahoo.WinnerShoppingInfo"
+                },
+                "TaxinWonPrice": {
+                    "type": "number"
+                },
+                "WonPrice": {
+                    "type": "integer"
+                },
+                "WonQuantity": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.WinnerRating": {
+            "type": "object",
+            "properties": {
+                "IsDeleted": {
+                    "type": "boolean"
+                },
+                "IsNotRated": {
+                    "type": "boolean"
+                },
+                "IsSuspended": {
+                    "type": "boolean"
+                },
+                "Point": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.WinnerShoppingInfo": {
+            "type": "object",
+            "properties": {
+                "OrderId": {
+                    "type": "string"
+                }
+            }
+        },
+        "yahoo.WinnersInfo": {
+            "type": "object",
+            "properties": {
+                "Winner": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/yahoo.Winner"
+                    }
+                },
+                "WinnersNum": {
+                    "type": "integer"
                 }
             }
         }

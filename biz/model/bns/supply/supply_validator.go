@@ -86,31 +86,30 @@ func (p *MercariGetSimilarItemsReq) IsValid() error {
 func (p *YahooPlaceBidReq) IsValid() error {
 	return nil
 }
-func (p *YahooPlaceBidResp) IsValid() error {
-	return nil
-}
 func (p *YahooGetTransactionReq) IsValid() error {
 	return nil
 }
-func (p *YahooTransaction) IsValid() error {
-	return nil
-}
-func (p *YahooGetTransactionsResp) IsValid() error {
+func (p *YahooGetTransactionsReq) IsValid() error {
 	return nil
 }
 func (p *YahooGetAuctionItemReq) IsValid() error {
-	if len(p.AuctionID) < int(1) {
-		return fmt.Errorf("field AuctionID min_len rule failed, current value: %d", len(p.AuctionID))
-	}
 	return nil
 }
 func (p *Seller) IsValid() error {
+	return nil
+}
+func (p *ShoppingItem) IsValid() error {
 	return nil
 }
 func (p *YahooGetAuctionItemResp) IsValid() error {
 	if p.Seller != nil {
 		if err := p.Seller.IsValid(); err != nil {
 			return fmt.Errorf("field Seller not valid, %w", err)
+		}
+	}
+	if p.ShoppingItem != nil {
+		if err := p.ShoppingItem.IsValid(); err != nil {
+			return fmt.Errorf("field ShoppingItem not valid, %w", err)
 		}
 	}
 	return nil
@@ -132,5 +131,8 @@ func (p *YahooGetAuctionItemAuthResp) IsValid() error {
 			return fmt.Errorf("field BidStatus not valid, %w", err)
 		}
 	}
+	return nil
+}
+func (p *YahooGetCategoryTreeReq) IsValid() error {
 	return nil
 }

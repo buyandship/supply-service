@@ -15,11 +15,11 @@ func PostTransactionReviewService(ctx context.Context, req *supply.MercariPostTr
 	hlog.CtxInfof(ctx, "PostTransactionReviewService is called, %+v", req)
 	h := mercari.GetHandler()
 
-	/* 	if config.GlobalServerConfig.Env == "development" {
+	/* 	if config.GlobalServerConfig.Env == "dev" {
 		return nil, bizErr.NotFoundError
 	} */
 
-	/* 	if config.GlobalServerConfig.Env == "development" {
+	/* 	if config.GlobalServerConfig.Env == "dev" {
 		return &mercari.PostTransactionReviewResponse{
 			ReviewStatus: "success",
 			RequestId:    uuid.NewString(),

@@ -16,7 +16,7 @@ func PostMessageService(ctx context.Context, req *supply.MercariPostMessageReq) 
 	hlog.CtxInfof(ctx, "PostMessageService is called, req: %+v", req)
 	h := mercari.GetHandler()
 
-	/* 	if config.GlobalServerConfig.Env == "development" {
+	/* 	if config.GlobalServerConfig.Env == "dev" {
 		return nil, bizErr.ConflictError
 	} */
 

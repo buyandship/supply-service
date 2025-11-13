@@ -9,7 +9,7 @@ on:
       
   push:
     tags:
-      - '*'
+      - 'v*.*.*'
 
 jobs:
   build_and_push_image:
@@ -26,3 +26,37 @@ jobs:
     secrets: inherit
     with:
       TARGET_FOLDER: k8s/supply-service
+
+  upload-swagger-to-s3:
+    runs-on: ubuntu-latest
+    needs: build_and_push_image
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-1
+
+      - name: Get tag name
+        id: tag
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "Tag name: $TAG_NAME"
+
+      - name: Rename swagger.json to tag name
+        run: |
+          cp docs/swagger.json docs/${{ steps.tag.outputs.tag_name }}.json
+          echo "Renamed swagger.json to ${{ steps.tag.outputs.tag_name }}.json"
+
+      - name: Upload to S3
+        run: |
+          aws s3 cp docs/${{ steps.tag.outputs.tag_name }}.json \
+            s3://${{ secrets.S3_BUCKET_NAME }}/swagger-doc/supply-svr/${{ steps.tag.outputs.tag_name }}.json \
+            --content-type application/json
+          echo "Uploaded ${{ steps.tag.outputs.tag_name }}.json to S3"
