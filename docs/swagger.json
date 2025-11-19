@@ -2901,7 +2901,7 @@
                     "type": "integer"
                 },
                 "CategoryId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "CharityOption": {
                     "$ref": "#/definitions/yahoo.CharityOption"
@@ -3886,7 +3886,7 @@
                     "type": "integer"
                 },
                 "SinglePrice": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "type": {
                     "type": "string"

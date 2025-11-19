@@ -334,15 +334,15 @@ type Payment struct {
 
 // ShippingMethod represents shipping method
 type ShippingMethod struct {
-	Type                       string `json:"type,omitempty"`
-	Index                      int    `json:"Index,omitempty"`
-	Name                       string `json:"Name,omitempty"`
-	ServiceCode                int    `json:"ServiceCode,omitempty"`
-	IsOfficialDelivery         bool   `json:"IsOfficialDelivery,omitempty"`
-	IsPrivacyDeliveryAvailable bool   `json:"IsPrivacyDeliveryAvailable"`
-	SinglePrice                int    `json:"SinglePrice"`
-	PriceURL                   string `json:"PriceURL,omitempty"`
-	DeliveryFeeSize            string `json:"DeliveryFeeSize,omitempty"`
+	Type                       string  `json:"type,omitempty"`
+	Index                      int     `json:"Index,omitempty"`
+	Name                       string  `json:"Name,omitempty"`
+	ServiceCode                int     `json:"ServiceCode,omitempty"`
+	IsOfficialDelivery         bool    `json:"IsOfficialDelivery,omitempty"`
+	IsPrivacyDeliveryAvailable bool    `json:"IsPrivacyDeliveryAvailable"`
+	SinglePrice                float64 `json:"SinglePrice"`
+	PriceURL                   string  `json:"PriceURL,omitempty"`
+	DeliveryFeeSize            string  `json:"DeliveryFeeSize,omitempty"`
 }
 
 // Shipping represents shipping information

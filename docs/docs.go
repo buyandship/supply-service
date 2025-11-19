@@ -2912,7 +2912,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "CategoryId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "CharityOption": {
                     "$ref": "#/definitions/yahoo.CharityOption"
@@ -3897,7 +3897,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "SinglePrice": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "type": {
                     "type": "string"

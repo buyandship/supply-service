@@ -175,7 +175,7 @@ type Affiliate struct {
 type AuctionItemListDetail struct {
 	AuctionID        string                `json:"AuctionID,omitempty"`
 	Title            string                `json:"Title,omitempty"`
-	CategoryId       string                `json:"CategoryId,omitempty"`
+	CategoryId       int                   `json:"CategoryId,omitempty"`
 	IsCrossListing   bool                  `json:"IsCrossListing,omitempty"`
 	IsFleaMarket     bool                  `json:"IsFleaMarket,omitempty"`
 	Seller           AuctionItemListSeller `json:"Seller,omitempty"`

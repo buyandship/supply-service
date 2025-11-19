@@ -996,7 +996,7 @@ definitions:
       Bids:
         type: integer
       CategoryId:
-        type: string
+        type: integer
       CharityOption:
         $ref: '#/definitions/yahoo.CharityOption'
       CurrentPrice:
@@ -1655,7 +1655,7 @@ definitions:
       ServiceCode:
         type: integer
       SinglePrice:
-        type: integer
+        type: number
       type:
         type: string
     type: object
