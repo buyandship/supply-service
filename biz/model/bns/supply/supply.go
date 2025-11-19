@@ -8876,24 +8876,24 @@ func (p *YahooGetAuctionItemAuthResp) String() string {
 }
 
 type YahooGetCategoryTreeReq struct {
-	Category    string `thrift:"category,1" json:"category" query:"category"`
-	Adf         string `thrift:"adf,2" json:"adf" query:"adf"`
-	IsFnaviOnly string `thrift:"is_fnavi_only,3" json:"is_fnavi_only" query:"is_fnavi_only"`
+	Category    int32 `thrift:"category,1" json:"category" query:"category"`
+	Adf         int32 `thrift:"adf,2" json:"adf" query:"adf"`
+	IsFnaviOnly int32 `thrift:"is_fnavi_only,3" json:"is_fnavi_only" query:"is_fnavi_only"`
 }
 
 func NewYahooGetCategoryTreeReq() *YahooGetCategoryTreeReq {
 	return &YahooGetCategoryTreeReq{}
 }
 
-func (p *YahooGetCategoryTreeReq) GetCategory() (v string) {
+func (p *YahooGetCategoryTreeReq) GetCategory() (v int32) {
 	return p.Category
 }
 
-func (p *YahooGetCategoryTreeReq) GetAdf() (v string) {
+func (p *YahooGetCategoryTreeReq) GetAdf() (v int32) {
 	return p.Adf
 }
 
-func (p *YahooGetCategoryTreeReq) GetIsFnaviOnly() (v string) {
+func (p *YahooGetCategoryTreeReq) GetIsFnaviOnly() (v int32) {
 	return p.IsFnaviOnly
 }
 
@@ -8923,7 +8923,7 @@ func (p *YahooGetCategoryTreeReq) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -8931,7 +8931,7 @@ func (p *YahooGetCategoryTreeReq) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 2:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -8939,7 +8939,7 @@ func (p *YahooGetCategoryTreeReq) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 3:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -8977,7 +8977,7 @@ ReadStructEndError:
 
 func (p *YahooGetCategoryTreeReq) ReadField1(iprot thrift.TProtocol) error {
 
-	if v, err := iprot.ReadString(); err != nil {
+	if v, err := iprot.ReadI32(); err != nil {
 		return err
 	} else {
 		p.Category = v
@@ -8986,7 +8986,7 @@ func (p *YahooGetCategoryTreeReq) ReadField1(iprot thrift.TProtocol) error {
 }
 func (p *YahooGetCategoryTreeReq) ReadField2(iprot thrift.TProtocol) error {
 
-	if v, err := iprot.ReadString(); err != nil {
+	if v, err := iprot.ReadI32(); err != nil {
 		return err
 	} else {
 		p.Adf = v
@@ -8995,7 +8995,7 @@ func (p *YahooGetCategoryTreeReq) ReadField2(iprot thrift.TProtocol) error {
 }
 func (p *YahooGetCategoryTreeReq) ReadField3(iprot thrift.TProtocol) error {
 
-	if v, err := iprot.ReadString(); err != nil {
+	if v, err := iprot.ReadI32(); err != nil {
 		return err
 	} else {
 		p.IsFnaviOnly = v
@@ -9040,10 +9040,10 @@ WriteStructEndError:
 }
 
 func (p *YahooGetCategoryTreeReq) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("category", thrift.STRING, 1); err != nil {
+	if err = oprot.WriteFieldBegin("category", thrift.I32, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Category); err != nil {
+	if err := oprot.WriteI32(p.Category); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -9057,10 +9057,10 @@ WriteFieldEndError:
 }
 
 func (p *YahooGetCategoryTreeReq) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("adf", thrift.STRING, 2); err != nil {
+	if err = oprot.WriteFieldBegin("adf", thrift.I32, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Adf); err != nil {
+	if err := oprot.WriteI32(p.Adf); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -9074,10 +9074,10 @@ WriteFieldEndError:
 }
 
 func (p *YahooGetCategoryTreeReq) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("is_fnavi_only", thrift.STRING, 3); err != nil {
+	if err = oprot.WriteFieldBegin("is_fnavi_only", thrift.I32, 3); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.IsFnaviOnly); err != nil {
+	if err := oprot.WriteI32(p.IsFnaviOnly); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -9095,6 +9095,1857 @@ func (p *YahooGetCategoryTreeReq) String() string {
 		return "<nil>"
 	}
 	return fmt.Sprintf("YahooGetCategoryTreeReq(%+v)", *p)
+
+}
+
+type YahooSearchAuctionsReq struct {
+	Keyword              string `thrift:"keyword,1" json:"keyword" query:"keyword"`
+	Type                 string `thrift:"type,2" json:"type" query:"type"`
+	Category             int32  `thrift:"category,3" json:"category" query:"category"`
+	ExpectCategory       string `thrift:"expect_category,4" json:"expect_category" query:"expect_category"`
+	Page                 int32  `thrift:"page,5" json:"page" query:"page"`
+	Sort                 string `thrift:"sort,6" json:"sort" query:"sort"`
+	Order                string `thrift:"order,7" json:"order" query:"order"`
+	Store                int32  `thrift:"store,8" json:"store" query:"store"`
+	Aucminprice          int32  `thrift:"aucminprice,9" json:"aucminprice" query:"aucminprice"`
+	Aucmaxprice          int32  `thrift:"aucmaxprice,10" json:"aucmaxprice" query:"aucmaxprice"`
+	AucminBidorbuyPrice  int32  `thrift:"aucmin_bidorbuy_price,11" json:"aucmin_bidorbuy_price" query:"aucmin_bidorbuy_price"`
+	AucmaxBidorbuyPrice  int32  `thrift:"aucmax_bidorbuy_price,12" json:"aucmax_bidorbuy_price" query:"aucmax_bidorbuy_price"`
+	LocCd                int32  `thrift:"loc_cd,13" json:"loc_cd" query:"loc_cd"`
+	Easypayment          int32  `thrift:"easypayment,14" json:"easypayment" query:"easypayment"`
+	New                  int32  `thrift:"new,15" json:"new" query:"new"`
+	Freeshipping         int32  `thrift:"freeshipping,16" json:"freeshipping" query:"freeshipping"`
+	Wrappingicon         int32  `thrift:"wrappingicon,17" json:"wrappingicon" query:"wrappingicon"`
+	Buynow               int32  `thrift:"buynow,18" json:"buynow" query:"buynow"`
+	Thumbnail            int32  `thrift:"thumbnail,19" json:"thumbnail" query:"thumbnail"`
+	Attn                 int32  `thrift:"attn,20" json:"attn" query:"attn"`
+	Point                int32  `thrift:"point,21" json:"point" query:"point"`
+	ItemStatus           int32  `thrift:"item_status,22" json:"item_status" query:"item_status"`
+	Adf                  int32  `thrift:"adf,23" json:"adf" query:"adf"`
+	SellerAucUserID      string `thrift:"seller_auc_user_id,24" json:"seller_auc_user_id" query:"seller_auc_user_id"`
+	F                    string `thrift:"f,25" json:"f" query:"f"`
+	Ngram                int32  `thrift:"ngram,26" json:"ngram" query:"ngram"`
+	Fixed                int32  `thrift:"fixed,27" json:"fixed" query:"fixed"`
+	MinCharity           int32  `thrift:"min_charity,28" json:"min_charity" query:"min_charity"`
+	MaxCharity           int32  `thrift:"max_charity,29" json:"max_charity" query:"max_charity"`
+	MinAffiliate         int32  `thrift:"min_affiliate,30" json:"min_affiliate" query:"min_affiliate"`
+	MaxAffiliate         int32  `thrift:"max_affiliate,31" json:"max_affiliate" query:"max_affiliate"`
+	Timebuf              int32  `thrift:"timebuf,32" json:"timebuf" query:"timebuf"`
+	Ranking              string `thrift:"ranking,33" json:"ranking" query:"ranking"`
+	BlackSellerAucUserID string `thrift:"black_seller_auc_user_id,34" json:"black_seller_auc_user_id" query:"black_seller_auc_user_id"`
+	Featured             string `thrift:"featured,35" json:"featured" query:"featured"`
+	Sort2                string `thrift:"sort2,36" json:"sort2" query:"sort2"`
+	Order2               string `thrift:"order2,37" json:"order2" query:"order2"`
+	MinStart             int32  `thrift:"min_start,38" json:"min_start" query:"min_start"`
+	MaxStart             int32  `thrift:"max_start,39" json:"max_start" query:"max_start"`
+	ExceptShoppingitem   bool   `thrift:"except_shoppingitem,40" json:"except_shoppingitem" query:"except_shoppingitem"`
+}
+
+func NewYahooSearchAuctionsReq() *YahooSearchAuctionsReq {
+	return &YahooSearchAuctionsReq{}
+}
+
+func (p *YahooSearchAuctionsReq) GetKeyword() (v string) {
+	return p.Keyword
+}
+
+func (p *YahooSearchAuctionsReq) GetType() (v string) {
+	return p.Type
+}
+
+func (p *YahooSearchAuctionsReq) GetCategory() (v int32) {
+	return p.Category
+}
+
+func (p *YahooSearchAuctionsReq) GetExpectCategory() (v string) {
+	return p.ExpectCategory
+}
+
+func (p *YahooSearchAuctionsReq) GetPage() (v int32) {
+	return p.Page
+}
+
+func (p *YahooSearchAuctionsReq) GetSort() (v string) {
+	return p.Sort
+}
+
+func (p *YahooSearchAuctionsReq) GetOrder() (v string) {
+	return p.Order
+}
+
+func (p *YahooSearchAuctionsReq) GetStore() (v int32) {
+	return p.Store
+}
+
+func (p *YahooSearchAuctionsReq) GetAucminprice() (v int32) {
+	return p.Aucminprice
+}
+
+func (p *YahooSearchAuctionsReq) GetAucmaxprice() (v int32) {
+	return p.Aucmaxprice
+}
+
+func (p *YahooSearchAuctionsReq) GetAucminBidorbuyPrice() (v int32) {
+	return p.AucminBidorbuyPrice
+}
+
+func (p *YahooSearchAuctionsReq) GetAucmaxBidorbuyPrice() (v int32) {
+	return p.AucmaxBidorbuyPrice
+}
+
+func (p *YahooSearchAuctionsReq) GetLocCd() (v int32) {
+	return p.LocCd
+}
+
+func (p *YahooSearchAuctionsReq) GetEasypayment() (v int32) {
+	return p.Easypayment
+}
+
+func (p *YahooSearchAuctionsReq) GetNew() (v int32) {
+	return p.New
+}
+
+func (p *YahooSearchAuctionsReq) GetFreeshipping() (v int32) {
+	return p.Freeshipping
+}
+
+func (p *YahooSearchAuctionsReq) GetWrappingicon() (v int32) {
+	return p.Wrappingicon
+}
+
+func (p *YahooSearchAuctionsReq) GetBuynow() (v int32) {
+	return p.Buynow
+}
+
+func (p *YahooSearchAuctionsReq) GetThumbnail() (v int32) {
+	return p.Thumbnail
+}
+
+func (p *YahooSearchAuctionsReq) GetAttn() (v int32) {
+	return p.Attn
+}
+
+func (p *YahooSearchAuctionsReq) GetPoint() (v int32) {
+	return p.Point
+}
+
+func (p *YahooSearchAuctionsReq) GetItemStatus() (v int32) {
+	return p.ItemStatus
+}
+
+func (p *YahooSearchAuctionsReq) GetAdf() (v int32) {
+	return p.Adf
+}
+
+func (p *YahooSearchAuctionsReq) GetSellerAucUserID() (v string) {
+	return p.SellerAucUserID
+}
+
+func (p *YahooSearchAuctionsReq) GetF() (v string) {
+	return p.F
+}
+
+func (p *YahooSearchAuctionsReq) GetNgram() (v int32) {
+	return p.Ngram
+}
+
+func (p *YahooSearchAuctionsReq) GetFixed() (v int32) {
+	return p.Fixed
+}
+
+func (p *YahooSearchAuctionsReq) GetMinCharity() (v int32) {
+	return p.MinCharity
+}
+
+func (p *YahooSearchAuctionsReq) GetMaxCharity() (v int32) {
+	return p.MaxCharity
+}
+
+func (p *YahooSearchAuctionsReq) GetMinAffiliate() (v int32) {
+	return p.MinAffiliate
+}
+
+func (p *YahooSearchAuctionsReq) GetMaxAffiliate() (v int32) {
+	return p.MaxAffiliate
+}
+
+func (p *YahooSearchAuctionsReq) GetTimebuf() (v int32) {
+	return p.Timebuf
+}
+
+func (p *YahooSearchAuctionsReq) GetRanking() (v string) {
+	return p.Ranking
+}
+
+func (p *YahooSearchAuctionsReq) GetBlackSellerAucUserID() (v string) {
+	return p.BlackSellerAucUserID
+}
+
+func (p *YahooSearchAuctionsReq) GetFeatured() (v string) {
+	return p.Featured
+}
+
+func (p *YahooSearchAuctionsReq) GetSort2() (v string) {
+	return p.Sort2
+}
+
+func (p *YahooSearchAuctionsReq) GetOrder2() (v string) {
+	return p.Order2
+}
+
+func (p *YahooSearchAuctionsReq) GetMinStart() (v int32) {
+	return p.MinStart
+}
+
+func (p *YahooSearchAuctionsReq) GetMaxStart() (v int32) {
+	return p.MaxStart
+}
+
+func (p *YahooSearchAuctionsReq) GetExceptShoppingitem() (v bool) {
+	return p.ExceptShoppingitem
+}
+
+var fieldIDToName_YahooSearchAuctionsReq = map[int16]string{
+	1:  "keyword",
+	2:  "type",
+	3:  "category",
+	4:  "expect_category",
+	5:  "page",
+	6:  "sort",
+	7:  "order",
+	8:  "store",
+	9:  "aucminprice",
+	10: "aucmaxprice",
+	11: "aucmin_bidorbuy_price",
+	12: "aucmax_bidorbuy_price",
+	13: "loc_cd",
+	14: "easypayment",
+	15: "new",
+	16: "freeshipping",
+	17: "wrappingicon",
+	18: "buynow",
+	19: "thumbnail",
+	20: "attn",
+	21: "point",
+	22: "item_status",
+	23: "adf",
+	24: "seller_auc_user_id",
+	25: "f",
+	26: "ngram",
+	27: "fixed",
+	28: "min_charity",
+	29: "max_charity",
+	30: "min_affiliate",
+	31: "max_affiliate",
+	32: "timebuf",
+	33: "ranking",
+	34: "black_seller_auc_user_id",
+	35: "featured",
+	36: "sort2",
+	37: "order2",
+	38: "min_start",
+	39: "max_start",
+	40: "except_shoppingitem",
+}
+
+func (p *YahooSearchAuctionsReq) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 2:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 3:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField3(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 4:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField4(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 5:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField5(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 6:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField6(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 7:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField7(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 8:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField8(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 9:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField9(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 10:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField10(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 11:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField11(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 12:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField12(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 13:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField13(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 14:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField14(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 15:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField15(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 16:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField16(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 17:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField17(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 18:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField18(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 19:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField19(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 20:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField20(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 21:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField21(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 22:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField22(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 23:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField23(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 24:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField24(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 25:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField25(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 26:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField26(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 27:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField27(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 28:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField28(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 29:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField29(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 30:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField30(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 31:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField31(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 32:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField32(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 33:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField33(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 34:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField34(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 35:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField35(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 36:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField36(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 37:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField37(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 38:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField38(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 39:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField39(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 40:
+			if fieldTypeId == thrift.BOOL {
+				if err = p.ReadField40(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_YahooSearchAuctionsReq[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) ReadField1(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Keyword = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField2(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Type = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField3(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Category = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField4(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.ExpectCategory = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField5(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Page = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField6(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Sort = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField7(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Order = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField8(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Store = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField9(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Aucminprice = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField10(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Aucmaxprice = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField11(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.AucminBidorbuyPrice = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField12(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.AucmaxBidorbuyPrice = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField13(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.LocCd = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField14(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Easypayment = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField15(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.New = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField16(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Freeshipping = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField17(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Wrappingicon = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField18(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Buynow = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField19(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Thumbnail = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField20(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Attn = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField21(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Point = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField22(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.ItemStatus = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField23(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Adf = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField24(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.SellerAucUserID = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField25(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.F = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField26(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Ngram = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField27(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Fixed = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField28(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.MinCharity = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField29(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.MaxCharity = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField30(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.MinAffiliate = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField31(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.MaxAffiliate = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField32(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Timebuf = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField33(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Ranking = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField34(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.BlackSellerAucUserID = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField35(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Featured = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField36(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Sort2 = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField37(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Order2 = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField38(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.MinStart = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField39(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.MaxStart = v
+	}
+	return nil
+}
+func (p *YahooSearchAuctionsReq) ReadField40(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadBool(); err != nil {
+		return err
+	} else {
+		p.ExceptShoppingitem = v
+	}
+	return nil
+}
+
+func (p *YahooSearchAuctionsReq) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("YahooSearchAuctionsReq"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField2(oprot); err != nil {
+			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField3(oprot); err != nil {
+			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
+			goto WriteFieldError
+		}
+		if err = p.writeField5(oprot); err != nil {
+			fieldId = 5
+			goto WriteFieldError
+		}
+		if err = p.writeField6(oprot); err != nil {
+			fieldId = 6
+			goto WriteFieldError
+		}
+		if err = p.writeField7(oprot); err != nil {
+			fieldId = 7
+			goto WriteFieldError
+		}
+		if err = p.writeField8(oprot); err != nil {
+			fieldId = 8
+			goto WriteFieldError
+		}
+		if err = p.writeField9(oprot); err != nil {
+			fieldId = 9
+			goto WriteFieldError
+		}
+		if err = p.writeField10(oprot); err != nil {
+			fieldId = 10
+			goto WriteFieldError
+		}
+		if err = p.writeField11(oprot); err != nil {
+			fieldId = 11
+			goto WriteFieldError
+		}
+		if err = p.writeField12(oprot); err != nil {
+			fieldId = 12
+			goto WriteFieldError
+		}
+		if err = p.writeField13(oprot); err != nil {
+			fieldId = 13
+			goto WriteFieldError
+		}
+		if err = p.writeField14(oprot); err != nil {
+			fieldId = 14
+			goto WriteFieldError
+		}
+		if err = p.writeField15(oprot); err != nil {
+			fieldId = 15
+			goto WriteFieldError
+		}
+		if err = p.writeField16(oprot); err != nil {
+			fieldId = 16
+			goto WriteFieldError
+		}
+		if err = p.writeField17(oprot); err != nil {
+			fieldId = 17
+			goto WriteFieldError
+		}
+		if err = p.writeField18(oprot); err != nil {
+			fieldId = 18
+			goto WriteFieldError
+		}
+		if err = p.writeField19(oprot); err != nil {
+			fieldId = 19
+			goto WriteFieldError
+		}
+		if err = p.writeField20(oprot); err != nil {
+			fieldId = 20
+			goto WriteFieldError
+		}
+		if err = p.writeField21(oprot); err != nil {
+			fieldId = 21
+			goto WriteFieldError
+		}
+		if err = p.writeField22(oprot); err != nil {
+			fieldId = 22
+			goto WriteFieldError
+		}
+		if err = p.writeField23(oprot); err != nil {
+			fieldId = 23
+			goto WriteFieldError
+		}
+		if err = p.writeField24(oprot); err != nil {
+			fieldId = 24
+			goto WriteFieldError
+		}
+		if err = p.writeField25(oprot); err != nil {
+			fieldId = 25
+			goto WriteFieldError
+		}
+		if err = p.writeField26(oprot); err != nil {
+			fieldId = 26
+			goto WriteFieldError
+		}
+		if err = p.writeField27(oprot); err != nil {
+			fieldId = 27
+			goto WriteFieldError
+		}
+		if err = p.writeField28(oprot); err != nil {
+			fieldId = 28
+			goto WriteFieldError
+		}
+		if err = p.writeField29(oprot); err != nil {
+			fieldId = 29
+			goto WriteFieldError
+		}
+		if err = p.writeField30(oprot); err != nil {
+			fieldId = 30
+			goto WriteFieldError
+		}
+		if err = p.writeField31(oprot); err != nil {
+			fieldId = 31
+			goto WriteFieldError
+		}
+		if err = p.writeField32(oprot); err != nil {
+			fieldId = 32
+			goto WriteFieldError
+		}
+		if err = p.writeField33(oprot); err != nil {
+			fieldId = 33
+			goto WriteFieldError
+		}
+		if err = p.writeField34(oprot); err != nil {
+			fieldId = 34
+			goto WriteFieldError
+		}
+		if err = p.writeField35(oprot); err != nil {
+			fieldId = 35
+			goto WriteFieldError
+		}
+		if err = p.writeField36(oprot); err != nil {
+			fieldId = 36
+			goto WriteFieldError
+		}
+		if err = p.writeField37(oprot); err != nil {
+			fieldId = 37
+			goto WriteFieldError
+		}
+		if err = p.writeField38(oprot); err != nil {
+			fieldId = 38
+			goto WriteFieldError
+		}
+		if err = p.writeField39(oprot); err != nil {
+			fieldId = 39
+			goto WriteFieldError
+		}
+		if err = p.writeField40(oprot); err != nil {
+			fieldId = 40
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("keyword", thrift.STRING, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Keyword); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField2(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("type", thrift.STRING, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Type); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField3(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("category", thrift.I32, 3); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.Category); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField4(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("expect_category", thrift.STRING, 4); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.ExpectCategory); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField5(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("page", thrift.I32, 5); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.Page); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField6(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("sort", thrift.STRING, 6); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Sort); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 6 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 6 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField7(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("order", thrift.STRING, 7); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Order); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 7 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 7 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField8(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("store", thrift.I32, 8); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.Store); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField9(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("aucminprice", thrift.I32, 9); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.Aucminprice); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField10(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("aucmaxprice", thrift.I32, 10); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.Aucmaxprice); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField11(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("aucmin_bidorbuy_price", thrift.I32, 11); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.AucminBidorbuyPrice); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 11 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 11 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField12(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("aucmax_bidorbuy_price", thrift.I32, 12); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.AucmaxBidorbuyPrice); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 12 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 12 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField13(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("loc_cd", thrift.I32, 13); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.LocCd); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 13 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 13 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField14(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("easypayment", thrift.I32, 14); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.Easypayment); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 14 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 14 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField15(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("new", thrift.I32, 15); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.New); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 15 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 15 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField16(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("freeshipping", thrift.I32, 16); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.Freeshipping); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 16 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 16 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField17(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("wrappingicon", thrift.I32, 17); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.Wrappingicon); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 17 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 17 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField18(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("buynow", thrift.I32, 18); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.Buynow); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 18 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 18 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField19(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("thumbnail", thrift.I32, 19); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.Thumbnail); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 19 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 19 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField20(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("attn", thrift.I32, 20); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.Attn); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 20 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 20 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField21(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("point", thrift.I32, 21); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.Point); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 21 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 21 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField22(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("item_status", thrift.I32, 22); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.ItemStatus); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 22 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 22 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField23(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("adf", thrift.I32, 23); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.Adf); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 23 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 23 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField24(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("seller_auc_user_id", thrift.STRING, 24); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.SellerAucUserID); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 24 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 24 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField25(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("f", thrift.STRING, 25); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.F); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 25 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 25 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField26(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("ngram", thrift.I32, 26); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.Ngram); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 26 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 26 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField27(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("fixed", thrift.I32, 27); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.Fixed); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 27 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 27 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField28(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("min_charity", thrift.I32, 28); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.MinCharity); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 28 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 28 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField29(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("max_charity", thrift.I32, 29); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.MaxCharity); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 29 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 29 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField30(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("min_affiliate", thrift.I32, 30); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.MinAffiliate); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 30 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 30 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField31(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("max_affiliate", thrift.I32, 31); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.MaxAffiliate); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 31 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 31 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField32(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("timebuf", thrift.I32, 32); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.Timebuf); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 32 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 32 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField33(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("ranking", thrift.STRING, 33); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Ranking); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 33 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 33 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField34(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("black_seller_auc_user_id", thrift.STRING, 34); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.BlackSellerAucUserID); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 34 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 34 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField35(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("featured", thrift.STRING, 35); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Featured); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 35 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 35 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField36(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("sort2", thrift.STRING, 36); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Sort2); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 36 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 36 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField37(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("order2", thrift.STRING, 37); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Order2); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 37 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 37 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField38(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("min_start", thrift.I32, 38); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.MinStart); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 38 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 38 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField39(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("max_start", thrift.I32, 39); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.MaxStart); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 39 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 39 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) writeField40(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("except_shoppingitem", thrift.BOOL, 40); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteBool(p.ExceptShoppingitem); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 40 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 40 end error: ", p), err)
+}
+
+func (p *YahooSearchAuctionsReq) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("YahooSearchAuctionsReq(%+v)", *p)
 
 }
 
@@ -9140,10 +10991,10 @@ type SupplyService interface {
 	YahooGetTransactionService(ctx context.Context, req *YahooGetTransactionReq) (r string, err error)
 	// YahooGetTransactionsResp YahooGetTransactionsService(1: YahooGetTransactionsReq req) (api.get="/v1/supplysrv/internal/yahoo/transactions")
 	YahooGetAuctionItemService(ctx context.Context, req *YahooGetAuctionItemReq) (r string, err error)
-
-	YahooGetAuctionItemAuthService(ctx context.Context, req *YahooGetAuctionItemAuthReq) (r *YahooGetAuctionItemResp, err error)
-
+	// YahooGetAuctionItemResp YahooGetAuctionItemAuthService(1: YahooGetAuctionItemAuthReq req) (api.get="/v1/supplysrv/internal/yahoo/auctionItemAuth")
 	YahooGetCategoryTreeService(ctx context.Context, req *YahooGetCategoryTreeReq) (r string, err error)
+
+	YahooSearchAuctionsService(ctx context.Context, req *YahooSearchAuctionsReq) (r string, err error)
 }
 
 type SupplyServiceClient struct {
@@ -9356,20 +11207,20 @@ func (p *SupplyServiceClient) YahooGetAuctionItemService(ctx context.Context, re
 	}
 	return _result.GetSuccess(), nil
 }
-func (p *SupplyServiceClient) YahooGetAuctionItemAuthService(ctx context.Context, req *YahooGetAuctionItemAuthReq) (r *YahooGetAuctionItemResp, err error) {
-	var _args SupplyServiceYahooGetAuctionItemAuthServiceArgs
-	_args.Req = req
-	var _result SupplyServiceYahooGetAuctionItemAuthServiceResult
-	if err = p.Client_().Call(ctx, "YahooGetAuctionItemAuthService", &_args, &_result); err != nil {
-		return
-	}
-	return _result.GetSuccess(), nil
-}
 func (p *SupplyServiceClient) YahooGetCategoryTreeService(ctx context.Context, req *YahooGetCategoryTreeReq) (r string, err error) {
 	var _args SupplyServiceYahooGetCategoryTreeServiceArgs
 	_args.Req = req
 	var _result SupplyServiceYahooGetCategoryTreeServiceResult
 	if err = p.Client_().Call(ctx, "YahooGetCategoryTreeService", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+func (p *SupplyServiceClient) YahooSearchAuctionsService(ctx context.Context, req *YahooSearchAuctionsReq) (r string, err error) {
+	var _args SupplyServiceYahooSearchAuctionsServiceArgs
+	_args.Req = req
+	var _result SupplyServiceYahooSearchAuctionsServiceResult
+	if err = p.Client_().Call(ctx, "YahooSearchAuctionsService", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
@@ -9416,8 +11267,8 @@ func NewSupplyServiceProcessor(handler SupplyService) *SupplyServiceProcessor {
 	self.AddToProcessorMap("YahooPlaceBidService", &supplyServiceProcessorYahooPlaceBidService{handler: handler})
 	self.AddToProcessorMap("YahooGetTransactionService", &supplyServiceProcessorYahooGetTransactionService{handler: handler})
 	self.AddToProcessorMap("YahooGetAuctionItemService", &supplyServiceProcessorYahooGetAuctionItemService{handler: handler})
-	self.AddToProcessorMap("YahooGetAuctionItemAuthService", &supplyServiceProcessorYahooGetAuctionItemAuthService{handler: handler})
 	self.AddToProcessorMap("YahooGetCategoryTreeService", &supplyServiceProcessorYahooGetCategoryTreeService{handler: handler})
+	self.AddToProcessorMap("YahooSearchAuctionsService", &supplyServiceProcessorYahooSearchAuctionsService{handler: handler})
 	return self
 }
 func (p *SupplyServiceProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -10446,54 +12297,6 @@ func (p *supplyServiceProcessorYahooGetAuctionItemService) Process(ctx context.C
 	return true, err
 }
 
-type supplyServiceProcessorYahooGetAuctionItemAuthService struct {
-	handler SupplyService
-}
-
-func (p *supplyServiceProcessorYahooGetAuctionItemAuthService) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := SupplyServiceYahooGetAuctionItemAuthServiceArgs{}
-	if err = args.Read(iprot); err != nil {
-		iprot.ReadMessageEnd()
-		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("YahooGetAuctionItemAuthService", thrift.EXCEPTION, seqId)
-		x.Write(oprot)
-		oprot.WriteMessageEnd()
-		oprot.Flush(ctx)
-		return false, err
-	}
-
-	iprot.ReadMessageEnd()
-	var err2 error
-	result := SupplyServiceYahooGetAuctionItemAuthServiceResult{}
-	var retval *YahooGetAuctionItemResp
-	if retval, err2 = p.handler.YahooGetAuctionItemAuthService(ctx, args.Req); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing YahooGetAuctionItemAuthService: "+err2.Error())
-		oprot.WriteMessageBegin("YahooGetAuctionItemAuthService", thrift.EXCEPTION, seqId)
-		x.Write(oprot)
-		oprot.WriteMessageEnd()
-		oprot.Flush(ctx)
-		return true, err2
-	} else {
-		result.Success = retval
-	}
-	if err2 = oprot.WriteMessageBegin("YahooGetAuctionItemAuthService", thrift.REPLY, seqId); err2 != nil {
-		err = err2
-	}
-	if err2 = result.Write(oprot); err == nil && err2 != nil {
-		err = err2
-	}
-	if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
-		err = err2
-	}
-	if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
-		err = err2
-	}
-	if err != nil {
-		return
-	}
-	return true, err
-}
-
 type supplyServiceProcessorYahooGetCategoryTreeService struct {
 	handler SupplyService
 }
@@ -10525,6 +12328,54 @@ func (p *supplyServiceProcessorYahooGetCategoryTreeService) Process(ctx context.
 		result.Success = &retval
 	}
 	if err2 = oprot.WriteMessageBegin("YahooGetCategoryTreeService", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 = result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
+}
+
+type supplyServiceProcessorYahooSearchAuctionsService struct {
+	handler SupplyService
+}
+
+func (p *supplyServiceProcessorYahooSearchAuctionsService) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := SupplyServiceYahooSearchAuctionsServiceArgs{}
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+		oprot.WriteMessageBegin("YahooSearchAuctionsService", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return false, err
+	}
+
+	iprot.ReadMessageEnd()
+	var err2 error
+	result := SupplyServiceYahooSearchAuctionsServiceResult{}
+	var retval string
+	if retval, err2 = p.handler.YahooSearchAuctionsService(ctx, args.Req); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing YahooSearchAuctionsService: "+err2.Error())
+		oprot.WriteMessageBegin("YahooSearchAuctionsService", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return true, err2
+	} else {
+		result.Success = &retval
+	}
+	if err2 = oprot.WriteMessageBegin("YahooSearchAuctionsService", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -16270,292 +18121,6 @@ func (p *SupplyServiceYahooGetAuctionItemServiceResult) String() string {
 
 }
 
-type SupplyServiceYahooGetAuctionItemAuthServiceArgs struct {
-	Req *YahooGetAuctionItemAuthReq `thrift:"req,1"`
-}
-
-func NewSupplyServiceYahooGetAuctionItemAuthServiceArgs() *SupplyServiceYahooGetAuctionItemAuthServiceArgs {
-	return &SupplyServiceYahooGetAuctionItemAuthServiceArgs{}
-}
-
-var SupplyServiceYahooGetAuctionItemAuthServiceArgs_Req_DEFAULT *YahooGetAuctionItemAuthReq
-
-func (p *SupplyServiceYahooGetAuctionItemAuthServiceArgs) GetReq() (v *YahooGetAuctionItemAuthReq) {
-	if !p.IsSetReq() {
-		return SupplyServiceYahooGetAuctionItemAuthServiceArgs_Req_DEFAULT
-	}
-	return p.Req
-}
-
-var fieldIDToName_SupplyServiceYahooGetAuctionItemAuthServiceArgs = map[int16]string{
-	1: "req",
-}
-
-func (p *SupplyServiceYahooGetAuctionItemAuthServiceArgs) IsSetReq() bool {
-	return p.Req != nil
-}
-
-func (p *SupplyServiceYahooGetAuctionItemAuthServiceArgs) Read(iprot thrift.TProtocol) (err error) {
-
-	var fieldTypeId thrift.TType
-	var fieldId int16
-
-	if _, err = iprot.ReadStructBegin(); err != nil {
-		goto ReadStructBeginError
-	}
-
-	for {
-		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
-		if err != nil {
-			goto ReadFieldBeginError
-		}
-		if fieldTypeId == thrift.STOP {
-			break
-		}
-
-		switch fieldId {
-		case 1:
-			if fieldTypeId == thrift.STRUCT {
-				if err = p.ReadField1(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		default:
-			if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		}
-		if err = iprot.ReadFieldEnd(); err != nil {
-			goto ReadFieldEndError
-		}
-	}
-	if err = iprot.ReadStructEnd(); err != nil {
-		goto ReadStructEndError
-	}
-
-	return nil
-ReadStructBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
-ReadFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
-ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_SupplyServiceYahooGetAuctionItemAuthServiceArgs[fieldId]), err)
-SkipFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
-
-ReadFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
-ReadStructEndError:
-	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-}
-
-func (p *SupplyServiceYahooGetAuctionItemAuthServiceArgs) ReadField1(iprot thrift.TProtocol) error {
-	p.Req = NewYahooGetAuctionItemAuthReq()
-	if err := p.Req.Read(iprot); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (p *SupplyServiceYahooGetAuctionItemAuthServiceArgs) Write(oprot thrift.TProtocol) (err error) {
-	var fieldId int16
-	if err = oprot.WriteStructBegin("YahooGetAuctionItemAuthService_args"); err != nil {
-		goto WriteStructBeginError
-	}
-	if p != nil {
-		if err = p.writeField1(oprot); err != nil {
-			fieldId = 1
-			goto WriteFieldError
-		}
-	}
-	if err = oprot.WriteFieldStop(); err != nil {
-		goto WriteFieldStopError
-	}
-	if err = oprot.WriteStructEnd(); err != nil {
-		goto WriteStructEndError
-	}
-	return nil
-WriteStructBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
-WriteFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
-WriteFieldStopError:
-	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
-WriteStructEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
-}
-
-func (p *SupplyServiceYahooGetAuctionItemAuthServiceArgs) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := p.Req.Write(oprot); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
-}
-
-func (p *SupplyServiceYahooGetAuctionItemAuthServiceArgs) String() string {
-	if p == nil {
-		return "<nil>"
-	}
-	return fmt.Sprintf("SupplyServiceYahooGetAuctionItemAuthServiceArgs(%+v)", *p)
-
-}
-
-type SupplyServiceYahooGetAuctionItemAuthServiceResult struct {
-	Success *YahooGetAuctionItemResp `thrift:"success,0,optional"`
-}
-
-func NewSupplyServiceYahooGetAuctionItemAuthServiceResult() *SupplyServiceYahooGetAuctionItemAuthServiceResult {
-	return &SupplyServiceYahooGetAuctionItemAuthServiceResult{}
-}
-
-var SupplyServiceYahooGetAuctionItemAuthServiceResult_Success_DEFAULT *YahooGetAuctionItemResp
-
-func (p *SupplyServiceYahooGetAuctionItemAuthServiceResult) GetSuccess() (v *YahooGetAuctionItemResp) {
-	if !p.IsSetSuccess() {
-		return SupplyServiceYahooGetAuctionItemAuthServiceResult_Success_DEFAULT
-	}
-	return p.Success
-}
-
-var fieldIDToName_SupplyServiceYahooGetAuctionItemAuthServiceResult = map[int16]string{
-	0: "success",
-}
-
-func (p *SupplyServiceYahooGetAuctionItemAuthServiceResult) IsSetSuccess() bool {
-	return p.Success != nil
-}
-
-func (p *SupplyServiceYahooGetAuctionItemAuthServiceResult) Read(iprot thrift.TProtocol) (err error) {
-
-	var fieldTypeId thrift.TType
-	var fieldId int16
-
-	if _, err = iprot.ReadStructBegin(); err != nil {
-		goto ReadStructBeginError
-	}
-
-	for {
-		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
-		if err != nil {
-			goto ReadFieldBeginError
-		}
-		if fieldTypeId == thrift.STOP {
-			break
-		}
-
-		switch fieldId {
-		case 0:
-			if fieldTypeId == thrift.STRUCT {
-				if err = p.ReadField0(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		default:
-			if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		}
-		if err = iprot.ReadFieldEnd(); err != nil {
-			goto ReadFieldEndError
-		}
-	}
-	if err = iprot.ReadStructEnd(); err != nil {
-		goto ReadStructEndError
-	}
-
-	return nil
-ReadStructBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
-ReadFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
-ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_SupplyServiceYahooGetAuctionItemAuthServiceResult[fieldId]), err)
-SkipFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
-
-ReadFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
-ReadStructEndError:
-	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-}
-
-func (p *SupplyServiceYahooGetAuctionItemAuthServiceResult) ReadField0(iprot thrift.TProtocol) error {
-	p.Success = NewYahooGetAuctionItemResp()
-	if err := p.Success.Read(iprot); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (p *SupplyServiceYahooGetAuctionItemAuthServiceResult) Write(oprot thrift.TProtocol) (err error) {
-	var fieldId int16
-	if err = oprot.WriteStructBegin("YahooGetAuctionItemAuthService_result"); err != nil {
-		goto WriteStructBeginError
-	}
-	if p != nil {
-		if err = p.writeField0(oprot); err != nil {
-			fieldId = 0
-			goto WriteFieldError
-		}
-	}
-	if err = oprot.WriteFieldStop(); err != nil {
-		goto WriteFieldStopError
-	}
-	if err = oprot.WriteStructEnd(); err != nil {
-		goto WriteStructEndError
-	}
-	return nil
-WriteStructBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
-WriteFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
-WriteFieldStopError:
-	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
-WriteStructEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
-}
-
-func (p *SupplyServiceYahooGetAuctionItemAuthServiceResult) writeField0(oprot thrift.TProtocol) (err error) {
-	if p.IsSetSuccess() {
-		if err = oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := p.Success.Write(oprot); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 0 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
-}
-
-func (p *SupplyServiceYahooGetAuctionItemAuthServiceResult) String() string {
-	if p == nil {
-		return "<nil>"
-	}
-	return fmt.Sprintf("SupplyServiceYahooGetAuctionItemAuthServiceResult(%+v)", *p)
-
-}
-
 type SupplyServiceYahooGetCategoryTreeServiceArgs struct {
 	Req *YahooGetCategoryTreeReq `thrift:"req,1"`
 }
@@ -16841,5 +18406,293 @@ func (p *SupplyServiceYahooGetCategoryTreeServiceResult) String() string {
 		return "<nil>"
 	}
 	return fmt.Sprintf("SupplyServiceYahooGetCategoryTreeServiceResult(%+v)", *p)
+
+}
+
+type SupplyServiceYahooSearchAuctionsServiceArgs struct {
+	Req *YahooSearchAuctionsReq `thrift:"req,1"`
+}
+
+func NewSupplyServiceYahooSearchAuctionsServiceArgs() *SupplyServiceYahooSearchAuctionsServiceArgs {
+	return &SupplyServiceYahooSearchAuctionsServiceArgs{}
+}
+
+var SupplyServiceYahooSearchAuctionsServiceArgs_Req_DEFAULT *YahooSearchAuctionsReq
+
+func (p *SupplyServiceYahooSearchAuctionsServiceArgs) GetReq() (v *YahooSearchAuctionsReq) {
+	if !p.IsSetReq() {
+		return SupplyServiceYahooSearchAuctionsServiceArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+var fieldIDToName_SupplyServiceYahooSearchAuctionsServiceArgs = map[int16]string{
+	1: "req",
+}
+
+func (p *SupplyServiceYahooSearchAuctionsServiceArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *SupplyServiceYahooSearchAuctionsServiceArgs) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_SupplyServiceYahooSearchAuctionsServiceArgs[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *SupplyServiceYahooSearchAuctionsServiceArgs) ReadField1(iprot thrift.TProtocol) error {
+	p.Req = NewYahooSearchAuctionsReq()
+	if err := p.Req.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *SupplyServiceYahooSearchAuctionsServiceArgs) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("YahooSearchAuctionsService_args"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *SupplyServiceYahooSearchAuctionsServiceArgs) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.Req.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *SupplyServiceYahooSearchAuctionsServiceArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SupplyServiceYahooSearchAuctionsServiceArgs(%+v)", *p)
+
+}
+
+type SupplyServiceYahooSearchAuctionsServiceResult struct {
+	Success *string `thrift:"success,0,optional"`
+}
+
+func NewSupplyServiceYahooSearchAuctionsServiceResult() *SupplyServiceYahooSearchAuctionsServiceResult {
+	return &SupplyServiceYahooSearchAuctionsServiceResult{}
+}
+
+var SupplyServiceYahooSearchAuctionsServiceResult_Success_DEFAULT string
+
+func (p *SupplyServiceYahooSearchAuctionsServiceResult) GetSuccess() (v string) {
+	if !p.IsSetSuccess() {
+		return SupplyServiceYahooSearchAuctionsServiceResult_Success_DEFAULT
+	}
+	return *p.Success
+}
+
+var fieldIDToName_SupplyServiceYahooSearchAuctionsServiceResult = map[int16]string{
+	0: "success",
+}
+
+func (p *SupplyServiceYahooSearchAuctionsServiceResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *SupplyServiceYahooSearchAuctionsServiceResult) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 0:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField0(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_SupplyServiceYahooSearchAuctionsServiceResult[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *SupplyServiceYahooSearchAuctionsServiceResult) ReadField0(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Success = &v
+	}
+	return nil
+}
+
+func (p *SupplyServiceYahooSearchAuctionsServiceResult) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("YahooSearchAuctionsService_result"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField0(oprot); err != nil {
+			fieldId = 0
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *SupplyServiceYahooSearchAuctionsServiceResult) writeField0(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSuccess() {
+		if err = oprot.WriteFieldBegin("success", thrift.STRING, 0); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Success); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
+}
+
+func (p *SupplyServiceYahooSearchAuctionsServiceResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SupplyServiceYahooSearchAuctionsServiceResult(%+v)", *p)
 
 }

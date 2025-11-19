@@ -10,7 +10,7 @@ import (
 
 func GetCategoryTreeService(ctx context.Context, req *supply.YahooGetCategoryTreeReq) (*model.Category, error) {
 	client := yahoo.GetClient()
-	resp, err := client.MockGetCategoryTree(ctx, req)
+	resp, err := client.GetCategoryTree(ctx, req)
 	if err != nil {
 		return nil, err
 	}

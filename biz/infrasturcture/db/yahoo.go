@@ -57,9 +57,10 @@ func (h *H) UpdateBuyoutBidRequest(ctx context.Context, order *yahoo.BidRequest)
 	}
 
 	if err := tx.Create(&yahoo.YahooTransaction{
-		BidRequestID: order.OrderID,
-		Price:        order.MaxBid,
-		Status:       order.Status, // TODO: transaction statu
+		BidRequestID:  order.OrderID,
+		Price:         order.MaxBid,
+		Status:        order.Status, // TODO: transaction statu
+		TransactionID: order.TransactionID,
 	}).Error; err != nil {
 		tx.Rollback()
 		return err

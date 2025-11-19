@@ -6,22 +6,31 @@ import (
 	"github.com/buyandship/supply-svr/biz/infrasturcture/yahoo"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 	model "github.com/buyandship/supply-svr/biz/model/yahoo"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
-func GetTransactionService(ctx context.Context, req *supply.YahooGetTransactionReq) (*model.Transaction, error) {
+func GetTransactionsService(ctx context.Context, req *supply.YahooGetTransactionsReq) ([]*model.Transaction, error) {
+	hlog.CtxInfof(ctx, "GetTransactionService: %+v", req)
 	yahooClient := yahoo.GetClient()
-
 	// get transaction id list with order id
-
 	// TODO: get bulk transaction
-	tx, err := yahooClient.MockGetTransaction(ctx, req, "account123") // TODO: get yahoo account
+	tx, err := yahooClient.GetTransactions(ctx, req) // TODO: get yahoo account
 	if err != nil {
 		return nil, err
 	}
 
-	resp := &model.Transaction{
-		TransactionID: tx.TransactionID,
+	transactions := make([]*model.Transaction, 0)
+	for _, tx := range tx.Transactions {
+		transactions = append(transactions, &model.Transaction{
+			TransactionID:   tx.TransactionID,
+			YsRefID:         tx.YsRefID,
+			AuctionID:       tx.AuctionID,
+			CurrentPrice:    tx.CurrentPrice,
+			TransactionType: tx.TransactionType,
+			Status:          tx.Status,
+			ReqPrice:        tx.ReqPrice,
+		})
 	}
 
-	return resp, nil
+	return transactions, nil
 }

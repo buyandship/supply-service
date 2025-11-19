@@ -255,10 +255,53 @@ struct YahooGetAuctionItemAuthResp {
 }
 
 struct YahooGetCategoryTreeReq {
-    1: string category (api.query="category")
-    2: string adf (api.query="adf")
-    3: string is_fnavi_only (api.query="is_fnavi_only")
+    1: i32 category (api.query="category")
+    2: i32 adf (api.query="adf")
+    3: i32 is_fnavi_only (api.query="is_fnavi_only")
 }
+
+struct YahooSearchAuctionsReq {
+    1: string keyword (api.query="keyword")
+    2: string type (api.query="type")
+    3: i32 category (api.query="category")
+    4: string expect_category (api.query="expect_category")
+    5: i32 page (api.query="page")
+    6: string sort (api.query="sort")
+    7: string order (api.query="order")
+    8: i32 store (api.query="store")
+    9: i32 aucminprice (api.query="aucminprice")
+    10: i32 aucmaxprice (api.query="aucmaxprice")
+    11: i32 aucmin_bidorbuy_price (api.query="aucmin_bidorbuy_price")
+    12: i32 aucmax_bidorbuy_price (api.query="aucmax_bidorbuy_price")
+    13: i32 loc_cd (api.query="loc_cd")
+    14: i32 easypayment (api.query="easypayment")
+    15: i32 new (api.query="new")
+    16: i32 freeshipping (api.query="freeshipping")
+    17: i32 wrappingicon (api.query="wrappingicon")
+    18: i32 buynow (api.query="buynow")
+    19: i32 thumbnail (api.query="thumbnail")
+    20: i32 attn (api.query="attn")
+    21: i32 point (api.query="point")
+    22: i32 item_status (api.query="item_status")
+    23: i32 adf (api.query="adf")
+    24: string seller_auc_user_id (api.query="seller_auc_user_id")
+    25: string f (api.query="f")
+    26: i32 ngram (api.query="ngram")
+    27: i32 fixed (api.query="fixed")
+    28: i32 min_charity (api.query="min_charity")
+    29: i32 max_charity (api.query="max_charity")
+    30: i32 min_affiliate (api.query="min_affiliate")
+    31: i32 max_affiliate (api.query="max_affiliate")
+    32: i32 timebuf (api.query="timebuf")
+    33: string ranking (api.query="ranking")
+    34: string black_seller_auc_user_id (api.query="black_seller_auc_user_id")
+    35: string featured (api.query="featured")
+    36: string sort2 (api.query="sort2")
+    37: string order2 (api.query="order2")
+    38: i32 min_start (api.query="min_start")
+    39: i32 max_start (api.query="max_start")
+    40: bool except_shoppingitem (api.query="except_shoppingitem")
+} 
 
 service SupplyService {
     string MercariGetItemService(1: MercariGetItemReq req) (api.get="/v1/supplysrv/internal/mercari/item");
@@ -287,6 +330,7 @@ service SupplyService {
     string YahooGetTransactionService(1: YahooGetTransactionReq req) (api.get="/v1/supplysrv/internal/yahoo/transaction")
     // YahooGetTransactionsResp YahooGetTransactionsService(1: YahooGetTransactionsReq req) (api.get="/v1/supplysrv/internal/yahoo/transactions")
     string YahooGetAuctionItemService(1: YahooGetAuctionItemReq req) (api.get="/v1/supplysrv/internal/yahoo/auctionItem")
-    YahooGetAuctionItemResp YahooGetAuctionItemAuthService(1: YahooGetAuctionItemAuthReq req) (api.get="/v1/supplysrv/internal/yahoo/auctionItemAuth")
+    // YahooGetAuctionItemResp YahooGetAuctionItemAuthService(1: YahooGetAuctionItemAuthReq req) (api.get="/v1/supplysrv/internal/yahoo/auctionItemAuth")
     string YahooGetCategoryTreeService(1: YahooGetCategoryTreeReq req) (api.get="/v1/supplysrv/internal/yahoo/categoryTree")
+    string YahooSearchAuctionsService(1: YahooSearchAuctionsReq req) (api.get="/v1/supplysrv/internal/yahoo/search")
 }

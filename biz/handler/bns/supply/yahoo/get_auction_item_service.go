@@ -9,7 +9,7 @@ import (
 
 func GetAuctionItemService(ctx context.Context, req *supply.YahooGetAuctionItemReq) (*yahoo.AuctionItemDetail, error) {
 	client := yahoo.GetClient()
-	auctionItemResp, err := client.MockGetAuctionItem(ctx, yahoo.AuctionItemRequest{AuctionID: req.AuctionID})
+	auctionItemResp, err := client.GetAuctionItemAuth(ctx, yahoo.AuctionItemRequest{AuctionID: req.AuctionID}, "chkyj_cp_by4d1vej")
 	if err != nil {
 		return nil, err
 	}

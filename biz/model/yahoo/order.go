@@ -12,6 +12,8 @@ type BidRequest struct {
 	Partial      bool   `gorm:"column:partial"`
 	Status       string `gorm:"column:status"`
 	ErrorMessage string `gorm:"column:error_message"`
+
+	TransactionID string `gorm:"-"`
 }
 
 func (o *BidRequest) TableName() string {
@@ -20,10 +22,11 @@ func (o *BidRequest) TableName() string {
 
 type YahooTransaction struct {
 	gorm.Model
-	BidRequestID string `gorm:"column:bid_request_id"`
-	Price        int64  `gorm:"column:price"`
-	Status       string `gorm:"column:status"`
-	ErrorMessage string `gorm:"column:error_message"`
+	BidRequestID  string `gorm:"column:bid_request_id"`
+	TransactionID string `gorm:"column:transaction_id"`
+	Price         int64  `gorm:"column:price"`
+	Status        string `gorm:"column:status"`
+	ErrorMessage  string `gorm:"column:error_message"`
 }
 
 func (o *YahooTransaction) TableName() string {

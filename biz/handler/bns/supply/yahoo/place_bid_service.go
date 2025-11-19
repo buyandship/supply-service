@@ -59,21 +59,40 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 	client := yahoo.GetClient()
 
 	// get auction item
-	auctionItemResp, err := client.MockGetAuctionItem(ctx, yahoo.AuctionItemRequest{AuctionID: req.AuctionID})
+	auctionItemResp, err := client.GetAuctionItem(ctx, yahoo.AuctionItemRequest{AuctionID: req.AuctionID})
 	if err != nil {
 		// Auction item not found
-		return nil, err
+		return nil, bizErr.BizError{
+			Status:  consts.StatusNotFound,
+			ErrCode: consts.StatusNotFound,
+			ErrMsg:  "get auction item failed",
+		}
 	}
 	// TODO: validation.
 	item := auctionItemResp.ResultSet.Result
-	if item.Status != "OPEN" {
+	if item.Status != "open" {
 		// TODO: return Auction Item is not available
+		return nil, bizErr.BizError{
+			Status:  consts.StatusUnprocessableEntity,
+			ErrCode: consts.StatusUnprocessableEntity, // TODO: define error code
+			ErrMsg:  "The auction item is not available",
+		}
 	}
 	if req.TransactionType == "BUYOUT" && req.Price != int32(item.Bidorbuy) {
 		// TODO: return Request price is not same as Buyout price
+		return nil, bizErr.BizError{
+			Status:  consts.StatusUnprocessableEntity,
+			ErrCode: consts.StatusUnprocessableEntity, // TODO: define error code
+			ErrMsg:  "The request price is not same as Buyout price",
+		}
 	}
 	if !req.Partial && item.Quantity < int(req.Quantity) {
 		// TODO: Requested Quantity is not able to fulfil
+		return nil, bizErr.BizError{
+			Status:  consts.StatusUnprocessableEntity,
+			ErrCode: consts.StatusUnprocessableEntity, // TODO: define error code
+			ErrMsg:  "The requested quantity is not able to fulfil",
+		}
 	}
 
 	// save order into database
@@ -95,8 +114,8 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 		hlog.CtxErrorf(ctx, "order already exists: %+v", order.Status)
 		// order already exists
 		return nil, bizErr.BizError{
-			Status:  consts.StatusBadRequest,
-			ErrCode: consts.StatusBadRequest,
+			Status:  consts.StatusUnprocessableEntity,
+			ErrCode: consts.StatusUnprocessableEntity,
 			ErrMsg:  "order already exists",
 		}
 	}
@@ -104,7 +123,7 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 	// check if the current price is highest in this auction
 	// place bid preview
 	previewReq := &yahoo.PlaceBidPreviewRequest{
-		YahooAccountID:  "TODO",
+		YahooAccountID:  "chkyj_cp_by4d1vej",
 		YsRefID:         req.YsRefID,
 		TransactionType: req.TransactionType,
 		AuctionID:       req.AuctionID,
@@ -112,30 +131,35 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 		Quantity:        int(req.Quantity),
 		Partial:         false,
 	}
-	previewResp, err := client.MockPlaceBidPreview(ctx, previewReq)
+	previewResp, err := client.PlaceBidPreview(ctx, previewReq)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "place bid preview failed: %+v", err)
 		// TODO: update order status to FAILED
 		if err := db.GetHandler().UpdateBuyoutBidRequest(ctx, &model.BidRequest{
 			OrderID:      req.YsRefID,
 			Status:       "FAILED",
+			MaxBid:       int64(req.Price),
 			ErrorMessage: err.Error(),
 		}); err != nil {
 			hlog.CtxErrorf(ctx, "update yahoo order failed: %+v", err)
 		}
-		return nil, err
+		return nil, bizErr.BizError{
+			Status:  consts.StatusUnprocessableEntity,
+			ErrCode: consts.StatusUnprocessableEntity,
+			ErrMsg:  "place bid preview failed",
+		}
 	}
 
 	// TODO: check if it's neccessary to update the bid request in database.
 	// TODO: determine if it's shopping item.
 	bidReq := yahoo.PlaceBidRequest{
-		YahooAccountID:  "TODO",
+		YahooAccountID:  "chkyj_cp_by4d1vej",
 		YsRefID:         req.YsRefID,
 		TransactionType: req.TransactionType,
 		AuctionID:       req.AuctionID,
 		Price:           int(req.Price),
 		Quantity:        int(req.Quantity),
-		Partial:         false,
+		Partial:         req.Partial,
 		Signature:       previewResp.ResultSet.Result.Signature,
 		// TODO: IsShoppingItem
 	}
@@ -147,31 +171,32 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 		return nil, bizErr.BizError{
 			Status:  consts.StatusBadRequest,
 			ErrCode: consts.StatusBadRequest,
-			ErrMsg:  "BID type is not supported",
+			ErrMsg:  "BID type is not supported yet",
 		}
 	case "BUYOUT":
 		// directly buyout
-		placeBidResp, err := client.MockPlaceBid(ctx, &bidReq)
+		placeBidResp, err := client.PlaceBid(ctx, &bidReq)
 		if err != nil {
-			// TODO: update order status to FAILED
 			if err := db.GetHandler().UpdateBuyoutBidRequest(ctx, &model.BidRequest{
 				OrderID:      req.YsRefID,
+				MaxBid:       int64(req.Price),
 				Status:       "FAILED",
 				ErrorMessage: err.Error(),
 			}); err != nil {
 				hlog.CtxErrorf(ctx, "update yahoo order failed: %+v", err)
 			}
 			return nil, bizErr.BizError{
-				Status:  consts.StatusBadRequest,
-				ErrCode: consts.StatusBadRequest,
+				Status:  consts.StatusUnprocessableEntity,
+				ErrCode: consts.StatusUnprocessableEntity,
 				ErrMsg:  err.Error(),
 			}
 		}
 
-		// TODO: update bid request to WIN_BID
 		if err := db.GetHandler().UpdateBuyoutBidRequest(ctx, &model.BidRequest{
-			OrderID: req.YsRefID,
-			Status:  "WIN_BID",
+			OrderID:       req.YsRefID,
+			Status:        "WIN_BID",
+			TransactionID: placeBidResp.ResultSet.Result.TransactionId,
+			MaxBid:        int64(req.Price),
 		}); err != nil {
 			hlog.CtxErrorf(ctx, "update yahoo order failed: %+v", err)
 		}

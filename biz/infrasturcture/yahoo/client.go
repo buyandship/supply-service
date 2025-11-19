@@ -19,10 +19,11 @@ import (
 	"github.com/buyandship/bns-golib/config"
 	bnsHttp "github.com/buyandship/bns-golib/http"
 	"github.com/buyandship/bns-golib/retry"
+	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
-	"github.com/buyandship/supply-svr/biz/model/yahoo"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 var (
@@ -47,7 +48,8 @@ func GetClient() *Client {
 		var baseURL string
 		switch config.GlobalAppConfig.Env {
 		case "dev":
-			baseURL = "http://staging.yahoo-bridge.internal.com" // TODO: change to actual url
+			baseURL = "http://staging.yahoo-bridge.internal" // TODO: change to actual url
+			// baseURL = "https://internal-stagin20251027043053843000000001-645109195.ap-northeast-1.elb.amazonaws.com"
 		case "prod":
 			baseURL = "https://mock-api.yahoo-auction.jp" // TODO: change to actual url
 		}
@@ -88,19 +90,20 @@ type PlaceBidRequest struct {
 }
 
 type PlaceBidResult struct {
-	AuctionID       string `json:"AuctionID" example:"x12345"`
-	Title           string `json:"Title" example:"商品名１"`
-	CurrentPrice    int    `json:"CurrentPrice" example:"1300"`
-	UnitOfBidPrice  string `json:"UnitOfBidPrice" example:"JPY"`
-	IsCurrentWinner bool   `json:"IsCurrentWinner" example:"false"`
-	IsBuyBid        bool   `json:"IsBuyBid" example:"false"`
-	IsNewBid        bool   `json:"IsNewBid" example:"true"`
-	UnderReserved   bool   `json:"UnderReserved" example:"false"`
-	NextBidPrice    int    `json:"NextBidPrice" example:"1400"`
-	AuctionUrl      string `json:"AuctionUrl" example:"https://auctions.yahooapis.jp/AuctionWebService/V2/auctionItem?auctionID=x12345678"`
-	AuctionItemUrl  string `json:"AuctionItemUrl" example:"https://page.auctions.yahoo.co.jp/jp/auction/x12345678"`
+	AuctionID       string  `json:"AuctionID" example:"x12345"`
+	Title           string  `json:"Title" example:"商品名１"`
+	CurrentPrice    float64 `json:"CurrentPrice" example:"1300"`
+	UnitOfBidPrice  float64 `json:"UnitOfBidPrice" example:"10"`
+	IsCurrentWinner bool    `json:"IsCurrentWinner" example:"false"`
+	IsBuyBid        bool    `json:"IsBuyBid" example:"false"`
+	IsNewBid        bool    `json:"IsNewBid" example:"true"`
+	UnderReserved   bool    `json:"UnderReserved" example:"false"`
+	NextBidPrice    float64 `json:"NextBidPrice" example:"1400"`
+	AuctionUrl      string  `json:"AuctionUrl" example:"https://auctions.yahooapis.jp/AuctionWebService/V2/auctionItem?auctionID=x12345678"`
+	AuctionItemUrl  string  `json:"AuctionItemUrl" example:"https://page.auctions.yahoo.co.jp/jp/auction/x12345678"`
 
-	Signature string `json:"Signature,omitempty" example:"4mYveHoMr0fad9AS.Seqc6ys2BdqMyWTxA2VG_RJDbDyZjtIU5MX8k_xqg--"`
+	Signature     string `json:"Signature,omitempty" example:"4mYveHoMr0fad9AS.Seqc6ys2BdqMyWTxA2VG_RJDbDyZjtIU5MX8k_xqg--"`
+	TransactionId string `json:"TransactionId,omitempty" example:"1234567890"`
 }
 
 type PlaceBidResponse struct {
@@ -125,13 +128,19 @@ type PlaceBidPreviewResult struct {
 }
 */
 
+type Error struct {
+	Message string `json:"Message"`
+	Code    int    `json:"Code"`
+}
+
 type PlaceBidPreviewResponse struct {
 	ResultSet struct {
 		Result                PlaceBidResult `json:"Result"`
 		TotalResultsAvailable int            `json:"totalResultsAvailable"`
 		TotalResultsReturned  int            `json:"totalResultsReturned"`
 		FirstResultPosition   int            `json:"firstResultPosition"`
-	} `json:"ResultSet"`
+	} `json:"ResultSet,omitempty"`
+	Error Error `json:"Error,omitempty"`
 }
 
 // PlaceBidPreviewRequest represents a bid preview request
@@ -162,23 +171,23 @@ type TransactionSearchRequest struct {
 }
 
 type Transaction struct {
-	TransactionID    string                  `json:"transaction_id"`
-	RequestGroupID   string                  `json:"request_group_id"`
-	RetryCount       int                     `json:"retry_count"`
-	YsRefID          string                  `json:"ys_ref_id"`
-	YahooAccountID   string                  `json:"yahoo_account_id"`
-	AuctionID        string                  `json:"auction_id"`
-	CurrentPrice     int64                   `json:"current_price"`
-	TransactionType  string                  `json:"transaction_type"`
-	Status           string                  `json:"status"`
-	APIEndpoint      string                  `json:"api_endpoint"`
-	HTTPStatus       int                     `json:"http_status"`
-	ProcessingTimeMS int                     `json:"processing_time_ms"`
-	ReqPrice         int64                   `json:"req_price"`
-	CreatedAt        string                  `json:"created_at"`
-	UpdatedAt        string                  `json:"updated_at"`
-	RequestData      supply.YahooPlaceBidReq `json:"request_data"`
-	ResponseData     PlaceBidResponse        `json:"response_data"`
+	TransactionID    string  `json:"transaction_id,omitempty"`
+	RequestGroupID   string  `json:"request_group_id,omitempty"`
+	RetryCount       int     `json:"retry_count,omitempty"`
+	YsRefID          string  `json:"ys_ref_id"`
+	YahooAccountID   string  `json:"yahoo_account_id,omitempty"`
+	AuctionID        string  `json:"auction_id,omitempty"`
+	CurrentPrice     float64 `json:"current_price,omitempty"`
+	TransactionType  string  `json:"transaction_type,omitempty"`
+	Status           string  `json:"status,omitempty"`
+	APIEndpoint      string  `json:"api_endpoint,omitempty"`
+	HTTPStatus       int     `json:"http_status,omitempty"`
+	ProcessingTimeMS int     `json:"processing_time_ms,omitempty"`
+	ReqPrice         float64 `json:"req_price,omitempty"`
+	CreatedAt        string  `json:"created_at,omitempty"`
+	UpdatedAt        string  `json:"updated_at,omitempty"`
+	// RequestData      supply.YahooPlaceBidReq `json:"request_data"`
+	// ResponseData     PlaceBidResponse        `json:"response_data,omitempty"`
 }
 
 type GetTransactionResponse struct {
@@ -186,9 +195,9 @@ type GetTransactionResponse struct {
 }
 
 type BidStatus struct {
-	HasBid       bool `json:"HasBid"`
-	MyHighestBid int  `json:"MyHighestBid"`
-	IsWinning    bool `json:"IsWinning"`
+	HasBid       bool `json:"HasBid,omitempty"`
+	MyHighestBid int  `json:"MyHighestBid,omitempty"`
+	IsWinning    bool `json:"IsWinning,omitempty"`
 }
 
 // Rating represents user rating information
@@ -206,26 +215,26 @@ type Rating struct {
 
 // SellerInfo represents seller information
 type SellerInfo struct {
-	AucUserId            string                 `json:"AucUserId" example:"sample_seller_123"`
-	Rating               Rating                 `json:"Rating"`
-	AucUserIdItemListURL string                 `json:"AucUserIdItemListURL" example:"https://auctions.yahooapis.jp/AuctionWebService/V2/sellingList?appid=xxxxx&ItemListAucUserIdUrl=sample_seller_123"`
-	AucUserIdRatingURL   string                 `json:"AucUserIdRatingURL" example:"https://auctions.yahooapis.jp/AuctionWebService/V1/ShowRating?appid=xxxxx&RatingAucUserIdUrl=sample_seller_123"`
-	DisplayName          string                 `json:"DisplayName" example:"サンプルセラー"`
+	AucUserId            string                 `json:"AucUserId,omitempty" example:"sample_seller_123"`
+	Rating               Rating                 `json:"Rating,omitempty"`
+	AucUserIdItemListURL string                 `json:"AucUserIdItemListURL,omitempty" example:"https://auctions.yahooapis.jp/AuctionWebService/V2/sellingList?appid=xxxxx&ItemListAucUserIdUrl=sample_seller_123"`
+	AucUserIdRatingURL   string                 `json:"AucUserIdRatingURL,omitempty" example:"https://auctions.yahooapis.jp/AuctionWebService/V1/ShowRating?appid=xxxxx&RatingAucUserIdUrl=sample_seller_123"`
+	DisplayName          string                 `json:"DisplayName,omitempty" example:"サンプルセラー"`
 	StoreName            string                 `json:"StoreName,omitempty" example:"サンプルストア"`
-	IconUrl128           string                 `json:"IconUrl128" example:"https://s.yimg.jp/images/auct/profile/icon/128/sample_seller_123.jpg"`
-	IconUrl256           string                 `json:"IconUrl256" example:"https://s.yimg.jp/images/auct/profile/icon/256/sample_seller_123.jpg"`
-	IconUrl512           string                 `json:"IconUrl512" example:"https://s.yimg.jp/images/auct/profile/icon/512/sample_seller_123.jpg"`
-	IsStore              bool                   `json:"IsStore" example:"true"`
+	IconUrl128           string                 `json:"IconUrl128,omitempty" example:"https://s.yimg.jp/images/auct/profile/icon/128/sample_seller_123.jpg"`
+	IconUrl256           string                 `json:"IconUrl256,omitempty" example:"https://s.yimg.jp/images/auct/profile/icon/256/sample_seller_123.jpg"`
+	IconUrl512           string                 `json:"IconUrl512,omitempty" example:"https://s.yimg.jp/images/auct/profile/icon/512/sample_seller_123.jpg"`
+	IsStore              bool                   `json:"IsStore,omitempty" example:"true"`
 	ShoppingSellerId     string                 `json:"ShoppingSellerId,omitempty" example:"store_12345"`
 	Performance          map[string]interface{} `json:"Performance,omitempty"`
 }
 
 // ImageInfo represents image information
 type ImageInfo struct {
-	URL    string `json:"url" example:"https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-img600x450-1234567890abc.jpg"`
-	Width  int    `json:"width" example:"600"`
-	Height int    `json:"height" example:"450"`
-	Alt    string `json:"alt" example:"Sample User Image"`
+	URL    string `json:"url,omitempty" example:"https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-img600x450-1234567890abc.jpg"`
+	Width  int    `json:"width,omitempty" example:"600"`
+	Height int    `json:"height,omitempty" example:"450"`
+	Alt    string `json:"alt,omitempty" example:"Sample User Image"`
 }
 
 // Images represents collection of images
@@ -244,34 +253,35 @@ type Thumbnails struct {
 
 // Bidder represents bidder information
 type Bidder struct {
-	AucUserId            string `json:"AucUserId"`
-	Rating               Rating `json:"Rating"`
-	AucUserIdItemListURL string `json:"AucUserIdItemListURL"`
-	AucUserIdRatingURL   string `json:"AucUserIdRatingURL"`
-	DisplayName          string `json:"DisplayName"`
-	IconUrl128           string `json:"IconUrl128"`
-	IconUrl256           string `json:"IconUrl256"`
-	IconUrl512           string `json:"IconUrl512"`
-	IsStore              bool   `json:"IsStore"`
+	AucUserId            string  `json:"AucUserId,omitempty"`
+	Rating               Rating  `json:"Rating,omitempty"`
+	AucUserIdItemListURL string  `json:"AucUserIdItemListURL,omitempty"`
+	AucUserIdRatingURL   string  `json:"AucUserIdRatingURL,omitempty"`
+	DisplayName          string  `json:"DisplayName,omitempty"`
+	IconUrl128           string  `json:"IconUrl128,omitempty"`
+	IconUrl256           string  `json:"IconUrl256,omitempty"`
+	IconUrl512           string  `json:"IconUrl512,omitempty"`
+	IsStore              bool    `json:"IsStore,omitempty"`
+	StoreName            *string `json:"StoreName,omitempty"`
 }
 
 // HighestBidders represents highest bidders information
 type HighestBidders struct {
-	TotalHighestBidders int      `json:"totalHighestBidders"`
-	Bidder              []Bidder `json:"Bidder"`
-	IsMore              bool     `json:"IsMore"`
+	TotalHighestBidders int      `json:"totalHighestBidders,omitempty"`
+	Bidder              []Bidder `json:"Bidder,omitempty"`
+	IsMore              bool     `json:"IsMore,omitempty"`
 }
 
 // ItemStatus represents item status
 type ItemStatus struct {
-	Condition string `json:"Condition"`
-	Comment   string `json:"Comment"`
+	Condition string `json:"Condition,omitempty"`
+	Comment   string `json:"Comment,omitempty"`
 }
 
 // ItemReturnable represents return policy
 type ItemReturnable struct {
-	Allowed bool   `json:"Allowed"`
-	Comment string `json:"Comment"`
+	Allowed bool   `json:"Allowed,omitempty"`
+	Comment string `json:"Comment,omitempty"`
 }
 
 // Option represents auction options
@@ -286,22 +296,22 @@ type Option struct {
 
 // BankMethod represents bank payment method
 type BankMethod struct {
-	Name   string `json:"name"`
-	BankID string `json:"bank_id"`
+	Name   string `json:"name,omitempty"`
+	BankID string `json:"bank_id,omitempty"`
 }
 
 // BankPayment represents bank payment information
 type BankPayment struct {
-	TotalBankMethodAvailable int          `json:"totalBankMethodAvailable"`
-	Method                   []BankMethod `json:"Method"`
+	TotalBankMethodAvailable int          `json:"totalBankMethodAvailable,omitempty"`
+	Method                   []BankMethod `json:"Method,omitempty"`
 }
 
 // EasyPayment represents easy payment information
 type EasyPayment struct {
-	SafeKeepingPayment string `json:"SafeKeepingPayment"`
-	IsCreditCard       bool   `json:"IsCreditCard"`
-	AllowInstallment   bool   `json:"AllowInstallment"`
-	IsPayPay           bool   `json:"IsPayPay"`
+	SafeKeepingPayment string `json:"SafeKeepingPayment,omitempty"`
+	IsCreditCard       bool   `json:"IsCreditCard,omitempty"`
+	AllowInstallment   bool   `json:"AllowInstallment,omitempty"`
+	IsPayPay           bool   `json:"IsPayPay,omitempty"`
 }
 
 // OtherPayment represents other payment methods
@@ -324,11 +334,11 @@ type Payment struct {
 
 // ShippingMethod represents shipping method
 type ShippingMethod struct {
-	Type                       string `json:"type"`
-	Index                      int    `json:"Index"`
-	Name                       string `json:"Name"`
-	ServiceCode                string `json:"ServiceCode"`
-	IsOfficialDelivery         bool   `json:"IsOfficialDelivery"`
+	Type                       string `json:"type,omitempty"`
+	Index                      int    `json:"Index,omitempty"`
+	Name                       string `json:"Name,omitempty"`
+	ServiceCode                int    `json:"ServiceCode,omitempty"`
+	IsOfficialDelivery         bool   `json:"IsOfficialDelivery,omitempty"`
 	IsPrivacyDeliveryAvailable bool   `json:"IsPrivacyDeliveryAvailable"`
 	SinglePrice                int    `json:"SinglePrice"`
 	PriceURL                   string `json:"PriceURL,omitempty"`
@@ -337,22 +347,22 @@ type ShippingMethod struct {
 
 // Shipping represents shipping information
 type Shipping struct {
-	TotalShippingMethodAvailable int              `json:"totalShippingMethodAvailable"`
-	LowestIndex                  int              `json:"LowestIndex"`
-	Method                       []ShippingMethod `json:"Method"`
+	TotalShippingMethodAvailable int              `json:"totalShippingMethodAvailable,omitempty"`
+	LowestIndex                  int              `json:"LowestIndex,omitempty"`
+	Method                       []ShippingMethod `json:"Method,omitempty"`
 }
 
 // BaggageInfo represents baggage information
 type BaggageInfo struct {
-	Size        string `json:"Size"`
-	SizeIndex   int    `json:"SizeIndex"`
-	Weight      string `json:"Weight"`
-	WeightIndex int    `json:"WeightIndex"`
+	Size        string `json:"Size,omitempty"`
+	SizeIndex   int    `json:"SizeIndex,omitempty"`
+	Weight      string `json:"Weight,omitempty"`
+	WeightIndex int    `json:"WeightIndex,omitempty"`
 }
 
 // CharityOption represents charity option
 type CharityOption struct {
-	Proportion int `json:"Proportion"`
+	Proportion int `json:"Proportion,omitempty"`
 }
 
 // ItemSpec represents item specifications
@@ -363,54 +373,54 @@ type ItemSpec struct {
 
 // CarRegist represents car registration information
 type CarRegist struct {
-	Model string `json:"Model"`
+	Model string `json:"Model,omitempty"`
 }
 
 // CarOptions represents car options
 type CarOptions struct {
-	Item []string `json:"Item"`
+	Item []string `json:"Item,omitempty"`
 }
 
 // Car represents car auction information
 type Car struct {
-	TotalCosts              int        `json:"TotalCosts"`
-	TaxinTotalCosts         int        `json:"TaxinTotalCosts"`
-	TotalPrice              int        `json:"TotalPrice"`
-	TaxinTotalPrice         int        `json:"TaxinTotalPrice"`
-	TotalBidorbuyPrice      int        `json:"TotalBidorbuyPrice"`
-	TaxinTotalBidorbuyPrice int        `json:"TaxinTotalBidorbuyPrice"`
-	OverheadCosts           int        `json:"OverheadCosts"`
-	TaxinOverheadCosts      int        `json:"TaxinOverheadCosts"`
-	LegalCosts              int        `json:"LegalCosts"`
-	ContactTelNumber        string     `json:"ContactTelNumber"`
-	ContactReceptionTime    string     `json:"ContactReceptionTime"`
-	ContactUrl              string     `json:"ContactUrl"`
-	Regist                  CarRegist  `json:"Regist"`
-	Options                 CarOptions `json:"Options"`
-	TotalAmountComment      string     `json:"TotalAmountComment"`
+	TotalCosts              int        `json:"TotalCosts,omitempty"`
+	TaxinTotalCosts         int        `json:"TaxinTotalCosts,omitempty"`
+	TotalPrice              int        `json:"TotalPrice,omitempty"`
+	TaxinTotalPrice         int        `json:"TaxinTotalPrice,omitempty"`
+	TotalBidorbuyPrice      int        `json:"TotalBidorbuyPrice,omitempty"`
+	TaxinTotalBidorbuyPrice int        `json:"TaxinTotalBidorbuyPrice,omitempty"`
+	OverheadCosts           int        `json:"OverheadCosts,omitempty"`
+	TaxinOverheadCosts      int        `json:"TaxinOverheadCosts,omitempty"`
+	LegalCosts              int        `json:"LegalCosts,omitempty"`
+	ContactTelNumber        string     `json:"ContactTelNumber,omitempty"`
+	ContactReceptionTime    string     `json:"ContactReceptionTime,omitempty"`
+	ContactUrl              string     `json:"ContactUrl,omitempty"`
+	Regist                  CarRegist  `json:"Regist,omitempty"`
+	Options                 CarOptions `json:"Options,omitempty"`
+	TotalAmountComment      string     `json:"TotalAmountComment,omitempty"`
 }
 
 // ExternalFleaMarketInfo represents external flea market information
 type ExternalFleaMarketInfo struct {
-	IsWinner bool `json:"IsWinner"`
+	IsWinner bool `json:"IsWinner,omitempty"`
 }
 
 // ShoppingSpec represents shopping specification
 type ShoppingSpec struct {
-	ID      int `json:"ID"`
-	ValueID int `json:"ValueID"`
+	ID      int `json:"ID,omitempty"`
+	ValueID int `json:"ValueID,omitempty"`
 }
 
 // ShoppingSpecs represents shopping specifications
 type ShoppingSpecs struct {
-	TotalShoppingSpecs int            `json:"totalShoppingSpecs"`
-	Spec               []ShoppingSpec `json:"Spec"`
+	TotalShoppingSpecs int            `json:"totalShoppingSpecs,omitempty"`
+	Spec               []ShoppingSpec `json:"Spec,omitempty"`
 }
 
 // ItemTagList represents item tag list
 type ItemTagList struct {
-	TotalItemTagList int      `json:"totalItemTagList"`
-	Tag              []string `json:"Tag"`
+	TotalItemTagList int      `json:"totalItemTagList,omitempty"`
+	Tag              []string `json:"Tag,omitempty"`
 }
 
 // ShoppingItem represents shopping item information
@@ -424,21 +434,21 @@ type ShoppingItem struct {
 
 // SellingInfo represents selling information
 type SellingInfo struct {
-	PageView                        int    `json:"PageView"`
-	WatchListNum                    int    `json:"WatchListNum"`
-	ReportedViolationNum            int    `json:"ReportedViolationNum"`
-	AnsweredQAndANum                int    `json:"AnsweredQAndANum"`
-	UnansweredQAndANum              int    `json:"UnansweredQAndANum"`
-	OfferNum                        int    `json:"OfferNum"`
-	UnansweredOfferNum              int    `json:"UnansweredOfferNum"`
-	AffiliateRatio                  int    `json:"AffiliateRatio"`
-	PageViewFromAff                 int    `json:"PageViewFromAff"`
-	WatchListNumFromAff             int    `json:"WatchListNumFromAff"`
-	BidsFromAff                     int    `json:"BidsFromAff"`
-	IsWon                           bool   `json:"IsWon"`
-	IsFirstSubmit                   bool   `json:"IsFirstSubmit"`
-	Duration                        int    `json:"Duration"`
-	FirstAutoResubmitAvailableCount int    `json:"FirstAutoResubmitAvailableCount"`
+	PageView                        int    `json:"PageView,omitempty"`
+	WatchListNum                    int    `json:"WatchListNum,omitempty"`
+	ReportedViolationNum            int    `json:"ReportedViolationNum,omitempty"`
+	AnsweredQAndANum                int    `json:"AnsweredQAndANum,omitempty"`
+	UnansweredQAndANum              int    `json:"UnansweredQAndANum,omitempty"`
+	OfferNum                        int    `json:"OfferNum,omitempty"`
+	UnansweredOfferNum              int    `json:"UnansweredOfferNum,omitempty"`
+	AffiliateRatio                  int    `json:"AffiliateRatio,omitempty"`
+	PageViewFromAff                 int    `json:"PageViewFromAff,omitempty"`
+	WatchListNumFromAff             int    `json:"WatchListNumFromAff,omitempty"`
+	BidsFromAff                     int    `json:"BidsFromAff,omitempty"`
+	IsWon                           bool   `json:"IsWon,omitempty"`
+	IsFirstSubmit                   bool   `json:"IsFirstSubmit,omitempty"`
+	Duration                        int    `json:"Duration,omitempty"`
+	FirstAutoResubmitAvailableCount int    `json:"FirstAutoResubmitAvailableCount,omitempty"`
 	AutoResubmitAvailableCount      int    `json:"AutoResubmitAvailableCount"`
 	FeaturedDpd                     string `json:"FeaturedDpd"`
 	ResubmitPriceDownRatio          int    `json:"ResubmitPriceDownRatio"`
@@ -448,70 +458,70 @@ type SellingInfo struct {
 
 // WinnerRating represents winner rating information
 type WinnerRating struct {
-	Point       int  `json:"Point"`
-	IsSuspended bool `json:"IsSuspended"`
-	IsDeleted   bool `json:"IsDeleted"`
+	Point       int  `json:"Point,omitempty"`
+	IsSuspended bool `json:"IsSuspended,omitempty"`
+	IsDeleted   bool `json:"IsDeleted,omitempty"`
 	IsNotRated  bool `json:"IsNotRated,omitempty"`
 }
 
 // WinnerShoppingInfo represents winner shopping information
 type WinnerShoppingInfo struct {
-	OrderId string `json:"OrderId"`
+	OrderId string `json:"OrderId,omitempty"`
 }
 
 // Winner represents winner information
 type Winner struct {
-	AucUserId          string              `json:"AucUserId"`
-	Rating             WinnerRating        `json:"Rating"`
-	IsRemovable        bool                `json:"IsRemovable"`
-	RemovableLimitTime int64               `json:"RemovableLimitTime"`
-	WonQuantity        int                 `json:"WonQuantity"`
-	LastBidQuantity    int                 `json:"LastBidQuantity"`
-	WonPrice           int                 `json:"WonPrice"`
-	TaxinWonPrice      float64             `json:"TaxinWonPrice"`
-	LastBidTime        int64               `json:"LastBidTime"`
-	BuyTime            string              `json:"BuyTime"`
-	IsFnaviBundledDeal bool                `json:"IsFnaviBundledDeal"`
+	AucUserId          string              `json:"AucUserId,omitempty"`
+	Rating             WinnerRating        `json:"Rating,omitempty"`
+	IsRemovable        bool                `json:"IsRemovable,omitempty"`
+	RemovableLimitTime int64               `json:"RemovableLimitTime,omitempty"`
+	WonQuantity        int                 `json:"WonQuantity,omitempty"`
+	LastBidQuantity    int                 `json:"LastBidQuantity,omitempty"`
+	WonPrice           int                 `json:"WonPrice,omitempty"`
+	TaxinWonPrice      float64             `json:"TaxinWonPrice,omitempty"`
+	LastBidTime        int64               `json:"LastBidTime,omitempty"`
+	BuyTime            string              `json:"BuyTime,omitempty"`
+	IsFnaviBundledDeal bool                `json:"IsFnaviBundledDeal,omitempty"`
 	ShoppingInfo       *WinnerShoppingInfo `json:"ShoppingInfo,omitempty"`
-	DisplayName        string              `json:"DisplayName"`
-	IconUrl128         string              `json:"IconUrl128"`
-	IconUrl256         string              `json:"IconUrl256"`
-	IconUrl512         string              `json:"IconUrl512"`
-	IsStore            bool                `json:"IsStore"`
+	DisplayName        string              `json:"DisplayName,omitempty"`
+	IconUrl128         string              `json:"IconUrl128,omitempty"`
+	IconUrl256         string              `json:"IconUrl256,omitempty"`
+	IconUrl512         string              `json:"IconUrl512,omitempty"`
+	IsStore            bool                `json:"IsStore,omitempty"`
 }
 
 // WinnersInfo represents winners information
 type WinnersInfo struct {
-	WinnersNum int      `json:"WinnersNum"`
-	Winner     []Winner `json:"Winner"`
+	WinnersNum int      `json:"WinnersNum,omitempty"`
+	Winner     []Winner `json:"Winner,omitempty"`
 }
 
 // ReserveRating represents reserve rating information
 type ReserveRating struct {
-	Point       int  `json:"Point"`
-	IsSuspended bool `json:"IsSuspended"`
-	IsDeleted   bool `json:"IsDeleted"`
+	Point       int  `json:"Point,omitempty"`
+	IsSuspended bool `json:"IsSuspended,omitempty"`
+	IsDeleted   bool `json:"IsDeleted,omitempty"`
 }
 
 // Reserve represents reserve information
 type Reserve struct {
-	AucUserId         string        `json:"AucUserId"`
-	Rating            ReserveRating `json:"Rating"`
-	LastBidQuantity   int           `json:"LastBidQuantity"`
-	LastBidPrice      int           `json:"LastBidPrice"`
-	TaxinLastBidPrice float64       `json:"TaxinLastBidPrice"`
-	LastBidTime       int64         `json:"LastBidTime"`
-	DisplayName       string        `json:"DisplayName"`
-	IconUrl128        string        `json:"IconUrl128"`
-	IconUrl256        string        `json:"IconUrl256"`
-	IconUrl512        string        `json:"IconUrl512"`
-	IsStore           bool          `json:"IsStore"`
+	AucUserId         string        `json:"AucUserId,omitempty"`
+	Rating            ReserveRating `json:"Rating,omitempty"`
+	LastBidQuantity   int           `json:"LastBidQuantity,omitempty"`
+	LastBidPrice      int           `json:"LastBidPrice,omitempty"`
+	TaxinLastBidPrice float64       `json:"TaxinLastBidPrice,omitempty"`
+	LastBidTime       int64         `json:"LastBidTime,omitempty"`
+	DisplayName       string        `json:"DisplayName,omitempty"`
+	IconUrl128        string        `json:"IconUrl128,omitempty"`
+	IconUrl256        string        `json:"IconUrl256,omitempty"`
+	IconUrl512        string        `json:"IconUrl512,omitempty"`
+	IsStore           bool          `json:"IsStore,omitempty"`
 }
 
 // ReservesInfo represents reserves information
 type ReservesInfo struct {
-	ReservesNum int       `json:"ReservesNum"`
-	Reserve     []Reserve `json:"Reserve"`
+	ReservesNum int       `json:"ReservesNum,omitempty"`
+	Reserve     []Reserve `json:"Reserve,omitempty"`
 }
 
 // Cancel represents cancel information
@@ -521,176 +531,69 @@ type Cancel struct {
 
 // CancelsInfo represents cancels information
 type CancelsInfo struct {
-	CancelsNum int      `json:"CancelsNum"`
-	Cancel     []Cancel `json:"Cancel"`
+	CancelsNum int      `json:"CancelsNum,omitempty"`
+	Cancel     []Cancel `json:"Cancel,omitempty"`
 }
 
 // LastBid represents last bid information
 type LastBid struct {
-	Price              int     `json:"Price"`
-	TaxinPrice         float64 `json:"TaxinPrice"`
-	Quantity           int     `json:"Quantity"`
-	Partial            bool    `json:"Partial"`
-	IsFnaviBundledDeal bool    `json:"IsFnaviBundledDeal"`
+	Price              int     `json:"Price,omitempty"`
+	TaxinPrice         float64 `json:"TaxinPrice,omitempty"`
+	Quantity           int     `json:"Quantity,omitempty"`
+	Partial            bool    `json:"Partial,omitempty"`
+	IsFnaviBundledDeal bool    `json:"IsFnaviBundledDeal,omitempty"`
 }
 
 // NextBid represents next bid information
 type NextBid struct {
-	Price         int `json:"Price"`
-	LimitQuantity int `json:"LimitQuantity"`
-	UnitPrice     int `json:"UnitPrice"`
+	Price         int `json:"Price,omitempty"`
+	LimitQuantity int `json:"LimitQuantity,omitempty"`
+	UnitPrice     int `json:"UnitPrice,omitempty"`
 }
 
 // BidInfo represents bid information
 type BidInfo struct {
-	IsHighestBidder bool    `json:"IsHighestBidder"`
-	IsWinner        bool    `json:"IsWinner"`
-	IsDeletedWinner bool    `json:"IsDeletedWinner"`
-	IsNextWinner    bool    `json:"IsNextWinner"`
-	LastBid         LastBid `json:"LastBid"`
-	NextBid         NextBid `json:"NextBid"`
+	IsHighestBidder bool    `json:"IsHighestBidder,omitempty"`
+	IsWinner        bool    `json:"IsWinner,omitempty"`
+	IsDeletedWinner bool    `json:"IsDeletedWinner,omitempty"`
+	IsNextWinner    bool    `json:"IsNextWinner,omitempty"`
+	LastBid         LastBid `json:"LastBid,omitempty"`
+	NextBid         NextBid `json:"NextBid,omitempty"`
 }
 
 // OfferInfo represents offer information
 type OfferInfo struct {
-	OfferCondition      int `json:"OfferCondition"`
-	SellerOfferredPrice int `json:"SellerOfferredPrice"`
-	BidderOfferredPrice int `json:"BidderOfferredPrice"`
-	RemainingOfferNum   int `json:"RemainingOfferNum"`
+	OfferCondition      int `json:"OfferCondition,omitempty"`
+	SellerOfferredPrice int `json:"SellerOfferredPrice,omitempty"`
+	BidderOfferredPrice int `json:"BidderOfferredPrice,omitempty"`
+	RemainingOfferNum   int `json:"RemainingOfferNum,omitempty"`
 }
 
 // EasyPaymentDetail represents easy payment detail
 type EasyPaymentDetail struct {
-	AucUserId  string `json:"AucUserId"`
-	Status     string `json:"Status"`
-	LimitTime  int64  `json:"LimitTime"`
-	UpdateTime int64  `json:"UpdateTime"`
+	AucUserId  string `json:"AucUserId,omitempty"`
+	Status     string `json:"Status,omitempty"`
+	LimitTime  int64  `json:"LimitTime,omitempty"`
+	UpdateTime int64  `json:"UpdateTime,omitempty"`
 }
 
 // EasyPaymentInfo represents easy payment information
 type EasyPaymentInfo struct {
-	EasyPayment EasyPaymentDetail `json:"EasyPayment"`
+	EasyPayment EasyPaymentDetail `json:"EasyPayment,omitempty"`
 }
 
 // StorePayment represents store payment information
 type StorePayment struct {
-	TotalStorePaymentMethodAvailable int      `json:"totalStorePaymentMethodAvailable"`
-	Method                           []string `json:"Method"`
-	UpdateTime                       int64    `json:"UpdateTime"`
-}
-
-// AuctionItemDetail represents detailed Yahoo Auction item information
-type AuctionItemDetail struct {
-	AuctionID                  string                  `json:"AuctionID" example:"x123456789"`
-	CategoryID                 string                  `json:"CategoryID" example:"22216"`
-	CategoryFarm               int                     `json:"CategoryFarm" example:"2"`
-	CategoryIdPath             string                  `json:"CategoryIdPath" example:"0,2084005403,22216"`
-	CategoryPath               string                  `json:"CategoryPath" example:"オークション > 音楽 > CD > R&B、ソウル"`
-	Title                      string                  `json:"Title" example:"【新品未開封】サンプルCD アルバム 限定版"`
-	SeoKeywords                string                  `json:"SeoKeywords,omitempty" example:"CD,R&B,ソウル,新品,未開封"`
-	Seller                     SellerInfo              `json:"Seller"`
-	ShoppingItemCode           string                  `json:"ShoppingItemCode,omitempty" example:"shopping_item_abc123"`
-	AuctionItemUrl             string                  `json:"AuctionItemUrl" example:"https://page.auctions.yahoo.co.jp/jp/auction/x123456789"`
-	Img                        Images                  `json:"Img"`
-	ImgColor                   string                  `json:"ImgColor,omitempty" example:"red"`
-	Thumbnails                 Thumbnails              `json:"Thumbnails,omitempty"`
-	Initprice                  int                     `json:"Initprice" example:"1000"`
-	LastInitprice              int                     `json:"LastInitprice,omitempty" example:"1200"`
-	Price                      int                     `json:"Price" example:"2480"`
-	TaxinStartPrice            float64                 `json:"TaxinStartPrice,omitempty" example:"1080"`
-	TaxinPrice                 float64                 `json:"TaxinPrice,omitempty" example:"2678.4"`
-	TaxinBidorbuy              float64                 `json:"TaxinBidorbuy,omitempty" example:"5400"`
-	Bidorbuy                   int                     `json:"Bidorbuy" example:"5000"`
-	TaxRate                    int                     `json:"TaxRate,omitempty" example:"8"`
-	Quantity                   int                     `json:"Quantity" example:"2"`
-	AvailableQuantity          int                     `json:"AvailableQuantity,omitempty" example:"1"`
-	WatchListNum               int                     `json:"WatchListNum,omitempty" example:"42"`
-	Bids                       int                     `json:"Bids" example:"5"`
-	HighestBidders             *HighestBidders         `json:"HighestBidders,omitempty"`
-	YPoint                     int                     `json:"YPoint,omitempty" example:"10"`
-	ItemStatus                 ItemStatus              `json:"ItemStatus"`
-	ItemReturnable             ItemReturnable          `json:"ItemReturnable,omitempty"`
-	StartTime                  string                  `json:"StartTime" example:"2025-01-15T10:00:00+09:00"`
-	EndTime                    string                  `json:"EndTime" example:"2025-02-15T23:59:59+09:00"`
-	IsBidCreditRestrictions    bool                    `json:"IsBidCreditRestrictions,omitempty" example:"true"`
-	IsBidderRestrictions       bool                    `json:"IsBidderRestrictions,omitempty" example:"true"`
-	IsBidderRatioRestrictions  bool                    `json:"isBidderRatioRestrictions,omitempty" example:"false"`
-	IsEarlyClosing             bool                    `json:"IsEarlyClosing,omitempty" example:"false"`
-	IsAutomaticExtension       bool                    `json:"IsAutomaticExtension,omitempty" example:"true"`
-	IsOffer                    bool                    `json:"IsOffer,omitempty" example:"true"`
-	IsCharity                  bool                    `json:"IsCharity,omitempty" example:"false"`
-	Option                     Option                  `json:"Option,omitempty"`
-	Description                string                  `json:"Description" example:"<![CDATA[新品未開封のCDアルバムです。限定版となります。<br>送料無料でお届けします。]]>"`
-	ItemDescriptionURL         string                  `json:"ItemDescriptionURL,omitempty" example:"https://pageX.auctions.yahoo.co.jp/jp/show/description?aID=x123456789&plainview=1"`
-	DescriptionInputType       string                  `json:"Description_input_type,omitempty" example:"html"`
-	Payment                    Payment                 `json:"Payment,omitempty"`
-	BlindBusiness              string                  `json:"BlindBusiness,omitempty" example:"impossible"`
-	SevenElevenReceive         string                  `json:"SevenElevenReceive,omitempty" example:"impossible"`
-	ChargeForShipping          string                  `json:"ChargeForShipping,omitempty" example:"seller"`
-	Location                   string                  `json:"Location,omitempty" example:"東京都"`
-	IsWorldwide                bool                    `json:"IsWorldwide,omitempty" example:"true"`
-	ShipTime                   string                  `json:"ShipTime,omitempty" example:"after"`
-	ShippingInput              string                  `json:"ShippingInput,omitempty" example:"now"`
-	IsYahunekoPack             bool                    `json:"IsYahunekoPack,omitempty" example:"true"`
-	IsJPOfficialDelivery       bool                    `json:"IsJPOfficialDelivery,omitempty" example:"true"`
-	IsPrivacyDeliveryAvailable bool                    `json:"IsPrivacyDeliveryAvailable,omitempty" example:"true"`
-	ShipSchedule               int                     `json:"ShipSchedule,omitempty" example:"1"`
-	ManualStartTime            string                  `json:"ManualStartTime,omitempty" example:"2025-01-15T10:00:00+09:00"`
-	Shipping                   *Shipping               `json:"Shipping,omitempty"`
-	BaggageInfo                BaggageInfo             `json:"BaggageInfo,omitempty"`
-	IsAdult                    bool                    `json:"IsAdult,omitempty" example:"false"`
-	IsCreature                 bool                    `json:"IsCreature,omitempty" example:"false"`
-	IsSpecificCategory         bool                    `json:"IsSpecificCategory,omitempty" example:"false"`
-	IsCharityCategory          bool                    `json:"IsCharityCategory,omitempty" example:"false"`
-	CharityOption              *CharityOption          `json:"CharityOption,omitempty"`
-	AnsweredQAndANum           int                     `json:"AnsweredQAndANum,omitempty" example:"3"`
-	Status                     string                  `json:"Status" example:"open"`
-	CpaRate                    int                     `json:"CpaRate,omitempty" example:"5"`
-	BiddingViaCpa              bool                    `json:"BiddingViaCpa,omitempty" example:"true"`
-	BrandLineIDPath            string                  `json:"BrandLineIDPath,omitempty" example:"brand123|line456"`
-	BrandLineNamePath          string                  `json:"BrandLineNamePath,omitempty" example:"サンプルブランド|サンプルライン"`
-	ItemSpec                   ItemSpec                `json:"ItemSpec,omitempty"`
-	CatalogId                  string                  `json:"CatalogId,omitempty" example:"catalog_12345"`
-	ProductName                string                  `json:"ProductName,omitempty" example:"サンプルCD アルバム"`
-	Car                        *Car                    `json:"Car,omitempty"`
-	OfferNum                   int                     `json:"OfferNum,omitempty" example:"2"`
-	HasOfferAccept             bool                    `json:"HasOfferAccept,omitempty" example:"false"`
-	ArticleNumber              string                  `json:"ArticleNumber,omitempty" example:"1234567890123"`
-	IsDsk                      bool                    `json:"IsDsk,omitempty" example:"true"`
-	CategoryInsuranceType      int                     `json:"CategoryInsuranceType,omitempty" example:"1"`
-	ExternalFleaMarketInfo     *ExternalFleaMarketInfo `json:"ExternalFleaMarketInfo,omitempty"`
-	ShoppingSpecs              *ShoppingSpecs          `json:"ShoppingSpecs,omitempty"`
-	ItemTagList                *ItemTagList            `json:"ItemTagList,omitempty"`
-	ShoppingItem               ShoppingItem            `json:"ShoppingItem,omitempty"`
-	IsWatched                  bool                    `json:"IsWatched,omitempty" example:"true"`
-	NotifyID                   string                  `json:"NotifyID,omitempty" example:"notify_abc123"`
-	StoreSearchKeywords        string                  `json:"StoreSearchKeywords,omitempty" example:"CD,音楽,限定版"`
-	SellingInfo                *SellingInfo            `json:"SellingInfo,omitempty"`
-	AucUserIdContactUrl        string                  `json:"AucUserIdContactUrl,omitempty" example:"https://auctions.yahoo.co.jp/jp/show/contact?aID=x123456789"`
-	WinnersInfo                *WinnersInfo            `json:"WinnersInfo,omitempty"`
-	ReservesInfo               *ReservesInfo           `json:"ReservesInfo,omitempty"`
-	CancelsInfo                *CancelsInfo            `json:"CancelsInfo,omitempty"`
-	BidInfo                    *BidInfo                `json:"BidInfo,omitempty"`
-	OfferInfo                  *OfferInfo              `json:"OfferInfo,omitempty"`
-	EasyPaymentInfo            *EasyPaymentInfo        `json:"EasyPaymentInfo,omitempty"`
-	StorePayment               *StorePayment           `json:"StorePayment,omitempty"`
-}
-
-// Response models
-type AuctionItemResponse struct {
-	ResultSet struct {
-		TotalResultsAvailable int               `json:"totalResultsAvailable"`
-		TotalResultsReturned  int               `json:"totalResultsReturned"`
-		FirstResultPosition   int               `json:"firstResultPosition"`
-		Result                AuctionItemDetail `json:"Result"`
-	} `json:"ResultSet"`
+	TotalStorePaymentMethodAvailable int      `json:"totalStorePaymentMethodAvailable,omitempty"`
+	Method                           []string `json:"Method,omitempty"`
+	UpdateTime                       int64    `json:"UpdateTime,omitempty"`
 }
 
 type Seller struct {
-	ID          string  `json:"Id"`
-	Rating      float64 `json:"Rating"`
-	IsSuspended bool    `json:"IsSuspended"`
-	IsDeleted   bool    `json:"IsDeleted"`
+	ID          string  `json:"Id,omitempty"`
+	Rating      float64 `json:"Rating,omitempty"`
+	IsSuspended bool    `json:"IsSuspended,omitempty"`
+	IsDeleted   bool    `json:"IsDeleted,omitempty"`
 }
 
 type ErrorResponse struct {
@@ -714,7 +617,7 @@ func (c *Client) generateHMACSignature(timestamp, method, path, body string) str
 
 // Helper method to make authenticated requests
 func (c *Client) makeRequest(ctx context.Context, method, path string, params url.Values, body interface{}, authType AuthType) (*http.Response, error) {
-	hlog.CtxDebugf(ctx, "makeRequest: %s %s %s %v", method, path, params.Encode(), body)
+	hlog.CtxInfof(ctx, "makeRequest: %s %s %s %v", method, path, params.Encode(), body)
 	// Build URL
 	fullURL := c.baseURL + path
 	if len(params) > 0 {
@@ -750,9 +653,7 @@ func (c *Client) makeRequest(ctx context.Context, method, path string, params ur
 	}
 
 	// Set content type for POST requests
-	if method == "POST" {
-		req.Header.Set("Content-Type", "application/json")
-	}
+	req.Header.Set("Content-Type", "application/json")
 
 	// Make request with retry mechanism
 	var resp *http.Response
@@ -764,32 +665,22 @@ func (c *Client) makeRequest(ctx context.Context, method, path string, params ur
 			return nil, backoff.Permanent(err)
 		}
 
-		defer func() {
-			if err := resp.Body.Close(); err != nil {
-				hlog.CtxErrorf(ctx, "http close error: %s", err)
-			}
-		}()
-
-		if resp.StatusCode != http.StatusOK {
+		switch resp.StatusCode {
+		case http.StatusOK:
+			return resp, nil
+			// TODO: handle retryable error
+		default:
 			respBody, _ := io.ReadAll(resp.Body)
-			hlog.CtxWarnf(ctx, "http error, error_code: [%d], error_msg: [%s]",
+			hlog.CtxInfof(ctx, "status code: [%d], response body: [%s]",
 				resp.StatusCode, string(respBody))
+			return resp, backoff.Permanent(fmt.Errorf("%s", string(respBody)))
 		}
-
-		// TODO: retrable error
-
-		if resp.StatusCode >= 500 {
-			// non-retryable error
-			return nil, backoff.Permanent(fmt.Errorf("server error: %d", resp.StatusCode))
-		}
-
-		return resp, nil
 	}
 
 	resp, err = backoff.Retry(ctx, operation, retry.GetDefaultRetryOpts()...)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "failed to send request after retries: %v", err)
-		return nil, fmt.Errorf("failed to send request after retries: %w", err)
+		return resp, fmt.Errorf("failed to send request after retries: %w", err)
 	}
 
 	return resp, nil
@@ -797,12 +688,17 @@ func (c *Client) makeRequest(ctx context.Context, method, path string, params ur
 
 // API Methods
 func (c *Client) parseResponse(resp *http.Response, v interface{}) error {
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			hlog.Errorf("http close error: %s", err)
+		}
+	}()
+
 	body, err := io.ReadAll(resp.Body)
+	hlog.Debugf("parseResponse body: %s", string(body))
 	if err != nil {
 		return err
 	}
-
-	hlog.Debugf("parseResponse: %s", string(body))
 
 	if err := json.Unmarshal(body, v); err != nil {
 		return fmt.Errorf("failed to parse response: %w", err)
@@ -835,6 +731,14 @@ func (c *Client) PlaceBidPreview(ctx context.Context, req *PlaceBidPreviewReques
 	var placeBidPreviewResponse PlaceBidPreviewResponse
 	if err := c.parseResponse(resp, &placeBidPreviewResponse); err != nil {
 		return nil, err
+	}
+
+	if placeBidPreviewResponse.Error.Code != 0 {
+		return nil, bizErr.BizError{
+			Status:  consts.StatusUnprocessableEntity,
+			ErrCode: consts.StatusUnprocessableEntity, // TODO: define error code
+			ErrMsg:  "You were not able to place your bid. This auction has already ended.",
+		}
 	}
 
 	return &placeBidPreviewResponse, nil
@@ -890,7 +794,9 @@ func (c *Client) PlaceBid(ctx context.Context, req *PlaceBidRequest) (*PlaceBidR
 		return nil, err
 	}
 
-	hlog.CtxDebugf(ctx, "placeBidResponse: %+v", placeBidResponse)
+	transactionId := resp.Header.Get("X-Transaction-ID")
+	hlog.CtxDebugf(ctx, "transactionId: %s", transactionId)
+	placeBidResponse.ResultSet.Result.TransactionId = transactionId
 
 	return &placeBidResponse, nil
 }
@@ -906,15 +812,15 @@ func (c *Client) MockPlaceBid(ctx context.Context, req *PlaceBidRequest) (*Place
 			Result: PlaceBidResult{
 				AuctionID:       req.AuctionID,
 				Title:           "Mock Title",
-				CurrentPrice:    req.Price,
-				UnitOfBidPrice:  "JPY",
+				CurrentPrice:    float64(req.Price),
+				UnitOfBidPrice:  float64(10),
 				IsCurrentWinner: false,
 				IsBuyBid:        false,
 				IsNewBid:        true,
 				UnderReserved:   false,
-				NextBidPrice:    req.Price + 100,
-				AuctionUrl:      "https://auctions.yahooapis.jp/AuctionWebService/V2/auctionItem?auctionID=x12345678",
-				AuctionItemUrl:  "https://page.auctions.yahoo.co.jp/jp/auction/x12345678",
+				// NextBidPrice:    req.Price + 100,
+				AuctionUrl:     "https://auctions.yahooapis.jp/AuctionWebService/V2/auctionItem?auctionID=x12345678",
+				AuctionItemUrl: "https://page.auctions.yahoo.co.jp/jp/auction/x12345678",
 			},
 			TotalResultsAvailable: 1,
 			TotalResultsReturned:  1,
@@ -922,477 +828,6 @@ func (c *Client) MockPlaceBid(ctx context.Context, req *PlaceBidRequest) (*Place
 		},
 	}
 	return &placeBidResponse, nil
-}
-
-// GetAuctionItem gets auction item information (public API)
-func (c *Client) GetAuctionItem(ctx context.Context, req AuctionItemRequest) (*AuctionItemResponse, error) {
-	params := url.Values{}
-	params.Set("auctionID", req.AuctionID)
-	if req.AppID != "" {
-		params.Set("appid", req.AppID)
-	}
-
-	resp, err := c.makeRequest(ctx, "GET", "/api/v1/auctionItem", params, nil, AuthTypeNone)
-	if err != nil {
-		return nil, err
-	}
-
-	var auctionItemResponse AuctionItemResponse
-	if err := c.parseResponse(resp, &auctionItemResponse); err != nil {
-		return nil, err
-	}
-
-	return &auctionItemResponse, nil
-}
-
-func (c *Client) MockGetAuctionItem(ctx context.Context, req AuctionItemRequest) (*AuctionItemResponse, error) {
-	auctionItemResponse := AuctionItemResponse{
-		ResultSet: struct {
-			TotalResultsAvailable int               `json:"totalResultsAvailable"`
-			TotalResultsReturned  int               `json:"totalResultsReturned"`
-			FirstResultPosition   int               `json:"firstResultPosition"`
-			Result                AuctionItemDetail `json:"Result"`
-		}{
-			Result: AuctionItemDetail{
-				AuctionID:      "x123456789",
-				CategoryID:     "22216",
-				CategoryFarm:   2,
-				CategoryIdPath: "0,2084005403,22216",
-				CategoryPath:   "オークション > 音楽 > CD > R&B、ソウル",
-				Title:          "【新品未開封】サンプルCD アルバム 限定版",
-				SeoKeywords:    "CD,R&B,ソウル,新品,未開封",
-				Seller: SellerInfo{
-					AucUserId: "sample_seller_123",
-					Rating: Rating{
-						Point:                   150,
-						TotalGoodRating:         145,
-						TotalNormalRating:       3,
-						TotalBadRating:          2,
-						SellerTotalGoodRating:   120,
-						SellerTotalNormalRating: 2,
-						SellerTotalBadRating:    1,
-						IsSuspended:             false,
-						IsDeleted:               false,
-					},
-					AucUserIdItemListURL: "https://auctions.yahooapis.jp/AuctionWebService/V2/sellingList?appid=xxxxx&ItemListAucUserIdUrl=sample_seller_123",
-					AucUserIdRatingURL:   "https://auctions.yahooapis.jp/AuctionWebService/V1/ShowRating?appid=xxxxx&RatingAucUserIdUrl=sample_seller_123",
-					DisplayName:          "サンプルセラー",
-					StoreName:            "サンプルストア",
-					IconUrl128:           "https://s.yimg.jp/images/auct/profile/icon/128/sample_seller_123.jpg",
-					IconUrl256:           "https://s.yimg.jp/images/auct/profile/icon/256/sample_seller_123.jpg",
-					IconUrl512:           "https://s.yimg.jp/images/auct/profile/icon/512/sample_seller_123.jpg",
-					IsStore:              true,
-					ShoppingSellerId:     "store_12345",
-					Performance:          map[string]interface{}{},
-				},
-				ShoppingItemCode: "shopping_item_abc123",
-				AuctionItemUrl:   "https://page.auctions.yahoo.co.jp/jp/auction/x123456789",
-				Img: Images{
-					Image1: &ImageInfo{
-						URL:    "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-img600x450-1234567890abc.jpg",
-						Width:  600,
-						Height: 450,
-						Alt:    "商品画像1",
-					},
-					Image2: &ImageInfo{
-						URL:    "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-img600x450-1234567890def.jpg",
-						Width:  600,
-						Height: 450,
-						Alt:    "商品画像2",
-					},
-					Image3: &ImageInfo{
-						URL:    "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-img600x450-1234567890ghi.jpg",
-						Width:  600,
-						Height: 450,
-						Alt:    "商品画像3",
-					},
-				},
-				ImgColor: "red",
-				Thumbnails: Thumbnails{
-					Thumbnail1: "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890abc.jpg",
-					Thumbnail2: "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890def.jpg",
-					Thumbnail3: "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890ghi.jpg",
-				},
-				Initprice:         1000,
-				LastInitprice:     1200,
-				Price:             2480,
-				TaxinStartPrice:   1080,
-				TaxinPrice:        2678.4,
-				TaxinBidorbuy:     5400,
-				Bidorbuy:          5000,
-				TaxRate:           8,
-				Quantity:          2,
-				AvailableQuantity: 1,
-				WatchListNum:      42,
-				Bids:              5,
-				HighestBidders: &HighestBidders{
-					TotalHighestBidders: 2,
-					Bidder: []Bidder{
-						{
-							AucUserId: "bidder_user_1",
-							Rating: Rating{
-								Point:       50,
-								IsSuspended: false,
-								IsDeleted:   false,
-							},
-							AucUserIdItemListURL: "https://auctions.yahooapis.jp/AuctionWebService/V2/sellingList?appid=xxxxx&ItemListAucUserIdUrl=bidder_user_1",
-							AucUserIdRatingURL:   "https://auctions.yahooapis.jp/AuctionWebService/V1/ShowRating?appid=xxxxx&RatingAucUserIdUrl=bidder_user_1",
-							DisplayName:          "入札者1",
-							IconUrl128:           "https://s.yimg.jp/images/auct/profile/icon/128/bidder_user_1.jpg",
-							IconUrl256:           "https://s.yimg.jp/images/auct/profile/icon/256/bidder_user_1.jpg",
-							IconUrl512:           "https://s.yimg.jp/images/auct/profile/icon/512/bidder_user_1.jpg",
-							IsStore:              false,
-						},
-						{
-							AucUserId: "bidder_user_2",
-							Rating: Rating{
-								Point:       75,
-								IsSuspended: false,
-								IsDeleted:   false,
-							},
-							AucUserIdItemListURL: "https://auctions.yahooapis.jp/AuctionWebService/V2/sellingList?appid=xxxxx&ItemListAucUserIdUrl=bidder_user_2",
-							AucUserIdRatingURL:   "https://auctions.yahooapis.jp/AuctionWebService/V1/ShowRating?appid=xxxxx&RatingAucUserIdUrl=bidder_user_2",
-							DisplayName:          "入札者2",
-							IconUrl128:           "https://s.yimg.jp/images/auct/profile/icon/128/bidder_user_2.jpg",
-							IconUrl256:           "https://s.yimg.jp/images/auct/profile/icon/256/bidder_user_2.jpg",
-							IconUrl512:           "https://s.yimg.jp/images/auct/profile/icon/512/bidder_user_2.jpg",
-							IsStore:              false,
-						},
-					},
-					IsMore: false,
-				},
-				YPoint: 10,
-				ItemStatus: ItemStatus{
-					Condition: "new",
-					Comment:   "新品・未開封品です",
-				},
-				ItemReturnable: ItemReturnable{
-					Allowed: true,
-					Comment: "未開封のため返品可能です",
-				},
-				StartTime:                 "2025-01-15T10:00:00+09:00",
-				EndTime:                   "2025-02-15T23:59:59+09:00",
-				IsBidCreditRestrictions:   true,
-				IsBidderRestrictions:      true,
-				IsBidderRatioRestrictions: false,
-				IsEarlyClosing:            false,
-				IsAutomaticExtension:      true,
-				IsOffer:                   true,
-				IsCharity:                 false,
-				Option: Option{
-					StoreIcon:            "https://image.auctions.yahoo.co.jp/images/store.gif",
-					FeaturedIcon:         "https://image.auctions.yahoo.co.jp/images/featured.gif",
-					FreeshippingIcon:     "https://image.auctions.yahoo.co.jp/images/freeshipping.gif",
-					NewItemIcon:          "https://image.auctions.yahoo.co.jp/images/newitem.gif",
-					EasyPaymentIcon:      "https://img.yahoo.co.jp/images/pay/icon_s16.gif",
-					IsTradingNaviAuction: true,
-				},
-				Description:          "<![CDATA[新品未開封のCDアルバムです。限定版となります。<br>送料無料でお届けします。]]>",
-				ItemDescriptionURL:   "https://pageX.auctions.yahoo.co.jp/jp/show/description?aID=x123456789&plainview=1",
-				DescriptionInputType: "html",
-				Payment: Payment{
-					YBank: map[string]interface{}{},
-					EasyPayment: &EasyPayment{
-						SafeKeepingPayment: "1.00",
-						IsCreditCard:       true,
-						AllowInstallment:   true,
-						IsPayPay:           true,
-					},
-					Bank: &BankPayment{
-						TotalBankMethodAvailable: 3,
-						Method: []BankMethod{
-							{Name: "三菱UFJ銀行", BankID: "0005"},
-							{Name: "みずほ銀行", BankID: "0001"},
-							{Name: "ゆうちょ銀行", BankID: "9900"},
-						},
-					},
-					CashRegistration: "可能",
-					PostalTransfer:   "可能",
-					PostalOrder:      "可能",
-					CashOnDelivery:   "可能",
-					Other: &OtherPayment{
-						TotalOtherMethodAvailable: 1,
-						Method:                    []string{"手渡し"},
-					},
-				},
-				BlindBusiness:              "impossible",
-				SevenElevenReceive:         "impossible",
-				ChargeForShipping:          "seller",
-				Location:                   "東京都",
-				IsWorldwide:                true,
-				ShipTime:                   "after",
-				ShippingInput:              "now",
-				IsYahunekoPack:             true,
-				IsJPOfficialDelivery:       true,
-				IsPrivacyDeliveryAvailable: true,
-				ShipSchedule:               1,
-				ManualStartTime:            "2025-01-15T10:00:00+09:00",
-				Shipping: &Shipping{
-					TotalShippingMethodAvailable: 4,
-					LowestIndex:                  0,
-					Method: []ShippingMethod{
-						{
-							Type:                       "ship_name1",
-							Index:                      0,
-							Name:                       "ヤフネコ!（ネコポス）",
-							ServiceCode:                "112",
-							IsOfficialDelivery:         true,
-							IsPrivacyDeliveryAvailable: true,
-							SinglePrice:                210,
-						},
-						{
-							Type:                       "ship_name2",
-							Index:                      1,
-							Name:                       "ヤフネコ!（宅急便コンパクト）",
-							ServiceCode:                "113",
-							IsOfficialDelivery:         true,
-							IsPrivacyDeliveryAvailable: true,
-							SinglePrice:                450,
-							DeliveryFeeSize:            "80",
-						},
-						{
-							Type:                       "ship_name3",
-							Index:                      2,
-							Name:                       "ゆうパケット（おてがる版）",
-							ServiceCode:                "115",
-							IsOfficialDelivery:         true,
-							IsPrivacyDeliveryAvailable: true,
-							SinglePrice:                230,
-						},
-						{
-							Type:                       "ship_name4",
-							Index:                      3,
-							Name:                       "ゆうパック（おてがる版）",
-							ServiceCode:                "116",
-							IsOfficialDelivery:         true,
-							IsPrivacyDeliveryAvailable: true,
-							SinglePrice:                800,
-							PriceURL:                   "https://yahoo.co.jp/shipping",
-							DeliveryFeeSize:            "60",
-						},
-					},
-				},
-				BaggageInfo: BaggageInfo{
-					Size:        "～70cm",
-					SizeIndex:   1,
-					Weight:      "～4kg",
-					WeightIndex: 2,
-				},
-				IsAdult:            false,
-				IsCreature:         false,
-				IsSpecificCategory: false,
-				IsCharityCategory:  false,
-				CharityOption: &CharityOption{
-					Proportion: 10,
-				},
-				AnsweredQAndANum:  3,
-				Status:            "open",
-				CpaRate:           5,
-				BiddingViaCpa:     true,
-				BrandLineIDPath:   "brand123|line456",
-				BrandLineNamePath: "サンプルブランド|サンプルライン",
-				ItemSpec: ItemSpec{
-					Size:    "M",
-					Segment: "メンズ",
-				},
-				CatalogId:   "catalog_12345",
-				ProductName: "サンプルCD アルバム",
-				Car: &Car{
-					TotalCosts:              250000,
-					TaxinTotalCosts:         270000,
-					TotalPrice:              1250000,
-					TaxinTotalPrice:         1350000,
-					TotalBidorbuyPrice:      1500000,
-					TaxinTotalBidorbuyPrice: 1620000,
-					OverheadCosts:           150000,
-					TaxinOverheadCosts:      162000,
-					LegalCosts:              100000,
-					ContactTelNumber:        "03-1234-5678",
-					ContactReceptionTime:    "平日10:00-18:00",
-					ContactUrl:              "https://example.com/contact",
-					Regist: CarRegist{
-						Model: "2020年式",
-					},
-					Options: CarOptions{
-						Item: []string{"カーナビ", "ETC", "バックカメラ"},
-					},
-					TotalAmountComment: "諸費用込みの総額です",
-				},
-				OfferNum:              2,
-				HasOfferAccept:        false,
-				ArticleNumber:         "1234567890123",
-				IsDsk:                 true,
-				CategoryInsuranceType: 1,
-				ExternalFleaMarketInfo: &ExternalFleaMarketInfo{
-					IsWinner: false,
-				},
-				ShoppingSpecs: &ShoppingSpecs{
-					TotalShoppingSpecs: 2,
-					Spec: []ShoppingSpec{
-						{ID: 100, ValueID: 1001},
-						{ID: 200, ValueID: 2001},
-					},
-				},
-				ItemTagList: &ItemTagList{
-					TotalItemTagList: 2,
-					Tag:              []string{"adidas", "Nike"},
-				},
-				ShoppingItem: ShoppingItem{
-					PostageSetId:    12345,
-					PostageId:       67890,
-					LeadTimeId:      5000,
-					ItemWeight:      500,
-					IsOptionEnabled: true,
-				},
-				IsWatched:           true,
-				NotifyID:            "notify_abc123",
-				StoreSearchKeywords: "CD,音楽,限定版",
-				SellingInfo: &SellingInfo{
-					PageView:                        1250,
-					WatchListNum:                    42,
-					ReportedViolationNum:            0,
-					AnsweredQAndANum:                3,
-					UnansweredQAndANum:              1,
-					OfferNum:                        2,
-					UnansweredOfferNum:              0,
-					AffiliateRatio:                  5,
-					PageViewFromAff:                 180,
-					WatchListNumFromAff:             8,
-					BidsFromAff:                     2,
-					IsWon:                           false,
-					IsFirstSubmit:                   true,
-					Duration:                        7,
-					FirstAutoResubmitAvailableCount: 3,
-					AutoResubmitAvailableCount:      3,
-					FeaturedDpd:                     "500",
-					ResubmitPriceDownRatio:          5,
-					IsNoResubmit:                    false,
-					BidQuantityLimit:                5,
-				},
-				AucUserIdContactUrl: "https://auctions.yahoo.co.jp/jp/show/contact?aID=x123456789",
-				WinnersInfo: &WinnersInfo{
-					WinnersNum: 1,
-					Winner: []Winner{
-						{
-							AucUserId: "winner_user_1",
-							Rating: WinnerRating{
-								Point:       120,
-								IsSuspended: false,
-								IsDeleted:   false,
-								IsNotRated:  false,
-							},
-							IsRemovable:        true,
-							RemovableLimitTime: 1739836800,
-							WonQuantity:        1,
-							LastBidQuantity:    1,
-							WonPrice:           2480,
-							TaxinWonPrice:      2678.4,
-							LastBidTime:        1707955199,
-							BuyTime:            "2025-02-15T23:59:59+09:00",
-							IsFnaviBundledDeal: false,
-							ShoppingInfo: &WinnerShoppingInfo{
-								OrderId: "order_12345",
-							},
-							DisplayName: "落札者1",
-							IconUrl128:  "https://s.yimg.jp/images/auct/profile/icon/128/winner_user_1.jpg",
-							IconUrl256:  "https://s.yimg.jp/images/auct/profile/icon/256/winner_user_1.jpg",
-							IconUrl512:  "https://s.yimg.jp/images/auct/profile/icon/512/winner_user_1.jpg",
-							IsStore:     false,
-						},
-					},
-				},
-				ReservesInfo: &ReservesInfo{
-					ReservesNum: 1,
-					Reserve: []Reserve{
-						{
-							AucUserId: "reserve_user_1",
-							Rating: ReserveRating{
-								Point:       85,
-								IsSuspended: false,
-								IsDeleted:   false,
-							},
-							LastBidQuantity:   1,
-							LastBidPrice:      2450,
-							TaxinLastBidPrice: 2646,
-							LastBidTime:       1707955150,
-							DisplayName:       "次点者1",
-							IconUrl128:        "https://s.yimg.jp/images/auct/profile/icon/128/reserve_user_1.jpg",
-							IconUrl256:        "https://s.yimg.jp/images/auct/profile/icon/256/reserve_user_1.jpg",
-							IconUrl512:        "https://s.yimg.jp/images/auct/profile/icon/512/reserve_user_1.jpg",
-							IsStore:           false,
-						},
-					},
-				},
-				CancelsInfo: &CancelsInfo{
-					CancelsNum: 0,
-					Cancel:     []Cancel{},
-				},
-				BidInfo: &BidInfo{
-					IsHighestBidder: true,
-					IsWinner:        false,
-					IsDeletedWinner: false,
-					IsNextWinner:    false,
-					LastBid: LastBid{
-						Price:              2480,
-						TaxinPrice:         2678.4,
-						Quantity:           1,
-						Partial:            false,
-						IsFnaviBundledDeal: false,
-					},
-					NextBid: NextBid{
-						Price:         2580,
-						LimitQuantity: 1,
-						UnitPrice:     100,
-					},
-				},
-				OfferInfo: &OfferInfo{
-					OfferCondition:      1,
-					SellerOfferredPrice: 4500,
-					BidderOfferredPrice: 4000,
-					RemainingOfferNum:   2,
-				},
-				EasyPaymentInfo: &EasyPaymentInfo{
-					EasyPayment: EasyPaymentDetail{
-						AucUserId:  "winner_user_1",
-						Status:     "completed",
-						LimitTime:  1710547199,
-						UpdateTime: 1709337599,
-					},
-				},
-				StorePayment: &StorePayment{
-					TotalStorePaymentMethodAvailable: 2,
-					Method:                           []string{"クレジットカード", "代金引換"},
-					UpdateTime:                       1704614400,
-				},
-			},
-			TotalResultsAvailable: 1,
-			TotalResultsReturned:  1,
-			FirstResultPosition:   1,
-		},
-	}
-	return &auctionItemResponse, nil
-}
-
-// GetAuctionItemAuth gets authenticated auction item information
-func (c *Client) GetAuctionItemAuth(ctx context.Context, req AuctionItemRequest, yahooAccountID string) (*AuctionItemResponse, error) {
-	params := url.Values{}
-	params.Set("auctionID", req.AuctionID)
-	params.Set("yahoo_account_id", yahooAccountID)
-	if req.AppID != "" {
-		params.Set("appid", req.AppID)
-	}
-
-	resp, err := c.makeRequest(ctx, "GET", "/api/v1/auctionItemAuth", params, nil, AuthTypeHMAC)
-	if err != nil {
-		return nil, err
-	}
-
-	var auctionItemAuthResponse AuctionItemResponse
-	if err := c.parseResponse(resp, &auctionItemAuthResponse); err != nil {
-		return nil, err
-	}
-
-	return &auctionItemAuthResponse, nil
 }
 
 // SearchTransactions searches for transactions
@@ -1419,25 +854,6 @@ func (c *Client) SearchTransactions(ctx context.Context, req TransactionSearchRe
 	return c.makeRequest(ctx, "GET", "/api/v1/transactions", params, nil, AuthTypeHMAC)
 }
 
-// GetTransaction gets specific transaction details
-func (c *Client) GetTransaction(ctx context.Context, req *supply.YahooGetTransactionReq, yahooAccountID string) (*Transaction, error) {
-	path := fmt.Sprintf("/api/v1/transactions/%s", req.TransactionID)
-	params := url.Values{}
-	params.Set("yahoo_account_id", yahooAccountID)
-
-	resp, err := c.makeRequest(ctx, "GET", path, params, nil, AuthTypeHMAC)
-	if err != nil {
-		return nil, err
-	}
-
-	var tx Transaction
-	if err := c.parseResponse(resp, &tx); err != nil {
-		return nil, err
-	}
-
-	return &tx, nil
-}
-
 func (c *Client) MockGetTransaction(ctx context.Context, req *supply.YahooGetTransactionReq, yahooAccountID string) (*Transaction, error) {
 	resp := Transaction{
 		TransactionID:   req.TransactionID,
@@ -1449,33 +865,6 @@ func (c *Client) MockGetTransaction(ctx context.Context, req *supply.YahooGetTra
 		ReqPrice:        1000,
 		CreatedAt:       "2025-10-22T12:00:00Z",
 		UpdatedAt:       "2025-10-22T12:00:01Z",
-		RequestData:     supply.YahooPlaceBidReq{},
-		ResponseData: PlaceBidResponse{
-			ResultSet: struct {
-				Result                PlaceBidResult `json:"Result"`
-				TotalResultsAvailable int            `json:"totalResultsAvailable"`
-				TotalResultsReturned  int            `json:"totalResultsReturned"`
-				FirstResultPosition   int            `json:"firstResultPosition"`
-			}{
-				Result: PlaceBidResult{
-					AuctionID:       "x12345",
-					Title:           "Mock Title",
-					CurrentPrice:    1000,
-					UnitOfBidPrice:  "JPY",
-					IsCurrentWinner: false,
-					IsBuyBid:        false,
-					IsNewBid:        true,
-					UnderReserved:   false,
-					NextBidPrice:    1100,
-					AuctionUrl:      "https://auctions.yahooapis.jp/AuctionWebService/V2/auctionItem?auctionID=x12345678",
-					AuctionItemUrl:  "https://page.auctions.yahoo.co.jp/jp/auction/x12345678",
-					Signature:       "abc123def456...",
-				},
-				TotalResultsAvailable: 1,
-				TotalResultsReturned:  1,
-				FirstResultPosition:   1,
-			},
-		},
 	}
 	return &resp, nil
 }
@@ -1536,70 +925,4 @@ func ParseAuctionItemResponse(resp *http.Response) (*AuctionItemResponse, error)
 	}
 
 	return &auctionResp, nil
-}
-
-type GetCategoryTreeResponse struct {
-	ResultSet struct {
-		Result                yahoo.Category `json:"Result"`
-		TotalResultsAvailable int            `json:"totalResultsAvailable"`
-		TotalResultsReturned  int            `json:"totalResultsReturned"`
-		FirstResultPosition   int            `json:"firstResultPosition"`
-	}
-}
-
-func (c *Client) GetCategoryTree(ctx context.Context, req *supply.YahooGetCategoryTreeReq) (*GetCategoryTreeResponse, error) {
-	params := url.Values{}
-	params.Set("category", req.Category)
-	params.Set("adf", req.Adf)
-	params.Set("is_fnavi_only", req.IsFnaviOnly)
-
-	resp, err := c.makeRequest(ctx, "GET", "/api/v1/categoryTree", params, nil, AuthTypeNone)
-	if err != nil {
-		return nil, err
-	}
-
-	var httpResp GetCategoryTreeResponse
-	if err := c.parseResponse(resp, &httpResp); err != nil {
-		return nil, err
-	}
-
-	return &httpResp, nil
-}
-
-func (c *Client) MockGetCategoryTree(ctx context.Context, req *supply.YahooGetCategoryTreeReq) (*GetCategoryTreeResponse, error) {
-	httpResp := GetCategoryTreeResponse{
-		ResultSet: struct {
-			Result                yahoo.Category `json:"Result"`
-			TotalResultsAvailable int            `json:"totalResultsAvailable"`
-			TotalResultsReturned  int            `json:"totalResultsReturned"`
-			FirstResultPosition   int            `json:"firstResultPosition"`
-		}{
-			Result: yahoo.Category{
-				CategoryID:       1234567890,
-				CategoryName:     "Mock Category",
-				CategoryPath:     "Mock Category Path",
-				CategoryIDPath:   "0,1234567890",
-				ParentCategoryID: 0,
-				IsLeaf:           false,
-				Depth:            1,
-				Order:            0,
-				IsLink:           false,
-				IsAdult:          false,
-				ChildCategoryNum: 0,
-				IsLeafToLink:     nil,
-				ChildCategory: []*yahoo.Category{
-					{
-						CategoryID:     1234567891,
-						CategoryName:   "Mock Child Category",
-						CategoryPath:   "Mock Child Category Path",
-						CategoryIDPath: "0,1234567891",
-					},
-				},
-			},
-			TotalResultsAvailable: 1,
-			TotalResultsReturned:  1,
-			FirstResultPosition:   1,
-		},
-	}
-	return &httpResp, nil
 }

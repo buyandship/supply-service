@@ -136,3 +136,6 @@ func (p *YahooGetAuctionItemAuthResp) IsValid() error {
 func (p *YahooGetCategoryTreeReq) IsValid() error {
 	return nil
 }
+func (p *YahooSearchAuctionsReq) IsValid() error {
+	return nil
+}

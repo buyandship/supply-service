@@ -512,6 +512,8 @@ func MercariGetSimilarItemsService(ctx context.Context, c *app.RequestContext) {
 // @Param request body supply.YahooPlaceBidReq true "Bid request"
 // @Success 200 {object} yahoo.PlaceBidResult "Bid placed successfully"
 // @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 404 {object} bizErr.BizError "get auction item failed"
+// @Failure 422 {object} bizErr.BizError "The auction item is not available for fulfillment"
 // @Failure 500 {object} bizErr.BizError "Internal server error"
 // @Router /v1/supplysrv/internal/yahoo/placeBid [POST]
 func YahooPlaceBidService(ctx context.Context, c *app.RequestContext) {
@@ -545,13 +547,14 @@ func YahooPlaceBidService(ctx context.Context, c *app.RequestContext) {
 // @Produce json
 // @Param Header header model.Header true "Header"
 // @Param transaction_id path string true "Transaction ID" example:"12345"
-// @Success 200 {object} yahoo.Transaction "Successfully retrieved transaction"
+// @Success 200 {object} []yahoo.Transaction "Successfully retrieved transaction"
 // @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 404 {object} bizErr.BizError "Transaction not found"
 // @Failure 500 {object} bizErr.BizError "Internal server error"
 // @Router /v1/supplysrv/internal/yahoo/transaction [GET]
 func YahooGetTransactionService(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req supply.YahooGetTransactionReq
+	var req supply.YahooGetTransactionsReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.AbortWithStatusJSON(consts.StatusBadRequest, bizErr.BizError{
@@ -562,16 +565,16 @@ func YahooGetTransactionService(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	if req.TransactionID == "" {
+	if req.YsRefID == "" {
 		c.AbortWithStatusJSON(consts.StatusBadRequest, bizErr.BizError{
 			Status:  consts.StatusBadRequest,
 			ErrCode: consts.StatusBadRequest,
-			ErrMsg:  "transaction_id is required",
+			ErrMsg:  "ys_ref_id is required",
 		})
 		return
 	}
 
-	resp, err := service.GetTransactionService(ctx, &req)
+	resp, err := service.GetTransactionsService(ctx, &req)
 	if err != nil {
 		cerr := bizErr.ConvertErr(err)
 		c.AbortWithStatusJSON(cerr.Status, cerr)
@@ -591,6 +594,7 @@ func YahooGetTransactionService(ctx context.Context, c *app.RequestContext) {
 // @Param request query supply.YahooGetAuctionItemReq true "Auction item request parameters"
 // @Success 200 {object} yahoo.AuctionItemDetail "Successfully retrieved auction item"
 // @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 404 {object} bizErr.BizError "Auction item not found"
 // @Failure 500 {object} bizErr.BizError "Internal server error"
 // @Router /v1/supplysrv/internal/yahoo/auctionItem [GET]
 func YahooGetAuctionItemService(ctx context.Context, c *app.RequestContext) {
@@ -669,6 +673,7 @@ func YahooGetAuctionItemAuthService(ctx context.Context, c *app.RequestContext) 
 // @Param request query supply.YahooGetCategoryTreeReq true "Category tree request parameters"
 // @Success 200 {object} yahoo.Category "Successfully retrieved category tree"
 // @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 404 {object} bizErr.BizError "category not found"
 // @Failure 500 {object} bizErr.BizError "Internal server error"
 // @Router /v1/supplysrv/internal/yahoo/categoryTree [GET]
 func YahooGetCategoryTreeService(ctx context.Context, c *app.RequestContext) {
@@ -681,6 +686,37 @@ func YahooGetCategoryTreeService(ctx context.Context, c *app.RequestContext) {
 	}
 
 	resp, err := service.GetCategoryTreeService(ctx, &req)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// YahooSearchAuctionsService .
+// @Summary Search Yahoo auctions
+// @Description Search Yahoo auctions
+// @Tags Yahoo
+// @Accept json
+// @Produce json
+// @Param Header header model.Header true "Header"
+// @Param request query supply.YahooSearchAuctionsReq true "Search auctions request parameters"
+// @Success 200 {object} yahoo.SearchAuctionsResponse "Successfully retrieved auctions"
+// @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @router /v1/supplysrv/internal/yahoo/search [GET]
+func YahooSearchAuctionsService(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req supply.YahooSearchAuctionsReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp, err := service.SearchAuctionService(ctx, &req)
 	if err != nil {
 		cerr := bizErr.ConvertErr(err)
 		c.AbortWithStatusJSON(cerr.Status, cerr)

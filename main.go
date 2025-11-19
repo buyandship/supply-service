@@ -58,7 +58,7 @@ func main() {
 	multiWriter := io.MultiWriter(os.Stdout, w2)
 
 	hlog.SetOutput(multiWriter)
-	hlog.SetLevel(hlog.Level(2))
+	hlog.SetLevel(hlog.Level(1))
 
 	propagator := propagation.NewCompositeTextMapPropagator()
 

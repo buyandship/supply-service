@@ -123,8 +123,26 @@ definitions:
     type: object
   github_com_buyandship_supply-svr_biz_model_yahoo.Transaction:
     properties:
-      TransactionID:
+      auction_id:
+        example: x123456789
+        type: string
+      current_price:
+        example: 1300
+        type: number
+      req_price:
+        example: 1000
+        type: number
+      status:
+        example: completed
+        type: string
+      transaction_id:
         example: txn_abc123
+        type: string
+      transaction_type:
+        example: BID
+        type: string
+      ys_ref_id:
+        example: YS-REF-001
         type: string
     type: object
   mercari.FetchItemsResponse:
@@ -703,6 +721,11 @@ definitions:
       ys_ref_id:
         type: string
     type: object
+  yahoo.Affiliate:
+    properties:
+      Rate:
+        type: integer
+    type: object
   yahoo.AuctionItemDetail:
     properties:
       AnsweredQAndANum:
@@ -732,7 +755,7 @@ definitions:
         type: boolean
       Bidorbuy:
         example: 5000
-        type: integer
+        type: number
       Bids:
         example: 5
         type: integer
@@ -756,8 +779,8 @@ definitions:
         example: 2
         type: integer
       CategoryID:
-        example: "22216"
-        type: string
+        example: 22216
+        type: integer
       CategoryIdPath:
         example: 0,2084005403,22216
         type: string
@@ -800,7 +823,7 @@ definitions:
         type: string
       Initprice:
         example: 1000
-        type: integer
+        type: number
       IsAdult:
         example: false
         type: boolean
@@ -862,7 +885,7 @@ definitions:
         $ref: '#/definitions/yahoo.ItemTagList'
       LastInitprice:
         example: 1200
-        type: integer
+        type: number
       Location:
         example: 東京都
         type: string
@@ -883,7 +906,7 @@ definitions:
         $ref: '#/definitions/yahoo.Payment'
       Price:
         example: 2480
-        type: integer
+        type: number
       ProductName:
         example: サンプルCD アルバム
         type: string
@@ -960,6 +983,90 @@ definitions:
         example: false
         type: boolean
     type: object
+  yahoo.AuctionItemListDetail:
+    properties:
+      Affiliate:
+        $ref: '#/definitions/yahoo.Affiliate'
+      AuctionID:
+        type: string
+      AuctionItemUrl:
+        type: string
+      BidOrBuy:
+        type: number
+      Bids:
+        type: integer
+      CategoryId:
+        type: string
+      CharityOption:
+        $ref: '#/definitions/yahoo.CharityOption'
+      CurrentPrice:
+        type: number
+      EndTime:
+        type: string
+      Image:
+        $ref: '#/definitions/yahoo.AuctionItemListImage'
+      IsAdult:
+        type: boolean
+      IsCrossListing:
+        type: boolean
+      IsFleaMarket:
+        type: boolean
+      IsReserved:
+        type: boolean
+      ItemUrl:
+        type: string
+      Option:
+        $ref: '#/definitions/yahoo.AuctionItemListOption'
+      OriginalImageNum:
+        type: integer
+      Seller:
+        $ref: '#/definitions/yahoo.AuctionItemListSeller'
+      StartTime:
+        type: string
+      Title:
+        type: string
+    type: object
+  yahoo.AuctionItemListImage:
+    properties:
+      Url:
+        type: string
+      height:
+        type: integer
+      width:
+        type: integer
+    type: object
+  yahoo.AuctionItemListOption:
+    properties:
+      BuynowIcon:
+        type: string
+      EasyPaymentIcon:
+        type: string
+      FeaturedIcon:
+        type: string
+      FreeshippingIcon:
+        type: string
+      IsBackGroundColor:
+        type: boolean
+      IsBold:
+        type: boolean
+      IsCharity:
+        type: boolean
+      IsOffer:
+        type: boolean
+      NewIcon:
+        type: string
+      StoreIcon:
+        type: string
+    type: object
+  yahoo.AuctionItemListSeller:
+    properties:
+      AucUserId:
+        type: string
+      AucUserIdItemListUrl:
+        type: string
+      AucUserIdRatingUrl:
+        type: string
+    type: object
   yahoo.BaggageInfo:
     properties:
       Size:
@@ -1022,6 +1129,8 @@ definitions:
         type: boolean
       Rating:
         $ref: '#/definitions/yahoo.Rating'
+      StoreName:
+        type: string
     type: object
   yahoo.Cancel:
     type: object
@@ -1314,7 +1423,7 @@ definitions:
         type: string
       CurrentPrice:
         example: 1300
-        type: integer
+        type: number
       IsBuyBid:
         example: false
         type: boolean
@@ -1326,19 +1435,22 @@ definitions:
         type: boolean
       NextBidPrice:
         example: 1400
-        type: integer
+        type: number
       Signature:
         example: 4mYveHoMr0fad9AS.Seqc6ys2BdqMyWTxA2VG_RJDbDyZjtIU5MX8k_xqg--
         type: string
       Title:
         example: 商品名１
         type: string
+      TransactionId:
+        example: "1234567890"
+        type: string
       UnderReserved:
         example: false
         type: boolean
       UnitOfBidPrice:
-        example: JPY
-        type: string
+        example: 10
+        type: number
     type: object
   yahoo.Rating:
     properties:
@@ -1412,6 +1524,27 @@ definitions:
         type: array
       ReservesNum:
         type: integer
+    type: object
+  yahoo.SearchAuctionResult:
+    properties:
+      Item:
+        items:
+          $ref: '#/definitions/yahoo.AuctionItemListDetail'
+        type: array
+    type: object
+  yahoo.SearchAuctionsResponse:
+    properties:
+      ResultSet:
+        properties:
+          '@firstResultPosition':
+            type: integer
+          '@totalResultsAvailable':
+            type: integer
+          '@totalResultsReturned':
+            type: integer
+          Result:
+            $ref: '#/definitions/yahoo.SearchAuctionResult'
+        type: object
     type: object
   yahoo.SellerInfo:
     properties:
@@ -1520,7 +1653,7 @@ definitions:
       PriceURL:
         type: string
       ServiceCode:
-        type: string
+        type: integer
       SinglePrice:
         type: integer
       type:
@@ -2134,6 +2267,10 @@ paths:
           description: Invalid parameter
           schema:
             $ref: '#/definitions/err.BizError'
+        "404":
+          description: Auction item not found
+          schema:
+            $ref: '#/definitions/err.BizError'
         "500":
           description: Internal server error
           schema:
@@ -2164,13 +2301,13 @@ paths:
         type: string
       - in: query
         name: adf
-        type: string
+        type: integer
       - in: query
         name: category
-        type: string
+        type: integer
       - in: query
         name: is_fnavi_only
-        type: string
+        type: integer
       produces:
       - application/json
       responses:
@@ -2180,6 +2317,10 @@ paths:
             $ref: '#/definitions/yahoo.Category'
         "400":
           description: Invalid parameter
+          schema:
+            $ref: '#/definitions/err.BizError'
+        "404":
+          description: category not found
           schema:
             $ref: '#/definitions/err.BizError'
         "500":
@@ -2227,11 +2368,178 @@ paths:
           description: Invalid parameter
           schema:
             $ref: '#/definitions/err.BizError'
+        "404":
+          description: get auction item failed
+          schema:
+            $ref: '#/definitions/err.BizError'
+        "422":
+          description: The auction item is not available for fulfillment
+          schema:
+            $ref: '#/definitions/err.BizError'
         "500":
           description: Internal server error
           schema:
             $ref: '#/definitions/err.BizError'
       summary: Place bid on Yahoo Auction
+      tags:
+      - Yahoo
+  /v1/supplysrv/internal/yahoo/search:
+    get:
+      consumes:
+      - application/json
+      description: Search Yahoo auctions
+      parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
+      - in: query
+        name: adf
+        type: integer
+      - in: query
+        name: attn
+        type: integer
+      - in: query
+        name: aucmax_bidorbuy_price
+        type: integer
+      - in: query
+        name: aucmaxprice
+        type: integer
+      - in: query
+        name: aucmin_bidorbuy_price
+        type: integer
+      - in: query
+        name: aucminprice
+        type: integer
+      - in: query
+        name: black_seller_auc_user_id
+        type: string
+      - in: query
+        name: buynow
+        type: integer
+      - in: query
+        name: category
+        type: integer
+      - in: query
+        name: easypayment
+        type: integer
+      - in: query
+        name: except_shoppingitem
+        type: boolean
+      - in: query
+        name: expect_category
+        type: string
+      - in: query
+        name: f
+        type: string
+      - in: query
+        name: featured
+        type: string
+      - in: query
+        name: fixed
+        type: integer
+      - in: query
+        name: freeshipping
+        type: integer
+      - in: query
+        name: item_status
+        type: integer
+      - in: query
+        name: keyword
+        type: string
+      - in: query
+        name: loc_cd
+        type: integer
+      - in: query
+        name: max_affiliate
+        type: integer
+      - in: query
+        name: max_charity
+        type: integer
+      - in: query
+        name: max_start
+        type: integer
+      - in: query
+        name: min_affiliate
+        type: integer
+      - in: query
+        name: min_charity
+        type: integer
+      - in: query
+        name: min_start
+        type: integer
+      - in: query
+        name: new
+        type: integer
+      - in: query
+        name: ngram
+        type: integer
+      - in: query
+        name: order
+        type: string
+      - in: query
+        name: order2
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: point
+        type: integer
+      - in: query
+        name: ranking
+        type: string
+      - in: query
+        name: seller_auc_user_id
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sort2
+        type: string
+      - in: query
+        name: store
+        type: integer
+      - in: query
+        name: thumbnail
+        type: integer
+      - in: query
+        name: timebuf
+        type: integer
+      - in: query
+        name: type
+        type: string
+      - in: query
+        name: wrappingicon
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved auctions
+          schema:
+            $ref: '#/definitions/yahoo.SearchAuctionsResponse'
+        "400":
+          description: Invalid parameter
+          schema:
+            $ref: '#/definitions/err.BizError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/err.BizError'
+      summary: Search Yahoo auctions
       tags:
       - Yahoo
   /v1/supplysrv/internal/yahoo/transaction:
@@ -2266,9 +2574,15 @@ paths:
         "200":
           description: Successfully retrieved transaction
           schema:
-            $ref: '#/definitions/github_com_buyandship_supply-svr_biz_model_yahoo.Transaction'
+            items:
+              $ref: '#/definitions/github_com_buyandship_supply-svr_biz_model_yahoo.Transaction'
+            type: array
         "400":
           description: Invalid parameter
+          schema:
+            $ref: '#/definitions/err.BizError'
+        "404":
+          description: Transaction not found
           schema:
             $ref: '#/definitions/err.BizError'
         "500":
