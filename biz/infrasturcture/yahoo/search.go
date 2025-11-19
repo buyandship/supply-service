@@ -2,8 +2,11 @@ package yahoo
 
 import (
 	"context"
+	"net/http"
 	"net/url"
 	"strconv"
+
+	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 )
 
 // SearchAuctionsRequest represents the request parameters for searching Yahoo Auctions
@@ -332,6 +335,18 @@ func (c *Client) SearchAuctions(ctx context.Context, req *SearchAuctionsRequest)
 
 	resp, err := c.makeRequest(ctx, "GET", "/api/v1/search", params, nil, AuthTypeHMAC)
 	if err != nil {
+		if resp != nil {
+			switch resp.StatusCode {
+			case http.StatusInternalServerError:
+				{
+					return nil, bizErr.BizError{
+						Status:  http.StatusBadRequest,
+						ErrCode: http.StatusBadRequest,
+						ErrMsg:  "yahoo returns internal server error",
+					}
+				}
+			}
+		}
 		return nil, err
 	}
 
