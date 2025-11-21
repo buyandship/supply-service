@@ -68,3 +68,16 @@ func (h *H) UpdateBuyoutBidRequest(ctx context.Context, order *yahoo.BidRequest)
 
 	return tx.Commit().Error
 }
+
+func (h *H) InsertBidAuctionItem(ctx context.Context, item *yahoo.BidAuctionItem) (err error) {
+	ctx, span := trace.StartDBOperation(ctx, "InsertBidAuctionItem")
+	defer trace.EndSpan(span, err)
+
+	db := h.cli.WithContext(ctx)
+
+	if err := db.Create(&item).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -192,6 +192,16 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 			}
 		}
 
+		// save auction item when WIN_BID
+		go func() {
+			auctionItem := item.ToBidAuctionItem()
+			auctionItem.BidRequestID = req.YsRefID
+			auctionItem.ItemType = req.TransactionType
+			if err := db.GetHandler().InsertBidAuctionItem(ctx, auctionItem); err != nil {
+				hlog.CtxErrorf(ctx, "insert auction item failed: %+v", err)
+			}
+		}()
+
 		if err := db.GetHandler().UpdateBuyoutBidRequest(ctx, &model.BidRequest{
 			OrderID:       req.YsRefID,
 			Status:        "WIN_BID",

@@ -3973,6 +3973,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890abc.jpg"
                 },
+                "Thumbnail10": {
+                    "type": "string",
+                    "example": "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890123.jpg"
+                },
                 "Thumbnail2": {
                     "type": "string",
                     "example": "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890def.jpg"
@@ -3980,6 +3984,30 @@ const docTemplate = `{
                 "Thumbnail3": {
                     "type": "string",
                     "example": "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890ghi.jpg"
+                },
+                "Thumbnail4": {
+                    "type": "string",
+                    "example": "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890jkl.jpg"
+                },
+                "Thumbnail5": {
+                    "type": "string",
+                    "example": "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890mno.jpg"
+                },
+                "Thumbnail6": {
+                    "type": "string",
+                    "example": "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890pqr.jpg"
+                },
+                "Thumbnail7": {
+                    "type": "string",
+                    "example": "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890stu.jpg"
+                },
+                "Thumbnail8": {
+                    "type": "string",
+                    "example": "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890vwx.jpg"
+                },
+                "Thumbnail9": {
+                    "type": "string",
+                    "example": "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890yz.jpg"
                 }
             }
         },

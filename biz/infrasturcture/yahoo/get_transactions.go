@@ -10,6 +10,26 @@ import (
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 )
 
+type Transaction struct {
+	TransactionID    string  `json:"transaction_id,omitempty"`
+	RequestGroupID   string  `json:"request_group_id,omitempty"`
+	RetryCount       int     `json:"retry_count,omitempty"`
+	YsRefID          string  `json:"ys_ref_id"`
+	YahooAccountID   string  `json:"yahoo_account_id,omitempty"`
+	AuctionID        string  `json:"auction_id,omitempty"`
+	CurrentPrice     float64 `json:"current_price,omitempty"`
+	TransactionType  string  `json:"transaction_type,omitempty"`
+	Status           string  `json:"status,omitempty"`
+	APIEndpoint      string  `json:"api_endpoint,omitempty"`
+	HTTPStatus       int     `json:"http_status,omitempty"`
+	ProcessingTimeMS int     `json:"processing_time_ms,omitempty"`
+	ReqPrice         float64 `json:"req_price,omitempty"`
+	CreatedAt        string  `json:"created_at,omitempty"`
+	UpdatedAt        string  `json:"updated_at,omitempty"`
+	// RequestData      supply.YahooPlaceBidReq `json:"request_data"`
+	// ResponseData     PlaceBidResponse        `json:"response_data,omitempty"`
+}
+
 type GetTransactionsResponse struct {
 	Transactions []Transaction `json:"transactions"`
 	Count        int           `json:"count"`

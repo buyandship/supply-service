@@ -1710,6 +1710,27 @@ definitions:
       Thumbnail3:
         example: https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890ghi.jpg
         type: string
+      Thumbnail4:
+        example: https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890jkl.jpg
+        type: string
+      Thumbnail5:
+        example: https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890mno.jpg
+        type: string
+      Thumbnail6:
+        example: https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890pqr.jpg
+        type: string
+      Thumbnail7:
+        example: https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890stu.jpg
+        type: string
+      Thumbnail8:
+        example: https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890vwx.jpg
+        type: string
+      Thumbnail9:
+        example: https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890yz.jpg
+        type: string
+      Thumbnail10:
+        example: https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890123.jpg
+        type: string
     type: object
   yahoo.Winner:
     properties:
