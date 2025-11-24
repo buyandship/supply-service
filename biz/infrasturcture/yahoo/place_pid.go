@@ -4,8 +4,6 @@ import (
 	"context"
 	"net/url"
 	"strconv"
-
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
 // PlaceBidRequest represents a bid request
@@ -82,7 +80,6 @@ func (c *Client) PlaceBid(ctx context.Context, req *PlaceBidRequest) (*PlaceBidR
 	}
 
 	transactionId := resp.Header.Get("X-Transaction-ID")
-	hlog.CtxDebugf(ctx, "transactionId: %s", transactionId)
 	placeBidResponse.ResultSet.Result.TransactionId = transactionId
 
 	return &placeBidResponse, nil

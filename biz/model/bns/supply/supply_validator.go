@@ -142,3 +142,9 @@ func (p *YahooSearchAuctionsReq) IsValid() error {
 func (p *YahooGetCategoryLeafReq) IsValid() error {
 	return nil
 }
+func (p *YahooGetMyWonListReq) IsValid() error {
+	return nil
+}
+func (p *YahooGetSellingListReq) IsValid() error {
+	return nil
+}

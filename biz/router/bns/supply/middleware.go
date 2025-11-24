@@ -205,3 +205,13 @@ func _yahoogetcategoryleafserviceMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _yahoogetmywonlistserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _yahoogetsellinglistserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

@@ -1448,6 +1448,70 @@ definitions:
       TaxinPrice:
         type: number
     type: object
+  yahoo.MyWonListImage:
+    properties:
+      '@Height':
+        type: integer
+      '@Width':
+        type: integer
+      Url:
+        type: string
+    type: object
+  yahoo.MyWonListItem:
+    properties:
+      AuctionID:
+        type: string
+      AuctionItemUrl:
+        type: string
+      Bids:
+        type: integer
+      EndTime:
+        type: string
+      Image:
+        $ref: '#/definitions/yahoo.MyWonListImage'
+      Option:
+        $ref: '#/definitions/yahoo.MyWonListOption'
+      Seller:
+        $ref: '#/definitions/yahoo.MyWonListSeller'
+      Title:
+        type: string
+      WonPrice:
+        type: number
+    type: object
+  yahoo.MyWonListOption:
+    properties:
+      FreeShippingIconUrl:
+        type: string
+      IsBackGroundColor:
+        type: boolean
+      IsBold:
+        type: boolean
+      StoreIconUrl:
+        type: string
+    type: object
+  yahoo.MyWonListResponse:
+    properties:
+      ResultSet:
+        properties:
+          '@firstResultPosition':
+            type: integer
+          '@totalResultsAvailable':
+            type: integer
+          '@totalResultsReturned':
+            type: integer
+          Result:
+            items:
+              $ref: '#/definitions/yahoo.MyWonListItem'
+            type: array
+        type: object
+    type: object
+  yahoo.MyWonListSeller:
+    properties:
+      AucUserId:
+        type: string
+      AucUserIdItemListUrl:
+        type: string
+    type: object
   yahoo.NextBid:
     properties:
       LimitQuantity:
@@ -1728,6 +1792,87 @@ definitions:
         type: integer
       WatchListNumFromAff:
         type: integer
+    type: object
+  yahoo.SellingListImage:
+    properties:
+      '@height':
+        type: integer
+      '@width':
+        type: integer
+      Url:
+        type: string
+    type: object
+  yahoo.SellingListItem:
+    properties:
+      AuctionID:
+        type: string
+      AuctionItemUrl:
+        type: string
+      BidOrbuy:
+        type: number
+      Bids:
+        type: integer
+      CharityOption:
+        $ref: '#/definitions/yahoo.CharityOption'
+      CurrentPrice:
+        type: number
+      EndTime:
+        type: string
+      Image:
+        $ref: '#/definitions/yahoo.SellingListImage'
+      IsReserved:
+        type: boolean
+      ItemUrl:
+        type: string
+      Option:
+        $ref: '#/definitions/yahoo.AuctionItemListOption'
+      Title:
+        type: string
+    type: object
+  yahoo.SellingListRating:
+    properties:
+      IsDeleted:
+        type: boolean
+      IsSuspended:
+        type: boolean
+      Point:
+        type: integer
+    type: object
+  yahoo.SellingListResponse:
+    properties:
+      ResultSet:
+        properties:
+          '@firstResultPosition':
+            type: integer
+          '@totalResultsAvailable':
+            type: integer
+          '@totalResultsReturned':
+            type: integer
+          Result:
+            $ref: '#/definitions/yahoo.SellingListResult'
+        type: object
+    type: object
+  yahoo.SellingListResult:
+    properties:
+      Item:
+        items:
+          $ref: '#/definitions/yahoo.SellingListItem'
+        type: array
+      Seller:
+        $ref: '#/definitions/yahoo.SellingListSeller'
+    type: object
+  yahoo.SellingListSeller:
+    properties:
+      AucUserId:
+        type: string
+      AucUserIdAboutUrl:
+        type: string
+      AucUserIdItemListUrl:
+        type: string
+      AucUserIdRatingUrl:
+        type: string
+      Rating:
+        $ref: '#/definitions/yahoo.SellingListRating'
     type: object
   yahoo.Shipping:
     properties:
@@ -2613,6 +2758,57 @@ paths:
       summary: Get Yahoo Auction category tree
       tags:
       - Yahoo
+  /v1/supplysrv/internal/yahoo/myWonList:
+    get:
+      consumes:
+      - application/json
+      description: Get my won list from Yahoo Auction
+      parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
+      - in: query
+        name: auction_id
+        type: string
+      - in: query
+        name: contact_progress
+        type: string
+      - in: query
+        name: start
+        type: integer
+      - in: query
+        name: ys_ref_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved my won list
+          schema:
+            $ref: '#/definitions/yahoo.MyWonListResponse'
+        "400":
+          description: Invalid parameter
+          schema:
+            $ref: '#/definitions/err.BizError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/err.BizError'
+      summary: Get Yahoo Auction my won list
+      tags:
+      - Yahoo
   /v1/supplysrv/internal/yahoo/placeBid:
     post:
       consumes:
@@ -2823,6 +3019,57 @@ paths:
           schema:
             $ref: '#/definitions/err.BizError'
       summary: Search Yahoo auctions
+      tags:
+      - Yahoo
+  /v1/supplysrv/internal/yahoo/sellingList:
+    get:
+      consumes:
+      - application/json
+      description: Get selling list from Yahoo Auction
+      parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
+      - in: query
+        name: sellerAucUserId
+        type: string
+      - in: query
+        name: start
+        type: integer
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: ys_ref_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved selling list
+          schema:
+            $ref: '#/definitions/yahoo.SellingListResponse'
+        "400":
+          description: Invalid parameter
+          schema:
+            $ref: '#/definitions/err.BizError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/err.BizError'
+      summary: Get Yahoo Auction selling list
       tags:
       - Yahoo
   /v1/supplysrv/internal/yahoo/transaction:

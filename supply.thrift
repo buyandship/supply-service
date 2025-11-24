@@ -347,6 +347,20 @@ struct YahooGetCategoryLeafReq {
     39: optional string callback (api.query="callback")
 }
 
+struct YahooGetMyWonListReq {
+    1: optional string ys_ref_id (api.query="ys_ref_id")
+    2: optional i32 start (api.query="start")
+    3: optional string contact_progress (api.query="contact_progress")
+    4: optional string auction_id (api.query="auction_id")
+}
+
+struct YahooGetSellingListReq {
+    1: string sellerAucUserId (api.query="sellerAucUserId")
+    2: optional string ys_ref_id (api.query="ys_ref_id")
+    3: optional i32 start (api.query="start")
+    4: optional string status (api.query="status")
+}
+
 service SupplyService {
     string MercariGetItemService(1: MercariGetItemReq req) (api.get="/v1/supplysrv/internal/mercari/item");
     string MercariGetCategoriesService() (api.get="/v1/supplysrv/internal/mercari/categories")
@@ -380,4 +394,6 @@ service SupplyService {
 
 
     string YahooGetCategoryLeafService(1: YahooGetCategoryLeafReq req) (api.get="/v1/supplysrv/internal/yahoo/categoryLeaf")
+    string YahooGetMyWonListService(1: YahooGetMyWonListReq req) (api.get="/v1/supplysrv/internal/yahoo/myWonList")
+    string YahooGetSellingListService(1: YahooGetSellingListReq req) (api.get="/v1/supplysrv/internal/yahoo/sellingList")
 }

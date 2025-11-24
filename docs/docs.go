@@ -1134,6 +1134,84 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/supplysrv/internal/yahoo/myWonList": {
+            "get": {
+                "description": "Get my won list from Yahoo Auction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Yahoo"
+                ],
+                "summary": "Get Yahoo Auction my won list",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "auction_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "contact_progress",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ys_ref_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved my won list",
+                        "schema": {
+                            "$ref": "#/definitions/yahoo.MyWonListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameter",
+                        "schema": {
+                            "$ref": "#/definitions/err.BizError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/err.BizError"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/supplysrv/internal/yahoo/placeBid": {
             "post": {
                 "description": "Place a bid on an item in Yahoo Auction marketplace",
@@ -1454,6 +1532,84 @@ const docTemplate = `{
                         "description": "Successfully retrieved auctions",
                         "schema": {
                             "$ref": "#/definitions/yahoo.SearchAuctionsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameter",
+                        "schema": {
+                            "$ref": "#/definitions/err.BizError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/err.BizError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/supplysrv/internal/yahoo/sellingList": {
+            "get": {
+                "description": "Get selling list from Yahoo Auction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Yahoo"
+                ],
+                "summary": "Get Yahoo Auction selling list",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "sellerAucUserId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ys_ref_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved selling list",
+                        "schema": {
+                            "$ref": "#/definitions/yahoo.SellingListResponse"
                         }
                     },
                     "400": {
@@ -3858,6 +4014,105 @@ const docTemplate = `{
                 }
             }
         },
+        "yahoo.MyWonListImage": {
+            "type": "object",
+            "properties": {
+                "@Height": {
+                    "type": "integer"
+                },
+                "@Width": {
+                    "type": "integer"
+                },
+                "Url": {
+                    "type": "string"
+                }
+            }
+        },
+        "yahoo.MyWonListItem": {
+            "type": "object",
+            "properties": {
+                "AuctionID": {
+                    "type": "string"
+                },
+                "AuctionItemUrl": {
+                    "type": "string"
+                },
+                "Bids": {
+                    "type": "integer"
+                },
+                "EndTime": {
+                    "type": "string"
+                },
+                "Image": {
+                    "$ref": "#/definitions/yahoo.MyWonListImage"
+                },
+                "Option": {
+                    "$ref": "#/definitions/yahoo.MyWonListOption"
+                },
+                "Seller": {
+                    "$ref": "#/definitions/yahoo.MyWonListSeller"
+                },
+                "Title": {
+                    "type": "string"
+                },
+                "WonPrice": {
+                    "type": "number"
+                }
+            }
+        },
+        "yahoo.MyWonListOption": {
+            "type": "object",
+            "properties": {
+                "FreeShippingIconUrl": {
+                    "type": "string"
+                },
+                "IsBackGroundColor": {
+                    "type": "boolean"
+                },
+                "IsBold": {
+                    "type": "boolean"
+                },
+                "StoreIconUrl": {
+                    "type": "string"
+                }
+            }
+        },
+        "yahoo.MyWonListResponse": {
+            "type": "object",
+            "properties": {
+                "ResultSet": {
+                    "type": "object",
+                    "properties": {
+                        "@firstResultPosition": {
+                            "type": "integer"
+                        },
+                        "@totalResultsAvailable": {
+                            "type": "integer"
+                        },
+                        "@totalResultsReturned": {
+                            "type": "integer"
+                        },
+                        "Result": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/yahoo.MyWonListItem"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "yahoo.MyWonListSeller": {
+            "type": "object",
+            "properties": {
+                "AucUserId": {
+                    "type": "string"
+                },
+                "AucUserIdItemListUrl": {
+                    "type": "string"
+                }
+            }
+        },
         "yahoo.NextBid": {
             "type": "object",
             "properties": {
@@ -4267,6 +4522,131 @@ const docTemplate = `{
                 },
                 "WatchListNumFromAff": {
                     "type": "integer"
+                }
+            }
+        },
+        "yahoo.SellingListImage": {
+            "type": "object",
+            "properties": {
+                "@height": {
+                    "type": "integer"
+                },
+                "@width": {
+                    "type": "integer"
+                },
+                "Url": {
+                    "type": "string"
+                }
+            }
+        },
+        "yahoo.SellingListItem": {
+            "type": "object",
+            "properties": {
+                "AuctionID": {
+                    "type": "string"
+                },
+                "AuctionItemUrl": {
+                    "type": "string"
+                },
+                "BidOrbuy": {
+                    "type": "number"
+                },
+                "Bids": {
+                    "type": "integer"
+                },
+                "CharityOption": {
+                    "$ref": "#/definitions/yahoo.CharityOption"
+                },
+                "CurrentPrice": {
+                    "type": "number"
+                },
+                "EndTime": {
+                    "type": "string"
+                },
+                "Image": {
+                    "$ref": "#/definitions/yahoo.SellingListImage"
+                },
+                "IsReserved": {
+                    "type": "boolean"
+                },
+                "ItemUrl": {
+                    "type": "string"
+                },
+                "Option": {
+                    "$ref": "#/definitions/yahoo.AuctionItemListOption"
+                },
+                "Title": {
+                    "type": "string"
+                }
+            }
+        },
+        "yahoo.SellingListRating": {
+            "type": "object",
+            "properties": {
+                "IsDeleted": {
+                    "type": "boolean"
+                },
+                "IsSuspended": {
+                    "type": "boolean"
+                },
+                "Point": {
+                    "type": "integer"
+                }
+            }
+        },
+        "yahoo.SellingListResponse": {
+            "type": "object",
+            "properties": {
+                "ResultSet": {
+                    "type": "object",
+                    "properties": {
+                        "@firstResultPosition": {
+                            "type": "integer"
+                        },
+                        "@totalResultsAvailable": {
+                            "type": "integer"
+                        },
+                        "@totalResultsReturned": {
+                            "type": "integer"
+                        },
+                        "Result": {
+                            "$ref": "#/definitions/yahoo.SellingListResult"
+                        }
+                    }
+                }
+            }
+        },
+        "yahoo.SellingListResult": {
+            "type": "object",
+            "properties": {
+                "Item": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/yahoo.SellingListItem"
+                    }
+                },
+                "Seller": {
+                    "$ref": "#/definitions/yahoo.SellingListSeller"
+                }
+            }
+        },
+        "yahoo.SellingListSeller": {
+            "type": "object",
+            "properties": {
+                "AucUserId": {
+                    "type": "string"
+                },
+                "AucUserIdAboutUrl": {
+                    "type": "string"
+                },
+                "AucUserIdItemListUrl": {
+                    "type": "string"
+                },
+                "AucUserIdRatingUrl": {
+                    "type": "string"
+                },
+                "Rating": {
+                    "$ref": "#/definitions/yahoo.SellingListRating"
                 }
             }
         },

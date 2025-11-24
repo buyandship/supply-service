@@ -757,3 +757,65 @@ func YahooGetCategoryLeafService(ctx context.Context, c *app.RequestContext) {
 
 	c.JSON(consts.StatusOK, resp)
 }
+
+// YahooGetMyWonListService .
+// @router /v1/supplysrv/internal/yahoo/myWonList [GET]
+// @Summary Get Yahoo Auction my won list
+// @Description Get my won list from Yahoo Auction
+// @Tags Yahoo
+// @Accept json
+// @Produce json
+// @Param Header header model.Header true "Header"
+// @Param request query supply.YahooGetMyWonListReq true "My won list request parameters"
+// @Success 200 {object} yahoo.MyWonListResponse "Successfully retrieved my won list"
+// @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+func YahooGetMyWonListService(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req supply.YahooGetMyWonListReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp, err := service.GetMyWonListService(ctx, &req)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// YahooGetSellingListService .
+// @router /v1/supplysrv/internal/yahoo/sellingList [GET]
+// @Summary Get Yahoo Auction selling list
+// @Description Get selling list from Yahoo Auction
+// @Tags Yahoo
+// @Accept json
+// @Produce json
+// @Param Header header model.Header true "Header"
+// @Param request query supply.YahooGetSellingListReq true "Selling list request parameters"
+// @Success 200 {object} yahoo.SellingListResponse "Successfully retrieved selling list"
+// @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+func YahooGetSellingListService(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req supply.YahooGetSellingListReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp, err := service.GetSellingListService(ctx, &req)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
