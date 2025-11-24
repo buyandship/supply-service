@@ -27,7 +27,7 @@ func PostTransactionReviewService(ctx context.Context, req *supply.MercariPostTr
 	} */
 
 	if req.GetTrxID() == "" {
-		hlog.CtxErrorf(ctx, "empty trx_id")
+		hlog.CtxWarnf(ctx, "empty trx_id")
 		return nil, bizErr.InvalidParameterError
 	}
 
