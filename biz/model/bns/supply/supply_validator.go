@@ -139,3 +139,6 @@ func (p *YahooGetCategoryTreeReq) IsValid() error {
 func (p *YahooSearchAuctionsReq) IsValid() error {
 	return nil
 }
+func (p *YahooGetCategoryLeafReq) IsValid() error {
+	return nil
+}

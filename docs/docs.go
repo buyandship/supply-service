@@ -796,6 +796,265 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/supplysrv/internal/yahoo/categoryLeaf": {
+            "get": {
+                "description": "Get category leaf from Yahoo Auction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Yahoo"
+                ],
+                "summary": "Get Yahoo Auction category leaf",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "adf",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "attn",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "aucmax_bidorbuy_price",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "aucmaxprice",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "aucmin_bidorbuy_price",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "aucminprice",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "black_seller_auc_user_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "buynow",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "callback",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "category",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "easypayment",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "except_category",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "except_shoppingitem",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "featured",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "fixed",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "freeshipping",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "item_status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "loc_cd",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "max_affiliate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "max_charity",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "max_start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "min_affiliate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "min_charity",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "min_start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "new",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "order2",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "point",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "ranking",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "seller_auc_user_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort2",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "store",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "thumbnail",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "timebuf",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "wrappingicon",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "yahoo_account_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ys_ref_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved category leaf",
+                        "schema": {
+                            "$ref": "#/definitions/yahoo.CategoryLeafResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameter",
+                        "schema": {
+                            "$ref": "#/definitions/err.BizError"
+                        }
+                    },
+                    "404": {
+                        "description": "category leaf not found",
+                        "schema": {
+                            "$ref": "#/definitions/err.BizError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/err.BizError"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/supplysrv/internal/yahoo/categoryTree": {
             "get": {
                 "description": "Get category tree from Yahoo Auction",
@@ -3263,6 +3522,162 @@ const docTemplate = `{
                 },
                 "ParentCategoryId": {
                     "type": "integer"
+                }
+            }
+        },
+        "yahoo.CategoryLeafImage": {
+            "type": "object",
+            "properties": {
+                "@height": {
+                    "type": "integer"
+                },
+                "@width": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "yahoo.CategoryLeafItem": {
+            "type": "object",
+            "properties": {
+                "Affiliate": {
+                    "$ref": "#/definitions/yahoo.Affiliate"
+                },
+                "AuctionID": {
+                    "type": "string"
+                },
+                "AuctionItemUrl": {
+                    "type": "string"
+                },
+                "BidOrBuy": {
+                    "type": "number"
+                },
+                "Bids": {
+                    "type": "integer"
+                },
+                "CharityOption": {
+                    "$ref": "#/definitions/yahoo.CharityOption"
+                },
+                "CurrentPrice": {
+                    "type": "number"
+                },
+                "EndTime": {
+                    "type": "string"
+                },
+                "Image": {
+                    "$ref": "#/definitions/yahoo.CategoryLeafImage"
+                },
+                "IsAdult": {
+                    "type": "boolean"
+                },
+                "IsReserved": {
+                    "type": "boolean"
+                },
+                "ItemUrl": {
+                    "type": "string"
+                },
+                "Option": {
+                    "$ref": "#/definitions/yahoo.CategoryLeafOption"
+                },
+                "OriginalImageNum": {
+                    "type": "integer"
+                },
+                "Seller": {
+                    "$ref": "#/definitions/yahoo.AuctionItemListSeller"
+                },
+                "StartTime": {
+                    "type": "string"
+                },
+                "Title": {
+                    "type": "string"
+                }
+            }
+        },
+        "yahoo.CategoryLeafOption": {
+            "type": "object",
+            "properties": {
+                "BuynowIcon": {
+                    "type": "string"
+                },
+                "CharityOptionIcon": {
+                    "type": "string"
+                },
+                "EasyPaymentIcon": {
+                    "type": "string"
+                },
+                "FeaturedIcon": {
+                    "type": "string"
+                },
+                "FreeshippingIcon": {
+                    "type": "string"
+                },
+                "IsBackGroundColor": {
+                    "type": "boolean"
+                },
+                "IsBold": {
+                    "type": "boolean"
+                },
+                "IsCharity": {
+                    "type": "boolean"
+                },
+                "IsOffer": {
+                    "type": "boolean"
+                },
+                "NewIcon": {
+                    "type": "string"
+                },
+                "NewItemIcon": {
+                    "type": "string"
+                },
+                "PointIcon": {
+                    "type": "string"
+                },
+                "StoreIcon": {
+                    "type": "string"
+                },
+                "WrappingIcon": {
+                    "type": "string"
+                }
+            }
+        },
+        "yahoo.CategoryLeafResponse": {
+            "type": "object",
+            "properties": {
+                "ResultSet": {
+                    "type": "object",
+                    "properties": {
+                        "@firstResultPosition": {
+                            "type": "integer"
+                        },
+                        "@totalResultsAvailable": {
+                            "type": "integer"
+                        },
+                        "@totalResultsReturned": {
+                            "type": "integer"
+                        },
+                        "Result": {
+                            "$ref": "#/definitions/yahoo.CategoryLeafResult"
+                        }
+                    }
+                }
+            }
+        },
+        "yahoo.CategoryLeafResult": {
+            "type": "object",
+            "properties": {
+                "CategoryIdPath": {
+                    "type": "string"
+                },
+                "CategoryPath": {
+                    "type": "string"
+                },
+                "Item": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/yahoo.CategoryLeafItem"
+                    }
                 }
             }
         },

@@ -47,6 +47,7 @@ func Register(r *server.Hertz) {
 				{
 					_yahoo := _internal.Group("/yahoo", _yahooMw()...)
 					_yahoo.GET("/auctionItem", append(_yahoogetauctionitemserviceMw(), supply.YahooGetAuctionItemService)...)
+					_yahoo.GET("/categoryLeaf", append(_yahoogetcategoryleafserviceMw(), supply.YahooGetCategoryLeafService)...)
 					_yahoo.GET("/categoryTree", append(_yahoogetcategorytreeserviceMw(), supply.YahooGetCategoryTreeService)...)
 					_yahoo.POST("/placeBid", append(_yahooplacebidserviceMw(), supply.YahooPlaceBidService)...)
 					_yahoo.GET("/search", append(_yahoosearchauctionsserviceMw(), supply.YahooSearchAuctionsService)...)

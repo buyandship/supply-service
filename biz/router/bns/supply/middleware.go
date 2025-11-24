@@ -200,3 +200,8 @@ func _yahoosearchauctionsserviceMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _yahoogetcategoryleafserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

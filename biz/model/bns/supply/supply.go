@@ -10949,6 +10949,2231 @@ func (p *YahooSearchAuctionsReq) String() string {
 
 }
 
+type YahooGetCategoryLeafReq struct {
+	YahooAccountID       *string `thrift:"yahoo_account_id,1,optional" json:"yahoo_account_id,omitempty" query:"yahoo_account_id"`
+	YsRefID              *string `thrift:"ys_ref_id,2,optional" json:"ys_ref_id,omitempty" query:"ys_ref_id"`
+	Category             int32   `thrift:"category,3" json:"category" query:"category"`
+	ExceptCategory       *string `thrift:"except_category,4,optional" json:"except_category,omitempty" query:"except_category"`
+	Featured             *int32  `thrift:"featured,5,optional" json:"featured,omitempty" query:"featured"`
+	Page                 *int32  `thrift:"page,6,optional" json:"page,omitempty" query:"page"`
+	Sort                 *string `thrift:"sort,7,optional" json:"sort,omitempty" query:"sort"`
+	Order                *string `thrift:"order,8,optional" json:"order,omitempty" query:"order"`
+	Store                *int32  `thrift:"store,9,optional" json:"store,omitempty" query:"store"`
+	Aucminprice          *int32  `thrift:"aucminprice,10,optional" json:"aucminprice,omitempty" query:"aucminprice"`
+	Aucmaxprice          *int32  `thrift:"aucmaxprice,11,optional" json:"aucmaxprice,omitempty" query:"aucmaxprice"`
+	AucminBidorbuyPrice  *int32  `thrift:"aucmin_bidorbuy_price,12,optional" json:"aucmin_bidorbuy_price,omitempty" query:"aucmin_bidorbuy_price"`
+	AucmaxBidorbuyPrice  *int32  `thrift:"aucmax_bidorbuy_price,13,optional" json:"aucmax_bidorbuy_price,omitempty" query:"aucmax_bidorbuy_price"`
+	Easypayment          *int32  `thrift:"easypayment,14,optional" json:"easypayment,omitempty" query:"easypayment"`
+	New                  *int32  `thrift:"new,15,optional" json:"new,omitempty" query:"new"`
+	Freeshipping         *int32  `thrift:"freeshipping,16,optional" json:"freeshipping,omitempty" query:"freeshipping"`
+	Wrappingicon         *int32  `thrift:"wrappingicon,17,optional" json:"wrappingicon,omitempty" query:"wrappingicon"`
+	Buynow               *int32  `thrift:"buynow,18,optional" json:"buynow,omitempty" query:"buynow"`
+	Thumbnail            *int32  `thrift:"thumbnail,19,optional" json:"thumbnail,omitempty" query:"thumbnail"`
+	Attn                 *int32  `thrift:"attn,20,optional" json:"attn,omitempty" query:"attn"`
+	Point                *int32  `thrift:"point,21,optional" json:"point,omitempty" query:"point"`
+	ItemStatus           *string `thrift:"item_status,22,optional" json:"item_status,omitempty" query:"item_status"`
+	Adf                  *int32  `thrift:"adf,23,optional" json:"adf,omitempty" query:"adf"`
+	MinCharity           *int32  `thrift:"min_charity,24,optional" json:"min_charity,omitempty" query:"min_charity"`
+	MaxCharity           *int32  `thrift:"max_charity,25,optional" json:"max_charity,omitempty" query:"max_charity"`
+	MinAffiliate         *int32  `thrift:"min_affiliate,26,optional" json:"min_affiliate,omitempty" query:"min_affiliate"`
+	MaxAffiliate         *int32  `thrift:"max_affiliate,27,optional" json:"max_affiliate,omitempty" query:"max_affiliate"`
+	Timebuf              *int32  `thrift:"timebuf,28,optional" json:"timebuf,omitempty" query:"timebuf"`
+	Ranking              *int32  `thrift:"ranking,29,optional" json:"ranking,omitempty" query:"ranking"`
+	SellerAucUserID      *string `thrift:"seller_auc_user_id,30,optional" json:"seller_auc_user_id,omitempty" query:"seller_auc_user_id"`
+	BlackSellerAucUserID *string `thrift:"black_seller_auc_user_id,31,optional" json:"black_seller_auc_user_id,omitempty" query:"black_seller_auc_user_id"`
+	Sort2                *string `thrift:"sort2,32,optional" json:"sort2,omitempty" query:"sort2"`
+	Order2               *string `thrift:"order2,33,optional" json:"order2,omitempty" query:"order2"`
+	LocCd                *string `thrift:"loc_cd,34,optional" json:"loc_cd,omitempty" query:"loc_cd"`
+	Fixed                *int32  `thrift:"fixed,35,optional" json:"fixed,omitempty" query:"fixed"`
+	MaxStart             *int64  `thrift:"max_start,36,optional" json:"max_start,omitempty" query:"max_start"`
+	MinStart             *int64  `thrift:"min_start,37,optional" json:"min_start,omitempty" query:"min_start"`
+	ExceptShoppingitem   *int32  `thrift:"except_shoppingitem,38,optional" json:"except_shoppingitem,omitempty" query:"except_shoppingitem"`
+	Callback             *string `thrift:"callback,39,optional" json:"callback,omitempty" query:"callback"`
+}
+
+func NewYahooGetCategoryLeafReq() *YahooGetCategoryLeafReq {
+	return &YahooGetCategoryLeafReq{}
+}
+
+var YahooGetCategoryLeafReq_YahooAccountID_DEFAULT string
+
+func (p *YahooGetCategoryLeafReq) GetYahooAccountID() (v string) {
+	if !p.IsSetYahooAccountID() {
+		return YahooGetCategoryLeafReq_YahooAccountID_DEFAULT
+	}
+	return *p.YahooAccountID
+}
+
+var YahooGetCategoryLeafReq_YsRefID_DEFAULT string
+
+func (p *YahooGetCategoryLeafReq) GetYsRefID() (v string) {
+	if !p.IsSetYsRefID() {
+		return YahooGetCategoryLeafReq_YsRefID_DEFAULT
+	}
+	return *p.YsRefID
+}
+
+func (p *YahooGetCategoryLeafReq) GetCategory() (v int32) {
+	return p.Category
+}
+
+var YahooGetCategoryLeafReq_ExceptCategory_DEFAULT string
+
+func (p *YahooGetCategoryLeafReq) GetExceptCategory() (v string) {
+	if !p.IsSetExceptCategory() {
+		return YahooGetCategoryLeafReq_ExceptCategory_DEFAULT
+	}
+	return *p.ExceptCategory
+}
+
+var YahooGetCategoryLeafReq_Featured_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetFeatured() (v int32) {
+	if !p.IsSetFeatured() {
+		return YahooGetCategoryLeafReq_Featured_DEFAULT
+	}
+	return *p.Featured
+}
+
+var YahooGetCategoryLeafReq_Page_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetPage() (v int32) {
+	if !p.IsSetPage() {
+		return YahooGetCategoryLeafReq_Page_DEFAULT
+	}
+	return *p.Page
+}
+
+var YahooGetCategoryLeafReq_Sort_DEFAULT string
+
+func (p *YahooGetCategoryLeafReq) GetSort() (v string) {
+	if !p.IsSetSort() {
+		return YahooGetCategoryLeafReq_Sort_DEFAULT
+	}
+	return *p.Sort
+}
+
+var YahooGetCategoryLeafReq_Order_DEFAULT string
+
+func (p *YahooGetCategoryLeafReq) GetOrder() (v string) {
+	if !p.IsSetOrder() {
+		return YahooGetCategoryLeafReq_Order_DEFAULT
+	}
+	return *p.Order
+}
+
+var YahooGetCategoryLeafReq_Store_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetStore() (v int32) {
+	if !p.IsSetStore() {
+		return YahooGetCategoryLeafReq_Store_DEFAULT
+	}
+	return *p.Store
+}
+
+var YahooGetCategoryLeafReq_Aucminprice_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetAucminprice() (v int32) {
+	if !p.IsSetAucminprice() {
+		return YahooGetCategoryLeafReq_Aucminprice_DEFAULT
+	}
+	return *p.Aucminprice
+}
+
+var YahooGetCategoryLeafReq_Aucmaxprice_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetAucmaxprice() (v int32) {
+	if !p.IsSetAucmaxprice() {
+		return YahooGetCategoryLeafReq_Aucmaxprice_DEFAULT
+	}
+	return *p.Aucmaxprice
+}
+
+var YahooGetCategoryLeafReq_AucminBidorbuyPrice_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetAucminBidorbuyPrice() (v int32) {
+	if !p.IsSetAucminBidorbuyPrice() {
+		return YahooGetCategoryLeafReq_AucminBidorbuyPrice_DEFAULT
+	}
+	return *p.AucminBidorbuyPrice
+}
+
+var YahooGetCategoryLeafReq_AucmaxBidorbuyPrice_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetAucmaxBidorbuyPrice() (v int32) {
+	if !p.IsSetAucmaxBidorbuyPrice() {
+		return YahooGetCategoryLeafReq_AucmaxBidorbuyPrice_DEFAULT
+	}
+	return *p.AucmaxBidorbuyPrice
+}
+
+var YahooGetCategoryLeafReq_Easypayment_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetEasypayment() (v int32) {
+	if !p.IsSetEasypayment() {
+		return YahooGetCategoryLeafReq_Easypayment_DEFAULT
+	}
+	return *p.Easypayment
+}
+
+var YahooGetCategoryLeafReq_New_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetNew() (v int32) {
+	if !p.IsSetNew() {
+		return YahooGetCategoryLeafReq_New_DEFAULT
+	}
+	return *p.New
+}
+
+var YahooGetCategoryLeafReq_Freeshipping_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetFreeshipping() (v int32) {
+	if !p.IsSetFreeshipping() {
+		return YahooGetCategoryLeafReq_Freeshipping_DEFAULT
+	}
+	return *p.Freeshipping
+}
+
+var YahooGetCategoryLeafReq_Wrappingicon_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetWrappingicon() (v int32) {
+	if !p.IsSetWrappingicon() {
+		return YahooGetCategoryLeafReq_Wrappingicon_DEFAULT
+	}
+	return *p.Wrappingicon
+}
+
+var YahooGetCategoryLeafReq_Buynow_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetBuynow() (v int32) {
+	if !p.IsSetBuynow() {
+		return YahooGetCategoryLeafReq_Buynow_DEFAULT
+	}
+	return *p.Buynow
+}
+
+var YahooGetCategoryLeafReq_Thumbnail_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetThumbnail() (v int32) {
+	if !p.IsSetThumbnail() {
+		return YahooGetCategoryLeafReq_Thumbnail_DEFAULT
+	}
+	return *p.Thumbnail
+}
+
+var YahooGetCategoryLeafReq_Attn_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetAttn() (v int32) {
+	if !p.IsSetAttn() {
+		return YahooGetCategoryLeafReq_Attn_DEFAULT
+	}
+	return *p.Attn
+}
+
+var YahooGetCategoryLeafReq_Point_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetPoint() (v int32) {
+	if !p.IsSetPoint() {
+		return YahooGetCategoryLeafReq_Point_DEFAULT
+	}
+	return *p.Point
+}
+
+var YahooGetCategoryLeafReq_ItemStatus_DEFAULT string
+
+func (p *YahooGetCategoryLeafReq) GetItemStatus() (v string) {
+	if !p.IsSetItemStatus() {
+		return YahooGetCategoryLeafReq_ItemStatus_DEFAULT
+	}
+	return *p.ItemStatus
+}
+
+var YahooGetCategoryLeafReq_Adf_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetAdf() (v int32) {
+	if !p.IsSetAdf() {
+		return YahooGetCategoryLeafReq_Adf_DEFAULT
+	}
+	return *p.Adf
+}
+
+var YahooGetCategoryLeafReq_MinCharity_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetMinCharity() (v int32) {
+	if !p.IsSetMinCharity() {
+		return YahooGetCategoryLeafReq_MinCharity_DEFAULT
+	}
+	return *p.MinCharity
+}
+
+var YahooGetCategoryLeafReq_MaxCharity_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetMaxCharity() (v int32) {
+	if !p.IsSetMaxCharity() {
+		return YahooGetCategoryLeafReq_MaxCharity_DEFAULT
+	}
+	return *p.MaxCharity
+}
+
+var YahooGetCategoryLeafReq_MinAffiliate_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetMinAffiliate() (v int32) {
+	if !p.IsSetMinAffiliate() {
+		return YahooGetCategoryLeafReq_MinAffiliate_DEFAULT
+	}
+	return *p.MinAffiliate
+}
+
+var YahooGetCategoryLeafReq_MaxAffiliate_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetMaxAffiliate() (v int32) {
+	if !p.IsSetMaxAffiliate() {
+		return YahooGetCategoryLeafReq_MaxAffiliate_DEFAULT
+	}
+	return *p.MaxAffiliate
+}
+
+var YahooGetCategoryLeafReq_Timebuf_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetTimebuf() (v int32) {
+	if !p.IsSetTimebuf() {
+		return YahooGetCategoryLeafReq_Timebuf_DEFAULT
+	}
+	return *p.Timebuf
+}
+
+var YahooGetCategoryLeafReq_Ranking_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetRanking() (v int32) {
+	if !p.IsSetRanking() {
+		return YahooGetCategoryLeafReq_Ranking_DEFAULT
+	}
+	return *p.Ranking
+}
+
+var YahooGetCategoryLeafReq_SellerAucUserID_DEFAULT string
+
+func (p *YahooGetCategoryLeafReq) GetSellerAucUserID() (v string) {
+	if !p.IsSetSellerAucUserID() {
+		return YahooGetCategoryLeafReq_SellerAucUserID_DEFAULT
+	}
+	return *p.SellerAucUserID
+}
+
+var YahooGetCategoryLeafReq_BlackSellerAucUserID_DEFAULT string
+
+func (p *YahooGetCategoryLeafReq) GetBlackSellerAucUserID() (v string) {
+	if !p.IsSetBlackSellerAucUserID() {
+		return YahooGetCategoryLeafReq_BlackSellerAucUserID_DEFAULT
+	}
+	return *p.BlackSellerAucUserID
+}
+
+var YahooGetCategoryLeafReq_Sort2_DEFAULT string
+
+func (p *YahooGetCategoryLeafReq) GetSort2() (v string) {
+	if !p.IsSetSort2() {
+		return YahooGetCategoryLeafReq_Sort2_DEFAULT
+	}
+	return *p.Sort2
+}
+
+var YahooGetCategoryLeafReq_Order2_DEFAULT string
+
+func (p *YahooGetCategoryLeafReq) GetOrder2() (v string) {
+	if !p.IsSetOrder2() {
+		return YahooGetCategoryLeafReq_Order2_DEFAULT
+	}
+	return *p.Order2
+}
+
+var YahooGetCategoryLeafReq_LocCd_DEFAULT string
+
+func (p *YahooGetCategoryLeafReq) GetLocCd() (v string) {
+	if !p.IsSetLocCd() {
+		return YahooGetCategoryLeafReq_LocCd_DEFAULT
+	}
+	return *p.LocCd
+}
+
+var YahooGetCategoryLeafReq_Fixed_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetFixed() (v int32) {
+	if !p.IsSetFixed() {
+		return YahooGetCategoryLeafReq_Fixed_DEFAULT
+	}
+	return *p.Fixed
+}
+
+var YahooGetCategoryLeafReq_MaxStart_DEFAULT int64
+
+func (p *YahooGetCategoryLeafReq) GetMaxStart() (v int64) {
+	if !p.IsSetMaxStart() {
+		return YahooGetCategoryLeafReq_MaxStart_DEFAULT
+	}
+	return *p.MaxStart
+}
+
+var YahooGetCategoryLeafReq_MinStart_DEFAULT int64
+
+func (p *YahooGetCategoryLeafReq) GetMinStart() (v int64) {
+	if !p.IsSetMinStart() {
+		return YahooGetCategoryLeafReq_MinStart_DEFAULT
+	}
+	return *p.MinStart
+}
+
+var YahooGetCategoryLeafReq_ExceptShoppingitem_DEFAULT int32
+
+func (p *YahooGetCategoryLeafReq) GetExceptShoppingitem() (v int32) {
+	if !p.IsSetExceptShoppingitem() {
+		return YahooGetCategoryLeafReq_ExceptShoppingitem_DEFAULT
+	}
+	return *p.ExceptShoppingitem
+}
+
+var YahooGetCategoryLeafReq_Callback_DEFAULT string
+
+func (p *YahooGetCategoryLeafReq) GetCallback() (v string) {
+	if !p.IsSetCallback() {
+		return YahooGetCategoryLeafReq_Callback_DEFAULT
+	}
+	return *p.Callback
+}
+
+var fieldIDToName_YahooGetCategoryLeafReq = map[int16]string{
+	1:  "yahoo_account_id",
+	2:  "ys_ref_id",
+	3:  "category",
+	4:  "except_category",
+	5:  "featured",
+	6:  "page",
+	7:  "sort",
+	8:  "order",
+	9:  "store",
+	10: "aucminprice",
+	11: "aucmaxprice",
+	12: "aucmin_bidorbuy_price",
+	13: "aucmax_bidorbuy_price",
+	14: "easypayment",
+	15: "new",
+	16: "freeshipping",
+	17: "wrappingicon",
+	18: "buynow",
+	19: "thumbnail",
+	20: "attn",
+	21: "point",
+	22: "item_status",
+	23: "adf",
+	24: "min_charity",
+	25: "max_charity",
+	26: "min_affiliate",
+	27: "max_affiliate",
+	28: "timebuf",
+	29: "ranking",
+	30: "seller_auc_user_id",
+	31: "black_seller_auc_user_id",
+	32: "sort2",
+	33: "order2",
+	34: "loc_cd",
+	35: "fixed",
+	36: "max_start",
+	37: "min_start",
+	38: "except_shoppingitem",
+	39: "callback",
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetYahooAccountID() bool {
+	return p.YahooAccountID != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetYsRefID() bool {
+	return p.YsRefID != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetExceptCategory() bool {
+	return p.ExceptCategory != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetFeatured() bool {
+	return p.Featured != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetPage() bool {
+	return p.Page != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetSort() bool {
+	return p.Sort != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetOrder() bool {
+	return p.Order != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetStore() bool {
+	return p.Store != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetAucminprice() bool {
+	return p.Aucminprice != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetAucmaxprice() bool {
+	return p.Aucmaxprice != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetAucminBidorbuyPrice() bool {
+	return p.AucminBidorbuyPrice != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetAucmaxBidorbuyPrice() bool {
+	return p.AucmaxBidorbuyPrice != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetEasypayment() bool {
+	return p.Easypayment != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetNew() bool {
+	return p.New != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetFreeshipping() bool {
+	return p.Freeshipping != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetWrappingicon() bool {
+	return p.Wrappingicon != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetBuynow() bool {
+	return p.Buynow != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetThumbnail() bool {
+	return p.Thumbnail != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetAttn() bool {
+	return p.Attn != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetPoint() bool {
+	return p.Point != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetItemStatus() bool {
+	return p.ItemStatus != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetAdf() bool {
+	return p.Adf != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetMinCharity() bool {
+	return p.MinCharity != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetMaxCharity() bool {
+	return p.MaxCharity != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetMinAffiliate() bool {
+	return p.MinAffiliate != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetMaxAffiliate() bool {
+	return p.MaxAffiliate != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetTimebuf() bool {
+	return p.Timebuf != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetRanking() bool {
+	return p.Ranking != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetSellerAucUserID() bool {
+	return p.SellerAucUserID != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetBlackSellerAucUserID() bool {
+	return p.BlackSellerAucUserID != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetSort2() bool {
+	return p.Sort2 != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetOrder2() bool {
+	return p.Order2 != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetLocCd() bool {
+	return p.LocCd != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetFixed() bool {
+	return p.Fixed != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetMaxStart() bool {
+	return p.MaxStart != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetMinStart() bool {
+	return p.MinStart != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetExceptShoppingitem() bool {
+	return p.ExceptShoppingitem != nil
+}
+
+func (p *YahooGetCategoryLeafReq) IsSetCallback() bool {
+	return p.Callback != nil
+}
+
+func (p *YahooGetCategoryLeafReq) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 2:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 3:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField3(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 4:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField4(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 5:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField5(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 6:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField6(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 7:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField7(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 8:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField8(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 9:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField9(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 10:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField10(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 11:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField11(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 12:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField12(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 13:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField13(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 14:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField14(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 15:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField15(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 16:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField16(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 17:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField17(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 18:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField18(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 19:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField19(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 20:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField20(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 21:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField21(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 22:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField22(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 23:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField23(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 24:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField24(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 25:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField25(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 26:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField26(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 27:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField27(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 28:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField28(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 29:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField29(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 30:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField30(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 31:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField31(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 32:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField32(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 33:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField33(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 34:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField34(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 35:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField35(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 36:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField36(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 37:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField37(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 38:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField38(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 39:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField39(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_YahooGetCategoryLeafReq[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) ReadField1(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.YahooAccountID = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField2(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.YsRefID = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField3(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Category = v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField4(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.ExceptCategory = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField5(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Featured = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField6(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Page = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField7(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Sort = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField8(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Order = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField9(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Store = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField10(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Aucminprice = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField11(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Aucmaxprice = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField12(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.AucminBidorbuyPrice = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField13(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.AucmaxBidorbuyPrice = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField14(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Easypayment = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField15(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.New = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField16(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Freeshipping = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField17(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Wrappingicon = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField18(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Buynow = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField19(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Thumbnail = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField20(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Attn = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField21(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Point = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField22(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.ItemStatus = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField23(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Adf = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField24(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.MinCharity = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField25(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.MaxCharity = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField26(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.MinAffiliate = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField27(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.MaxAffiliate = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField28(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Timebuf = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField29(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Ranking = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField30(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.SellerAucUserID = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField31(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.BlackSellerAucUserID = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField32(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Sort2 = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField33(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Order2 = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField34(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.LocCd = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField35(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Fixed = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField36(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		p.MaxStart = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField37(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		p.MinStart = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField38(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.ExceptShoppingitem = &v
+	}
+	return nil
+}
+func (p *YahooGetCategoryLeafReq) ReadField39(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Callback = &v
+	}
+	return nil
+}
+
+func (p *YahooGetCategoryLeafReq) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("YahooGetCategoryLeafReq"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField2(oprot); err != nil {
+			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField3(oprot); err != nil {
+			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
+			goto WriteFieldError
+		}
+		if err = p.writeField5(oprot); err != nil {
+			fieldId = 5
+			goto WriteFieldError
+		}
+		if err = p.writeField6(oprot); err != nil {
+			fieldId = 6
+			goto WriteFieldError
+		}
+		if err = p.writeField7(oprot); err != nil {
+			fieldId = 7
+			goto WriteFieldError
+		}
+		if err = p.writeField8(oprot); err != nil {
+			fieldId = 8
+			goto WriteFieldError
+		}
+		if err = p.writeField9(oprot); err != nil {
+			fieldId = 9
+			goto WriteFieldError
+		}
+		if err = p.writeField10(oprot); err != nil {
+			fieldId = 10
+			goto WriteFieldError
+		}
+		if err = p.writeField11(oprot); err != nil {
+			fieldId = 11
+			goto WriteFieldError
+		}
+		if err = p.writeField12(oprot); err != nil {
+			fieldId = 12
+			goto WriteFieldError
+		}
+		if err = p.writeField13(oprot); err != nil {
+			fieldId = 13
+			goto WriteFieldError
+		}
+		if err = p.writeField14(oprot); err != nil {
+			fieldId = 14
+			goto WriteFieldError
+		}
+		if err = p.writeField15(oprot); err != nil {
+			fieldId = 15
+			goto WriteFieldError
+		}
+		if err = p.writeField16(oprot); err != nil {
+			fieldId = 16
+			goto WriteFieldError
+		}
+		if err = p.writeField17(oprot); err != nil {
+			fieldId = 17
+			goto WriteFieldError
+		}
+		if err = p.writeField18(oprot); err != nil {
+			fieldId = 18
+			goto WriteFieldError
+		}
+		if err = p.writeField19(oprot); err != nil {
+			fieldId = 19
+			goto WriteFieldError
+		}
+		if err = p.writeField20(oprot); err != nil {
+			fieldId = 20
+			goto WriteFieldError
+		}
+		if err = p.writeField21(oprot); err != nil {
+			fieldId = 21
+			goto WriteFieldError
+		}
+		if err = p.writeField22(oprot); err != nil {
+			fieldId = 22
+			goto WriteFieldError
+		}
+		if err = p.writeField23(oprot); err != nil {
+			fieldId = 23
+			goto WriteFieldError
+		}
+		if err = p.writeField24(oprot); err != nil {
+			fieldId = 24
+			goto WriteFieldError
+		}
+		if err = p.writeField25(oprot); err != nil {
+			fieldId = 25
+			goto WriteFieldError
+		}
+		if err = p.writeField26(oprot); err != nil {
+			fieldId = 26
+			goto WriteFieldError
+		}
+		if err = p.writeField27(oprot); err != nil {
+			fieldId = 27
+			goto WriteFieldError
+		}
+		if err = p.writeField28(oprot); err != nil {
+			fieldId = 28
+			goto WriteFieldError
+		}
+		if err = p.writeField29(oprot); err != nil {
+			fieldId = 29
+			goto WriteFieldError
+		}
+		if err = p.writeField30(oprot); err != nil {
+			fieldId = 30
+			goto WriteFieldError
+		}
+		if err = p.writeField31(oprot); err != nil {
+			fieldId = 31
+			goto WriteFieldError
+		}
+		if err = p.writeField32(oprot); err != nil {
+			fieldId = 32
+			goto WriteFieldError
+		}
+		if err = p.writeField33(oprot); err != nil {
+			fieldId = 33
+			goto WriteFieldError
+		}
+		if err = p.writeField34(oprot); err != nil {
+			fieldId = 34
+			goto WriteFieldError
+		}
+		if err = p.writeField35(oprot); err != nil {
+			fieldId = 35
+			goto WriteFieldError
+		}
+		if err = p.writeField36(oprot); err != nil {
+			fieldId = 36
+			goto WriteFieldError
+		}
+		if err = p.writeField37(oprot); err != nil {
+			fieldId = 37
+			goto WriteFieldError
+		}
+		if err = p.writeField38(oprot); err != nil {
+			fieldId = 38
+			goto WriteFieldError
+		}
+		if err = p.writeField39(oprot); err != nil {
+			fieldId = 39
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField1(oprot thrift.TProtocol) (err error) {
+	if p.IsSetYahooAccountID() {
+		if err = oprot.WriteFieldBegin("yahoo_account_id", thrift.STRING, 1); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.YahooAccountID); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField2(oprot thrift.TProtocol) (err error) {
+	if p.IsSetYsRefID() {
+		if err = oprot.WriteFieldBegin("ys_ref_id", thrift.STRING, 2); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.YsRefID); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField3(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("category", thrift.I32, 3); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.Category); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField4(oprot thrift.TProtocol) (err error) {
+	if p.IsSetExceptCategory() {
+		if err = oprot.WriteFieldBegin("except_category", thrift.STRING, 4); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.ExceptCategory); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField5(oprot thrift.TProtocol) (err error) {
+	if p.IsSetFeatured() {
+		if err = oprot.WriteFieldBegin("featured", thrift.I32, 5); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.Featured); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField6(oprot thrift.TProtocol) (err error) {
+	if p.IsSetPage() {
+		if err = oprot.WriteFieldBegin("page", thrift.I32, 6); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.Page); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 6 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 6 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField7(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSort() {
+		if err = oprot.WriteFieldBegin("sort", thrift.STRING, 7); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Sort); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 7 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 7 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField8(oprot thrift.TProtocol) (err error) {
+	if p.IsSetOrder() {
+		if err = oprot.WriteFieldBegin("order", thrift.STRING, 8); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Order); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField9(oprot thrift.TProtocol) (err error) {
+	if p.IsSetStore() {
+		if err = oprot.WriteFieldBegin("store", thrift.I32, 9); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.Store); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField10(oprot thrift.TProtocol) (err error) {
+	if p.IsSetAucminprice() {
+		if err = oprot.WriteFieldBegin("aucminprice", thrift.I32, 10); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.Aucminprice); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField11(oprot thrift.TProtocol) (err error) {
+	if p.IsSetAucmaxprice() {
+		if err = oprot.WriteFieldBegin("aucmaxprice", thrift.I32, 11); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.Aucmaxprice); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 11 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 11 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField12(oprot thrift.TProtocol) (err error) {
+	if p.IsSetAucminBidorbuyPrice() {
+		if err = oprot.WriteFieldBegin("aucmin_bidorbuy_price", thrift.I32, 12); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.AucminBidorbuyPrice); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 12 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 12 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField13(oprot thrift.TProtocol) (err error) {
+	if p.IsSetAucmaxBidorbuyPrice() {
+		if err = oprot.WriteFieldBegin("aucmax_bidorbuy_price", thrift.I32, 13); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.AucmaxBidorbuyPrice); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 13 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 13 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField14(oprot thrift.TProtocol) (err error) {
+	if p.IsSetEasypayment() {
+		if err = oprot.WriteFieldBegin("easypayment", thrift.I32, 14); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.Easypayment); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 14 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 14 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField15(oprot thrift.TProtocol) (err error) {
+	if p.IsSetNew() {
+		if err = oprot.WriteFieldBegin("new", thrift.I32, 15); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.New); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 15 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 15 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField16(oprot thrift.TProtocol) (err error) {
+	if p.IsSetFreeshipping() {
+		if err = oprot.WriteFieldBegin("freeshipping", thrift.I32, 16); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.Freeshipping); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 16 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 16 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField17(oprot thrift.TProtocol) (err error) {
+	if p.IsSetWrappingicon() {
+		if err = oprot.WriteFieldBegin("wrappingicon", thrift.I32, 17); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.Wrappingicon); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 17 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 17 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField18(oprot thrift.TProtocol) (err error) {
+	if p.IsSetBuynow() {
+		if err = oprot.WriteFieldBegin("buynow", thrift.I32, 18); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.Buynow); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 18 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 18 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField19(oprot thrift.TProtocol) (err error) {
+	if p.IsSetThumbnail() {
+		if err = oprot.WriteFieldBegin("thumbnail", thrift.I32, 19); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.Thumbnail); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 19 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 19 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField20(oprot thrift.TProtocol) (err error) {
+	if p.IsSetAttn() {
+		if err = oprot.WriteFieldBegin("attn", thrift.I32, 20); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.Attn); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 20 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 20 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField21(oprot thrift.TProtocol) (err error) {
+	if p.IsSetPoint() {
+		if err = oprot.WriteFieldBegin("point", thrift.I32, 21); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.Point); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 21 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 21 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField22(oprot thrift.TProtocol) (err error) {
+	if p.IsSetItemStatus() {
+		if err = oprot.WriteFieldBegin("item_status", thrift.STRING, 22); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.ItemStatus); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 22 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 22 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField23(oprot thrift.TProtocol) (err error) {
+	if p.IsSetAdf() {
+		if err = oprot.WriteFieldBegin("adf", thrift.I32, 23); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.Adf); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 23 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 23 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField24(oprot thrift.TProtocol) (err error) {
+	if p.IsSetMinCharity() {
+		if err = oprot.WriteFieldBegin("min_charity", thrift.I32, 24); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.MinCharity); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 24 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 24 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField25(oprot thrift.TProtocol) (err error) {
+	if p.IsSetMaxCharity() {
+		if err = oprot.WriteFieldBegin("max_charity", thrift.I32, 25); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.MaxCharity); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 25 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 25 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField26(oprot thrift.TProtocol) (err error) {
+	if p.IsSetMinAffiliate() {
+		if err = oprot.WriteFieldBegin("min_affiliate", thrift.I32, 26); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.MinAffiliate); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 26 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 26 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField27(oprot thrift.TProtocol) (err error) {
+	if p.IsSetMaxAffiliate() {
+		if err = oprot.WriteFieldBegin("max_affiliate", thrift.I32, 27); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.MaxAffiliate); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 27 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 27 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField28(oprot thrift.TProtocol) (err error) {
+	if p.IsSetTimebuf() {
+		if err = oprot.WriteFieldBegin("timebuf", thrift.I32, 28); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.Timebuf); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 28 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 28 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField29(oprot thrift.TProtocol) (err error) {
+	if p.IsSetRanking() {
+		if err = oprot.WriteFieldBegin("ranking", thrift.I32, 29); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.Ranking); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 29 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 29 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField30(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSellerAucUserID() {
+		if err = oprot.WriteFieldBegin("seller_auc_user_id", thrift.STRING, 30); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.SellerAucUserID); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 30 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 30 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField31(oprot thrift.TProtocol) (err error) {
+	if p.IsSetBlackSellerAucUserID() {
+		if err = oprot.WriteFieldBegin("black_seller_auc_user_id", thrift.STRING, 31); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.BlackSellerAucUserID); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 31 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 31 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField32(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSort2() {
+		if err = oprot.WriteFieldBegin("sort2", thrift.STRING, 32); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Sort2); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 32 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 32 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField33(oprot thrift.TProtocol) (err error) {
+	if p.IsSetOrder2() {
+		if err = oprot.WriteFieldBegin("order2", thrift.STRING, 33); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Order2); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 33 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 33 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField34(oprot thrift.TProtocol) (err error) {
+	if p.IsSetLocCd() {
+		if err = oprot.WriteFieldBegin("loc_cd", thrift.STRING, 34); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.LocCd); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 34 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 34 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField35(oprot thrift.TProtocol) (err error) {
+	if p.IsSetFixed() {
+		if err = oprot.WriteFieldBegin("fixed", thrift.I32, 35); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.Fixed); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 35 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 35 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField36(oprot thrift.TProtocol) (err error) {
+	if p.IsSetMaxStart() {
+		if err = oprot.WriteFieldBegin("max_start", thrift.I64, 36); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI64(*p.MaxStart); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 36 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 36 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField37(oprot thrift.TProtocol) (err error) {
+	if p.IsSetMinStart() {
+		if err = oprot.WriteFieldBegin("min_start", thrift.I64, 37); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI64(*p.MinStart); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 37 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 37 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField38(oprot thrift.TProtocol) (err error) {
+	if p.IsSetExceptShoppingitem() {
+		if err = oprot.WriteFieldBegin("except_shoppingitem", thrift.I32, 38); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.ExceptShoppingitem); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 38 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 38 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) writeField39(oprot thrift.TProtocol) (err error) {
+	if p.IsSetCallback() {
+		if err = oprot.WriteFieldBegin("callback", thrift.STRING, 39); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Callback); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 39 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 39 end error: ", p), err)
+}
+
+func (p *YahooGetCategoryLeafReq) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("YahooGetCategoryLeafReq(%+v)", *p)
+
+}
+
 type SupplyService interface {
 	MercariGetItemService(ctx context.Context, req *MercariGetItemReq) (r string, err error)
 
@@ -10995,6 +13220,8 @@ type SupplyService interface {
 	YahooGetCategoryTreeService(ctx context.Context, req *YahooGetCategoryTreeReq) (r string, err error)
 
 	YahooSearchAuctionsService(ctx context.Context, req *YahooSearchAuctionsReq) (r string, err error)
+
+	YahooGetCategoryLeafService(ctx context.Context, req *YahooGetCategoryLeafReq) (r string, err error)
 }
 
 type SupplyServiceClient struct {
@@ -11225,6 +13452,15 @@ func (p *SupplyServiceClient) YahooSearchAuctionsService(ctx context.Context, re
 	}
 	return _result.GetSuccess(), nil
 }
+func (p *SupplyServiceClient) YahooGetCategoryLeafService(ctx context.Context, req *YahooGetCategoryLeafReq) (r string, err error) {
+	var _args SupplyServiceYahooGetCategoryLeafServiceArgs
+	_args.Req = req
+	var _result SupplyServiceYahooGetCategoryLeafServiceResult
+	if err = p.Client_().Call(ctx, "YahooGetCategoryLeafService", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
 
 type SupplyServiceProcessor struct {
 	processorMap map[string]thrift.TProcessorFunction
@@ -11269,6 +13505,7 @@ func NewSupplyServiceProcessor(handler SupplyService) *SupplyServiceProcessor {
 	self.AddToProcessorMap("YahooGetAuctionItemService", &supplyServiceProcessorYahooGetAuctionItemService{handler: handler})
 	self.AddToProcessorMap("YahooGetCategoryTreeService", &supplyServiceProcessorYahooGetCategoryTreeService{handler: handler})
 	self.AddToProcessorMap("YahooSearchAuctionsService", &supplyServiceProcessorYahooSearchAuctionsService{handler: handler})
+	self.AddToProcessorMap("YahooGetCategoryLeafService", &supplyServiceProcessorYahooGetCategoryLeafService{handler: handler})
 	return self
 }
 func (p *SupplyServiceProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -12376,6 +14613,54 @@ func (p *supplyServiceProcessorYahooSearchAuctionsService) Process(ctx context.C
 		result.Success = &retval
 	}
 	if err2 = oprot.WriteMessageBegin("YahooSearchAuctionsService", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 = result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
+}
+
+type supplyServiceProcessorYahooGetCategoryLeafService struct {
+	handler SupplyService
+}
+
+func (p *supplyServiceProcessorYahooGetCategoryLeafService) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := SupplyServiceYahooGetCategoryLeafServiceArgs{}
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+		oprot.WriteMessageBegin("YahooGetCategoryLeafService", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return false, err
+	}
+
+	iprot.ReadMessageEnd()
+	var err2 error
+	result := SupplyServiceYahooGetCategoryLeafServiceResult{}
+	var retval string
+	if retval, err2 = p.handler.YahooGetCategoryLeafService(ctx, args.Req); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing YahooGetCategoryLeafService: "+err2.Error())
+		oprot.WriteMessageBegin("YahooGetCategoryLeafService", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return true, err2
+	} else {
+		result.Success = &retval
+	}
+	if err2 = oprot.WriteMessageBegin("YahooGetCategoryLeafService", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -18694,5 +20979,293 @@ func (p *SupplyServiceYahooSearchAuctionsServiceResult) String() string {
 		return "<nil>"
 	}
 	return fmt.Sprintf("SupplyServiceYahooSearchAuctionsServiceResult(%+v)", *p)
+
+}
+
+type SupplyServiceYahooGetCategoryLeafServiceArgs struct {
+	Req *YahooGetCategoryLeafReq `thrift:"req,1"`
+}
+
+func NewSupplyServiceYahooGetCategoryLeafServiceArgs() *SupplyServiceYahooGetCategoryLeafServiceArgs {
+	return &SupplyServiceYahooGetCategoryLeafServiceArgs{}
+}
+
+var SupplyServiceYahooGetCategoryLeafServiceArgs_Req_DEFAULT *YahooGetCategoryLeafReq
+
+func (p *SupplyServiceYahooGetCategoryLeafServiceArgs) GetReq() (v *YahooGetCategoryLeafReq) {
+	if !p.IsSetReq() {
+		return SupplyServiceYahooGetCategoryLeafServiceArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+var fieldIDToName_SupplyServiceYahooGetCategoryLeafServiceArgs = map[int16]string{
+	1: "req",
+}
+
+func (p *SupplyServiceYahooGetCategoryLeafServiceArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *SupplyServiceYahooGetCategoryLeafServiceArgs) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_SupplyServiceYahooGetCategoryLeafServiceArgs[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *SupplyServiceYahooGetCategoryLeafServiceArgs) ReadField1(iprot thrift.TProtocol) error {
+	p.Req = NewYahooGetCategoryLeafReq()
+	if err := p.Req.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *SupplyServiceYahooGetCategoryLeafServiceArgs) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("YahooGetCategoryLeafService_args"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *SupplyServiceYahooGetCategoryLeafServiceArgs) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.Req.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *SupplyServiceYahooGetCategoryLeafServiceArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SupplyServiceYahooGetCategoryLeafServiceArgs(%+v)", *p)
+
+}
+
+type SupplyServiceYahooGetCategoryLeafServiceResult struct {
+	Success *string `thrift:"success,0,optional"`
+}
+
+func NewSupplyServiceYahooGetCategoryLeafServiceResult() *SupplyServiceYahooGetCategoryLeafServiceResult {
+	return &SupplyServiceYahooGetCategoryLeafServiceResult{}
+}
+
+var SupplyServiceYahooGetCategoryLeafServiceResult_Success_DEFAULT string
+
+func (p *SupplyServiceYahooGetCategoryLeafServiceResult) GetSuccess() (v string) {
+	if !p.IsSetSuccess() {
+		return SupplyServiceYahooGetCategoryLeafServiceResult_Success_DEFAULT
+	}
+	return *p.Success
+}
+
+var fieldIDToName_SupplyServiceYahooGetCategoryLeafServiceResult = map[int16]string{
+	0: "success",
+}
+
+func (p *SupplyServiceYahooGetCategoryLeafServiceResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *SupplyServiceYahooGetCategoryLeafServiceResult) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 0:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField0(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_SupplyServiceYahooGetCategoryLeafServiceResult[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *SupplyServiceYahooGetCategoryLeafServiceResult) ReadField0(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Success = &v
+	}
+	return nil
+}
+
+func (p *SupplyServiceYahooGetCategoryLeafServiceResult) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("YahooGetCategoryLeafService_result"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField0(oprot); err != nil {
+			fieldId = 0
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *SupplyServiceYahooGetCategoryLeafServiceResult) writeField0(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSuccess() {
+		if err = oprot.WriteFieldBegin("success", thrift.STRING, 0); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Success); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
+}
+
+func (p *SupplyServiceYahooGetCategoryLeafServiceResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SupplyServiceYahooGetCategoryLeafServiceResult(%+v)", *p)
 
 }

@@ -725,3 +725,35 @@ func YahooSearchAuctionsService(ctx context.Context, c *app.RequestContext) {
 
 	c.JSON(consts.StatusOK, resp)
 }
+
+// YahooGetCategoryLeafService .
+// @router /v1/supplysrv/internal/yahoo/categoryLeaf [GET]
+// @Summary Get Yahoo Auction category leaf
+// @Description Get category leaf from Yahoo Auction
+// @Tags Yahoo
+// @Accept json
+// @Produce json
+// @Param Header header model.Header true "Header"
+// @Param request query supply.YahooGetCategoryLeafReq true "Category leaf request parameters"
+// @Success 200 {object} yahoo.CategoryLeafResponse "Successfully retrieved category leaf"
+// @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 404 {object} bizErr.BizError "category leaf not found"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+func YahooGetCategoryLeafService(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req supply.YahooGetCategoryLeafReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp, err := service.GetCategoryLeafService(ctx, &req)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
