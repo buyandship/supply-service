@@ -56,6 +56,22 @@ type Images struct {
 	Image3 *ImageInfo `json:"Image3,omitempty"`
 }
 
+func (i *Images) List() []string {
+	if i.Image1 == nil {
+		return []string{}
+	}
+
+	urls := []string{i.Image1.URL}
+	if i.Image2 != nil {
+		urls = append(urls, i.Image2.URL)
+	}
+	if i.Image3 != nil {
+		urls = append(urls, i.Image3.URL)
+	}
+
+	return urls
+}
+
 // Thumbnails represents thumbnail URLs
 type Thumbnails struct {
 	Thumbnail1  string `json:"Thumbnail1,omitempty" example:"https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890abc.jpg"`
