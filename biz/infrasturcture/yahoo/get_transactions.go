@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/buyandship/supply-svr/biz/common/config"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 	"github.com/buyandship/supply-svr/biz/model/bns/supply"
 )
@@ -84,7 +85,7 @@ func (c *Client) GetTransaction(ctx context.Context, req *supply.YahooGetTransac
 func (c *Client) GetTransactions(ctx context.Context, req *supply.YahooGetTransactionsReq) (*GetTransactionsResponse, error) {
 	path := "/api/v1/transactions"
 	params := url.Values{}
-	params.Set("yahoo_account_id", "chkyj_cp_by4d1vej")
+	params.Set("yahoo_account_id", config.Yahoo02AccountID)
 	if req.TransactionID != "" {
 		params.Set("transaction_id", req.TransactionID)
 	}

@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"strconv"
 
+	"github.com/buyandship/supply-svr/biz/common/config"
 	bizErr "github.com/buyandship/supply-svr/biz/common/err"
 )
 
@@ -211,7 +212,7 @@ type SearchAuctionsResponse struct {
 func (c *Client) SearchAuctions(ctx context.Context, req *SearchAuctionsRequest) (*SearchAuctionsResponse, error) {
 	params := url.Values{}
 	params.Set("query", req.Query)
-	params.Set("yahoo_account_id", "chkyj_cp_by4d1vej")
+	params.Set("yahoo_account_id", config.MasterYahooAccountID)
 	if req.YsRefID != "" {
 		params.Set("ys_ref_id", req.YsRefID)
 	}

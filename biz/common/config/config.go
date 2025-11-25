@@ -1,9 +1,12 @@
 package config
 
 const (
-	MasterYahooAccountID = "chkyj_cp_by4d1vej"
+	MasterYahooAccountID = "chkyj_cp_evjr2p2v" // For product list
+	Yahoo02AccountID     = "chkyj_cp_by4d1vej" // For bidding
+	Yahoo03AccountID     = "chkyj_cp_c0rufa99" // For backuup bidding
 )
 
+// Cache keys
 const (
 	MercariBrandsKey     = "supply_srv:v1:mercari_brands"
 	MercariCategoriesKey = "supply_srv:v1:mercari_categories"
