@@ -11,7 +11,7 @@ import (
 
 	"github.com/buyandship/bns-golib/cache"
 	"github.com/buyandship/bns-golib/retry"
-	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	bizErr "github.com/buyandship/supply-service/biz/common/err"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )

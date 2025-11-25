@@ -14,9 +14,9 @@ import (
 	"github.com/buyandship/bns-golib/cache"
 	"github.com/buyandship/bns-golib/config"
 	"github.com/buyandship/bns-golib/retry"
-	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
-	model "github.com/buyandship/supply-svr/biz/model/mercari"
+	bizErr "github.com/buyandship/supply-service/biz/common/err"
+	"github.com/buyandship/supply-service/biz/infrasturcture/db"
+	model "github.com/buyandship/supply-service/biz/model/mercari"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )

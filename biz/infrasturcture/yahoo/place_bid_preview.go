@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strconv"
 
-	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	bizErr "github.com/buyandship/supply-service/biz/common/err"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 

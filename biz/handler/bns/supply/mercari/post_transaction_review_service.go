@@ -3,11 +3,11 @@ package mercari
 import (
 	"context"
 
-	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
-	"github.com/buyandship/supply-svr/biz/model/bns/supply"
-	model "github.com/buyandship/supply-svr/biz/model/mercari"
+	bizErr "github.com/buyandship/supply-service/biz/common/err"
+	"github.com/buyandship/supply-service/biz/infrasturcture/db"
+	"github.com/buyandship/supply-service/biz/infrasturcture/mercari"
+	"github.com/buyandship/supply-service/biz/model/bns/supply"
+	model "github.com/buyandship/supply-service/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 

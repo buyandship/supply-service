@@ -5,12 +5,12 @@ import (
 	"time"
 
 	"github.com/buyandship/bns-golib/cache"
-	"github.com/buyandship/supply-svr/biz/common/config"
-	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/http"
-	"github.com/buyandship/supply-svr/biz/model/bns/supply"
-	"github.com/buyandship/supply-svr/biz/model/mercari"
+	"github.com/buyandship/supply-service/biz/common/config"
+	bizErr "github.com/buyandship/supply-service/biz/common/err"
+	"github.com/buyandship/supply-service/biz/infrasturcture/db"
+	"github.com/buyandship/supply-service/biz/infrasturcture/http"
+	"github.com/buyandship/supply-service/biz/model/bns/supply"
+	"github.com/buyandship/supply-service/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 

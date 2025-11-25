@@ -3,7 +3,7 @@
 package router
 
 import (
-	bns_supply "github.com/buyandship/supply-svr/biz/router/bns/supply"
+	bns_supply "github.com/buyandship/supply-service/biz/router/bns/supply"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 

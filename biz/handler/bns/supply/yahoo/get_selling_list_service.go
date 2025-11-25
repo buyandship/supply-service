@@ -3,8 +3,8 @@ package yahoo
 import (
 	"context"
 
-	"github.com/buyandship/supply-svr/biz/infrasturcture/yahoo"
-	"github.com/buyandship/supply-svr/biz/model/bns/supply"
+	"github.com/buyandship/supply-service/biz/infrasturcture/yahoo"
+	"github.com/buyandship/supply-service/biz/model/bns/supply"
 )
 
 func GetSellingListService(ctx context.Context, req *supply.YahooGetSellingListReq) (*yahoo.SellingListResponse, error) {

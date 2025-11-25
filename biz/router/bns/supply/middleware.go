@@ -3,7 +3,7 @@
 package supply
 
 import (
-	"github.com/buyandship/supply-svr/biz/middleware"
+	"github.com/buyandship/supply-service/biz/middleware"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 

@@ -5,11 +5,11 @@ package supply
 import (
 	"context"
 
-	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/handler/bns/supply/mercari"
-	service "github.com/buyandship/supply-svr/biz/handler/bns/supply/yahoo"
-	"github.com/buyandship/supply-svr/biz/model/bns/supply"
-	_ "github.com/buyandship/supply-svr/biz/model/yahoo"
+	bizErr "github.com/buyandship/supply-service/biz/common/err"
+	"github.com/buyandship/supply-service/biz/handler/bns/supply/mercari"
+	service "github.com/buyandship/supply-service/biz/handler/bns/supply/yahoo"
+	"github.com/buyandship/supply-service/biz/model/bns/supply"
+	_ "github.com/buyandship/supply-service/biz/model/yahoo"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"

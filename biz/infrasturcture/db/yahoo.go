@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/buyandship/bns-golib/trace"
-	"github.com/buyandship/supply-svr/biz/model/yahoo"
+	"github.com/buyandship/supply-service/biz/model/yahoo"
 	"gorm.io/gorm"
 )
 

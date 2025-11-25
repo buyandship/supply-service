@@ -1,4 +1,4 @@
-module github.com/buyandship/supply-svr
+module github.com/buyandship/supply-service
 
 go 1.23.0
 
@@ -29,6 +29,7 @@ require (
 	github.com/hertz-contrib/swagger v0.1.1
 	github.com/stretchr/testify v1.11.1
 	github.com/swaggo/files v1.0.1
+	github.com/swaggo/swag v1.16.1
 	go.opentelemetry.io/otel v1.38.0
 	gorm.io/datatypes v1.2.7
 	gorm.io/gorm v1.31.0
@@ -140,7 +141,6 @@ require (
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/spf13/viper v1.21.0 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
-	github.com/swaggo/swag v1.16.1 // indirect
 	github.com/thanhpk/randstr v1.0.4 // indirect
 	github.com/tidwall/gjson v1.17.3 // indirect
 	github.com/tidwall/match v1.1.1 // indirect

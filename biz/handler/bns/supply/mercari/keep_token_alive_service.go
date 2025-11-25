@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
+	"github.com/buyandship/supply-service/biz/infrasturcture/db"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 

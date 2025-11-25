@@ -6,8 +6,8 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/buyandship/supply-svr/biz/common/config"
-	bizErr "github.com/buyandship/supply-svr/biz/common/err"
+	"github.com/buyandship/supply-service/biz/common/config"
+	bizErr "github.com/buyandship/supply-service/biz/common/err"
 )
 
 // SearchAuctionsRequest represents the request parameters for searching Yahoo Auctions

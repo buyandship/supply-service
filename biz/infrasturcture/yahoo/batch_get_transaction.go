@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/buyandship/supply-svr/biz/model/bns/supply"
+	"github.com/buyandship/supply-service/biz/model/bns/supply"
 )
 
 // TransactionSearchRequest represents a transaction search request

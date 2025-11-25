@@ -6,8 +6,8 @@ import (
 	"net/url"
 	"strconv"
 
-	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/model/bns/supply"
+	bizErr "github.com/buyandship/supply-service/biz/common/err"
+	"github.com/buyandship/supply-service/biz/model/bns/supply"
 )
 
 // CategoryLeafImage represents image information in category leaf response

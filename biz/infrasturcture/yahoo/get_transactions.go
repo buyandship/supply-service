@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/buyandship/supply-svr/biz/common/config"
-	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/model/bns/supply"
+	"github.com/buyandship/supply-service/biz/common/config"
+	bizErr "github.com/buyandship/supply-service/biz/common/err"
+	"github.com/buyandship/supply-service/biz/model/bns/supply"
 )
 
 type Transaction struct {

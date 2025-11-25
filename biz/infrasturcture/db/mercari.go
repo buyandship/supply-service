@@ -7,7 +7,7 @@ import (
 
 	"github.com/buyandship/bns-golib/db"
 	"github.com/buyandship/bns-golib/trace"
-	model "github.com/buyandship/supply-svr/biz/model/mercari"
+	model "github.com/buyandship/supply-service/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"gorm.io/gorm"
 )

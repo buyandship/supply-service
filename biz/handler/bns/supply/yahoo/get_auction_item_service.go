@@ -3,9 +3,9 @@ package yahoo
 import (
 	"context"
 
-	"github.com/buyandship/supply-svr/biz/common/config"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/yahoo"
-	"github.com/buyandship/supply-svr/biz/model/bns/supply"
+	"github.com/buyandship/supply-service/biz/common/config"
+	"github.com/buyandship/supply-service/biz/infrasturcture/yahoo"
+	"github.com/buyandship/supply-service/biz/model/bns/supply"
 )
 
 func GetAuctionItemService(ctx context.Context, req *supply.YahooGetAuctionItemReq) (*yahoo.AuctionItemDetail, error) {
