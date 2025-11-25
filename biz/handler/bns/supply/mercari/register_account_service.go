@@ -6,7 +6,7 @@ import (
 
 	"github.com/buyandship/bns-golib/cache"
 	"github.com/buyandship/supply-service/biz/common/config"
-	"github.com/buyandship/supply-service/biz/infrasturcture/db"
+	"github.com/buyandship/supply-service/biz/infrastructure/db"
 	"github.com/buyandship/supply-service/biz/model/bns/supply"
 	model "github.com/buyandship/supply-service/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"

@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/buyandship/bns-golib/cache"
-	"github.com/buyandship/supply-service/biz/infrasturcture/db"
+	"github.com/buyandship/supply-service/biz/infrastructure/db"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"

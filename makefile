@@ -9,7 +9,7 @@ docker_login:
 build:
 	@echo "Building go binary..."
 	@mkdir -p output/
-	@GOOS=linux GOARCH=amd64 go build ./
+	@GOOS=linux GOARCH=amd64 go build -o supply-svr ./
 	@echo "Build successfully"
 
 docker_build:

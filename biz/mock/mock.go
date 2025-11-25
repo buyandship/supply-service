@@ -3,7 +3,7 @@ package mock
 import (
 	"github.com/buyandship/bns-golib/config"
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
-	"github.com/buyandship/supply-service/biz/infrasturcture/mercari"
+	"github.com/buyandship/supply-service/biz/infrastructure/mercari"
 	"github.com/google/uuid"
 )
 

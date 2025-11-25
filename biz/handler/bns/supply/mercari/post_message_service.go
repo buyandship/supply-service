@@ -5,8 +5,8 @@ import (
 	"unicode/utf8"
 
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
-	"github.com/buyandship/supply-service/biz/infrasturcture/db"
-	"github.com/buyandship/supply-service/biz/infrasturcture/mercari"
+	"github.com/buyandship/supply-service/biz/infrastructure/db"
+	"github.com/buyandship/supply-service/biz/infrastructure/mercari"
 	"github.com/buyandship/supply-service/biz/model/bns/supply"
 	model "github.com/buyandship/supply-service/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"

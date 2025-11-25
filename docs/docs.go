@@ -1676,7 +1676,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_buyandship_supply-svr_biz_model_yahoo.Transaction"
+                                "$ref": "#/definitions/github_com_buyandship_supply-service_biz_model_yahoo.Transaction"
                             }
                         }
                     },
@@ -1851,7 +1851,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_buyandship_supply-svr_biz_infrasturcture_mercari.AnshinItemAuthentication": {
+        "github_com_buyandship_supply-service_biz_infrastructure_mercari.AnshinItemAuthentication": {
             "type": "object",
             "properties": {
                 "fee": {
@@ -1862,11 +1862,11 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_buyandship_supply-svr_biz_infrasturcture_mercari.Item": {
+        "github_com_buyandship_supply-service_biz_infrastructure_mercari.Item": {
             "type": "object",
             "properties": {
                 "anshin_item_authentication": {
-                    "$ref": "#/definitions/github_com_buyandship_supply-svr_biz_infrasturcture_mercari.AnshinItemAuthentication"
+                    "$ref": "#/definitions/github_com_buyandship_supply-service_biz_infrastructure_mercari.AnshinItemAuthentication"
                 },
                 "created": {
                     "type": "integer"
@@ -1878,13 +1878,13 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "item_brand": {
-                    "$ref": "#/definitions/github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ItemBrand"
+                    "$ref": "#/definitions/github_com_buyandship_supply-service_biz_infrastructure_mercari.ItemBrand"
                 },
                 "item_category": {
-                    "$ref": "#/definitions/github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ItemCategory"
+                    "$ref": "#/definitions/github_com_buyandship_supply-service_biz_infrastructure_mercari.ItemCategory"
                 },
                 "item_condition": {
-                    "$ref": "#/definitions/github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ItemCondition"
+                    "$ref": "#/definitions/github_com_buyandship_supply-service_biz_infrastructure_mercari.ItemCondition"
                 },
                 "item_discount": {
                     "$ref": "#/definitions/mercari.ItemDiscount"
@@ -1892,7 +1892,7 @@ const docTemplate = `{
                 "item_sizes": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ItemSize"
+                        "$ref": "#/definitions/github_com_buyandship_supply-service_biz_infrastructure_mercari.ItemSize"
                     }
                 },
                 "item_type": {
@@ -1911,13 +1911,13 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "seller": {
-                    "$ref": "#/definitions/github_com_buyandship_supply-svr_biz_infrasturcture_mercari.Seller"
+                    "$ref": "#/definitions/github_com_buyandship_supply-service_biz_infrastructure_mercari.Seller"
                 },
                 "shipping_duration": {
-                    "$ref": "#/definitions/github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ShippingDuration"
+                    "$ref": "#/definitions/github_com_buyandship_supply-service_biz_infrastructure_mercari.ShippingDuration"
                 },
                 "shipping_payer": {
-                    "$ref": "#/definitions/github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ShippingPayer"
+                    "$ref": "#/definitions/github_com_buyandship_supply-service_biz_infrastructure_mercari.ShippingPayer"
                 },
                 "status": {
                     "type": "string"
@@ -1930,7 +1930,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ItemBrand": {
+        "github_com_buyandship_supply-service_biz_infrastructure_mercari.ItemBrand": {
             "type": "object",
             "properties": {
                 "id": {
@@ -1944,7 +1944,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ItemCategory": {
+        "github_com_buyandship_supply-service_biz_infrastructure_mercari.ItemCategory": {
             "type": "object",
             "properties": {
                 "id": {
@@ -1955,7 +1955,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ItemCondition": {
+        "github_com_buyandship_supply-service_biz_infrastructure_mercari.ItemCondition": {
             "type": "object",
             "properties": {
                 "id": {
@@ -1966,7 +1966,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ItemSize": {
+        "github_com_buyandship_supply-service_biz_infrastructure_mercari.ItemSize": {
             "type": "object",
             "properties": {
                 "id": {
@@ -1977,7 +1977,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_buyandship_supply-svr_biz_infrasturcture_mercari.Seller": {
+        "github_com_buyandship_supply-service_biz_infrastructure_mercari.Seller": {
             "type": "object",
             "properties": {
                 "id": {
@@ -1994,7 +1994,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ShippingDuration": {
+        "github_com_buyandship_supply-service_biz_infrastructure_mercari.ShippingDuration": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2011,7 +2011,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ShippingPayer": {
+        "github_com_buyandship_supply-service_biz_infrastructure_mercari.ShippingPayer": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2025,7 +2025,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_buyandship_supply-svr_biz_model_yahoo.Transaction": {
+        "github_com_buyandship_supply-service_biz_model_yahoo.Transaction": {
             "type": "object",
             "properties": {
                 "auction_id": {
@@ -2064,7 +2064,7 @@ const docTemplate = `{
                 "items": {
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/definitions/github_com_buyandship_supply-svr_biz_infrasturcture_mercari.Item"
+                        "$ref": "#/definitions/github_com_buyandship_supply-service_biz_infrastructure_mercari.Item"
                     }
                 }
             }
@@ -2611,7 +2611,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_buyandship_supply-svr_biz_infrasturcture_mercari.Item"
+                        "$ref": "#/definitions/github_com_buyandship_supply-service_biz_infrastructure_mercari.Item"
                     }
                 },
                 "meta": {

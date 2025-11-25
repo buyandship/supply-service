@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/buyandship/supply-service/biz/common/config"
-	"github.com/buyandship/supply-service/biz/infrasturcture/yahoo"
+	"github.com/buyandship/supply-service/biz/infrastructure/yahoo"
 	"github.com/buyandship/supply-service/biz/model/bns/supply"
 )
 

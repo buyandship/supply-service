@@ -3,7 +3,7 @@ package mercari
 import (
 	"context"
 
-	"github.com/buyandship/supply-service/biz/infrasturcture/db"
+	"github.com/buyandship/supply-service/biz/infrastructure/db"
 	"github.com/buyandship/supply-service/biz/model/bns/supply"
 )
 

@@ -8,17 +8,17 @@ definitions:
       status:
         type: integer
     type: object
-  github_com_buyandship_supply-svr_biz_infrasturcture_mercari.AnshinItemAuthentication:
+  github_com_buyandship_supply-service_biz_infrastructure_mercari.AnshinItemAuthentication:
     properties:
       fee:
         type: integer
       is_authenticatable:
         type: boolean
     type: object
-  github_com_buyandship_supply-svr_biz_infrasturcture_mercari.Item:
+  github_com_buyandship_supply-service_biz_infrastructure_mercari.Item:
     properties:
       anshin_item_authentication:
-        $ref: '#/definitions/github_com_buyandship_supply-svr_biz_infrasturcture_mercari.AnshinItemAuthentication'
+        $ref: '#/definitions/github_com_buyandship_supply-service_biz_infrastructure_mercari.AnshinItemAuthentication'
       created:
         type: integer
       description:
@@ -26,16 +26,16 @@ definitions:
       id:
         type: string
       item_brand:
-        $ref: '#/definitions/github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ItemBrand'
+        $ref: '#/definitions/github_com_buyandship_supply-service_biz_infrastructure_mercari.ItemBrand'
       item_category:
-        $ref: '#/definitions/github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ItemCategory'
+        $ref: '#/definitions/github_com_buyandship_supply-service_biz_infrastructure_mercari.ItemCategory'
       item_condition:
-        $ref: '#/definitions/github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ItemCondition'
+        $ref: '#/definitions/github_com_buyandship_supply-service_biz_infrastructure_mercari.ItemCondition'
       item_discount:
         $ref: '#/definitions/mercari.ItemDiscount'
       item_sizes:
         items:
-          $ref: '#/definitions/github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ItemSize'
+          $ref: '#/definitions/github_com_buyandship_supply-service_biz_infrastructure_mercari.ItemSize'
         type: array
       item_type:
         type: string
@@ -48,11 +48,11 @@ definitions:
       price:
         type: integer
       seller:
-        $ref: '#/definitions/github_com_buyandship_supply-svr_biz_infrasturcture_mercari.Seller'
+        $ref: '#/definitions/github_com_buyandship_supply-service_biz_infrastructure_mercari.Seller'
       shipping_duration:
-        $ref: '#/definitions/github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ShippingDuration'
+        $ref: '#/definitions/github_com_buyandship_supply-service_biz_infrastructure_mercari.ShippingDuration'
       shipping_payer:
-        $ref: '#/definitions/github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ShippingPayer'
+        $ref: '#/definitions/github_com_buyandship_supply-service_biz_infrastructure_mercari.ShippingPayer'
       status:
         type: string
       thumbnail:
@@ -60,7 +60,7 @@ definitions:
       updated:
         type: integer
     type: object
-  github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ItemBrand:
+  github_com_buyandship_supply-service_biz_infrastructure_mercari.ItemBrand:
     properties:
       id:
         type: integer
@@ -69,28 +69,28 @@ definitions:
       sub_name:
         type: string
     type: object
-  github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ItemCategory:
+  github_com_buyandship_supply-service_biz_infrastructure_mercari.ItemCategory:
     properties:
       id:
         type: integer
       name:
         type: string
     type: object
-  github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ItemCondition:
+  github_com_buyandship_supply-service_biz_infrastructure_mercari.ItemCondition:
     properties:
       id:
         type: integer
       name:
         type: string
     type: object
-  github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ItemSize:
+  github_com_buyandship_supply-service_biz_infrastructure_mercari.ItemSize:
     properties:
       id:
         type: integer
       name:
         type: string
     type: object
-  github_com_buyandship_supply-svr_biz_infrasturcture_mercari.Seller:
+  github_com_buyandship_supply-service_biz_infrastructure_mercari.Seller:
     properties:
       id:
         type: string
@@ -101,7 +101,7 @@ definitions:
       shop_id:
         type: string
     type: object
-  github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ShippingDuration:
+  github_com_buyandship_supply-service_biz_infrastructure_mercari.ShippingDuration:
     properties:
       id:
         type: integer
@@ -112,7 +112,7 @@ definitions:
       name:
         type: string
     type: object
-  github_com_buyandship_supply-svr_biz_infrasturcture_mercari.ShippingPayer:
+  github_com_buyandship_supply-service_biz_infrastructure_mercari.ShippingPayer:
     properties:
       code:
         type: string
@@ -121,7 +121,7 @@ definitions:
       name:
         type: string
     type: object
-  github_com_buyandship_supply-svr_biz_model_yahoo.Transaction:
+  github_com_buyandship_supply-service_biz_model_yahoo.Transaction:
     properties:
       auction_id:
         example: x123456789
@@ -149,7 +149,7 @@ definitions:
     properties:
       items:
         additionalProperties:
-          $ref: '#/definitions/github_com_buyandship_supply-svr_biz_infrasturcture_mercari.Item'
+          $ref: '#/definitions/github_com_buyandship_supply-service_biz_infrastructure_mercari.Item'
         type: object
     type: object
   mercari.GetBrandsResp:
@@ -502,7 +502,7 @@ definitions:
     properties:
       data:
         items:
-          $ref: '#/definitions/github_com_buyandship_supply-svr_biz_infrasturcture_mercari.Item'
+          $ref: '#/definitions/github_com_buyandship_supply-service_biz_infrastructure_mercari.Item'
         type: array
       meta:
         properties:
@@ -3105,7 +3105,7 @@ paths:
           description: Successfully retrieved transaction
           schema:
             items:
-              $ref: '#/definitions/github_com_buyandship_supply-svr_biz_model_yahoo.Transaction'
+              $ref: '#/definitions/github_com_buyandship_supply-service_biz_model_yahoo.Transaction'
             type: array
         "400":
           description: Invalid parameter

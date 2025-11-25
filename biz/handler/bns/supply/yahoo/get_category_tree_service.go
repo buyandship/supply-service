@@ -3,7 +3,7 @@ package yahoo
 import (
 	"context"
 
-	"github.com/buyandship/supply-service/biz/infrasturcture/yahoo"
+	"github.com/buyandship/supply-service/biz/infrastructure/yahoo"
 	"github.com/buyandship/supply-service/biz/model/bns/supply"
 	model "github.com/buyandship/supply-service/biz/model/yahoo"
 )
