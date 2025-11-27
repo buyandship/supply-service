@@ -27,7 +27,7 @@ func SearchAuctionService(ctx context.Context, req *supply.YahooSearchAuctionsRe
 		New:                  int(req.New),
 		FreeShipping:         int(req.Freeshipping),
 		WrappingIcon:         int(req.Wrappingicon),
-		BuyNow:               int(req.Buynow),
+		BuyNow:               1,
 		Thumbnail:            int(req.Thumbnail),
 		Attn:                 int(req.Attn),
 		Point:                int(req.Point),

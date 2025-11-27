@@ -1359,29 +1359,28 @@ definitions:
       totalHighestBidders:
         type: integer
     type: object
-  yahoo.ImageInfo:
-    properties:
-      alt:
-        example: Sample User Image
-        type: string
-      height:
-        example: 450
-        type: integer
-      url:
-        example: https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-img600x450-1234567890abc.jpg
-        type: string
-      width:
-        example: 600
-        type: integer
-    type: object
   yahoo.Images:
     properties:
       Image1:
-        $ref: '#/definitions/yahoo.ImageInfo'
+        $ref: '#/definitions/yahoo.AuctionImage'
       Image2:
-        $ref: '#/definitions/yahoo.ImageInfo'
+        $ref: '#/definitions/yahoo.AuctionImage'
       Image3:
-        $ref: '#/definitions/yahoo.ImageInfo'
+        $ref: '#/definitions/yahoo.AuctionImage'
+      Image4:
+        $ref: '#/definitions/yahoo.AuctionImage'
+      Image5:
+        $ref: '#/definitions/yahoo.AuctionImage'
+      Image6:
+        $ref: '#/definitions/yahoo.AuctionImage'
+      Image7:
+        $ref: '#/definitions/yahoo.AuctionImage'
+      Image8:
+        $ref: '#/definitions/yahoo.AuctionImage'
+      Image9:
+        $ref: '#/definitions/yahoo.AuctionImage'
+      Image10:
+        $ref: '#/definitions/yahoo.AuctionImage'
     type: object
   yahoo.ItemReturnable:
     properties:

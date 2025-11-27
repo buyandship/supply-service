@@ -44,19 +44,18 @@ type SellerInfo struct {
 	Performance          map[string]interface{} `json:"Performance,omitempty"`
 }
 
-// ImageInfo represents image information
-type ImageInfo struct {
-	URL    string `json:"url,omitempty" example:"https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-img600x450-1234567890abc.jpg"`
-	Width  int    `json:"width,omitempty" example:"600"`
-	Height int    `json:"height,omitempty" example:"450"`
-	Alt    string `json:"alt,omitempty" example:"Sample User Image"`
-}
-
 // Images represents collection of images
 type Images struct {
-	Image1 *ImageInfo `json:"Image1,omitempty"`
-	Image2 *ImageInfo `json:"Image2,omitempty"`
-	Image3 *ImageInfo `json:"Image3,omitempty"`
+	Image1  *AuctionImage `json:"Image1,omitempty"`
+	Image2  *AuctionImage `json:"Image2,omitempty"`
+	Image3  *AuctionImage `json:"Image3,omitempty"`
+	Image4  *AuctionImage `json:"Image4,omitempty"`
+	Image5  *AuctionImage `json:"Image5,omitempty"`
+	Image6  *AuctionImage `json:"Image6,omitempty"`
+	Image7  *AuctionImage `json:"Image7,omitempty"`
+	Image8  *AuctionImage `json:"Image8,omitempty"`
+	Image9  *AuctionImage `json:"Image9,omitempty"`
+	Image10 *AuctionImage `json:"Image10,omitempty"`
 }
 
 func (i *Images) List() []string {
@@ -730,27 +729,7 @@ func (c *Client) MockGetAuctionItem(ctx context.Context, req AuctionItemRequest)
 				},
 				ShoppingItemCode: "shopping_item_abc123",
 				AuctionItemUrl:   "https://page.auctions.yahoo.co.jp/jp/auction/x123456789",
-				Img: Images{
-					Image1: &ImageInfo{
-						URL:    "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-img600x450-1234567890abc.jpg",
-						Width:  600,
-						Height: 450,
-						Alt:    "商品画像1",
-					},
-					Image2: &ImageInfo{
-						URL:    "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-img600x450-1234567890def.jpg",
-						Width:  600,
-						Height: 450,
-						Alt:    "商品画像2",
-					},
-					Image3: &ImageInfo{
-						URL:    "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-img600x450-1234567890ghi.jpg",
-						Width:  600,
-						Height: 450,
-						Alt:    "商品画像3",
-					},
-				},
-				ImgColor: "red",
+				ImgColor:         "red",
 				Thumbnails: Thumbnails{
 					Thumbnail1: "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890abc.jpg",
 					Thumbnail2: "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890def.jpg",

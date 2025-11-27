@@ -3882,38 +3882,38 @@ const docTemplate = `{
                 }
             }
         },
-        "yahoo.ImageInfo": {
-            "type": "object",
-            "properties": {
-                "alt": {
-                    "type": "string",
-                    "example": "Sample User Image"
-                },
-                "height": {
-                    "type": "integer",
-                    "example": 450
-                },
-                "url": {
-                    "type": "string",
-                    "example": "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-img600x450-1234567890abc.jpg"
-                },
-                "width": {
-                    "type": "integer",
-                    "example": 600
-                }
-            }
-        },
         "yahoo.Images": {
             "type": "object",
             "properties": {
                 "Image1": {
-                    "$ref": "#/definitions/yahoo.ImageInfo"
+                    "$ref": "#/definitions/yahoo.AuctionImage"
+                },
+                "Image10": {
+                    "$ref": "#/definitions/yahoo.AuctionImage"
                 },
                 "Image2": {
-                    "$ref": "#/definitions/yahoo.ImageInfo"
+                    "$ref": "#/definitions/yahoo.AuctionImage"
                 },
                 "Image3": {
-                    "$ref": "#/definitions/yahoo.ImageInfo"
+                    "$ref": "#/definitions/yahoo.AuctionImage"
+                },
+                "Image4": {
+                    "$ref": "#/definitions/yahoo.AuctionImage"
+                },
+                "Image5": {
+                    "$ref": "#/definitions/yahoo.AuctionImage"
+                },
+                "Image6": {
+                    "$ref": "#/definitions/yahoo.AuctionImage"
+                },
+                "Image7": {
+                    "$ref": "#/definitions/yahoo.AuctionImage"
+                },
+                "Image8": {
+                    "$ref": "#/definitions/yahoo.AuctionImage"
+                },
+                "Image9": {
+                    "$ref": "#/definitions/yahoo.AuctionImage"
                 }
             }
         },
