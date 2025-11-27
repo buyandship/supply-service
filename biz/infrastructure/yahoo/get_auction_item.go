@@ -70,6 +70,27 @@ func (i *Images) List() []string {
 	if i.Image3 != nil {
 		urls = append(urls, i.Image3.URL)
 	}
+	if i.Image4 != nil {
+		urls = append(urls, i.Image4.URL)
+	}
+	if i.Image5 != nil {
+		urls = append(urls, i.Image5.URL)
+	}
+	if i.Image6 != nil {
+		urls = append(urls, i.Image6.URL)
+	}
+	if i.Image7 != nil {
+		urls = append(urls, i.Image7.URL)
+	}
+	if i.Image8 != nil {
+		urls = append(urls, i.Image8.URL)
+	}
+	if i.Image9 != nil {
+		urls = append(urls, i.Image9.URL)
+	}
+	if i.Image10 != nil {
+		urls = append(urls, i.Image10.URL)
+	}
 
 	return urls
 }
