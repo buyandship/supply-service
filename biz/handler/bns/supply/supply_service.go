@@ -547,7 +547,7 @@ func YahooPlaceBidService(ctx context.Context, c *app.RequestContext) {
 // @Produce json
 // @Param Header header model.Header true "Header"
 // @Param transaction_id path string true "Transaction ID" example:"12345"
-// @Success 200 {object} []yahoo.Transaction "Successfully retrieved transaction"
+// @Success 200 {object} []yahoo.TransactionResult "Successfully retrieved transaction"
 // @Failure 400 {object} bizErr.BizError "Invalid parameter"
 // @Failure 404 {object} bizErr.BizError "Transaction not found"
 // @Failure 500 {object} bizErr.BizError "Internal server error"

@@ -11,6 +11,21 @@ import (
 	"github.com/buyandship/supply-service/biz/model/bns/supply"
 )
 
+type TransactionResult struct {
+	TransactionID   string  `json:"transaction_id,omitempty" example:"txn_abc123"`
+	YsRefID         string  `json:"ys_ref_id,omitempty" example:"YS-REF-001"`
+	AuctionID       string  `json:"auction_id,omitempty" example:"x123456789"`
+	CurrentPrice    float64 `json:"current_price,omitempty" example:"1300"`
+	TransactionType string  `json:"transaction_type,omitempty" example:"BID"`
+	Status          string  `json:"status,omitempty" example:"completed"`
+	ReqPrice        float64 `json:"req_price,omitempty" example:"1000"`
+	EventType       string  `json:"event_type,omitempty" example:"placeBidPreview"`
+	CreatedAt       string  `json:"created_at,omitempty" example:"2025-01-01T00:00:00Z"`
+	UpdatedAt       string  `json:"updated_at,omitempty" example:"2025-01-01T00:00:00Z"`
+
+	Detail PlaceBidResult `json:"detail,omitempty"`
+}
+
 type Transaction struct {
 	TransactionID    string  `json:"transaction_id,omitempty"`
 	RequestGroupID   string  `json:"request_group_id,omitempty"`
@@ -28,7 +43,7 @@ type Transaction struct {
 	CreatedAt        string  `json:"created_at,omitempty"`
 	UpdatedAt        string  `json:"updated_at,omitempty"`
 	// RequestData      supply.YahooPlaceBidReq `json:"request_data"`
-	// ResponseData     PlaceBidResponse        `json:"response_data,omitempty"`
+	ResponseData PlaceBidResponse `json:"response_data,omitempty"`
 }
 
 type GetTransactionsResponse struct {

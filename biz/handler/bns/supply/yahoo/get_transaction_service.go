@@ -2,14 +2,14 @@ package yahoo
 
 import (
 	"context"
+	"strings"
 
 	"github.com/buyandship/supply-service/biz/infrastructure/yahoo"
 	"github.com/buyandship/supply-service/biz/model/bns/supply"
-	model "github.com/buyandship/supply-service/biz/model/yahoo"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
-func GetTransactionsService(ctx context.Context, req *supply.YahooGetTransactionsReq) ([]*model.Transaction, error) {
+func GetTransactionsService(ctx context.Context, req *supply.YahooGetTransactionsReq) ([]*yahoo.TransactionResult, error) {
 	hlog.CtxInfof(ctx, "GetTransactionService: %+v", req)
 	yahooClient := yahoo.GetClient()
 	// get transaction id list with order id
@@ -19,9 +19,14 @@ func GetTransactionsService(ctx context.Context, req *supply.YahooGetTransaction
 		return nil, err
 	}
 
-	transactions := make([]*model.Transaction, 0)
+	transactions := make([]*yahoo.TransactionResult, 0)
 	for _, tx := range tx.Transactions {
-		transactions = append(transactions, &model.Transaction{
+		apiEndpoint := strings.Split(tx.APIEndpoint, "/")
+		eventType := apiEndpoint[len(apiEndpoint)-1]
+		if eventType != "placeBidPreview" && eventType != "placeBid" {
+			continue
+		}
+		transactions = append(transactions, &yahoo.TransactionResult{
 			TransactionID:   tx.TransactionID,
 			YsRefID:         tx.YsRefID,
 			AuctionID:       tx.AuctionID,
@@ -29,6 +34,10 @@ func GetTransactionsService(ctx context.Context, req *supply.YahooGetTransaction
 			TransactionType: tx.TransactionType,
 			Status:          tx.Status,
 			ReqPrice:        tx.ReqPrice,
+			EventType:       eventType,
+			CreatedAt:       tx.CreatedAt,
+			UpdatedAt:       tx.UpdatedAt,
+			Detail:          tx.ResponseData.ResultSet.Result,
 		})
 	}
 

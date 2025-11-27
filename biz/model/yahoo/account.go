@@ -17,16 +17,6 @@ type Category struct {
 	IsLeafToLink     *bool       `json:"IsLeafToLink,omitempty" example:"false"` // Only present in child categories
 }
 
-type Transaction struct {
-	TransactionID   string  `json:"transaction_id,omitempty" example:"txn_abc123"`
-	YsRefID         string  `json:"ys_ref_id,omitempty" example:"YS-REF-001"`
-	AuctionID       string  `json:"auction_id,omitempty" example:"x123456789"`
-	CurrentPrice    float64 `json:"current_price,omitempty" example:"1300"`
-	TransactionType string  `json:"transaction_type,omitempty" example:"BID"`
-	Status          string  `json:"status,omitempty" example:"completed"`
-	ReqPrice        float64 `json:"req_price,omitempty" example:"1000"`
-}
-
 // Account represents a Yahoo account
 type Account struct {
 	YahooID  string `json:"yahoo_id" example:"chkyj_cp_evjr2p2v"`

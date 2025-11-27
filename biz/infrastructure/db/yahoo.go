@@ -25,19 +25,27 @@ func (h *H) InsertBuyoutBidRequest(ctx context.Context, order *yahoo.BidRequest)
 			tx.Rollback()
 			return err
 		}
-		// create transaction
-		if err := tx.Create(&yahoo.YahooTransaction{
-			BidRequestID: order.OrderID,
-			Price:        order.MaxBid,
-			Status:       "CREATED",
-		}).Error; err != nil {
-			tx.Rollback()
-			return err
-		}
+
 		return tx.Commit().Error
 	}
 	*order = existing
 	return nil
+}
+
+func (h *H) GetBidRequest(ctx context.Context, orderID string) (order *yahoo.BidRequest, err error) {
+	ctx, span := trace.StartDBOperation(ctx, "GetBidRequest")
+	defer trace.EndSpan(span, err)
+
+	db := h.cli.WithContext(ctx)
+
+	order = &yahoo.BidRequest{}
+	if err := db.Where("order_id = ?", orderID).First(order).Error; err != nil {
+		if err != gorm.ErrRecordNotFound {
+			return nil, err
+		}
+		return nil, nil
+	}
+	return order, nil
 }
 
 func (h *H) UpdateBuyoutBidRequest(ctx context.Context, order *yahoo.BidRequest) (err error) {

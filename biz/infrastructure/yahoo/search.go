@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/buyandship/supply-service/biz/common/config"
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
@@ -146,11 +147,11 @@ type AuctionItemListSeller struct {
 	AucUserIdRatingURL   string `json:"AucUserIdRatingUrl,omitempty"`
 }
 
-// AuctionItemListImage represents image information in auction item list
-type AuctionItemListImage struct {
-	URL    string `json:"Url,omitempty"`
-	Width  int    `json:"width,omitempty"`
-	Height int    `json:"height,omitempty"`
+type AuctionImage struct {
+	URL    string `json:"#text,omitempty"`
+	Width  int    `json:"@width,omitempty"`
+	Height int    `json:"@height,omitempty"`
+	Alt    string `json:"@alt,omitempty"`
 }
 
 // AuctionItemListOption represents option information in auction item list
@@ -182,7 +183,7 @@ type AuctionItemListDetail struct {
 	Seller           AuctionItemListSeller `json:"Seller,omitempty"`
 	ItemUrl          string                `json:"ItemUrl,omitempty"`
 	AuctionItemUrl   string                `json:"AuctionItemUrl,omitempty"`
-	Image            AuctionItemListImage  `json:"Image,omitempty"`
+	Image            AuctionImage          `json:"Image,omitempty"`
 	OriginalImageNum int32                 `json:"OriginalImageNum,omitempty"`
 	CurrentPrice     float64               `json:"CurrentPrice,omitempty"`
 	Bids             int                   `json:"Bids,omitempty"`
@@ -354,6 +355,11 @@ func (c *Client) SearchAuctions(ctx context.Context, req *SearchAuctionsRequest)
 	var searchAuctionsResponse SearchAuctionsResponse
 	if err := c.parseResponse(resp, &searchAuctionsResponse); err != nil {
 		return nil, err
+	}
+
+	for i, item := range searchAuctionsResponse.ResultSet.Result.Item {
+		// remove query params from image URL
+		searchAuctionsResponse.ResultSet.Result.Item[i].Image.URL = strings.Split(item.Image.URL, "?")[0]
 	}
 
 	return &searchAuctionsResponse, nil

@@ -121,30 +121,6 @@ definitions:
       name:
         type: string
     type: object
-  github_com_buyandship_supply-service_biz_model_yahoo.Transaction:
-    properties:
-      auction_id:
-        example: x123456789
-        type: string
-      current_price:
-        example: 1300
-        type: number
-      req_price:
-        example: 1000
-        type: number
-      status:
-        example: completed
-        type: string
-      transaction_id:
-        example: txn_abc123
-        type: string
-      transaction_type:
-        example: BID
-        type: string
-      ys_ref_id:
-        example: YS-REF-001
-        type: string
-    type: object
   mercari.FetchItemsResponse:
     properties:
       items:
@@ -726,6 +702,17 @@ definitions:
       Rate:
         type: integer
     type: object
+  yahoo.AuctionImage:
+    properties:
+      '#text':
+        type: string
+      '@alt':
+        type: string
+      '@height':
+        type: integer
+      '@width':
+        type: integer
+    type: object
   yahoo.AuctionItemDetail:
     properties:
       AnsweredQAndANum:
@@ -1004,7 +991,7 @@ definitions:
       EndTime:
         type: string
       Image:
-        $ref: '#/definitions/yahoo.AuctionItemListImage'
+        $ref: '#/definitions/yahoo.AuctionImage'
       IsAdult:
         type: boolean
       IsCrossListing:
@@ -1025,15 +1012,6 @@ definitions:
         type: string
       Title:
         type: string
-    type: object
-  yahoo.AuctionItemListImage:
-    properties:
-      Url:
-        type: string
-      height:
-        type: integer
-      width:
-        type: integer
     type: object
   yahoo.AuctionItemListOption:
     properties:
@@ -1977,6 +1955,41 @@ definitions:
         type: string
       Thumbnail10:
         example: https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890123.jpg
+        type: string
+    type: object
+  yahoo.TransactionResult:
+    properties:
+      auction_id:
+        example: x123456789
+        type: string
+      created_at:
+        example: "2025-01-01T00:00:00Z"
+        type: string
+      current_price:
+        example: 1300
+        type: number
+      detail:
+        $ref: '#/definitions/yahoo.PlaceBidResult'
+      event_type:
+        example: placeBidPreview
+        type: string
+      req_price:
+        example: 1000
+        type: number
+      status:
+        example: completed
+        type: string
+      transaction_id:
+        example: txn_abc123
+        type: string
+      transaction_type:
+        example: BID
+        type: string
+      updated_at:
+        example: "2025-01-01T00:00:00Z"
+        type: string
+      ys_ref_id:
+        example: YS-REF-001
         type: string
     type: object
   yahoo.Winner:
@@ -3105,7 +3118,7 @@ paths:
           description: Successfully retrieved transaction
           schema:
             items:
-              $ref: '#/definitions/github_com_buyandship_supply-service_biz_model_yahoo.Transaction'
+              $ref: '#/definitions/yahoo.TransactionResult'
             type: array
         "400":
           description: Invalid parameter

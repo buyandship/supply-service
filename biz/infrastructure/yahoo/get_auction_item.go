@@ -5,8 +5,11 @@ import (
 	"encoding/base64"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
+
+	"golang.org/x/net/html"
 
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
 	"github.com/buyandship/supply-service/biz/model/yahoo"
@@ -521,6 +524,95 @@ type AuctionItemDetail struct {
 	StorePayment               *StorePayment           `json:"StorePayment,omitempty"`
 }
 
+func (a *AuctionItemDetail) GetDescription() string {
+	if a.Description == "" {
+		return ""
+	}
+
+	// Remove CDATA wrapper if present
+	desc := a.Description
+	if strings.HasPrefix(desc, "<![CDATA[") && strings.HasSuffix(desc, "]]>") {
+		desc = strings.TrimPrefix(desc, "<![CDATA[")
+		desc = strings.TrimSuffix(desc, "]]>")
+	}
+
+	// Parse HTML and extract text
+	doc, err := html.Parse(strings.NewReader(desc))
+	if err != nil {
+		// If parsing fails, return original description
+		return a.Description
+	}
+
+	var result strings.Builder
+	var lastChar byte
+	var extractText func(*html.Node, bool, *html.Node)
+	extractText = func(n *html.Node, addSpace bool, prevSibling *html.Node) {
+		switch n.Type {
+		case html.TextNode:
+			// Replace literal \n with actual newlines
+			text := strings.ReplaceAll(n.Data, "\\n", "\n")
+			text = strings.TrimSpace(text)
+			if text != "" {
+				if addSpace && result.Len() > 0 && lastChar != '\n' {
+					result.WriteString(" ")
+					lastChar = ' '
+				}
+				result.WriteString(text)
+				if len(text) > 0 {
+					lastChar = text[len(text)-1]
+				}
+			}
+		case html.ElementNode:
+			// Handle line breaks and block elements
+			switch n.Data {
+			case "br", "BR":
+				if result.Len() > 0 {
+					// Check if previous sibling was also a BR tag for paragraph break
+					isConsecutiveBR := prevSibling != nil &&
+						prevSibling.Type == html.ElementNode &&
+						(prevSibling.Data == "br" || prevSibling.Data == "BR")
+
+					if isConsecutiveBR {
+						// Consecutive BR tags create a paragraph break (double newline)
+						result.WriteString("\n")
+					}
+					result.WriteString("\n")
+					lastChar = '\n'
+				}
+			case "p", "P", "div", "DIV":
+				if result.Len() > 0 {
+					result.WriteString("\n")
+					lastChar = '\n'
+				}
+			}
+		}
+		var prev *html.Node
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			// Add space between text nodes, but not after block elements
+			shouldAddSpace := n.Type != html.ElementNode || (n.Data != "br" && n.Data != "BR" && n.Data != "p" && n.Data != "P" && n.Data != "div" && n.Data != "DIV")
+			extractText(c, shouldAddSpace, prev)
+			prev = c
+		}
+	}
+	extractText(doc, false, nil)
+
+	plainText := result.String()
+
+	// Normalize whitespace: replace multiple spaces/tabs with single space, but preserve newlines
+	spaceRegex := regexp.MustCompile(`[ \t]+`)
+	plainText = spaceRegex.ReplaceAllString(plainText, " ")
+
+	// Normalize multiple consecutive newlines (3+) to double newline (paragraph break)
+	// This preserves intentional paragraph breaks from <BR><BR> while removing excessive newlines
+	newlineRegex := regexp.MustCompile(`\n{3,}`)
+	plainText = newlineRegex.ReplaceAllString(plainText, "\n\n")
+
+	// Trim leading/trailing whitespace
+	plainText = strings.TrimSpace(plainText)
+
+	return plainText
+}
+
 func (a *AuctionItemDetail) ToBidAuctionItem() *yahoo.BidAuctionItem {
 	auctionID := base64.StdEncoding.EncodeToString([]byte(a.AuctionID))
 	status := base64.StdEncoding.EncodeToString([]byte(a.Status))
@@ -528,12 +620,15 @@ func (a *AuctionItemDetail) ToBidAuctionItem() *yahoo.BidAuctionItem {
 	currentPrice := base64.StdEncoding.EncodeToString([]byte(strconv.FormatFloat(a.Price, 'f', -1, 64)))
 	buyoutPrice := base64.StdEncoding.EncodeToString([]byte(strconv.FormatFloat(a.Bidorbuy, 'f', -1, 64)))
 	// itemType := base64.StdEncoding.EncodeToString([]byte(a.ItemType))
-	description := base64.StdEncoding.EncodeToString([]byte(a.Description))
+	description := base64.StdEncoding.EncodeToString([]byte(a.Description)) // TODO: parse HTML to plain text
 	startTime := base64.StdEncoding.EncodeToString([]byte(a.StartTime))
 	endTime := base64.StdEncoding.EncodeToString([]byte(a.EndTime))
 	itemCategoryID := base64.StdEncoding.EncodeToString([]byte(strconv.Itoa(a.CategoryID)))
 	itemCondition := base64.StdEncoding.EncodeToString([]byte(a.ItemStatus.Condition))
-	itemBrand := base64.StdEncoding.EncodeToString([]byte(strings.Join(a.ItemTagList.Tag, ",")))
+	var itemBrand string
+	if a.ItemTagList != nil {
+		itemBrand = base64.StdEncoding.EncodeToString([]byte(strings.Join(a.ItemTagList.Tag, ",")))
+	}
 	itemWatchListNum := base64.StdEncoding.EncodeToString([]byte(strconv.Itoa(a.WatchListNum)))
 	sellerID := base64.StdEncoding.EncodeToString([]byte(a.Seller.AucUserId))
 	sellerRating := base64.StdEncoding.EncodeToString([]byte(strconv.Itoa(a.Seller.Rating.Point)))
@@ -978,6 +1073,8 @@ func (c *Client) GetAuctionItemAuth(ctx context.Context, req AuctionItemRequest,
 	if err := c.parseResponse(resp, &auctionItemAuthResponse); err != nil {
 		return nil, err
 	}
+
+	auctionItemAuthResponse.ResultSet.Result.Description = auctionItemAuthResponse.ResultSet.Result.GetDescription()
 
 	return &auctionItemAuthResponse, nil
 }

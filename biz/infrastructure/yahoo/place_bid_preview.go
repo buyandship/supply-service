@@ -64,6 +64,9 @@ func (c *Client) PlaceBidPreview(ctx context.Context, req *PlaceBidPreviewReques
 		}
 	}
 
+	transactionId := resp.Header.Get("X-Transaction-ID")
+	placeBidPreviewResponse.ResultSet.Result.TransactionId = transactionId
+
 	return &placeBidPreviewResponse, nil
 }
 

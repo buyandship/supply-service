@@ -1676,7 +1676,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_buyandship_supply-service_biz_model_yahoo.Transaction"
+                                "$ref": "#/definitions/yahoo.TransactionResult"
                             }
                         }
                     },
@@ -2022,39 +2022,6 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
-                }
-            }
-        },
-        "github_com_buyandship_supply-service_biz_model_yahoo.Transaction": {
-            "type": "object",
-            "properties": {
-                "auction_id": {
-                    "type": "string",
-                    "example": "x123456789"
-                },
-                "current_price": {
-                    "type": "number",
-                    "example": 1300
-                },
-                "req_price": {
-                    "type": "number",
-                    "example": 1000
-                },
-                "status": {
-                    "type": "string",
-                    "example": "completed"
-                },
-                "transaction_id": {
-                    "type": "string",
-                    "example": "txn_abc123"
-                },
-                "transaction_type": {
-                    "type": "string",
-                    "example": "BID"
-                },
-                "ys_ref_id": {
-                    "type": "string",
-                    "example": "YS-REF-001"
                 }
             }
         },
@@ -2956,6 +2923,23 @@ const docTemplate = `{
                 }
             }
         },
+        "yahoo.AuctionImage": {
+            "type": "object",
+            "properties": {
+                "#text": {
+                    "type": "string"
+                },
+                "@alt": {
+                    "type": "string"
+                },
+                "@height": {
+                    "type": "integer"
+                },
+                "@width": {
+                    "type": "integer"
+                }
+            }
+        },
         "yahoo.AuctionItemDetail": {
             "type": "object",
             "properties": {
@@ -3339,7 +3323,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "Image": {
-                    "$ref": "#/definitions/yahoo.AuctionItemListImage"
+                    "$ref": "#/definitions/yahoo.AuctionImage"
                 },
                 "IsAdult": {
                     "type": "boolean"
@@ -3370,20 +3354,6 @@ const docTemplate = `{
                 },
                 "Title": {
                     "type": "string"
-                }
-            }
-        },
-        "yahoo.AuctionItemListImage": {
-            "type": "object",
-            "properties": {
-                "Url": {
-                    "type": "string"
-                },
-                "height": {
-                    "type": "integer"
-                },
-                "width": {
-                    "type": "integer"
                 }
             }
         },
@@ -4803,6 +4773,54 @@ const docTemplate = `{
                 "Thumbnail9": {
                     "type": "string",
                     "example": "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890yz.jpg"
+                }
+            }
+        },
+        "yahoo.TransactionResult": {
+            "type": "object",
+            "properties": {
+                "auction_id": {
+                    "type": "string",
+                    "example": "x123456789"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2025-01-01T00:00:00Z"
+                },
+                "current_price": {
+                    "type": "number",
+                    "example": 1300
+                },
+                "detail": {
+                    "$ref": "#/definitions/yahoo.PlaceBidResult"
+                },
+                "event_type": {
+                    "type": "string",
+                    "example": "placeBidPreview"
+                },
+                "req_price": {
+                    "type": "number",
+                    "example": 1000
+                },
+                "status": {
+                    "type": "string",
+                    "example": "completed"
+                },
+                "transaction_id": {
+                    "type": "string",
+                    "example": "txn_abc123"
+                },
+                "transaction_type": {
+                    "type": "string",
+                    "example": "BID"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2025-01-01T00:00:00Z"
+                },
+                "ys_ref_id": {
+                    "type": "string",
+                    "example": "YS-REF-001"
                 }
             }
         },
