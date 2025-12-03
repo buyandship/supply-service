@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"strconv"
 
+	globalConfig "github.com/buyandship/bns-golib/config"
 	"github.com/buyandship/supply-service/biz/common/config"
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
 	"github.com/buyandship/supply-service/biz/model/bns/supply"
@@ -58,7 +59,12 @@ type MyWonListResponse struct {
 // GetMyWonList retrieves won auction list for authenticated user
 func (c *Client) GetMyWonList(ctx context.Context, req *supply.YahooGetMyWonListReq) (*MyWonListResponse, error) {
 	params := url.Values{}
-	params.Set("yahoo_account_id", config.MasterYahooAccountID)
+	switch globalConfig.GlobalAppConfig.Env {
+	case "dev":
+		params.Set("yahoo_account_id", config.DevYahoo02AccountID)
+	case "prod":
+		params.Set("yahoo_account_id", config.ProdMasterYahooAccountID)
+	}
 	if req.YsRefID != nil {
 		params.Set("ys_ref_id", *req.YsRefID)
 	}

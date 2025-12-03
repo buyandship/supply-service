@@ -5,6 +5,8 @@ import (
 	"net/url"
 	"strconv"
 
+	globalConfig "github.com/buyandship/bns-golib/config"
+	"github.com/buyandship/supply-service/biz/common/config"
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
@@ -21,7 +23,6 @@ type PlaceBidPreviewResponse struct {
 
 // PlaceBidPreviewRequest represents a bid preview request
 type PlaceBidPreviewRequest struct {
-	YahooAccountID  string `json:"yahoo_account_id"`
 	YsRefID         string `json:"ys_ref_id"`
 	TransactionType string `json:"transaction_type"`
 	AuctionID       string `json:"auction_id"`
@@ -33,7 +34,12 @@ type PlaceBidPreviewRequest struct {
 // PlaceBidPreview gets bid preview with signature
 func (c *Client) PlaceBidPreview(ctx context.Context, req *PlaceBidPreviewRequest) (*PlaceBidPreviewResponse, error) {
 	params := url.Values{}
-	params.Set("yahoo_account_id", req.YahooAccountID)
+	switch globalConfig.GlobalAppConfig.Env {
+	case "dev":
+		params.Set("yahoo_account_id", config.DevYahoo02AccountID)
+	case "prod":
+		params.Set("yahoo_account_id", config.ProdMasterYahooAccountID)
+	}
 	params.Set("ys_ref_id", req.YsRefID)
 	params.Set("transaction_type", req.TransactionType)
 	params.Set("auction_id", req.AuctionID)

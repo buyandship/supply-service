@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 
+	globalConfig "github.com/buyandship/bns-golib/config"
 	"github.com/buyandship/supply-service/biz/common/config"
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
 	"github.com/buyandship/supply-service/biz/model/bns/supply"
@@ -100,7 +101,12 @@ func (c *Client) GetTransaction(ctx context.Context, req *supply.YahooGetTransac
 func (c *Client) GetTransactions(ctx context.Context, req *supply.YahooGetTransactionsReq) (*GetTransactionsResponse, error) {
 	path := "/api/v1/transactions"
 	params := url.Values{}
-	params.Set("yahoo_account_id", config.Yahoo02AccountID)
+	switch globalConfig.GlobalAppConfig.Env {
+	case "dev":
+		params.Set("yahoo_account_id", config.DevYahoo02AccountID)
+	case "prod":
+		params.Set("yahoo_account_id", config.ProdMasterYahooAccountID)
+	}
 	if req.TransactionID != "" {
 		params.Set("transaction_id", req.TransactionID)
 	}

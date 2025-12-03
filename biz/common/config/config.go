@@ -1,9 +1,14 @@
 package config
 
 const (
-	MasterYahooAccountID = "chkyj_cp_evjr2p2v" // For product list
-	Yahoo02AccountID     = "chkyj_cp_by4d1vej" // For bidding
-	Yahoo03AccountID     = "chkyj_cp_c0rufa99" // For backuup bidding
+	DevMasterYahooAccountID = "chkyj_cp_evjr2p2v" // For product list
+	DevYahoo02AccountID     = "chkyj_cp_by4d1vej" // For bidding
+	DevYahoo03AccountID     = "chkyj_cp_c0rufa99" // For backuup bidding
+
+	ProdMasterYahooAccountID = "juhyq37695" // For product list
+	ProdYahoo02AccountID     = "wfwnd94596" // For bidding
+	ProdYahoo03AccountID     = "vfkwo56810" // For backuup bidding
+	ProdYahoo04AccountID     = "poxoe05998" // For backup bidding
 )
 
 // Cache keys

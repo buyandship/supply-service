@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	globalConfig "github.com/buyandship/bns-golib/config"
 	"github.com/buyandship/supply-service/biz/common/config"
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
 )
@@ -213,7 +214,12 @@ type SearchAuctionsResponse struct {
 func (c *Client) SearchAuctions(ctx context.Context, req *SearchAuctionsRequest) (*SearchAuctionsResponse, error) {
 	params := url.Values{}
 	params.Set("query", req.Query)
-	params.Set("yahoo_account_id", config.MasterYahooAccountID)
+	switch globalConfig.GlobalAppConfig.Env {
+	case "dev":
+		params.Set("yahoo_account_id", config.DevYahoo02AccountID)
+	case "prod":
+		params.Set("yahoo_account_id", config.ProdMasterYahooAccountID)
+	}
 	if req.YsRefID != "" {
 		params.Set("ys_ref_id", req.YsRefID)
 	}

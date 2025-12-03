@@ -3,6 +3,7 @@ package yahoo
 import (
 	"context"
 
+	globalConfig "github.com/buyandship/bns-golib/config"
 	"github.com/buyandship/supply-service/biz/common/config"
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
 	"github.com/buyandship/supply-service/biz/infrastructure/db"
@@ -150,7 +151,6 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 	// check if the current price is highest in this auction
 	// place bid preview
 	previewReq := &yahoo.PlaceBidPreviewRequest{
-		YahooAccountID:  config.Yahoo02AccountID,
 		YsRefID:         req.YsRefID,
 		TransactionType: req.TransactionType,
 		AuctionID:       req.AuctionID,
@@ -200,10 +200,18 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 		}
 	}
 
+	var yahooAccountID string
+	switch globalConfig.GlobalAppConfig.Env {
+	case "dev":
+		yahooAccountID = config.DevYahoo02AccountID
+	case "prod":
+		yahooAccountID = config.ProdMasterYahooAccountID
+	}
+
 	// TODO: check if it's neccessary to update the bid request in database.
 	// TODO: determine if it's shopping item.
 	bidReq := yahoo.PlaceBidRequest{
-		YahooAccountID:  config.Yahoo02AccountID,
+		YahooAccountID:  yahooAccountID,
 		YsRefID:         req.YsRefID,
 		TransactionType: req.TransactionType,
 		AuctionID:       req.AuctionID,
