@@ -15,6 +15,6 @@ const (
 	MercariRefreshTokenLock = "supply_srv:v1:mercari_refresh_token"
 	MercariFailoverLock     = "supply_srv:v1:mercari_failover"
 
-	ActiveAccountId     = "supplysrv:v1:active_account_id"
-	TokenRedisKeyPrefix = "supplysrv:v1:token:%d"
+	ActiveAccountId     = "supply_srv:v1:active_account_id"
+	TokenRedisKeyPrefix = "supply_srv:v1:token:%d"
 )

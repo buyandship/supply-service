@@ -48,7 +48,7 @@ func GetClient() *Client {
 			baseURL = "http://staging.yahoo-bridge.internal" // TODO: change to actual url
 			// baseURL = "https://internal-stagin20251027043053843000000001-645109195.ap-northeast-1.elb.amazonaws.com"
 		case "prod":
-			baseURL = "https://mock-api.yahoo-auction.jp" // TODO: change to actual url
+			baseURL = "https://production.yahoo-bridge.internal" // TODO: change to actual url
 		}
 		apiKey := config.GlobalAppConfig.GetString("yahoo.api_key")
 		secretKey := config.GlobalAppConfig.GetString("yahoo.secret_key")
