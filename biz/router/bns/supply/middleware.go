@@ -215,3 +215,8 @@ func _yahoogetsellinglistserviceMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _yahoo0Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

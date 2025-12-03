@@ -387,7 +387,7 @@ service SupplyService {
     string YahooPlaceBidService(1: YahooPlaceBidReq req) (api.post="/v1/supplysrv/internal/yahoo/placeBid")
     string YahooGetTransactionService(1: YahooGetTransactionReq req) (api.get="/v1/supplysrv/internal/yahoo/transaction")
     // YahooGetTransactionsResp YahooGetTransactionsService(1: YahooGetTransactionsReq req) (api.get="/v1/supplysrv/internal/yahoo/transactions")
-    string YahooGetAuctionItemService(1: YahooGetAuctionItemReq req) (api.get="/v1/supplysrv/internal/yahoo/auctionItem")
+    string YahooGetAuctionItemService(1: YahooGetAuctionItemReq req) (api.get="/v1/supplysrv/public/yahoo/auctionItem")
     // YahooGetAuctionItemResp YahooGetAuctionItemAuthService(1: YahooGetAuctionItemAuthReq req) (api.get="/v1/supplysrv/internal/yahoo/auctionItemAuth")
     string YahooGetCategoryTreeService(1: YahooGetCategoryTreeReq req) (api.get="/v1/supplysrv/internal/yahoo/categoryTree")
     string YahooSearchAuctionsService(1: YahooSearchAuctionsReq req) (api.get="/v1/supplysrv/internal/yahoo/search")
