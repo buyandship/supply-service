@@ -3,7 +3,7 @@
 package supply
 
 import (
-	supply "github.com/buyandship/supply-svr/biz/handler/bns/supply"
+	supply "github.com/buyandship/supply-service/biz/handler/bns/supply"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
@@ -43,6 +43,17 @@ func Register(r *server.Hertz) {
 						_account := _mercari.Group("/account", _accountMw()...)
 						_account.GET("/list", append(_mercarigetaccountserviceMw(), supply.MercariGetAccountService)...)
 					}
+				}
+				{
+					_yahoo := _internal.Group("/yahoo", _yahooMw()...)
+					_yahoo.GET("/auctionItem", append(_yahoogetauctionitemserviceMw(), supply.YahooGetAuctionItemService)...)
+					_yahoo.GET("/categoryLeaf", append(_yahoogetcategoryleafserviceMw(), supply.YahooGetCategoryLeafService)...)
+					_yahoo.GET("/categoryTree", append(_yahoogetcategorytreeserviceMw(), supply.YahooGetCategoryTreeService)...)
+					_yahoo.GET("/myWonList", append(_yahoogetmywonlistserviceMw(), supply.YahooGetMyWonListService)...)
+					_yahoo.POST("/placeBid", append(_yahooplacebidserviceMw(), supply.YahooPlaceBidService)...)
+					_yahoo.GET("/search", append(_yahoosearchauctionsserviceMw(), supply.YahooSearchAuctionsService)...)
+					_yahoo.GET("/sellingList", append(_yahoogetsellinglistserviceMw(), supply.YahooGetSellingListService)...)
+					_yahoo.GET("/transaction", append(_yahoogettransactionserviceMw(), supply.YahooGetTransactionService)...)
 				}
 			}
 			{

@@ -4,13 +4,13 @@ import (
 	"context"
 	"time"
 
-	"github.com/buyandship/supply-svr/biz/common/config"
-	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/http"
-	"github.com/buyandship/supply-svr/biz/model/bns/supply"
-	"github.com/buyandship/supply-svr/biz/model/mercari"
+	"github.com/buyandship/bns-golib/cache"
+	"github.com/buyandship/supply-service/biz/common/config"
+	bizErr "github.com/buyandship/supply-service/biz/common/err"
+	"github.com/buyandship/supply-service/biz/infrastructure/db"
+	"github.com/buyandship/supply-service/biz/infrastructure/http"
+	"github.com/buyandship/supply-service/biz/model/bns/supply"
+	"github.com/buyandship/supply-service/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
@@ -29,12 +29,12 @@ func ManualSwitchAccountService(ctx context.Context, req *supply.MercariManualSw
 		return err
 	}
 
-	if err := cache.GetHandler().Set(ctx, config.ActiveAccountId, req.AccountID, time.Hour); err != nil {
+	if err := cache.GetRedisClient().Set(ctx, config.ActiveAccountId, req.AccountID, time.Hour); err != nil {
 		hlog.CtxErrorf(ctx, "failed to set active account id: %v", err)
 	}
 
 	var activeAccountId int32
-	if err := cache.GetHandler().Get(ctx, config.ActiveAccountId, &activeAccountId); err != nil {
+	if err := cache.GetRedisClient().Get(ctx, config.ActiveAccountId, &activeAccountId); err != nil {
 		hlog.CtxErrorf(ctx, "failed to get active account id: %v", err)
 		return err
 	}

@@ -3,8 +3,8 @@ package mercari
 import (
 	"context"
 
-	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
-	"github.com/buyandship/supply-svr/biz/model/bns/supply"
+	"github.com/buyandship/supply-service/biz/infrastructure/db"
+	"github.com/buyandship/supply-service/biz/model/bns/supply"
 )
 
 func GetAccountListService(ctx context.Context) (*supply.MercariGetAccountResp, error) {

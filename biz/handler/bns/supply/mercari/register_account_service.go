@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/buyandship/supply-svr/biz/common/config"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/cache"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
-	"github.com/buyandship/supply-svr/biz/model/bns/supply"
-	model "github.com/buyandship/supply-svr/biz/model/mercari"
+	"github.com/buyandship/bns-golib/cache"
+	"github.com/buyandship/supply-service/biz/common/config"
+	"github.com/buyandship/supply-service/biz/infrastructure/db"
+	"github.com/buyandship/supply-service/biz/model/bns/supply"
+	model "github.com/buyandship/supply-service/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
@@ -35,7 +35,7 @@ func RegisterAccountService(ctx context.Context, req *supply.MercariRegisterAcco
 		return nil, err
 	}
 	// delete cache
-	if err := cache.GetHandler().Del(ctx, fmt.Sprintf(config.MercariAccountPrefix, acc.ID)); err != nil {
+	if err := cache.GetRedisClient().Del(ctx, fmt.Sprintf(config.MercariAccountPrefix, acc.ID)); err != nil {
 		return nil, err
 	}
 

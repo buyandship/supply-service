@@ -3,7 +3,7 @@
 package main
 
 import (
-	handler "github.com/buyandship/supply-svr/biz/handler"
+	handler "github.com/buyandship/supply-service/biz/handler"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 

@@ -3,7 +3,7 @@
 package supply
 
 import (
-	"github.com/buyandship/supply-svr/biz/middleware"
+	"github.com/buyandship/supply-service/biz/middleware"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -67,7 +67,10 @@ func _mercarigettokenserviceMw() []app.HandlerFunc {
 
 func _v1Mw() []app.HandlerFunc {
 	// your code...
-	return nil
+	// add request id
+	var opt []app.HandlerFunc
+	opt = append(opt, middleware.RequestIDValidator())
+	return opt
 }
 
 func _supplysrvMw() []app.HandlerFunc {
@@ -141,6 +144,74 @@ func _mercarifetchitemsserviceMw() []app.HandlerFunc {
 }
 
 func _mercarigetsimilaritemsserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _yahooMw() []app.HandlerFunc {
+	// your code...
+	// TODO: add authentication middleware
+	var opt []app.HandlerFunc
+	opt = append(opt, middleware.HmacValidator())
+	return opt
+}
+
+func _yahoobuyoutserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _yahooplacebidserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _yahoogettransactionserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _yahoogetauctionitemserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _yahoogetauctionitemauthserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _yahoogettransactionsserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _transactionMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _yahoogetcategorytreeserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _yahoosearchauctionsserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _yahoogetcategoryleafserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _yahoogetmywonlistserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _yahoogetsellinglistserviceMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }

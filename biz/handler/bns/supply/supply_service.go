@@ -5,27 +5,28 @@ package supply
 import (
 	"context"
 
-	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/handler/bns/supply/mercari"
-	"github.com/buyandship/supply-svr/biz/model/bns/supply"
+	bizErr "github.com/buyandship/supply-service/biz/common/err"
+	"github.com/buyandship/supply-service/biz/handler/bns/supply/mercari"
+	service "github.com/buyandship/supply-service/biz/handler/bns/supply/yahoo"
+	"github.com/buyandship/supply-service/biz/model/bns/supply"
+	_ "github.com/buyandship/supply-service/biz/model/yahoo"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	"github.com/google/uuid"
-	hertzzap "github.com/hertz-contrib/logger/zap"
 )
 
-// MercariGetItemService .
-// @router /mercari/item [GET]
+// MercariGetItemService retrieves Mercari item information
+// @Summary Get Mercari item details
+// @Description Get detailed information about a Mercari item by item ID
+// @Tags Mercari
+// @Accept json
+// @Produce json
+// @Param request query supply.MercariGetItemReq true "Item request parameters"
+// @Success 200 {object} mercari.GetItemByIDResponse "Successfully retrieved item information"
+// @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /mercari/item [GET]
 func MercariGetItemService(ctx context.Context, c *app.RequestContext) {
-	var requestId string
-	if string(c.GetHeader("X-Request-ID")) == "" {
-		requestId = uuid.NewString()
-	} else {
-		requestId = string(c.GetHeader("X-Request-ID"))
-	}
-	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
-
 	var err error
 	var req supply.MercariGetItemReq
 	err = c.BindAndValidate(&req)
@@ -44,17 +45,16 @@ func MercariGetItemService(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// MercariGetCategoriesService .
-// @router /mercari/categories [GET]
+// MercariGetCategoriesService retrieves Mercari categories list
+// @Summary Get Mercari categories
+// @Description Get list of all available categories from Mercari
+// @Tags Mercari
+// @Accept json
+// @Produce json
+// @Success 200 {object} mercari.GetItemCategoriesResp "Successfully retrieved categories"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /mercari/categories [GET]
 func MercariGetCategoriesService(ctx context.Context, c *app.RequestContext) {
-	var requestId string
-	if string(c.GetHeader("X-Request-ID")) == "" {
-		requestId = uuid.NewString()
-	} else {
-		requestId = string(c.GetHeader("X-Request-ID"))
-	}
-	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
-
 	resp, err := mercari.GetCategoriesService(ctx)
 	if err != nil {
 		cerr := bizErr.ConvertErr(err)
@@ -64,17 +64,18 @@ func MercariGetCategoriesService(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// MercariGetSellerService .
-// @router /mercari/seller [GET]
+// MercariGetSellerService retrieves Mercari seller information
+// @Summary Get Mercari seller details
+// @Description Get detailed information about a Mercari seller by seller ID
+// @Tags Mercari
+// @Accept json
+// @Produce json
+// @Param request query supply.MercariGetSellerReq true "Seller request parameters"
+// @Success 200 {object} mercari.GetUserByUserIDResponse "Successfully retrieved seller information"
+// @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /mercari/seller [GET]
 func MercariGetSellerService(ctx context.Context, c *app.RequestContext) {
-	var requestId string
-	if string(c.GetHeader("X-Request-ID")) == "" {
-		requestId = uuid.NewString()
-	} else {
-		requestId = string(c.GetHeader("X-Request-ID"))
-	}
-	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
-
 	var err error
 	var req supply.MercariGetSellerReq
 	err = c.BindAndValidate(&req)
@@ -93,17 +94,18 @@ func MercariGetSellerService(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// MercariPostOrderService .
-// @router /mercari/order [POST]
+// MercariPostOrderService creates a new order on Mercari
+// @Summary Create Mercari order
+// @Description Place a new order for items on Mercari marketplace
+// @Tags Mercari
+// @Accept json
+// @Produce json
+// @Param request body supply.MercariPostOrderReq true "Order request"
+// @Success 200 {object} supply.MercariPostOrderResp "Order created successfully"
+// @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /mercari/order [POST]
 func MercariPostOrderService(ctx context.Context, c *app.RequestContext) {
-	var requestId string
-	if string(c.GetHeader("X-Request-ID")) == "" {
-		requestId = uuid.NewString()
-	} else {
-		requestId = string(c.GetHeader("X-Request-ID"))
-	}
-	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
-
 	var err error
 	var req supply.MercariPostOrderReq
 	err = c.BindAndValidate(&req)
@@ -121,17 +123,18 @@ func MercariPostOrderService(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// MercariPostMessageService .
-// @router /mercari/message [POST]
+// MercariPostMessageService sends a message on Mercari
+// @Summary Send Mercari message
+// @Description Send a message to a seller or buyer on Mercari marketplace
+// @Tags Mercari
+// @Accept json
+// @Produce json
+// @Param request body supply.MercariPostMessageReq true "Message request"
+// @Success 200 {object} supply.MercariPostMessageResp "Message sent successfully"
+// @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /mercari/message [POST]
 func MercariPostMessageService(ctx context.Context, c *app.RequestContext) {
-	var requestId string
-	if string(c.GetHeader("X-Request-ID")) == "" {
-		requestId = uuid.NewString()
-	} else {
-		requestId = string(c.GetHeader("X-Request-ID"))
-	}
-	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
-
 	var err error
 	var req supply.MercariPostMessageReq
 	err = c.BindAndValidate(&req)
@@ -149,17 +152,18 @@ func MercariPostMessageService(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// MercariRegisterAccountService .
-// @router /mercari/register [POST]
+// MercariRegisterAccountService registers a new Mercari account
+// @Summary Register Mercari account
+// @Description Register a new Mercari account for API access
+// @Tags Mercari
+// @Accept json
+// @Produce json
+// @Param request body supply.MercariRegisterAccountReq true "Account registration request"
+// @Success 200 {object} supply.MercariRegisterAccountResp "Account registered successfully"
+// @Failure 400 {string} string "Invalid parameter"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /mercari/register [POST]
 func MercariRegisterAccountService(ctx context.Context, c *app.RequestContext) {
-	var requestId string
-	if string(c.GetHeader("X-Request-ID")) == "" {
-		requestId = uuid.NewString()
-	} else {
-		requestId = string(c.GetHeader("X-Request-ID"))
-	}
-	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
-
 	var err error
 	var req supply.MercariRegisterAccountReq
 	err = c.BindAndValidate(&req)
@@ -178,17 +182,18 @@ func MercariRegisterAccountService(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// MercariLoginCallBackService .
-// @router /xb/login_callback [POST]
+// MercariLoginCallBackService handles Mercari OAuth login callback
+// @Summary Mercari login callback
+// @Description Handle OAuth callback from Mercari login flow
+// @Tags Mercari
+// @Accept json
+// @Produce json
+// @Param request body supply.MercariLoginCallBackReq true "Login callback request"
+// @Success 200 {string} string "success"
+// @Failure 400 {string} string "Invalid parameter"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /xb/login_callback [POST]
 func MercariLoginCallBackService(ctx context.Context, c *app.RequestContext) {
-	var requestId string
-	if string(c.GetHeader("X-Request-ID")) == "" {
-		requestId = uuid.NewString()
-	} else {
-		requestId = string(c.GetHeader("X-Request-ID"))
-	}
-	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
-
 	var err error
 	var req supply.MercariLoginCallBackReq
 	err = c.BindAndValidate(&req)
@@ -208,19 +213,16 @@ func MercariLoginCallBackService(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, "success")
 }
 
-// MercariGetTokenService .
-// @router /mercari/token [GET]
+// MercariGetTokenService retrieves Mercari access token
+// @Summary Get Mercari token
+// @Description Get access token for Mercari API authentication
+// @Tags Mercari
+// @Accept json
+// @Produce json
+// @Success 200 {object} supply.MercariGetTokenResp "Successfully retrieved token"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /mercari/token [GET]
 func MercariGetTokenService(ctx context.Context, c *app.RequestContext) {
-	var err error
-
-	var requestId string
-	if string(c.GetHeader("X-Request-ID")) == "" {
-		requestId = uuid.NewString()
-	} else {
-		requestId = string(c.GetHeader("X-Request-ID"))
-	}
-	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
-
 	resp, err := mercari.GetTokenService(ctx)
 	if err != nil {
 		cerr := bizErr.ConvertErr(err)
@@ -230,17 +232,18 @@ func MercariGetTokenService(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// MercariGetTransactionByItemIdService .
-// @router /v1/supplysrv/mercari/tx [GET]
+// MercariGetTransactionByItemIdService retrieves transaction by item ID
+// @Summary Get Mercari transaction by item ID
+// @Description Get transaction information for a specific Mercari item
+// @Tags Mercari
+// @Accept json
+// @Produce json
+// @Param request query supply.MercariGetTransactionByItemIdReq true "Transaction request parameters"
+// @Success 200 {object} mercari.GetTransactionByItemIDResponse "Successfully retrieved transaction"
+// @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /v1/supplysrv/mercari/tx [GET]
 func MercariGetTransactionByItemIdService(ctx context.Context, c *app.RequestContext) {
-	var requestId string
-	if string(c.GetHeader("X-Request-ID")) == "" {
-		requestId = uuid.NewString()
-	} else {
-		requestId = string(c.GetHeader("X-Request-ID"))
-	}
-	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
-
 	var err error
 	var req supply.MercariGetTransactionByItemIdReq
 	err = c.BindAndValidate(&req)
@@ -259,17 +262,18 @@ func MercariGetTransactionByItemIdService(ctx context.Context, c *app.RequestCon
 	c.JSON(consts.StatusOK, resp)
 }
 
-// MercariPostTransactionReviewService .
-// @router /v1/supplysrv/internal/mercari/review [GET]
+// MercariPostTransactionReviewService posts a transaction review
+// @Summary Post Mercari transaction review
+// @Description Submit a review for a Mercari transaction
+// @Tags Mercari
+// @Accept json
+// @Produce json
+// @Param request query supply.MercariPostTransactionReviewReq true "Review request parameters"
+// @Success 200 {object} mercari.PostTransactionReviewResponse "Review submitted successfully"
+// @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /v1/supplysrv/internal/mercari/review [GET]
 func MercariPostTransactionReviewService(ctx context.Context, c *app.RequestContext) {
-	var requestId string
-	if string(c.GetHeader("X-Request-ID")) == "" {
-		requestId = uuid.NewString()
-	} else {
-		requestId = string(c.GetHeader("X-Request-ID"))
-	}
-	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
-
 	var err error
 	var req supply.MercariPostTransactionReviewReq
 	err = c.BindAndValidate(&req)
@@ -287,17 +291,18 @@ func MercariPostTransactionReviewService(ctx context.Context, c *app.RequestCont
 	c.JSON(consts.StatusOK, resp)
 }
 
-// MercariGetTodoListService .
-// @router /v1/supplysrv/internal/mercari/todo [GET]
+// MercariGetTodoListService retrieves Mercari todo list
+// @Summary Get Mercari todo list
+// @Description Get list of pending todo items from Mercari
+// @Tags Mercari
+// @Accept json
+// @Produce json
+// @Param request query supply.MercariGetTodoListReq true "Todo list request parameters"
+// @Success 200 {object} mercari.GetTodoListResp "Successfully retrieved todo list"
+// @Failure 400 {string} string "Invalid parameter"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /v1/supplysrv/internal/mercari/todo [GET]
 func MercariGetTodoListService(ctx context.Context, c *app.RequestContext) {
-	var requestId string
-	if string(c.GetHeader("X-Request-ID")) == "" {
-		requestId = uuid.NewString()
-	} else {
-		requestId = string(c.GetHeader("X-Request-ID"))
-	}
-	ctx = context.WithValue(ctx, hertzzap.ExtraKey("X-Request-ID"), requestId)
-
 	var err error
 	var req supply.MercariGetTodoListReq
 	err = c.BindAndValidate(&req)
@@ -315,8 +320,17 @@ func MercariGetTodoListService(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// MercariSearchItemsService .
-// @router /v1/supplysrv/internal/mercari/search [GET]
+// MercariSearchItemsService searches for items on Mercari
+// @Summary Search Mercari items
+// @Description Search for items on Mercari marketplace with filters
+// @Tags Mercari
+// @Accept json
+// @Produce json
+// @Param request query supply.MercariSearchItemsReq true "Search request parameters"
+// @Success 200 {object} mercari.SearchItemsResponse "Successfully retrieved search results"
+// @Failure 400 {string} string "Invalid parameter"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /v1/supplysrv/internal/mercari/search [GET]
 func MercariSearchItemsService(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req supply.MercariSearchItemsReq
@@ -336,8 +350,15 @@ func MercariSearchItemsService(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// MercariGetBrandsService .
-// @router /v1/supplysrv/internal/mercari/brands [GET]
+// MercariGetBrandsService retrieves Mercari brands list
+// @Summary Get Mercari brands
+// @Description Get list of all available brands from Mercari
+// @Tags Mercari
+// @Accept json
+// @Produce json
+// @Success 200 {object} mercari.GetBrandsResp "Successfully retrieved brands"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /v1/supplysrv/internal/mercari/brands [GET]
 func MercariGetBrandsService(ctx context.Context, c *app.RequestContext) {
 	var err error
 
@@ -351,8 +372,15 @@ func MercariGetBrandsService(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// MercariGetAccountService .
-// @router /v1/supplysrv/internal/mercari/account/list [GET]
+// MercariGetAccountService retrieves list of Mercari accounts
+// @Summary Get Mercari account list
+// @Description Get list of all registered Mercari accounts
+// @Tags Mercari
+// @Accept json
+// @Produce json
+// @Success 200 {object} supply.MercariGetAccountResp "Successfully retrieved account list"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /v1/supplysrv/internal/mercari/account/list [GET]
 func MercariGetAccountService(ctx context.Context, c *app.RequestContext) {
 	var err error
 
@@ -366,8 +394,17 @@ func MercariGetAccountService(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// MercariManualSwitchAccountService .
-// @router /v1/supplysrv/public/mercari/switch_account [POST]
+// MercariManualSwitchAccountService manually switches Mercari account
+// @Summary Switch Mercari account manually
+// @Description Manually switch the active Mercari account
+// @Tags Mercari
+// @Accept json
+// @Produce json
+// @Param request body supply.MercariManualSwitchAccountReq true "Account switch request"
+// @Success 200 {string} string "ok"
+// @Failure 400 {string} string "Invalid parameter"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /v1/supplysrv/public/mercari/switch_account [POST]
 func MercariManualSwitchAccountService(ctx context.Context, c *app.RequestContext) {
 
 	var req supply.MercariManualSwitchAccountReq
@@ -386,8 +423,15 @@ func MercariManualSwitchAccountService(ctx context.Context, c *app.RequestContex
 	c.JSON(consts.StatusOK, "ok")
 }
 
-// KeepTokenAliveService .
-// @router /v1/supplysrv/internal/mercari/keep_token_alive [POST]
+// KeepTokenAliveService keeps Mercari token alive
+// @Summary Keep Mercari token alive
+// @Description Refresh and keep the Mercari access token active
+// @Tags Mercari
+// @Accept json
+// @Produce json
+// @Success 200 {string} string "ok"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /v1/supplysrv/internal/mercari/keep_token_alive [POST]
 func KeepTokenAliveService(ctx context.Context, c *app.RequestContext) {
 	if err := mercari.KeepTokenAliveService(ctx); err != nil {
 		cerr := bizErr.ConvertErr(err)
@@ -398,8 +442,17 @@ func KeepTokenAliveService(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, "ok")
 }
 
-// MercariFetchItemsService .
-// @router /v1/supplysrv/internal/mercari/fetch_items [POST]
+// MercariFetchItemsService fetches multiple items from Mercari
+// @Summary Fetch Mercari items
+// @Description Fetch multiple items from Mercari marketplace by item IDs
+// @Tags Mercari
+// @Accept json
+// @Produce json
+// @Param request body supply.MercariFetchItemsReq true "Fetch items request"
+// @Success 200 {object} mercari.FetchItemsResponse "Successfully fetched items"
+// @Failure 400 {string} string "Invalid parameter"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /v1/supplysrv/internal/mercari/fetch_items [POST]
 func MercariFetchItemsService(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req supply.MercariFetchItemsReq
@@ -419,8 +472,17 @@ func MercariFetchItemsService(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// MercariGetSimilarItemsService .
-// @router /v1/supplysrv/internal/mercari/similar_items [GET]
+// MercariGetSimilarItemsService retrieves similar items from Mercari
+// @Summary Get similar Mercari items
+// @Description Get list of items similar to a given Mercari item
+// @Tags Mercari
+// @Accept json
+// @Produce json
+// @Param request query supply.MercariGetSimilarItemsReq true "Similar items request parameters"
+// @Success 200 {object} mercari.GetSimilarItemsResponse "Successfully retrieved similar items"
+// @Failure 400 {string} string "Invalid parameter"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /v1/supplysrv/internal/mercari/similar_items [GET]
 func MercariGetSimilarItemsService(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req supply.MercariGetSimilarItemsReq
@@ -431,6 +493,324 @@ func MercariGetSimilarItemsService(ctx context.Context, c *app.RequestContext) {
 	}
 
 	resp, err := mercari.GetSimilarItemsService(ctx, &req)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// YahooPlaceBidService places a bid on Yahoo Auction
+// @Summary Place bid on Yahoo Auction
+// @Description Place a bid on an item in Yahoo Auction marketplace
+// @Tags Yahoo
+// @Accept json
+// @Produce json
+// @Param Header header model.Header true "Header"
+// @Param request body supply.YahooPlaceBidReq true "Bid request"
+// @Success 200 {object} yahoo.PlaceBidResult "Bid placed successfully"
+// @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 404 {object} bizErr.BizError "get auction item failed"
+// @Failure 422 {object} bizErr.BizError "The auction item is not available for fulfillment"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /v1/supplysrv/internal/yahoo/placeBid [POST]
+func YahooPlaceBidService(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req supply.YahooPlaceBidReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.AbortWithStatusJSON(consts.StatusBadRequest, bizErr.BizError{
+			Status:  consts.StatusBadRequest,
+			ErrCode: consts.StatusBadRequest,
+			ErrMsg:  err.Error(),
+		})
+		return
+	}
+
+	resp, err := service.PlaceBidService(ctx, &req)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// YahooGetTransactionService retrieves Yahoo Auction transaction
+// @Summary Get Yahoo Auction transaction
+// @Description Get transaction details from Yahoo Auction
+// @Tags Yahoo
+// @Accept json
+// @Produce json
+// @Param Header header model.Header true "Header"
+// @Param transaction_id path string true "Transaction ID" example:"12345"
+// @Success 200 {object} []yahoo.TransactionResult "Successfully retrieved transaction"
+// @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 404 {object} bizErr.BizError "Transaction not found"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /v1/supplysrv/internal/yahoo/transaction [GET]
+func YahooGetTransactionService(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req supply.YahooGetTransactionsReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.AbortWithStatusJSON(consts.StatusBadRequest, bizErr.BizError{
+			Status:  consts.StatusBadRequest,
+			ErrCode: consts.StatusBadRequest,
+			ErrMsg:  err.Error(),
+		})
+		return
+	}
+
+	if req.YsRefID == "" {
+		c.AbortWithStatusJSON(consts.StatusBadRequest, bizErr.BizError{
+			Status:  consts.StatusBadRequest,
+			ErrCode: consts.StatusBadRequest,
+			ErrMsg:  "ys_ref_id is required",
+		})
+		return
+	}
+
+	resp, err := service.GetTransactionsService(ctx, &req)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// YahooGetAuctionItemService retrieves Yahoo Auction item details
+// @Summary Get Yahoo Auction item
+// @Description Get detailed information about a Yahoo Auction item
+// @Tags Yahoo
+// @Accept json
+// @Produce json
+// @Param Header header model.Header true "Header"
+// @Param request query supply.YahooGetAuctionItemReq true "Auction item request parameters"
+// @Success 200 {object} yahoo.AuctionItemDetail "Successfully retrieved auction item"
+// @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 404 {object} bizErr.BizError "Auction item not found"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /v1/supplysrv/internal/yahoo/auctionItem [GET]
+func YahooGetAuctionItemService(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req supply.YahooGetAuctionItemReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.AbortWithStatusJSON(consts.StatusBadRequest, bizErr.BizError{
+			Status:  consts.StatusBadRequest,
+			ErrCode: consts.StatusBadRequest,
+			ErrMsg:  err.Error(),
+		})
+		return
+	}
+
+	if req.AuctionID == "" {
+		c.AbortWithStatusJSON(consts.StatusBadRequest, bizErr.BizError{
+			Status:  consts.StatusBadRequest,
+			ErrCode: consts.StatusBadRequest,
+			ErrMsg:  "auction_id is required",
+		})
+		return
+	}
+
+	resp, err := service.GetAuctionItemService(ctx, &req)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+/*
+func YahooGetAuctionItemAuthService(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req supply.YahooGetAuctionItemAuthReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.AbortWithStatusJSON(consts.StatusBadRequest, bizErr.BizError{
+			Status:  consts.StatusBadRequest,
+			ErrCode: consts.StatusBadRequest,
+			ErrMsg:  err.Error(),
+		})
+		return
+	}
+
+	if req.AuctionID == "" {
+		c.AbortWithStatusJSON(consts.StatusBadRequest, bizErr.BizError{
+			Status:  consts.StatusBadRequest,
+			ErrCode: consts.StatusBadRequest,
+			ErrMsg:  "auction_id is required",
+		})
+		return
+	}
+
+	resp, err := yahoo.GetAuctionItemAuthService(ctx, &req)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+*/
+
+// YahooGetCategoryTreeService .
+// @Summary Get Yahoo Auction category tree
+// @Description Get category tree from Yahoo Auction
+// @Tags Yahoo
+// @Accept json
+// @Produce json
+// @Param Header header model.Header true "Header"
+// @Param request query supply.YahooGetCategoryTreeReq true "Category tree request parameters"
+// @Success 200 {object} yahoo.Category "Successfully retrieved category tree"
+// @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 404 {object} bizErr.BizError "category not found"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @Router /v1/supplysrv/internal/yahoo/categoryTree [GET]
+func YahooGetCategoryTreeService(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req supply.YahooGetCategoryTreeReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp, err := service.GetCategoryTreeService(ctx, &req)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// YahooSearchAuctionsService .
+// @Summary Search Yahoo auctions
+// @Description Search Yahoo auctions
+// @Tags Yahoo
+// @Accept json
+// @Produce json
+// @Param Header header model.Header true "Header"
+// @Param request query supply.YahooSearchAuctionsReq true "Search auctions request parameters"
+// @Success 200 {object} yahoo.SearchAuctionsResponse "Successfully retrieved auctions"
+// @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+// @router /v1/supplysrv/internal/yahoo/search [GET]
+func YahooSearchAuctionsService(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req supply.YahooSearchAuctionsReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp, err := service.SearchAuctionService(ctx, &req)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// YahooGetCategoryLeafService .
+// @router /v1/supplysrv/internal/yahoo/categoryLeaf [GET]
+// @Summary Get Yahoo Auction category leaf
+// @Description Get category leaf from Yahoo Auction
+// @Tags Yahoo
+// @Accept json
+// @Produce json
+// @Param Header header model.Header true "Header"
+// @Param request query supply.YahooGetCategoryLeafReq true "Category leaf request parameters"
+// @Success 200 {object} yahoo.CategoryLeafResponse "Successfully retrieved category leaf"
+// @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 404 {object} bizErr.BizError "category leaf not found"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+func YahooGetCategoryLeafService(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req supply.YahooGetCategoryLeafReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp, err := service.GetCategoryLeafService(ctx, &req)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// YahooGetMyWonListService .
+// @router /v1/supplysrv/internal/yahoo/myWonList [GET]
+// @Summary Get Yahoo Auction my won list
+// @Description Get my won list from Yahoo Auction
+// @Tags Yahoo
+// @Accept json
+// @Produce json
+// @Param Header header model.Header true "Header"
+// @Param request query supply.YahooGetMyWonListReq true "My won list request parameters"
+// @Success 200 {object} yahoo.MyWonListResponse "Successfully retrieved my won list"
+// @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+func YahooGetMyWonListService(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req supply.YahooGetMyWonListReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp, err := service.GetMyWonListService(ctx, &req)
+	if err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// YahooGetSellingListService .
+// @router /v1/supplysrv/internal/yahoo/sellingList [GET]
+// @Summary Get Yahoo Auction selling list
+// @Description Get selling list from Yahoo Auction
+// @Tags Yahoo
+// @Accept json
+// @Produce json
+// @Param Header header model.Header true "Header"
+// @Param request query supply.YahooGetSellingListReq true "Selling list request parameters"
+// @Success 200 {object} yahoo.SellingListResponse "Successfully retrieved selling list"
+// @Failure 400 {object} bizErr.BizError "Invalid parameter"
+// @Failure 500 {object} bizErr.BizError "Internal server error"
+func YahooGetSellingListService(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req supply.YahooGetSellingListReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp, err := service.GetSellingListService(ctx, &req)
 	if err != nil {
 		cerr := bizErr.ConvertErr(err)
 		c.AbortWithStatusJSON(cerr.Status, cerr)

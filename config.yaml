@@ -1,4 +1,4 @@
-env: "development"
+env: "dev"
 mysql:
   username: "bns_test"
   password: "sees7&ch@nting"
@@ -10,6 +10,9 @@ mercari:
   client_id: "NUSnaBnbqRGy1sndWIYZUQJFnwousvRh"
   client_secret: "7D0mXAF7VsfRswFSckwwb1NoGBU6J7N0"
   callback_url: "https://b4u-req-api-test.buynship.com/api/callback/mercari/login/"
+yahoo:
+  api_key: "qNKqjZcPb34FsjSlVke6CGp1PtnsmjpyxYYO0BfnjlM"
+  secret_key: "yDD0BhPdCmW9w13urb9VtX1wKQJHJKmFkH7mTpDYM8jo4pP6t7_QEeuuXVSaj3UnmHovmYNjHK1hO-VDHrHdhw"
 hmac_secret: "utmtuacz-hhme-fht4-gba6-3lg4vi8fzpu6"
 b4u_token: "y7CgIr0j9TNidRv64hRqPlLffO4RePxp"
 otel:

@@ -1,0 +1,212 @@
+package db
+
+import (
+	"context"
+	"sync"
+	"time"
+
+	"github.com/buyandship/bns-golib/db"
+	"github.com/buyandship/bns-golib/trace"
+	model "github.com/buyandship/supply-service/biz/model/mercari"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"gorm.io/gorm"
+)
+
+var (
+	once    sync.Once
+	Handler *H
+)
+
+type H struct {
+	cli *gorm.DB
+}
+
+func GetHandler() *H {
+	once.Do(func() {
+		c := db.MysqlClient()
+		Handler = &H{cli: c}
+	})
+	return Handler
+}
+
+func (h *H) HealthCheck() error {
+	return db.HealthCheck()
+}
+
+func (h *H) UpsertAccount(ctx context.Context, account *model.Account) (err error) {
+	ctx, span := trace.StartDBOperation(ctx, "UpsertAccount")
+	defer trace.EndSpan(span, err)
+
+	sql := h.cli.WithContext(ctx)
+	var existingAccount model.Account
+	if err := sql.Where("email = ?", account.Email).First(&existingAccount).Error; err != nil {
+		if err != gorm.ErrRecordNotFound {
+			return err
+		}
+		return sql.Create(&account).Error
+	}
+
+	if existingAccount.ID > 0 {
+		if err := sql.Model(&model.Account{}).Where("id = ?", existingAccount.ID).Updates(account).Error; err != nil {
+			return err
+		}
+		if err := sql.Where("id = ?", existingAccount.ID).First(&account).Error; err != nil {
+			return err
+		}
+		return nil
+	}
+	return nil
+}
+
+func (h *H) BanAccount(ctx context.Context, accountId int32) (err error) {
+	ctx, span := trace.StartDBOperation(ctx, "BanAccount")
+	defer trace.EndSpan(span, err)
+
+	sql := h.cli.WithContext(ctx)
+
+	updates := map[string]any{
+		"banned_at": time.Now(),
+	}
+
+	return sql.Model(&model.Account{}).Where("id = ?", accountId).Updates(updates).Error
+}
+
+func (h *H) InsertMessage(ctx context.Context, message *model.Message) (err error) {
+	ctx, span := trace.StartDBOperation(ctx, "InsertMessage")
+	defer trace.EndSpan(span, err)
+
+	sql := h.cli.WithContext(ctx)
+
+	return sql.Create(&message).Error
+}
+
+func (h *H) InsertReview(ctx context.Context, review *model.Review) (err error) {
+	ctx, span := trace.StartDBOperation(ctx, "InsertReview")
+	defer trace.EndSpan(span, err)
+
+	sql := h.cli.WithContext(ctx)
+
+	return sql.Create(&review).Error
+}
+
+func (h *H) GetTransaction(ctx context.Context, where *model.Transaction) (trx *model.Transaction, err error) {
+	ctx, span := trace.StartDBOperation(ctx, "GetTransaction")
+	defer trace.EndSpan(span, err)
+
+	sql := h.cli.WithContext(ctx)
+
+	err = sql.Where(where).First(&trx).Error
+
+	if err != nil {
+		return nil, err
+	}
+	return
+}
+
+func (h *H) InsertTransaction(ctx context.Context, transaction *model.Transaction) (err error) {
+	ctx, span := trace.StartDBOperation(ctx, "InsertTransaction")
+	defer trace.EndSpan(span, err)
+
+	sql := h.cli.WithContext(ctx)
+
+	return sql.Create(&transaction).Error
+}
+
+func (h *H) InsertTokenLog(ctx context.Context, token *model.Token) (err error) {
+	ctx, span := trace.StartDBOperation(ctx, "InsertTokenLog")
+	defer trace.EndSpan(span, err)
+
+	sql := h.cli.WithContext(ctx)
+
+	return sql.Create(&token).Error
+}
+
+func (h *H) UpdateTransaction(ctx context.Context, cond *model.Transaction) (err error) {
+	ctx, span := trace.StartDBOperation(ctx, "UpdateTransaction")
+	defer trace.EndSpan(span, err)
+
+	sql := h.cli.WithContext(ctx)
+
+	return sql.Where("ref_id = ?", cond.RefID).Updates(cond).Error
+}
+
+func (h *H) GetAccount(ctx context.Context, id int32) (account *model.Account, err error) {
+	ctx, span := trace.StartDBOperation(ctx, "GetAccount")
+	defer trace.EndSpan(span, err)
+
+	sql := h.cli.WithContext(ctx)
+
+	err = sql.Where("id = ?", id).First(&account).Error
+
+	if err != nil {
+		hlog.CtxErrorf(ctx, "get account error: %s", err.Error())
+		return nil, err
+	}
+	return
+}
+
+func (h *H) GetToken(ctx context.Context, accountId int32) (token *model.Token, err error) {
+	ctx, span := trace.StartDBOperation(ctx, "GetToken")
+	defer trace.EndSpan(span, err)
+
+	sql := h.cli.WithContext(ctx)
+
+	err = sql.Where("account_id = ?", accountId).
+		Order("created_at desc").
+		First(&token).Error
+
+	if err != nil {
+		return nil, err
+	}
+	return
+}
+
+func (h *H) GetAccountList(ctx context.Context) (accounts []*model.Account, err error) {
+	ctx, span := trace.StartDBOperation(ctx, "GetAccountList")
+	defer trace.EndSpan(span, err)
+
+	sql := h.cli.WithContext(ctx)
+
+	err = sql.Order("priority asc").Find(&accounts).Error
+
+	if err != nil {
+		return nil, err
+	}
+	return
+}
+
+func (h *H) SwitchAccount(ctx context.Context, accountId int32) (err error) {
+	ctx, span := trace.StartDBOperation(ctx, "SwitchAccount")
+	defer trace.EndSpan(span, err)
+
+	sql := h.cli.WithContext(ctx)
+
+	tx := sql.Begin()
+
+	now := time.Now()
+
+	if err := tx.
+		Model(&model.Account{}).
+		Where("active_at is not null").
+		Update("active_at", nil).Error; err != nil {
+		hlog.CtxErrorf(ctx, "failed to update account active_at: %v", err)
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.
+		Where("id = ?", accountId).
+		Updates(&model.Account{ActiveAt: &now}).Error; err != nil {
+		hlog.CtxErrorf(ctx, "failed to update account active_at: %v", err)
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		hlog.CtxErrorf(ctx, "failed to commit tx: %v", err)
+		tx.Rollback()
+		return err
+	}
+
+	return
+}

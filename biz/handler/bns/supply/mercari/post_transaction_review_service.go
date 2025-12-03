@@ -3,11 +3,11 @@ package mercari
 import (
 	"context"
 
-	bizErr "github.com/buyandship/supply-svr/biz/common/err"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/db"
-	"github.com/buyandship/supply-svr/biz/infrasturcture/mercari"
-	"github.com/buyandship/supply-svr/biz/model/bns/supply"
-	model "github.com/buyandship/supply-svr/biz/model/mercari"
+	bizErr "github.com/buyandship/supply-service/biz/common/err"
+	"github.com/buyandship/supply-service/biz/infrastructure/db"
+	"github.com/buyandship/supply-service/biz/infrastructure/mercari"
+	"github.com/buyandship/supply-service/biz/model/bns/supply"
+	model "github.com/buyandship/supply-service/biz/model/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
@@ -15,11 +15,11 @@ func PostTransactionReviewService(ctx context.Context, req *supply.MercariPostTr
 	hlog.CtxInfof(ctx, "PostTransactionReviewService is called, %+v", req)
 	h := mercari.GetHandler()
 
-	/* 	if config.GlobalServerConfig.Env == "development" {
+	/* 	if config.GlobalServerConfig.Env == "dev" {
 		return nil, bizErr.NotFoundError
 	} */
 
-	/* 	if config.GlobalServerConfig.Env == "development" {
+	/* 	if config.GlobalServerConfig.Env == "dev" {
 		return &mercari.PostTransactionReviewResponse{
 			ReviewStatus: "success",
 			RequestId:    uuid.NewString(),

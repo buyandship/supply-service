@@ -1,0 +1,23 @@
+CREATE TABLE `yahoo`.`bid_auction_item` (
+    `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+    `created_at` datetime(3) DEFAULT NULL,
+    `updated_at` datetime(3) DEFAULT NULL,
+    `deleted_at` datetime(3) DEFAULT NULL,
+    `bid_request_id` varchar(255) DEFAULT NULL,
+    `auction_id` varchar(255) DEFAULT NULL,
+    `status` varchar(1024) DEFAULT NULL,
+    `name` varchar(255) DEFAULT NULL,
+    `current_price` varchar(255) DEFAULT NULL,
+    `buyout_price` varchar(255) DEFAULT NULL,
+    `item_type` varchar(255) DEFAULT NULL,
+    `description` text DEFAULT NULL,
+    `start_time` varchar(255) DEFAULT NULL,
+    `end_time` varchar(255) DEFAULT NULL,
+    `item_category_id` varchar(255) DEFAULT NULL,
+    `item_condition` varchar(255) DEFAULT NULL,
+    `item_brand` varchar(255) DEFAULT NULL,
+    `item_watch_list_num` varchar(255) DEFAULT NULL,
+    `seller_id` varchar(255) DEFAULT NULL,
+    `seller_rating` varchar(255) DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

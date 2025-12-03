@@ -3,7 +3,7 @@ package mercari
 import (
 	"time"
 
-	"github.com/buyandship/supply-svr/biz/model/bns/supply"
+	"github.com/buyandship/supply-service/biz/model/bns/supply"
 	"gorm.io/gorm"
 )
 
