@@ -46,6 +46,7 @@ func Register(r *server.Hertz) {
 				}
 				{
 					_yahoo := _internal.Group("/yahoo", _yahooMw()...)
+					_yahoo.GET("/auctionItem", append(_yahoogetauctionitemserviceMw(), supply.YahooGetAuctionItemService)...)
 					_yahoo.GET("/categoryLeaf", append(_yahoogetcategoryleafserviceMw(), supply.YahooGetCategoryLeafService)...)
 					_yahoo.GET("/categoryTree", append(_yahoogetcategorytreeserviceMw(), supply.YahooGetCategoryTreeService)...)
 					_yahoo.GET("/myWonList", append(_yahoogetmywonlistserviceMw(), supply.YahooGetMyWonListService)...)
@@ -61,10 +62,6 @@ func Register(r *server.Hertz) {
 					_mercari0 := _public.Group("/mercari", _mercari0Mw()...)
 					_mercari0.POST("/register", append(_mercariregisteraccountserviceMw(), supply.MercariRegisterAccountService)...)
 					_mercari0.POST("/switch_account", append(_mercarimanualswitchaccountserviceMw(), supply.MercariManualSwitchAccountService)...)
-				}
-				{
-					_yahoo0 := _public.Group("/yahoo", _yahoo0Mw()...)
-					_yahoo0.GET("/auctionItem", append(_yahoogetauctionitemserviceMw(), supply.YahooGetAuctionItemService)...)
 				}
 			}
 		}
