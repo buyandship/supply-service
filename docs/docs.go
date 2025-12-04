@@ -4499,20 +4499,6 @@ const docTemplate = `{
                 }
             }
         },
-        "yahoo.SellingListImage": {
-            "type": "object",
-            "properties": {
-                "@height": {
-                    "type": "integer"
-                },
-                "@width": {
-                    "type": "integer"
-                },
-                "Url": {
-                    "type": "string"
-                }
-            }
-        },
         "yahoo.SellingListItem": {
             "type": "object",
             "properties": {
@@ -4538,7 +4524,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "Image": {
-                    "$ref": "#/definitions/yahoo.SellingListImage"
+                    "$ref": "#/definitions/yahoo.AuctionImage"
                 },
                 "IsReserved": {
                     "type": "boolean"

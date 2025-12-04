@@ -1773,15 +1773,6 @@ definitions:
       WatchListNumFromAff:
         type: integer
     type: object
-  yahoo.SellingListImage:
-    properties:
-      '@height':
-        type: integer
-      '@width':
-        type: integer
-      Url:
-        type: string
-    type: object
   yahoo.SellingListItem:
     properties:
       AuctionID:
@@ -1799,7 +1790,7 @@ definitions:
       EndTime:
         type: string
       Image:
-        $ref: '#/definitions/yahoo.SellingListImage'
+        $ref: '#/definitions/yahoo.AuctionImage'
       IsReserved:
         type: boolean
       ItemUrl:

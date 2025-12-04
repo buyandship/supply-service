@@ -10,13 +10,6 @@ import (
 	"github.com/buyandship/supply-service/biz/model/bns/supply"
 )
 
-// SellingListImage represents image information in selling list response
-type SellingListImage struct {
-	URL    string `json:"Url,omitempty"`
-	Width  int    `json:"@width,omitempty"`
-	Height int    `json:"@height,omitempty"`
-}
-
 // SellingListRating represents seller rating information in selling list response
 type SellingListRating struct {
 	Point       int  `json:"Point,omitempty"`
@@ -39,7 +32,7 @@ type SellingListItem struct {
 	Title          string                `json:"Title,omitempty"`
 	ItemUrl        string                `json:"ItemUrl,omitempty"`
 	AuctionItemUrl string                `json:"AuctionItemUrl,omitempty"`
-	Image          SellingListImage      `json:"Image,omitempty"`
+	Image          AuctionImage          `json:"Image,omitempty"`
 	CurrentPrice   float64               `json:"CurrentPrice,omitempty"`
 	Bids           int                   `json:"Bids,omitempty"`
 	EndTime        string                `json:"EndTime,omitempty"`
