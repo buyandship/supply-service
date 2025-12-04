@@ -218,7 +218,7 @@ func (c *Client) SearchAuctions(ctx context.Context, req *SearchAuctionsRequest)
 	case "dev":
 		params.Set("yahoo_account_id", config.DevYahoo02AccountID)
 	case "prod":
-		params.Set("yahoo_account_id", config.ProdMasterYahooAccountID)
+		params.Set("yahoo_account_id", config.ProdYahoo02AccountID)
 	}
 	if req.YsRefID != "" {
 		params.Set("ys_ref_id", req.YsRefID)

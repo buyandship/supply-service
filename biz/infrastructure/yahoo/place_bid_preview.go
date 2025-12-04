@@ -38,7 +38,7 @@ func (c *Client) PlaceBidPreview(ctx context.Context, req *PlaceBidPreviewReques
 	case "dev":
 		params.Set("yahoo_account_id", config.DevYahoo02AccountID)
 	case "prod":
-		params.Set("yahoo_account_id", config.ProdMasterYahooAccountID)
+		params.Set("yahoo_account_id", config.ProdYahoo02AccountID)
 	}
 	params.Set("ys_ref_id", req.YsRefID)
 	params.Set("transaction_type", req.TransactionType)

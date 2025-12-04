@@ -205,7 +205,7 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 	case "dev":
 		yahooAccountID = config.DevYahoo02AccountID
 	case "prod":
-		yahooAccountID = config.ProdMasterYahooAccountID
+		yahooAccountID = config.ProdYahoo02AccountID
 	}
 
 	// TODO: check if it's neccessary to update the bid request in database.

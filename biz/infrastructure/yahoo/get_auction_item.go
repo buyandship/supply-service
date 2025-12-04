@@ -471,7 +471,7 @@ type AuctionItemDetail struct {
 	Bidorbuy                   float64                 `json:"Bidorbuy,omitempty" example:"5000"`
 	TaxRate                    int                     `json:"TaxRate,omitempty" example:"8"`
 	Quantity                   int                     `json:"Quantity,omitempty" example:"2"`
-	AvailableQuantity          int                     `json:"AvailableQuantity,omitempty" example:"1"`
+	AvailableQuantity          int                     `json:"AvailableQuantity" example:"1"`
 	WatchListNum               int                     `json:"WatchListNum,omitempty" example:"42"`
 	Bids                       int                     `json:"Bids,omitempty" example:"5"`
 	HighestBidders             *HighestBidders         `json:"HighestBidders,omitempty"`
@@ -1075,6 +1075,11 @@ func (c *Client) GetAuctionItemAuth(ctx context.Context, req AuctionItemRequest,
 	}
 
 	auctionItemAuthResponse.ResultSet.Result.Description = auctionItemAuthResponse.ResultSet.Result.GetDescription()
+
+	// set shipping fee
+	if auctionItemAuthResponse.ResultSet.Result.ChargeForShipping != "seller" {
+		auctionItemAuthResponse.ResultSet.Result.Shipping.Method[0].SinglePrice = 1230
+	}
 
 	return &auctionItemAuthResponse, nil
 }

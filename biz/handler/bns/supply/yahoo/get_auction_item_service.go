@@ -16,7 +16,7 @@ func GetAuctionItemService(ctx context.Context, req *supply.YahooGetAuctionItemR
 	case "dev":
 		yahooAccountID = config.DevYahoo02AccountID
 	case "prod":
-		yahooAccountID = config.ProdMasterYahooAccountID
+		yahooAccountID = config.ProdYahoo02AccountID
 	}
 	auctionItemResp, err := client.GetAuctionItemAuth(ctx, yahoo.AuctionItemRequest{AuctionID: req.AuctionID}, yahooAccountID)
 	if err != nil {

@@ -105,7 +105,7 @@ func (c *Client) GetTransactions(ctx context.Context, req *supply.YahooGetTransa
 	case "dev":
 		params.Set("yahoo_account_id", config.DevYahoo02AccountID)
 	case "prod":
-		params.Set("yahoo_account_id", config.ProdMasterYahooAccountID)
+		params.Set("yahoo_account_id", config.ProdYahoo02AccountID)
 	}
 	if req.TransactionID != "" {
 		params.Set("transaction_id", req.TransactionID)
