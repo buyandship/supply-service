@@ -2,6 +2,7 @@ package yahoo
 
 import (
 	"context"
+	"errors"
 
 	"github.com/buyandship/supply-service/biz/infrastructure/yahoo"
 	"github.com/buyandship/supply-service/biz/model/bns/supply"
@@ -9,6 +10,12 @@ import (
 
 func SearchAuctionService(ctx context.Context, req *supply.YahooSearchAuctionsReq) (*yahoo.SearchAuctionsResponse, error) {
 	client := yahoo.GetClient()
+
+	// keyword is required
+	if req.Keyword == "" {
+		return nil, errors.New("keyword is required")
+	}
+
 	searchAuctionsResp, err := client.SearchAuctions(ctx, &yahoo.SearchAuctionsRequest{
 		Query:                req.Keyword,
 		Type:                 req.Type,

@@ -147,7 +147,6 @@ func (c *Client) makeRequest(ctx context.Context, method, path string, params ur
 
 	resp, err = backoff.Retry(ctx, operation, retry.GetDefaultRetryOpts()...)
 	if err != nil {
-		hlog.CtxErrorf(ctx, "failed to send request after retries: %v", err)
 		return resp, fmt.Errorf("failed to send request after retries: %w", err)
 	}
 
@@ -163,7 +162,6 @@ func (c *Client) parseResponse(resp *http.Response, v interface{}) error {
 	}()
 
 	body, err := io.ReadAll(resp.Body)
-	hlog.Debugf("parseResponse body: %s", string(body))
 	if err != nil {
 		return err
 	}

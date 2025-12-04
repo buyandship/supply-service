@@ -13,6 +13,7 @@ import (
 
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
 	"github.com/buyandship/supply-service/biz/model/yahoo"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
 // Rating represents user rating information
@@ -1064,6 +1065,7 @@ func (c *Client) GetAuctionItemAuth(ctx context.Context, req AuctionItemRequest,
 				}
 			}
 		}
+		hlog.CtxErrorf(ctx, "get auction item:[%s] auth error: %v", req.AuctionID, err)
 		return nil, bizErr.BizError{
 			Status:  http.StatusInternalServerError,
 			ErrCode: http.StatusInternalServerError,
