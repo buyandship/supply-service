@@ -542,6 +542,8 @@ type AuctionItemDetail struct {
 	OfferInfo                  *OfferInfo              `json:"OfferInfo,omitempty"`
 	EasyPaymentInfo            *EasyPaymentInfo        `json:"EasyPaymentInfo,omitempty"`
 	StorePayment               *StorePayment           `json:"StorePayment,omitempty"`
+
+	ShippingFee int64 `json:"ShippingFee" example:"1230"`
 }
 
 func (a *AuctionItemDetail) GetDescription() string {
@@ -1078,7 +1080,7 @@ func (c *Client) GetAuctionItemAuth(ctx context.Context, req AuctionItemRequest,
 
 	// set shipping fee
 	if auctionItemAuthResponse.ResultSet.Result.ChargeForShipping != "seller" {
-		auctionItemAuthResponse.ResultSet.Result.Shipping.Method[0].SinglePrice = 1230
+		auctionItemAuthResponse.ResultSet.Result.ShippingFee = 1230
 	}
 
 	return &auctionItemAuthResponse, nil

@@ -3223,6 +3223,10 @@ const docTemplate = `{
                 "Shipping": {
                     "$ref": "#/definitions/yahoo.Shipping"
                 },
+                "ShippingFee": {
+                    "type": "integer",
+                    "example": 1230
+                },
                 "ShippingInput": {
                     "type": "string",
                     "example": "now"

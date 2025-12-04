@@ -920,6 +920,9 @@ definitions:
         type: string
       Shipping:
         $ref: '#/definitions/yahoo.Shipping'
+      ShippingFee:
+        example: 1230
+        type: integer
       ShippingInput:
         example: now
         type: string
