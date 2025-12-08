@@ -61,6 +61,7 @@ func Register(r *server.Hertz) {
 				{
 					_mercari0 := _public.Group("/mercari", _mercari0Mw()...)
 					_mercari0.POST("/register", append(_mercariregisteraccountserviceMw(), supply.MercariRegisterAccountService)...)
+					_mercari0.POST("/release_account", append(_mercarireleaseaccountserviceMw(), supply.MercariReleaseAccountService)...)
 					_mercari0.POST("/switch_account", append(_mercarimanualswitchaccountserviceMw(), supply.MercariManualSwitchAccountService)...)
 				}
 			}

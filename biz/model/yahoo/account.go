@@ -6,15 +6,16 @@ type Category struct {
 	CategoryName     string      `json:"CategoryName,omitempty" example:"コンピュータ"`
 	CategoryPath     string      `json:"CategoryPath,omitempty" example:"オークション > コンピュータ"`
 	CategoryIDPath   string      `json:"CategoryIdPath,omitempty" example:"0,23336"`
-	ParentCategoryID int64       `json:"ParentCategoryId,omitempty"`
-	IsLeaf           bool        `json:"IsLeaf,omitempty" example:"false"`
-	Depth            int         `json:"Depth,omitempty" example:"1"`
-	Order            int         `json:"Order,omitempty" example:"0"`
-	IsLink           bool        `json:"IsLink,omitempty" example:"false"`
-	IsAdult          bool        `json:"IsAdult,omitempty" example:"false"`
-	ChildCategoryNum int         `json:"ChildCategoryNum,omitempty" example:"15"`
-	ChildCategory    []*Category `json:"ChildCategory,omitempty"`
+	NumOfAuctions    *int64      `json:"NumOfAuctions,omitempty" example:"100"`
+	ParentCategoryID *int64      `json:"ParentCategoryId,omitempty"`
+	IsLeaf           *bool       `json:"IsLeaf,omitempty" example:"false"`
+	Depth            *int        `json:"Depth,omitempty" example:"1"`
+	Order            *int        `json:"Order,omitempty" example:"0"`
+	IsLink           *bool       `json:"IsLink,omitempty" example:"false"`
+	IsAdult          *bool       `json:"IsAdult,omitempty" example:"false"`
+	ChildCategoryNum *int        `json:"ChildCategoryNum,omitempty" example:"15"`
 	IsLeafToLink     *bool       `json:"IsLeafToLink,omitempty" example:"false"` // Only present in child categories
+	ChildCategory    []*Category `json:"ChildCategory,omitempty"`
 }
 
 // Account represents a Yahoo account

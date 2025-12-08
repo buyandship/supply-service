@@ -1206,20 +1206,14 @@ definitions:
       IsLink:
         example: false
         type: boolean
+      NumOfAuctions:
+        example: 100
+        type: integer
       Order:
         example: 0
         type: integer
       ParentCategoryId:
         type: integer
-    type: object
-  yahoo.CategoryLeafImage:
-    properties:
-      '@height':
-        type: integer
-      '@width':
-        type: integer
-      url:
-        type: string
     type: object
   yahoo.CategoryLeafItem:
     properties:
@@ -1240,7 +1234,7 @@ definitions:
       EndTime:
         type: string
       Image:
-        $ref: '#/definitions/yahoo.CategoryLeafImage'
+        $ref: '#/definitions/yahoo.AuctionImage'
       IsAdult:
         type: boolean
       IsReserved:
@@ -1800,15 +1794,6 @@ definitions:
       Title:
         type: string
     type: object
-  yahoo.SellingListRating:
-    properties:
-      IsDeleted:
-        type: boolean
-      IsSuspended:
-        type: boolean
-      Point:
-        type: integer
-    type: object
   yahoo.SellingListResponse:
     properties:
       ResultSet:
@@ -1830,20 +1815,7 @@ definitions:
           $ref: '#/definitions/yahoo.SellingListItem'
         type: array
       Seller:
-        $ref: '#/definitions/yahoo.SellingListSeller'
-    type: object
-  yahoo.SellingListSeller:
-    properties:
-      AucUserId:
-        type: string
-      AucUserIdAboutUrl:
-        type: string
-      AucUserIdItemListUrl:
-        type: string
-      AucUserIdRatingUrl:
-        type: string
-      Rating:
-        $ref: '#/definitions/yahoo.SellingListRating'
+        $ref: '#/definitions/yahoo.SellerInfo'
     type: object
   yahoo.Shipping:
     properties:
@@ -3155,6 +3127,9 @@ paths:
       summary: Get Mercari transaction by item ID
       tags:
       - Mercari
+  /v1/supplysrv/public/mercari/release_account:
+    post:
+      responses: {}
   /v1/supplysrv/public/mercari/switch_account:
     post:
       consumes:

@@ -220,3 +220,8 @@ func _yahoo0Mw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _mercarireleaseaccountserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

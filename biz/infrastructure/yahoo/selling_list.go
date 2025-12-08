@@ -44,7 +44,7 @@ type SellingListItem struct {
 
 // SellingListResult represents the result object in selling list response
 type SellingListResult struct {
-	Seller SellingListSeller `json:"Seller,omitempty"`
+	Seller SellerInfo        `json:"Seller,omitempty"`
 	Item   []SellingListItem `json:"Item,omitempty"`
 }
 

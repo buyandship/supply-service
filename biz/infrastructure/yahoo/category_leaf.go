@@ -10,14 +10,6 @@ import (
 	"github.com/buyandship/supply-service/biz/model/bns/supply"
 )
 
-// CategoryLeafImage represents image information in category leaf response
-// Note: Uses lowercase "url" and "@width"/"@height" with @ prefix
-type CategoryLeafImage struct {
-	URL    string `json:"url,omitempty"`
-	Width  int    `json:"@width,omitempty"`
-	Height int    `json:"@height,omitempty"`
-}
-
 // CategoryLeafOption represents option information in category leaf response
 // Extends AuctionItemListOption with additional icon fields
 type CategoryLeafOption struct {
@@ -44,7 +36,7 @@ type CategoryLeafItem struct {
 	Seller           AuctionItemListSeller `json:"Seller,omitempty"`
 	ItemUrl          string                `json:"ItemUrl,omitempty"`
 	AuctionItemUrl   string                `json:"AuctionItemUrl,omitempty"`
-	Image            CategoryLeafImage     `json:"Image,omitempty"`
+	Image            AuctionImage          `json:"Image,omitempty"`
 	OriginalImageNum int                   `json:"OriginalImageNum,omitempty"`
 	CurrentPrice     float64               `json:"CurrentPrice,omitempty"`
 	Bids             int                   `json:"Bids,omitempty"`

@@ -372,6 +372,7 @@ service SupplyService {
     string MercariSearchItemsService(1: MercariSearchItemsReq req) (api.get="/v1/supplysrv/internal/mercari/search")
     string MercariGetBrandsService() (api.get="/v1/supplysrv/internal/mercari/brands")
     string MercariManualSwitchAccountService(1: MercariManualSwitchAccountReq req) (api.post="/v1/supplysrv/public/mercari/switch_account")
+    string MercariReleaseAccountService(1: string account_id) (api.post="/v1/supplysrv/public/mercari/release_account")
     string KeepTokenAliveService() (api.post="/v1/supplysrv/internal/mercari/keep_token_alive")
 
     MercariRegisterAccountResp MercariRegisterAccountService(1: MercariRegisterAccountReq req) (api.post="/v1/supplysrv/public/mercari/register")

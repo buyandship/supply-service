@@ -210,3 +210,15 @@ func (h *H) SwitchAccount(ctx context.Context, accountId int32) (err error) {
 
 	return
 }
+
+func (h *H) ReleaseAccount(ctx context.Context, accountID string) (err error) {
+
+	sql := h.cli.WithContext(ctx)
+
+	if err := sql.Model(&model.Account{}).Where("id = ?", accountID).Update("banned_at", nil).Error; err != nil {
+		hlog.CtxErrorf(ctx, "failed to release account: %v", err)
+		return err
+	}
+
+	return nil
+}

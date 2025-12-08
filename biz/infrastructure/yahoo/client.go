@@ -85,7 +85,6 @@ func (c *Client) generateHMACSignature(timestamp, method, path, body string) str
 
 // Helper method to make authenticated requests
 func (c *Client) makeRequest(ctx context.Context, method, path string, params url.Values, body interface{}, authType AuthType) (*http.Response, error) {
-	hlog.CtxInfof(ctx, "makeRequest: %s %s %s %v", method, path, params.Encode(), body)
 	// Build URL
 	fullURL := c.baseURL + path
 	if len(params) > 0 {
@@ -165,6 +164,8 @@ func (c *Client) parseResponse(resp *http.Response, v interface{}) error {
 	if err != nil {
 		return err
 	}
+
+	hlog.Debugf("http response body: %s", string(body))
 
 	if err := json.Unmarshal(body, v); err != nil {
 		return fmt.Errorf("failed to parse response: %w", err)

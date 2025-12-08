@@ -1743,6 +1743,11 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/supplysrv/public/mercari/release_account": {
+            "post": {
+                "responses": {}
+            }
+        },
         "/v1/supplysrv/public/mercari/switch_account": {
             "post": {
                 "description": "Manually switch the active Mercari account",
@@ -3646,26 +3651,16 @@ const docTemplate = `{
                     "type": "boolean",
                     "example": false
                 },
+                "NumOfAuctions": {
+                    "type": "integer",
+                    "example": 100
+                },
                 "Order": {
                     "type": "integer",
                     "example": 0
                 },
                 "ParentCategoryId": {
                     "type": "integer"
-                }
-            }
-        },
-        "yahoo.CategoryLeafImage": {
-            "type": "object",
-            "properties": {
-                "@height": {
-                    "type": "integer"
-                },
-                "@width": {
-                    "type": "integer"
-                },
-                "url": {
-                    "type": "string"
                 }
             }
         },
@@ -3697,7 +3692,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "Image": {
-                    "$ref": "#/definitions/yahoo.CategoryLeafImage"
+                    "$ref": "#/definitions/yahoo.AuctionImage"
                 },
                 "IsAdult": {
                     "type": "boolean"
@@ -4540,20 +4535,6 @@ const docTemplate = `{
                 }
             }
         },
-        "yahoo.SellingListRating": {
-            "type": "object",
-            "properties": {
-                "IsDeleted": {
-                    "type": "boolean"
-                },
-                "IsSuspended": {
-                    "type": "boolean"
-                },
-                "Point": {
-                    "type": "integer"
-                }
-            }
-        },
         "yahoo.SellingListResponse": {
             "type": "object",
             "properties": {
@@ -4586,27 +4567,7 @@ const docTemplate = `{
                     }
                 },
                 "Seller": {
-                    "$ref": "#/definitions/yahoo.SellingListSeller"
-                }
-            }
-        },
-        "yahoo.SellingListSeller": {
-            "type": "object",
-            "properties": {
-                "AucUserId": {
-                    "type": "string"
-                },
-                "AucUserIdAboutUrl": {
-                    "type": "string"
-                },
-                "AucUserIdItemListUrl": {
-                    "type": "string"
-                },
-                "AucUserIdRatingUrl": {
-                    "type": "string"
-                },
-                "Rating": {
-                    "$ref": "#/definitions/yahoo.SellingListRating"
+                    "$ref": "#/definitions/yahoo.SellerInfo"
                 }
             }
         },

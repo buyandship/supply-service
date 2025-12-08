@@ -819,3 +819,19 @@ func YahooGetSellingListService(ctx context.Context, c *app.RequestContext) {
 
 	c.JSON(consts.StatusOK, resp)
 }
+
+// MercariReleaseAccountService .
+// @router /v1/supplysrv/public/mercari/release_account [POST]
+func MercariReleaseAccountService(ctx context.Context, c *app.RequestContext) {
+	account_id := c.Query("account_id")
+	if account_id == "" {
+		c.String(consts.StatusBadRequest, "account_id is required")
+		return
+	}
+
+	if err := mercari.ReleaseAccountService(ctx, account_id); err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+}
