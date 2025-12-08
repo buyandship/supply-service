@@ -170,7 +170,7 @@ func PostOrderService(ctx context.Context, req *supply.MercariPostOrderReq) (*su
 			return getResponse(tx), nil
 		}
 
-		if tx.FailureReason != "" {
+		if tx.FailureReason != "" && !req.GetForceRetryPurchase() {
 			// 4.2.2 the transaction does exist, but the failure_reason is not empty, which means this order purchased
 			// failure
 			return nil, bizErr.BizError{

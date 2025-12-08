@@ -279,12 +279,13 @@ func (p *MercariGetSellerReq) String() string {
 }
 
 type MercariPostOrderReq struct {
-	ItemID      string `thrift:"item_id,1" form:"item_id" json:"item_id" query:"item_id"`
-	RefPrice    int64  `thrift:"ref_price,2" form:"ref_price" json:"ref_price" query:"ref_price"`
-	RefCurrency string `thrift:"ref_currency,3" form:"ref_currency" json:"ref_currency" query:"ref_currency"`
-	Checksum    string `thrift:"checksum,4" form:"checksum" json:"checksum" query:"checksum"`
-	RefID       string `thrift:"ref_id,5" form:"ref_id" json:"ref_id" query:"ref_id"`
-	DeliveryID  string `thrift:"delivery_id,6" form:"delivery_id" json:"delivery_id" query:"delivery_id"`
+	ItemID             string `thrift:"item_id,1" form:"item_id" json:"item_id" query:"item_id"`
+	RefPrice           int64  `thrift:"ref_price,2" form:"ref_price" json:"ref_price" query:"ref_price"`
+	RefCurrency        string `thrift:"ref_currency,3" form:"ref_currency" json:"ref_currency" query:"ref_currency"`
+	Checksum           string `thrift:"checksum,4" form:"checksum" json:"checksum" query:"checksum"`
+	RefID              string `thrift:"ref_id,5" form:"ref_id" json:"ref_id" query:"ref_id"`
+	DeliveryID         string `thrift:"delivery_id,6" form:"delivery_id" json:"delivery_id" query:"delivery_id"`
+	ForceRetryPurchase bool   `thrift:"force_retry_purchase,7" form:"force_retry_purchase" json:"force_retry_purchase" query:"force_retry_purchase"`
 }
 
 func NewMercariPostOrderReq() *MercariPostOrderReq {
@@ -315,6 +316,10 @@ func (p *MercariPostOrderReq) GetDeliveryID() (v string) {
 	return p.DeliveryID
 }
 
+func (p *MercariPostOrderReq) GetForceRetryPurchase() (v bool) {
+	return p.ForceRetryPurchase
+}
+
 var fieldIDToName_MercariPostOrderReq = map[int16]string{
 	1: "item_id",
 	2: "ref_price",
@@ -322,6 +327,7 @@ var fieldIDToName_MercariPostOrderReq = map[int16]string{
 	4: "checksum",
 	5: "ref_id",
 	6: "delivery_id",
+	7: "force_retry_purchase",
 }
 
 func (p *MercariPostOrderReq) Read(iprot thrift.TProtocol) (err error) {
@@ -386,6 +392,14 @@ func (p *MercariPostOrderReq) Read(iprot thrift.TProtocol) (err error) {
 		case 6:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField6(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 7:
+			if fieldTypeId == thrift.BOOL {
+				if err = p.ReadField7(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -474,6 +488,15 @@ func (p *MercariPostOrderReq) ReadField6(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
+func (p *MercariPostOrderReq) ReadField7(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadBool(); err != nil {
+		return err
+	} else {
+		p.ForceRetryPurchase = v
+	}
+	return nil
+}
 
 func (p *MercariPostOrderReq) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
@@ -503,6 +526,10 @@ func (p *MercariPostOrderReq) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField6(oprot); err != nil {
 			fieldId = 6
+			goto WriteFieldError
+		}
+		if err = p.writeField7(oprot); err != nil {
+			fieldId = 7
 			goto WriteFieldError
 		}
 	}
@@ -623,6 +650,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 6 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 6 end error: ", p), err)
+}
+
+func (p *MercariPostOrderReq) writeField7(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("force_retry_purchase", thrift.BOOL, 7); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteBool(p.ForceRetryPurchase); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 7 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 7 end error: ", p), err)
 }
 
 func (p *MercariPostOrderReq) String() string {

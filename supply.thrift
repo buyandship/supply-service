@@ -16,6 +16,7 @@ struct MercariPostOrderReq {
     4: string checksum (api.json="checksum")
     5: string ref_id (api.json="ref_id")
     6: string delivery_id (api.json = "delivery_id")
+    7: bool force_retry_purchase (api.json = "force_retry_purchase")
 }
 
 struct MercariPostMessageReq {
