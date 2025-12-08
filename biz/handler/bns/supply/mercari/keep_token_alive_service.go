@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/buyandship/supply-service/biz/infrastructure/db"
+	"github.com/buyandship/supply-service/biz/infrastructure/mercari"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
@@ -25,10 +26,10 @@ func KeepTokenAliveService(ctx context.Context) error {
 		if token.CreatedAt.Before(time.Now().Add(-85 * time.Hour * 24)) {
 			hlog.CtxInfof(ctx, "account: %d, token expired: %v", account.ID, token)
 			// refresh token
-			// if err := mercari.GetHandler().RefreshToken(ctx, token); err != nil {
-			//	hlog.CtxErrorf(ctx, "refresh token error: %v", err)
-			//	continue
-			// }
+			if err := mercari.GetHandler().RefreshToken(ctx, token); err != nil {
+				hlog.CtxWarnf(ctx, "refresh token error: %v", err)
+				continue
+			}
 			// hlog.CtxInfof(ctx, "refresh token success: %",)
 		}
 
