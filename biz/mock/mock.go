@@ -509,6 +509,10 @@ func MockYahooGetAuctionItemError(auctionId string) error {
 		return bizErr.TimeoutError
 	}
 
+	if auctionId == "w1211863278" {
+		return bizErr.BadRequestError
+	}
+
 	return nil
 }
 
@@ -526,5 +530,16 @@ func MockYahooPlaceBidError(auctionId string) error {
 		return bizErr.InternalError
 	}
 
+	if auctionId == "s1211903305" {
+		return bizErr.BadRequestError
+	}
+
+	if auctionId == "l1211896005" {
+		return bizErr.NotFoundError
+	}
+
+	if auctionId == "n1211897053" {
+		return bizErr.InternalError
+	}
 	return nil
 }
