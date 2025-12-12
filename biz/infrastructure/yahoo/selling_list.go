@@ -8,6 +8,7 @@ import (
 
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
 	"github.com/buyandship/supply-service/biz/model/bns/supply"
+	"github.com/shopspring/decimal"
 )
 
 // SellingListRating represents seller rating information in selling list response
@@ -40,6 +41,14 @@ type SellingListItem struct {
 	IsReserved     bool                  `json:"IsReserved,omitempty"`
 	CharityOption  CharityOption         `json:"CharityOption,omitempty"`
 	Option         AuctionItemListOption `json:"Option,omitempty"`
+}
+
+func (s *SellingListItem) GetBuyoutPriceString() string {
+	return decimal.NewFromFloat(s.BidOrbuy).StringFixed(0)
+}
+
+func (s *SellingListItem) GetBidPriceString() string {
+	return decimal.NewFromFloat(s.CurrentPrice).StringFixed(0)
 }
 
 // SellingListResult represents the result object in selling list response

@@ -8,6 +8,7 @@ import (
 
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
 	"github.com/buyandship/supply-service/biz/model/bns/supply"
+	"github.com/shopspring/decimal"
 )
 
 // CategoryLeafOption represents option information in category leaf response
@@ -48,6 +49,14 @@ type CategoryLeafItem struct {
 	Affiliate        Affiliate             `json:"Affiliate,omitempty"`
 	Option           CategoryLeafOption    `json:"Option,omitempty"`
 	IsAdult          bool                  `json:"IsAdult,omitempty"`
+}
+
+func (c *CategoryLeafItem) GetBuyoutPriceWithShippingFee() string {
+	return decimal.NewFromFloat(c.BidOrBuy).Add(decimal.NewFromInt(DefaultShippingFee)).StringFixed(0)
+}
+
+func (c *CategoryLeafItem) GetBidPriceString() string {
+	return decimal.NewFromFloat(c.CurrentPrice).StringFixed(0)
 }
 
 // CategoryLeafResult represents the result object in category leaf response

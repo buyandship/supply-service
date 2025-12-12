@@ -571,6 +571,20 @@ func (a *AuctionItemDetail) GetBuyoutPriceWithShippingFee() string {
 	return buyoutPriceDecimal.Add(shippingFee).StringFixed(0)
 }
 
+func (a *AuctionItemDetail) GetBidPriceString() string {
+	return decimal.NewFromFloat(a.Price).StringFixed(0)
+}
+
+func (a *AuctionItemDetail) GetBidPriceWithShippingFee() string {
+	bidPrice := a.GetBidPriceString()
+	shippingFee := decimal.NewFromInt(a.ShippingFee)
+	bidPriceDecimal, err := decimal.NewFromString(bidPrice)
+	if err != nil {
+		return ""
+	}
+	return bidPriceDecimal.Add(shippingFee).StringFixed(0)
+}
+
 func (a *AuctionItemDetail) GetDescription() string {
 	if a.Description == "" {
 		return ""
@@ -1110,7 +1124,6 @@ func (c *Client) GetAuctionItemAuth(ctx context.Context, req AuctionItemRequest,
 }
 
 func calculateShippingFee(ctx context.Context, auctionItemAuthResponse *AuctionItemResponse) error {
-	hlog.CtxInfof(ctx, "location: %s", auctionItemAuthResponse.ResultSet.Result.Location)
 	if auctionItemAuthResponse == nil {
 		return nil
 	}
