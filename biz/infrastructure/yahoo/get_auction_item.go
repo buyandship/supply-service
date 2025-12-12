@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"golang.org/x/net/html"
 
@@ -1158,7 +1159,7 @@ func calculateShippingFee(ctx context.Context, auctionItemAuthResponse *AuctionI
 			shippingFeeSetting[shippingFee.ServiceCode][shippingFee.From][shippingFee.Size] = shippingFee.Fee
 		}
 		// set to redis
-		if err := cache.GetRedisClient().Set(ctx, "supplysrv:yahoo:shipping_fee", shippingFeeSetting, 0); err != nil {
+		if err := cache.GetRedisClient().Set(ctx, "supplysrv:yahoo:shipping_fee", shippingFeeSetting, 60*time.Minute); err != nil {
 			return err
 		}
 	}
@@ -1181,12 +1182,18 @@ func calculateShippingFee(ctx context.Context, auctionItemAuthResponse *AuctionI
 			continue
 		case 113:
 			fee := shippingFeeSetting[method.ServiceCode][auctionItemAuthResponse.ResultSet.Result.Location]["0"]
+			if fee == 0 {
+				fee = DefaultShippingFee
+			}
 			if fee < lowestShippingFee {
 				lowestShippingFee = fee
 			}
 			continue
 		case 114:
 			fee := shippingFeeSetting[method.ServiceCode][auctionItemAuthResponse.ResultSet.Result.Location][method.DeliveryFeeSize]
+			if fee == 0 {
+				fee = DefaultShippingFee
+			}
 			if fee < lowestShippingFee {
 				lowestShippingFee = fee
 			}
@@ -1207,6 +1214,9 @@ func calculateShippingFee(ctx context.Context, auctionItemAuthResponse *AuctionI
 			continue
 		case 116:
 			fee := shippingFeeSetting[method.ServiceCode][auctionItemAuthResponse.ResultSet.Result.Location][method.DeliveryFeeSize]
+			if fee == 0 {
+				fee = DefaultShippingFee
+			}
 			if fee < lowestShippingFee {
 				lowestShippingFee = fee
 			}
