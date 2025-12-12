@@ -564,7 +564,11 @@ func (a *AuctionItemDetail) GetBuyoutPriceString() string {
 func (a *AuctionItemDetail) GetBuyoutPriceWithShippingFee() string {
 	buyoutPrice := a.GetBuyoutPriceString()
 	shippingFee := decimal.NewFromInt(a.ShippingFee)
-	return decimal.NewFromFloat(buyoutPrice).Add(shippingFee).StringFixed(0)
+	buyoutPriceDecimal, err := decimal.NewFromString(buyoutPrice)
+	if err != nil {
+		return ""
+	}
+	return buyoutPriceDecimal.Add(shippingFee).StringFixed(0)
 }
 
 func (a *AuctionItemDetail) GetDescription() string {
