@@ -89,3 +89,16 @@ func (h *H) InsertBidAuctionItem(ctx context.Context, item *yahoo.BidAuctionItem
 
 	return nil
 }
+
+func (h *H) GetShippingFee(ctx context.Context) (fees []yahoo.ShippingFee, err error) {
+	ctx, span := trace.StartDBOperation(ctx, "GetShippingFee")
+	defer trace.EndSpan(span, err)
+
+	db := h.cli.WithContext(ctx)
+
+	shippingFees := []yahoo.ShippingFee{}
+	if err := db.Find(&shippingFees).Error; err != nil {
+		return nil, err
+	}
+	return shippingFees, nil
+}

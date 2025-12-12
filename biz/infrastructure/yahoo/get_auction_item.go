@@ -11,9 +11,16 @@ import (
 
 	"golang.org/x/net/html"
 
+	"github.com/buyandship/bns-golib/cache"
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
+	"github.com/buyandship/supply-service/biz/infrastructure/db"
 	"github.com/buyandship/supply-service/biz/model/yahoo"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/shopspring/decimal"
+)
+
+const (
+	DefaultShippingFee = 1230
 )
 
 // Rating represents user rating information
@@ -545,6 +552,19 @@ type AuctionItemDetail struct {
 	StorePayment               *StorePayment           `json:"StorePayment,omitempty"`
 
 	ShippingFee int64 `json:"ShippingFee" example:"1230"`
+}
+
+func (a *AuctionItemDetail) GetBuyoutPriceString() string {
+	if a.TaxinBidorbuy > 0 {
+		return decimal.NewFromFloat(a.TaxinBidorbuy).StringFixed(0)
+	}
+	return decimal.NewFromFloat(a.Bidorbuy).StringFixed(0)
+}
+
+func (a *AuctionItemDetail) GetBuyoutPriceWithShippingFee() string {
+	buyoutPrice := a.GetBuyoutPriceString()
+	shippingFee := decimal.NewFromInt(a.ShippingFee)
+	return decimal.NewFromFloat(buyoutPrice).Add(shippingFee).StringFixed(0)
 }
 
 func (a *AuctionItemDetail) GetDescription() string {
@@ -1080,10 +1100,108 @@ func (c *Client) GetAuctionItemAuth(ctx context.Context, req AuctionItemRequest,
 
 	auctionItemAuthResponse.ResultSet.Result.Description = auctionItemAuthResponse.ResultSet.Result.GetDescription()
 
-	// set shipping fee
-	if auctionItemAuthResponse.ResultSet.Result.ChargeForShipping != "seller" {
-		auctionItemAuthResponse.ResultSet.Result.ShippingFee = 1230
-	}
+	calculateShippingFee(ctx, &auctionItemAuthResponse)
 
 	return &auctionItemAuthResponse, nil
+}
+
+func calculateShippingFee(ctx context.Context, auctionItemAuthResponse *AuctionItemResponse) error {
+	hlog.CtxInfof(ctx, "location: %s", auctionItemAuthResponse.ResultSet.Result.Location)
+	if auctionItemAuthResponse == nil {
+		return nil
+	}
+	if auctionItemAuthResponse.ResultSet.Result.ChargeForShipping == "seller" {
+		auctionItemAuthResponse.ResultSet.Result.ShippingFee = 0
+		return nil
+	}
+	shipping := auctionItemAuthResponse.ResultSet.Result.Shipping
+	if shipping == nil {
+		auctionItemAuthResponse.ResultSet.Result.ShippingFee = DefaultShippingFee
+		return nil
+	}
+
+	// load the shipping fee from the database
+	// get from redis
+	shippingFeeSetting := make(map[int]map[string]map[string]float64)
+	if err := cache.GetRedisClient().Get(ctx, "supplysrv:yahoo:shipping_fee",
+		&shippingFeeSetting); err != nil {
+		// load from database
+		shippingFees, err := db.GetHandler().GetShippingFee(ctx)
+		if err != nil {
+			return err
+		}
+
+		for _, shippingFee := range shippingFees {
+			if _, ok := shippingFeeSetting[shippingFee.ServiceCode]; !ok {
+				shippingFeeSetting[shippingFee.ServiceCode] = make(map[string]map[string]float64)
+			}
+			if _, ok := shippingFeeSetting[shippingFee.ServiceCode][shippingFee.From]; !ok {
+				shippingFeeSetting[shippingFee.ServiceCode][shippingFee.From] = make(map[string]float64)
+			}
+			shippingFeeSetting[shippingFee.ServiceCode][shippingFee.From][shippingFee.Size] = shippingFee.Fee
+		}
+		// set to redis
+		if err := cache.GetRedisClient().Set(ctx, "supplysrv:yahoo:shipping_fee", shippingFeeSetting, 0); err != nil {
+			return err
+		}
+	}
+
+	// get the lowest shipping fee
+	lowestShippingFee := 1000000.0
+	for _, method := range shipping.Method {
+		if method.SinglePrice != 0 {
+			if method.SinglePrice < lowestShippingFee {
+				lowestShippingFee = method.SinglePrice
+			}
+			continue
+		}
+
+		switch method.ServiceCode {
+		case 112:
+			if lowestShippingFee > 230 {
+				lowestShippingFee = 230
+			}
+			continue
+		case 113:
+			fee := shippingFeeSetting[method.ServiceCode][auctionItemAuthResponse.ResultSet.Result.Location]["0"]
+			if fee < lowestShippingFee {
+				lowestShippingFee = fee
+			}
+			continue
+		case 114:
+			fee := shippingFeeSetting[method.ServiceCode][auctionItemAuthResponse.ResultSet.Result.Location][method.DeliveryFeeSize]
+			if fee < lowestShippingFee {
+				lowestShippingFee = fee
+			}
+			continue
+		case 115:
+			fee := 0.0
+			switch method.DeliveryFeeSize {
+			case "0", "":
+				fee = 230
+			case "20":
+				fee = 180
+			case "50":
+				fee = 440
+			}
+			if fee < lowestShippingFee {
+				lowestShippingFee = fee
+			}
+			continue
+		case 116:
+			fee := shippingFeeSetting[method.ServiceCode][auctionItemAuthResponse.ResultSet.Result.Location][method.DeliveryFeeSize]
+			if fee < lowestShippingFee {
+				lowestShippingFee = fee
+			}
+			continue
+		}
+	}
+
+	if lowestShippingFee > 100000 {
+		auctionItemAuthResponse.ResultSet.Result.ShippingFee = DefaultShippingFee
+	} else {
+		auctionItemAuthResponse.ResultSet.Result.ShippingFee = int64(lowestShippingFee)
+	}
+
+	return nil
 }

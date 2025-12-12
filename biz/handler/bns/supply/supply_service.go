@@ -21,11 +21,12 @@ import (
 // @Tags Mercari
 // @Accept json
 // @Produce json
+// @Param Header header model.Header true "Header"
 // @Param request query supply.MercariGetItemReq true "Item request parameters"
 // @Success 200 {object} mercari.GetItemByIDResponse "Successfully retrieved item information"
 // @Failure 400 {object} bizErr.BizError "Invalid parameter"
 // @Failure 500 {object} bizErr.BizError "Internal server error"
-// @Router /mercari/item [GET]
+// @Router /v1/supplysrv/internal/mercari/item [GET]
 func MercariGetItemService(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req supply.MercariGetItemReq
@@ -51,9 +52,10 @@ func MercariGetItemService(ctx context.Context, c *app.RequestContext) {
 // @Tags Mercari
 // @Accept json
 // @Produce json
+// @Param Header header model.Header true "Header"
 // @Success 200 {object} mercari.GetItemCategoriesResp "Successfully retrieved categories"
 // @Failure 500 {object} bizErr.BizError "Internal server error"
-// @Router /mercari/categories [GET]
+// @Router /v1/supplysrv/internal/mercari/categories [GET]
 func MercariGetCategoriesService(ctx context.Context, c *app.RequestContext) {
 	resp, err := mercari.GetCategoriesService(ctx)
 	if err != nil {
@@ -70,11 +72,12 @@ func MercariGetCategoriesService(ctx context.Context, c *app.RequestContext) {
 // @Tags Mercari
 // @Accept json
 // @Produce json
+// @Param Header header model.Header true "Header"
 // @Param request query supply.MercariGetSellerReq true "Seller request parameters"
 // @Success 200 {object} mercari.GetUserByUserIDResponse "Successfully retrieved seller information"
 // @Failure 400 {object} bizErr.BizError "Invalid parameter"
 // @Failure 500 {object} bizErr.BizError "Internal server error"
-// @Router /mercari/seller [GET]
+// @Router /v1/supplysrv/internal/mercari/seller [POST]
 func MercariGetSellerService(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req supply.MercariGetSellerReq
@@ -100,11 +103,12 @@ func MercariGetSellerService(ctx context.Context, c *app.RequestContext) {
 // @Tags Mercari
 // @Accept json
 // @Produce json
+// @Param Header header model.Header true "Header"
 // @Param request body supply.MercariPostOrderReq true "Order request"
 // @Success 200 {object} supply.MercariPostOrderResp "Order created successfully"
 // @Failure 400 {object} bizErr.BizError "Invalid parameter"
 // @Failure 500 {object} bizErr.BizError "Internal server error"
-// @Router /mercari/order [POST]
+// @Router /v1/supplysrv/internal/mercari/order [POST]
 func MercariPostOrderService(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req supply.MercariPostOrderReq
@@ -129,11 +133,12 @@ func MercariPostOrderService(ctx context.Context, c *app.RequestContext) {
 // @Tags Mercari
 // @Accept json
 // @Produce json
+// @Param Header header model.Header true "Header"
 // @Param request body supply.MercariPostMessageReq true "Message request"
 // @Success 200 {object} supply.MercariPostMessageResp "Message sent successfully"
 // @Failure 400 {object} bizErr.BizError "Invalid parameter"
 // @Failure 500 {object} bizErr.BizError "Internal server error"
-// @Router /mercari/message [POST]
+// @Router /v1/supplysrv/internal/mercari/message [POST]
 func MercariPostMessageService(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req supply.MercariPostMessageReq
@@ -158,11 +163,12 @@ func MercariPostMessageService(ctx context.Context, c *app.RequestContext) {
 // @Tags Mercari
 // @Accept json
 // @Produce json
+// @Param Header header model.Header true "Header"
 // @Param request body supply.MercariRegisterAccountReq true "Account registration request"
 // @Success 200 {object} supply.MercariRegisterAccountResp "Account registered successfully"
 // @Failure 400 {string} string "Invalid parameter"
 // @Failure 500 {object} bizErr.BizError "Internal server error"
-// @Router /mercari/register [POST]
+// @Router /v1/supplysrv/internal/mercari/register [POST]
 func MercariRegisterAccountService(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req supply.MercariRegisterAccountReq
@@ -188,6 +194,7 @@ func MercariRegisterAccountService(ctx context.Context, c *app.RequestContext) {
 // @Tags Mercari
 // @Accept json
 // @Produce json
+// @Param Header header model.Header true "Header"
 // @Param request body supply.MercariLoginCallBackReq true "Login callback request"
 // @Success 200 {string} string "success"
 // @Failure 400 {string} string "Invalid parameter"
@@ -219,9 +226,10 @@ func MercariLoginCallBackService(ctx context.Context, c *app.RequestContext) {
 // @Tags Mercari
 // @Accept json
 // @Produce json
+// @Param Header header model.Header true "Header"
 // @Success 200 {object} supply.MercariGetTokenResp "Successfully retrieved token"
 // @Failure 500 {object} bizErr.BizError "Internal server error"
-// @Router /mercari/token [GET]
+// @Router /v1/supplysrv/internal/mercari/token [POST]
 func MercariGetTokenService(ctx context.Context, c *app.RequestContext) {
 	resp, err := mercari.GetTokenService(ctx)
 	if err != nil {
@@ -238,11 +246,12 @@ func MercariGetTokenService(ctx context.Context, c *app.RequestContext) {
 // @Tags Mercari
 // @Accept json
 // @Produce json
+// @Param Header header model.Header true "Header"
 // @Param request query supply.MercariGetTransactionByItemIdReq true "Transaction request parameters"
 // @Success 200 {object} mercari.GetTransactionByItemIDResponse "Successfully retrieved transaction"
 // @Failure 400 {object} bizErr.BizError "Invalid parameter"
 // @Failure 500 {object} bizErr.BizError "Internal server error"
-// @Router /v1/supplysrv/mercari/tx [GET]
+// @Router /v1/supplysrv/internal/v1/supplysrv/mercari/tx [GET]
 func MercariGetTransactionByItemIdService(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req supply.MercariGetTransactionByItemIdReq
@@ -268,11 +277,12 @@ func MercariGetTransactionByItemIdService(ctx context.Context, c *app.RequestCon
 // @Tags Mercari
 // @Accept json
 // @Produce json
-// @Param request query supply.MercariPostTransactionReviewReq true "Review request parameters"
+// @Param Header header model.Header true "Header"
+// @Param request body supply.MercariPostTransactionReviewReq true "Review request parameters"
 // @Success 200 {object} mercari.PostTransactionReviewResponse "Review submitted successfully"
 // @Failure 400 {object} bizErr.BizError "Invalid parameter"
 // @Failure 500 {object} bizErr.BizError "Internal server error"
-// @Router /v1/supplysrv/internal/mercari/review [GET]
+// @Router /v1/supplysrv/internal/mercari/review [POST]
 func MercariPostTransactionReviewService(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req supply.MercariPostTransactionReviewReq
@@ -297,6 +307,7 @@ func MercariPostTransactionReviewService(ctx context.Context, c *app.RequestCont
 // @Tags Mercari
 // @Accept json
 // @Produce json
+// @Param Header header model.Header true "Header"
 // @Param request query supply.MercariGetTodoListReq true "Todo list request parameters"
 // @Success 200 {object} mercari.GetTodoListResp "Successfully retrieved todo list"
 // @Failure 400 {string} string "Invalid parameter"
@@ -326,6 +337,7 @@ func MercariGetTodoListService(ctx context.Context, c *app.RequestContext) {
 // @Tags Mercari
 // @Accept json
 // @Produce json
+// @Param Header header model.Header true "Header"
 // @Param request query supply.MercariSearchItemsReq true "Search request parameters"
 // @Success 200 {object} mercari.SearchItemsResponse "Successfully retrieved search results"
 // @Failure 400 {string} string "Invalid parameter"
@@ -356,6 +368,7 @@ func MercariSearchItemsService(ctx context.Context, c *app.RequestContext) {
 // @Tags Mercari
 // @Accept json
 // @Produce json
+// @Param Header header model.Header true "Header"
 // @Success 200 {object} mercari.GetBrandsResp "Successfully retrieved brands"
 // @Failure 500 {object} bizErr.BizError "Internal server error"
 // @Router /v1/supplysrv/internal/mercari/brands [GET]
@@ -378,6 +391,7 @@ func MercariGetBrandsService(ctx context.Context, c *app.RequestContext) {
 // @Tags Mercari
 // @Accept json
 // @Produce json
+// @Param Header header model.Header true "Header"
 // @Success 200 {object} supply.MercariGetAccountResp "Successfully retrieved account list"
 // @Failure 500 {object} bizErr.BizError "Internal server error"
 // @Router /v1/supplysrv/internal/mercari/account/list [GET]
@@ -400,6 +414,7 @@ func MercariGetAccountService(ctx context.Context, c *app.RequestContext) {
 // @Tags Mercari
 // @Accept json
 // @Produce json
+// @Param Header header model.Header true "Header"
 // @Param request body supply.MercariManualSwitchAccountReq true "Account switch request"
 // @Success 200 {string} string "ok"
 // @Failure 400 {string} string "Invalid parameter"
@@ -429,6 +444,7 @@ func MercariManualSwitchAccountService(ctx context.Context, c *app.RequestContex
 // @Tags Mercari
 // @Accept json
 // @Produce json
+// @Param Header header model.Header true "Header"
 // @Success 200 {string} string "ok"
 // @Failure 500 {object} bizErr.BizError "Internal server error"
 // @Router /v1/supplysrv/internal/mercari/keep_token_alive [POST]
@@ -448,11 +464,12 @@ func KeepTokenAliveService(ctx context.Context, c *app.RequestContext) {
 // @Tags Mercari
 // @Accept json
 // @Produce json
-// @Param request body supply.MercariFetchItemsReq true "Fetch items request"
+// @Param Header header model.Header true "Header"
+// @Param request query supply.MercariFetchItemsReq true "Fetch items request"
 // @Success 200 {object} mercari.FetchItemsResponse "Successfully fetched items"
 // @Failure 400 {string} string "Invalid parameter"
 // @Failure 500 {object} bizErr.BizError "Internal server error"
-// @Router /v1/supplysrv/internal/mercari/fetch_items [POST]
+// @Router /v1/supplysrv/internal/mercari/fetch_items [GET]
 func MercariFetchItemsService(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req supply.MercariFetchItemsReq
@@ -478,6 +495,7 @@ func MercariFetchItemsService(ctx context.Context, c *app.RequestContext) {
 // @Tags Mercari
 // @Accept json
 // @Produce json
+// @Param Header header model.Header true "Header"
 // @Param request query supply.MercariGetSimilarItemsReq true "Similar items request parameters"
 // @Success 200 {object} mercari.GetSimilarItemsResponse "Successfully retrieved similar items"
 // @Failure 400 {string} string "Invalid parameter"
@@ -821,6 +839,8 @@ func YahooGetSellingListService(ctx context.Context, c *app.RequestContext) {
 }
 
 // MercariReleaseAccountService .
+// @Param Header header model.Header true "Header"
+// @Param request query string true "Account ID" example:"12345"
 // @router /v1/supplysrv/public/mercari/release_account [POST]
 func MercariReleaseAccountService(ctx context.Context, c *app.RequestContext) {
 	account_id := c.Query("account_id")

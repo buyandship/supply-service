@@ -555,13 +555,6 @@ definitions:
       zip_code2:
         type: string
     type: object
-  supply.MercariFetchItemsReq:
-    properties:
-      item_ids:
-        items:
-          type: string
-        type: array
-    type: object
   supply.MercariGetAccountResp:
     properties:
       accounts:
@@ -614,6 +607,8 @@ definitions:
         type: string
       delivery_id:
         type: string
+      force_retry_purchase:
+        type: boolean
       item_id:
         type: string
       ref_currency:
@@ -639,6 +634,17 @@ definitions:
         type: integer
       price:
         type: integer
+      trx_id:
+        type: string
+    type: object
+  supply.MercariPostTransactionReviewReq:
+    properties:
+      account_id:
+        type: integer
+      fame:
+        type: string
+      review:
+        type: string
       trx_id:
         type: string
     type: object
@@ -2022,11 +2028,97 @@ definitions:
 info:
   contact: {}
 paths:
-  /mercari/categories:
+  /v1/supplysrv/internal/mercari/account/list:
+    get:
+      consumes:
+      - application/json
+      description: Get list of all registered Mercari accounts
+      parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved account list
+          schema:
+            $ref: '#/definitions/supply.MercariGetAccountResp'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/err.BizError'
+      summary: Get Mercari account list
+      tags:
+      - Mercari
+  /v1/supplysrv/internal/mercari/brands:
+    get:
+      consumes:
+      - application/json
+      description: Get list of all available brands from Mercari
+      parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved brands
+          schema:
+            $ref: '#/definitions/mercari.GetBrandsResp'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/err.BizError'
+      summary: Get Mercari brands
+      tags:
+      - Mercari
+  /v1/supplysrv/internal/mercari/categories:
     get:
       consumes:
       - application/json
       description: Get list of all available categories from Mercari
+      parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -2041,12 +2133,72 @@ paths:
       summary: Get Mercari categories
       tags:
       - Mercari
-  /mercari/item:
+  /v1/supplysrv/internal/mercari/fetch_items:
+    get:
+      consumes:
+      - application/json
+      description: Fetch multiple items from Mercari marketplace by item IDs
+      parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
+      - collectionFormat: csv
+        in: query
+        items:
+          type: string
+        name: item_ids
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully fetched items
+          schema:
+            $ref: '#/definitions/mercari.FetchItemsResponse'
+        "400":
+          description: Invalid parameter
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/err.BizError'
+      summary: Fetch Mercari items
+      tags:
+      - Mercari
+  /v1/supplysrv/internal/mercari/item:
     get:
       consumes:
       - application/json
       description: Get detailed information about a Mercari item by item ID
       parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
       - in: query
         name: item_id
         type: string
@@ -2068,12 +2220,62 @@ paths:
       summary: Get Mercari item details
       tags:
       - Mercari
-  /mercari/message:
+  /v1/supplysrv/internal/mercari/keep_token_alive:
+    post:
+      consumes:
+      - application/json
+      description: Refresh and keep the Mercari access token active
+      parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/err.BizError'
+      summary: Keep Mercari token alive
+      tags:
+      - Mercari
+  /v1/supplysrv/internal/mercari/message:
     post:
       consumes:
       - application/json
       description: Send a message to a seller or buyer on Mercari marketplace
       parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
       - description: Message request
         in: body
         name: request
@@ -2098,12 +2300,27 @@ paths:
       summary: Send Mercari message
       tags:
       - Mercari
-  /mercari/order:
+  /v1/supplysrv/internal/mercari/order:
     post:
       consumes:
       - application/json
       description: Place a new order for items on Mercari marketplace
       parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
       - description: Order request
         in: body
         name: request
@@ -2128,12 +2345,27 @@ paths:
       summary: Create Mercari order
       tags:
       - Mercari
-  /mercari/register:
+  /v1/supplysrv/internal/mercari/register:
     post:
       consumes:
       - application/json
       description: Register a new Mercari account for API access
       parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
       - description: Account registration request
         in: body
         name: request
@@ -2158,157 +2390,33 @@ paths:
       summary: Register Mercari account
       tags:
       - Mercari
-  /mercari/seller:
-    get:
-      consumes:
-      - application/json
-      description: Get detailed information about a Mercari seller by seller ID
-      parameters:
-      - in: query
-        name: seller_id
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully retrieved seller information
-          schema:
-            $ref: '#/definitions/mercari.GetUserByUserIDResponse'
-        "400":
-          description: Invalid parameter
-          schema:
-            $ref: '#/definitions/err.BizError'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/err.BizError'
-      summary: Get Mercari seller details
-      tags:
-      - Mercari
-  /mercari/token:
-    get:
-      consumes:
-      - application/json
-      description: Get access token for Mercari API authentication
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully retrieved token
-          schema:
-            $ref: '#/definitions/supply.MercariGetTokenResp'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/err.BizError'
-      summary: Get Mercari token
-      tags:
-      - Mercari
-  /v1/supplysrv/internal/mercari/account/list:
-    get:
-      consumes:
-      - application/json
-      description: Get list of all registered Mercari accounts
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully retrieved account list
-          schema:
-            $ref: '#/definitions/supply.MercariGetAccountResp'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/err.BizError'
-      summary: Get Mercari account list
-      tags:
-      - Mercari
-  /v1/supplysrv/internal/mercari/brands:
-    get:
-      consumes:
-      - application/json
-      description: Get list of all available brands from Mercari
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully retrieved brands
-          schema:
-            $ref: '#/definitions/mercari.GetBrandsResp'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/err.BizError'
-      summary: Get Mercari brands
-      tags:
-      - Mercari
-  /v1/supplysrv/internal/mercari/fetch_items:
-    post:
-      consumes:
-      - application/json
-      description: Fetch multiple items from Mercari marketplace by item IDs
-      parameters:
-      - description: Fetch items request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/supply.MercariFetchItemsReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully fetched items
-          schema:
-            $ref: '#/definitions/mercari.FetchItemsResponse'
-        "400":
-          description: Invalid parameter
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/err.BizError'
-      summary: Fetch Mercari items
-      tags:
-      - Mercari
-  /v1/supplysrv/internal/mercari/keep_token_alive:
-    post:
-      consumes:
-      - application/json
-      description: Refresh and keep the Mercari access token active
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: ok
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/err.BizError'
-      summary: Keep Mercari token alive
-      tags:
-      - Mercari
   /v1/supplysrv/internal/mercari/review:
-    get:
+    post:
       consumes:
       - application/json
       description: Submit a review for a Mercari transaction
       parameters:
-      - in: query
-        name: account_id
-        type: integer
-      - in: query
-        name: fame
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
         type: string
-      - in: query
-        name: review
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
         type: string
-      - in: query
-        name: trx_id
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
         type: string
+      - description: Review request parameters
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/supply.MercariPostTransactionReviewReq'
       produces:
       - application/json
       responses:
@@ -2333,6 +2441,21 @@ paths:
       - application/json
       description: Search for items on Mercari marketplace with filters
       parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
       - in: query
         name: brand_id
         type: string
@@ -2420,12 +2543,69 @@ paths:
       summary: Search Mercari items
       tags:
       - Mercari
+  /v1/supplysrv/internal/mercari/seller:
+    post:
+      consumes:
+      - application/json
+      description: Get detailed information about a Mercari seller by seller ID
+      parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
+      - in: query
+        name: seller_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved seller information
+          schema:
+            $ref: '#/definitions/mercari.GetUserByUserIDResponse'
+        "400":
+          description: Invalid parameter
+          schema:
+            $ref: '#/definitions/err.BizError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/err.BizError'
+      summary: Get Mercari seller details
+      tags:
+      - Mercari
   /v1/supplysrv/internal/mercari/similar_items:
     get:
       consumes:
       - application/json
       description: Get list of items similar to a given Mercari item
       parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
       - in: query
         name: item_id
         type: string
@@ -2453,6 +2633,21 @@ paths:
       - application/json
       description: Get list of pending todo items from Mercari
       parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
       - in: query
         name: limit
         type: integer
@@ -2475,6 +2670,83 @@ paths:
           schema:
             $ref: '#/definitions/err.BizError'
       summary: Get Mercari todo list
+      tags:
+      - Mercari
+  /v1/supplysrv/internal/mercari/token:
+    post:
+      consumes:
+      - application/json
+      description: Get access token for Mercari API authentication
+      parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved token
+          schema:
+            $ref: '#/definitions/supply.MercariGetTokenResp'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/err.BizError'
+      summary: Get Mercari token
+      tags:
+      - Mercari
+  /v1/supplysrv/internal/v1/supplysrv/mercari/tx:
+    get:
+      consumes:
+      - application/json
+      description: Get transaction information for a specific Mercari item
+      parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
+      - in: query
+        name: item_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved transaction
+          schema:
+            $ref: '#/definitions/mercari.GetTransactionByItemIDResponse'
+        "400":
+          description: Invalid parameter
+          schema:
+            $ref: '#/definitions/err.BizError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/err.BizError'
+      summary: Get Mercari transaction by item ID
       tags:
       - Mercari
   /v1/supplysrv/internal/yahoo/auctionItem:
@@ -3100,35 +3372,29 @@ paths:
       summary: Get Yahoo Auction transaction
       tags:
       - Yahoo
-  /v1/supplysrv/mercari/tx:
-    get:
-      consumes:
-      - application/json
-      description: Get transaction information for a specific Mercari item
-      parameters:
-      - in: query
-        name: item_id
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully retrieved transaction
-          schema:
-            $ref: '#/definitions/mercari.GetTransactionByItemIDResponse'
-        "400":
-          description: Invalid parameter
-          schema:
-            $ref: '#/definitions/err.BizError'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/err.BizError'
-      summary: Get Mercari transaction by item ID
-      tags:
-      - Mercari
   /v1/supplysrv/public/mercari/release_account:
     post:
+      parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
+      - description: Account ID
+        in: query
+        name: request
+        required: true
+        type: string
       responses: {}
   /v1/supplysrv/public/mercari/switch_account:
     post:
@@ -3136,6 +3402,21 @@ paths:
       - application/json
       description: Manually switch the active Mercari account
       parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
       - description: Account switch request
         in: body
         name: request
@@ -3166,6 +3447,21 @@ paths:
       - application/json
       description: Handle OAuth callback from Mercari login flow
       parameters:
+      - example: a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989
+        in: header
+        name: hmac
+        required: true
+        type: string
+      - example: "1762155727995"
+        in: header
+        name: timestamp
+        required: true
+        type: string
+      - example: adc3d4cb-d4d0-4a74-9908-5b95bee4d62b
+        in: header
+        name: X-Request-ID
+        required: true
+        type: string
       - description: Login callback request
         in: body
         name: request

@@ -490,3 +490,41 @@ func MockMercariGetTransactionByItemId(resp *mercari.GetTransactionByItemIDRespo
 
 	return nil
 }
+
+func MockYahooGetAuctionItemError(auctionId string) error {
+
+	if config.GlobalAppConfig.Env != "dev" {
+		return nil
+	}
+
+	if auctionId == "w1211863278" {
+		return bizErr.BadRequestError
+	}
+
+	if auctionId == "n1211899153" {
+		return bizErr.InternalError
+	}
+
+	if auctionId == "c1211905254" {
+		return bizErr.TimeoutError
+	}
+
+	return nil
+}
+
+func MockYahooPlaceBidError(auctionId string) error {
+
+	if config.GlobalAppConfig.Env != "dev" {
+		return nil
+	}
+
+	if auctionId == "l1211860869" {
+		return bizErr.BadRequestError
+	}
+
+	if auctionId == "l1211858121" {
+		return bizErr.InternalError
+	}
+
+	return nil
+}

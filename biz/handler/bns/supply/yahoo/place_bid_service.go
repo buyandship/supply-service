@@ -8,6 +8,7 @@ import (
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
 	"github.com/buyandship/supply-service/biz/infrastructure/db"
 	"github.com/buyandship/supply-service/biz/infrastructure/yahoo"
+	"github.com/buyandship/supply-service/biz/mock"
 	"github.com/buyandship/supply-service/biz/model/bns/supply"
 	model "github.com/buyandship/supply-service/biz/model/yahoo"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -16,6 +17,10 @@ import (
 
 // TODO throttle and rate limit.
 func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *yahoo.PlaceBidResult, err error) {
+
+	if err := mock.MockYahooPlaceBidError(req.AuctionID); err != nil {
+		return nil, err
+	}
 
 	if req.YsRefID == "" {
 		return nil, bizErr.BizError{
@@ -96,6 +101,17 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 			ErrMsg:  "get auction item failed",
 		}
 	}
+
+	if globalConfig.GlobalAppConfig.Env == "dev" {
+		if auctionItemResp.ResultSet.Result.Seller.AucUserId != "AnzTKsBM5HUpBc3CCQc3dHpETkds1" {
+			return nil, bizErr.BizError{
+				Status:  consts.StatusUnprocessableEntity,
+				ErrCode: consts.StatusUnprocessableEntity,
+				ErrMsg:  "this product is not allowed to be placed bid in staging environment",
+			}
+		}
+	}
+
 	// TODO: validation.
 	item := auctionItemResp.ResultSet.Result
 	if item.Status != "open" {

@@ -40,6 +40,7 @@ var (
 	InvalidInputError     = BizError{Status: consts.StatusForbidden, ErrCode: consts.StatusForbidden, ErrMsg: "invalid input"}
 	TooManyRequestError   = BizError{Status: consts.StatusTooManyRequests, ErrCode: consts.StatusTooManyRequests, ErrMsg: "too many request"}
 	AccountBannedError    = BizError{Status: consts.StatusForbidden, ErrCode: consts.StatusForbidden, ErrMsg: "account banned"}
+	TimeoutError          = BizError{Status: consts.StatusRequestTimeout, ErrCode: consts.StatusRequestTimeout, ErrMsg: "timeout"}
 
 	MercariInternalError      = BizError{Status: consts.StatusInternalServerError, ErrCode: consts.StatusInternalServerError, ErrMsg: "mercari internal error"}
 	InternalError             = BizError{Status: consts.StatusInternalServerError, ErrCode: 1000, ErrMsg: "internal error"}

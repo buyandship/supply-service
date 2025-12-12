@@ -15,7 +15,111 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/mercari/categories": {
+        "/v1/supplysrv/internal/mercari/account/list": {
+            "get": {
+                "description": "Get list of all registered Mercari accounts",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mercari"
+                ],
+                "summary": "Get Mercari account list",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved account list",
+                        "schema": {
+                            "$ref": "#/definitions/supply.MercariGetAccountResp"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/err.BizError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/supplysrv/internal/mercari/brands": {
+            "get": {
+                "description": "Get list of all available brands from Mercari",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mercari"
+                ],
+                "summary": "Get Mercari brands",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved brands",
+                        "schema": {
+                            "$ref": "#/definitions/mercari.GetBrandsResp"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/err.BizError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/supplysrv/internal/mercari/categories": {
             "get": {
                 "description": "Get list of all available categories from Mercari",
                 "consumes": [
@@ -28,6 +132,29 @@ const docTemplate = `{
                     "Mercari"
                 ],
                 "summary": "Get Mercari categories",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successfully retrieved categories",
@@ -44,7 +171,74 @@ const docTemplate = `{
                 }
             }
         },
-        "/mercari/item": {
+        "/v1/supplysrv/internal/mercari/fetch_items": {
+            "get": {
+                "description": "Fetch multiple items from Mercari marketplace by item IDs",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mercari"
+                ],
+                "summary": "Fetch Mercari items",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "name": "item_ids",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully fetched items",
+                        "schema": {
+                            "$ref": "#/definitions/mercari.FetchItemsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameter",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/err.BizError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/supplysrv/internal/mercari/item": {
             "get": {
                 "description": "Get detailed information about a Mercari item by item ID",
                 "consumes": [
@@ -58,6 +252,27 @@ const docTemplate = `{
                 ],
                 "summary": "Get Mercari item details",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "name": "item_id",
@@ -86,7 +301,59 @@ const docTemplate = `{
                 }
             }
         },
-        "/mercari/message": {
+        "/v1/supplysrv/internal/mercari/keep_token_alive": {
+            "post": {
+                "description": "Refresh and keep the Mercari access token active",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mercari"
+                ],
+                "summary": "Keep Mercari token alive",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/err.BizError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/supplysrv/internal/mercari/message": {
             "post": {
                 "description": "Send a message to a seller or buyer on Mercari marketplace",
                 "consumes": [
@@ -100,6 +367,27 @@ const docTemplate = `{
                 ],
                 "summary": "Send Mercari message",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "Message request",
                         "name": "request",
@@ -132,7 +420,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/mercari/order": {
+        "/v1/supplysrv/internal/mercari/order": {
             "post": {
                 "description": "Place a new order for items on Mercari marketplace",
                 "consumes": [
@@ -146,6 +434,27 @@ const docTemplate = `{
                 ],
                 "summary": "Create Mercari order",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "Order request",
                         "name": "request",
@@ -178,7 +487,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/mercari/register": {
+        "/v1/supplysrv/internal/mercari/register": {
             "post": {
                 "description": "Register a new Mercari account for API access",
                 "consumes": [
@@ -192,6 +501,27 @@ const docTemplate = `{
                 ],
                 "summary": "Register Mercari account",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "Account registration request",
                         "name": "request",
@@ -224,212 +554,8 @@ const docTemplate = `{
                 }
             }
         },
-        "/mercari/seller": {
-            "get": {
-                "description": "Get detailed information about a Mercari seller by seller ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Mercari"
-                ],
-                "summary": "Get Mercari seller details",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "name": "seller_id",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved seller information",
-                        "schema": {
-                            "$ref": "#/definitions/mercari.GetUserByUserIDResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid parameter",
-                        "schema": {
-                            "$ref": "#/definitions/err.BizError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/err.BizError"
-                        }
-                    }
-                }
-            }
-        },
-        "/mercari/token": {
-            "get": {
-                "description": "Get access token for Mercari API authentication",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Mercari"
-                ],
-                "summary": "Get Mercari token",
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved token",
-                        "schema": {
-                            "$ref": "#/definitions/supply.MercariGetTokenResp"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/err.BizError"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/supplysrv/internal/mercari/account/list": {
-            "get": {
-                "description": "Get list of all registered Mercari accounts",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Mercari"
-                ],
-                "summary": "Get Mercari account list",
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved account list",
-                        "schema": {
-                            "$ref": "#/definitions/supply.MercariGetAccountResp"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/err.BizError"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/supplysrv/internal/mercari/brands": {
-            "get": {
-                "description": "Get list of all available brands from Mercari",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Mercari"
-                ],
-                "summary": "Get Mercari brands",
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved brands",
-                        "schema": {
-                            "$ref": "#/definitions/mercari.GetBrandsResp"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/err.BizError"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/supplysrv/internal/mercari/fetch_items": {
-            "post": {
-                "description": "Fetch multiple items from Mercari marketplace by item IDs",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Mercari"
-                ],
-                "summary": "Fetch Mercari items",
-                "parameters": [
-                    {
-                        "description": "Fetch items request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/supply.MercariFetchItemsReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully fetched items",
-                        "schema": {
-                            "$ref": "#/definitions/mercari.FetchItemsResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid parameter",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/err.BizError"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/supplysrv/internal/mercari/keep_token_alive": {
-            "post": {
-                "description": "Refresh and keep the Mercari access token active",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Mercari"
-                ],
-                "summary": "Keep Mercari token alive",
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/err.BizError"
-                        }
-                    }
-                }
-            }
-        },
         "/v1/supplysrv/internal/mercari/review": {
-            "get": {
+            "post": {
                 "description": "Submit a review for a Mercari transaction",
                 "consumes": [
                     "application/json"
@@ -443,24 +569,34 @@ const docTemplate = `{
                 "summary": "Post Mercari transaction review",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "name": "account_id",
-                        "in": "query"
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
                     },
                     {
                         "type": "string",
-                        "name": "fame",
-                        "in": "query"
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
                     },
                     {
                         "type": "string",
-                        "name": "review",
-                        "in": "query"
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
                     },
                     {
-                        "type": "string",
-                        "name": "trx_id",
-                        "in": "query"
+                        "description": "Review request parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/supply.MercariPostTransactionReviewReq"
+                        }
                     }
                 ],
                 "responses": {
@@ -499,6 +635,27 @@ const docTemplate = `{
                 ],
                 "summary": "Search Mercari items",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "name": "brand_id",
@@ -637,6 +794,69 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/supplysrv/internal/mercari/seller": {
+            "post": {
+                "description": "Get detailed information about a Mercari seller by seller ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mercari"
+                ],
+                "summary": "Get Mercari seller details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "seller_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved seller information",
+                        "schema": {
+                            "$ref": "#/definitions/mercari.GetUserByUserIDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameter",
+                        "schema": {
+                            "$ref": "#/definitions/err.BizError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/err.BizError"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/supplysrv/internal/mercari/similar_items": {
             "get": {
                 "description": "Get list of items similar to a given Mercari item",
@@ -651,6 +871,27 @@ const docTemplate = `{
                 ],
                 "summary": "Get similar Mercari items",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "name": "item_id",
@@ -694,6 +935,27 @@ const docTemplate = `{
                 "summary": "Get Mercari todo list",
                 "parameters": [
                     {
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "type": "integer",
                         "name": "limit",
                         "in": "query"
@@ -715,6 +977,121 @@ const docTemplate = `{
                         "description": "Invalid parameter",
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/err.BizError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/supplysrv/internal/mercari/token": {
+            "post": {
+                "description": "Get access token for Mercari API authentication",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mercari"
+                ],
+                "summary": "Get Mercari token",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved token",
+                        "schema": {
+                            "$ref": "#/definitions/supply.MercariGetTokenResp"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/err.BizError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/supplysrv/internal/v1/supplysrv/mercari/tx": {
+            "get": {
+                "description": "Get transaction information for a specific Mercari item",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mercari"
+                ],
+                "summary": "Get Mercari transaction by item ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "item_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved transaction",
+                        "schema": {
+                            "$ref": "#/definitions/mercari.GetTransactionByItemIDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameter",
+                        "schema": {
+                            "$ref": "#/definitions/err.BizError"
                         }
                     },
                     "500": {
@@ -1701,50 +2078,38 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/supplysrv/mercari/tx": {
-            "get": {
-                "description": "Get transaction information for a specific Mercari item",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Mercari"
-                ],
-                "summary": "Get Mercari transaction by item ID",
+        "/v1/supplysrv/public/mercari/release_account": {
+            "post": {
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "item_id",
-                        "in": "query"
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Account ID",
+                        "name": "request",
+                        "in": "query",
+                        "required": true
                     }
                 ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved transaction",
-                        "schema": {
-                            "$ref": "#/definitions/mercari.GetTransactionByItemIDResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid parameter",
-                        "schema": {
-                            "$ref": "#/definitions/err.BizError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/err.BizError"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/supplysrv/public/mercari/release_account": {
-            "post": {
                 "responses": {}
             }
         },
@@ -1762,6 +2127,27 @@ const docTemplate = `{
                 ],
                 "summary": "Switch Mercari account manually",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "Account switch request",
                         "name": "request",
@@ -1808,6 +2194,27 @@ const docTemplate = `{
                 ],
                 "summary": "Mercari login callback",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "example": "a7062ca18a39e7ec551499958684745f3bd28227c7ae52b5246492c738fa7989",
+                        "name": "hmac",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1762155727995",
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "adc3d4cb-d4d0-4a74-9908-5b95bee4d62b",
+                        "name": "X-Request-ID",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "Login callback request",
                         "name": "request",
@@ -2701,17 +3108,6 @@ const docTemplate = `{
                 }
             }
         },
-        "supply.MercariFetchItemsReq": {
-            "type": "object",
-            "properties": {
-                "item_ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
         "supply.MercariGetAccountResp": {
             "type": "object",
             "properties": {
@@ -2793,6 +3189,9 @@ const docTemplate = `{
                 "delivery_id": {
                     "type": "string"
                 },
+                "force_retry_purchase": {
+                    "type": "boolean"
+                },
                 "item_id": {
                     "type": "string"
                 },
@@ -2830,6 +3229,23 @@ const docTemplate = `{
                 },
                 "price": {
                     "type": "integer"
+                },
+                "trx_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "supply.MercariPostTransactionReviewReq": {
+            "type": "object",
+            "properties": {
+                "account_id": {
+                    "type": "integer"
+                },
+                "fame": {
+                    "type": "string"
+                },
+                "review": {
+                    "type": "string"
                 },
                 "trx_id": {
                     "type": "string"
