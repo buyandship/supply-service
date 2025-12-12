@@ -135,7 +135,7 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 		return nil, bizErr.BizError{
 			Status:  consts.StatusUnprocessableEntity,
 			ErrCode: consts.StatusUnprocessableEntity, // TODO: define error code
-			ErrMsg:  "The requested quantity is not able to fulfil",
+			ErrMsg:  "The requested quantity is not able to fulfill",
 		}
 	}
 

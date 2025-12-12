@@ -10,6 +10,7 @@ import (
 	globalConfig "github.com/buyandship/bns-golib/config"
 	"github.com/buyandship/supply-service/biz/common/config"
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
+	"github.com/shopspring/decimal"
 )
 
 // SearchAuctionsRequest represents the request parameters for searching Yahoo Auctions
@@ -196,6 +197,14 @@ type AuctionItemListDetail struct {
 	Affiliate        Affiliate             `json:"Affiliate,omitempty"`
 	Option           AuctionItemListOption `json:"Option,omitempty"`
 	IsAdult          bool                  `json:"IsAdult,omitempty"`
+}
+
+func (a *AuctionItemListDetail) GetBuyoutPriceString() string {
+	return decimal.NewFromFloat(a.BidOrBuy).StringFixed(0)
+}
+
+func (a *AuctionItemListDetail) GetBidPriceString() string {
+	return decimal.NewFromFloat(a.CurrentPrice).StringFixed(0)
 }
 
 type SearchAuctionResult struct {
