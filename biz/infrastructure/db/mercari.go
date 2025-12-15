@@ -167,7 +167,7 @@ func (h *H) GetAccountList(ctx context.Context) (accounts []*model.Account, err 
 
 	sql := h.cli.WithContext(ctx)
 
-	err = sql.Order("priority asc").Find(&accounts).Error
+	err = sql.Where("priority > 0").Order("priority asc").Find(&accounts).Error
 
 	if err != nil {
 		return nil, err
