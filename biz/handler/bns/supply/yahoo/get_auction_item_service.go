@@ -27,5 +27,9 @@ func GetAuctionItemService(ctx context.Context, req *supply.YahooGetAuctionItemR
 		return nil, err
 	}
 
+	if err := mock.MockYahooGetAuctionItemDetail(auctionItemResp); err != nil {
+		return nil, err
+	}
+
 	return &auctionItemResp.ResultSet.Result, nil
 }

@@ -122,12 +122,23 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 			ErrMsg:  "The auction item is not available",
 		}
 	}
-	if req.TransactionType == "BUYOUT" && req.Price != int32(item.Bidorbuy) {
-		// TODO: return Request price is not same as Buyout price
-		return nil, bizErr.BizError{
-			Status:  consts.StatusUnprocessableEntity,
-			ErrCode: consts.StatusUnprocessableEntity, // TODO: define error code
-			ErrMsg:  "The request price is not same as Buyout price",
+	if req.TransactionType == "BUYOUT" {
+		if item.TaxinBidorbuy != 0 {
+			if req.Price != int32(item.TaxinBidorbuy) {
+				return nil, bizErr.BizError{
+					Status:  consts.StatusUnprocessableEntity,
+					ErrCode: consts.StatusUnprocessableEntity, // TODO: define error code
+					ErrMsg:  "The request price is not same as Buyout price",
+				}
+			}
+		} else {
+			if req.Price != int32(item.Bidorbuy) {
+				return nil, bizErr.BizError{
+					Status:  consts.StatusUnprocessableEntity,
+					ErrCode: consts.StatusUnprocessableEntity, // TODO: define error code
+					ErrMsg:  "The request price is not same as Buyout price",
+				}
+			}
 		}
 	}
 	if !req.Partial && item.Quantity < int(req.Quantity) {

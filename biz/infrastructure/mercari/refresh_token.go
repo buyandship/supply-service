@@ -46,6 +46,7 @@ func (m *Mercari) GetActiveToken(ctx context.Context) (*mercari.Token, error) {
 			}
 		}
 		if accountId == 0 {
+			hlog.CtxErrorf(ctx, "no active account found")
 			return nil, bizErr.InternalError
 		}
 		go func() {

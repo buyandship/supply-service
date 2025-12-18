@@ -4,6 +4,7 @@ import (
 	"github.com/buyandship/bns-golib/config"
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
 	"github.com/buyandship/supply-service/biz/infrastructure/mercari"
+	"github.com/buyandship/supply-service/biz/infrastructure/yahoo"
 	"github.com/google/uuid"
 )
 
@@ -541,5 +542,18 @@ func MockYahooPlaceBidError(auctionId string) error {
 	if auctionId == "n1211897053" {
 		return bizErr.InternalError
 	}
+	return nil
+}
+
+func MockYahooGetAuctionItemDetail(resp *yahoo.AuctionItemResponse) error {
+	if config.GlobalAppConfig.Env != "dev" {
+		return nil
+	}
+
+	if resp.ResultSet.Result.AuctionID == "b1212185797" {
+		resp.ResultSet.Result.Quantity = 5
+		resp.ResultSet.Result.AvailableQuantity = 4
+	}
+
 	return nil
 }
