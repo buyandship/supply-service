@@ -112,6 +112,16 @@ func MockMercariPostOrderError(itemId string) error {
 		return bizErr.InternalError
 	}
 
+	/*
+		if itemId == "m51533021958" {
+			return bizErr.PaymentRequiredError
+		}
+
+		if itemId == "m81061748245" {
+			return bizErr.InternalError
+		}
+	*/
+
 	return nil
 }
 
@@ -129,6 +139,14 @@ func MockMercariPostMessageError(itemId string) error {
 	}
 
 	if itemId == "m75718811593" {
+		return bizErr.NotFoundError
+	}
+
+	if itemId == "m70687287564" {
+		return bizErr.TooManyRequestError
+	}
+
+	if itemId == "m61551956239" {
 		return bizErr.NotFoundError
 	}
 
