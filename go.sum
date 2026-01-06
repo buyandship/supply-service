@@ -116,8 +116,8 @@ github.com/buyandship/bns-golib/monitor v0.0.0-20240430080408-55e5a0a2e995 h1:JH
 github.com/buyandship/bns-golib/monitor v0.0.0-20240430080408-55e5a0a2e995/go.mod h1:Ghw8spA2sOeUmzpy+LVgV61fFHzRS45kE/zjE1W590k=
 github.com/buyandship/bns-golib/mysql v0.0.3 h1:MsH+mRrpgYjItvSIrs8eiuBZZjmvFRQTnoUU1nrrXoA=
 github.com/buyandship/bns-golib/mysql v0.0.3/go.mod h1:F+bkLX7nXgk1eaytC6aFd8dc2CqkblAny57fvWCBVr0=
-github.com/buyandship/bns-golib/rabbitmq v0.1.0 h1:qsWwDNWHr4QhxuRYHRtkEs/VbRqk2QUGQr440g0RRLc=
-github.com/buyandship/bns-golib/rabbitmq v0.1.0/go.mod h1:6xvVPc2NTXugmLgmxXCZXd/bqOOkKMHQNCl32dXqRsM=
+github.com/buyandship/bns-golib/rabbitmq v1.0.0 h1:+gkW9qaPrG7XS1+CIWE8t5EkH9tSsh5VshnyiUVQu0s=
+github.com/buyandship/bns-golib/rabbitmq v1.0.0/go.mod h1:6xvVPc2NTXugmLgmxXCZXd/bqOOkKMHQNCl32dXqRsM=
 github.com/buyandship/bns-golib/registry v0.0.0-20240430080408-55e5a0a2e995 h1:rkA1wjiIa8MvG5awn3hD7Ygx+b4eDGHS+fS4BVZs2GA=
 github.com/buyandship/bns-golib/registry v0.0.0-20240430080408-55e5a0a2e995/go.mod h1:ODwuWNeaSzSq425p4A8vb1LMzcPiKqBomtIa74X/108=
 github.com/buyandship/bns-golib/retry v1.0.0 h1:teaz7C4Cc10/i8Rw3rAylQNrE3XnLfdvG8kgI+HJpCY=

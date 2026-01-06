@@ -37,4 +37,12 @@ const (
 	OneHourBufferMessageQueue      = "one_hour_buffer_message_queue"
 	OneHourBufferMessageRoutingKey = "one_hour_buffer_message_routing_key"
 	OneHourBufferMessageExchange   = "one_hour_buffer_message_exchange"
+
+	// Retry queue configuration
+	RetryQueue        = "supply:v1:retry_queue"
+	RetryExchange     = "supply:v1:retry_exchange"
+	RetryRoutingKey   = "supply:v1:retry_routing_key"
+	RetryDLQ          = "supply:v1:retry_dlq" // Dead letter queue for failed retries
+	RetryDLX          = "supply:v1:retry_dlx" // Dead letter exchange
+	RetryDLRoutingKey = "supply:v1:retry_dl_routing_key"
 )

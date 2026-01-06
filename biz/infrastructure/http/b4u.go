@@ -5,10 +5,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 
 	"github.com/buyandship/bns-golib/config"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
 type Notifier struct {
@@ -55,6 +57,40 @@ func (n *Notifier) Notify(ctx context.Context, body any) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("failed to notify b4u: %s", resp.Status)
+	}
+
+	return nil
+}
+
+func (n *Notifier) NotifyBiddingStatus(ctx context.Context, batchNumber string, body []byte) error {
+	cli := http.Client{
+		Timeout: 5 * time.Second,
+	}
+
+	url := fmt.Sprintf("%s/bns/orders/update_order_status/%s", n.Endpoint, batchNumber)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(body))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Authorization", fmt.Sprintf("Token %s", n.Token))
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		// parse response body
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+		hlog.Errorf("failed to notify b4u: %s", string(body))
 		return fmt.Errorf("failed to notify b4u: %s", resp.Status)
 	}
 

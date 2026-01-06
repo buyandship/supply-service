@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
@@ -9,10 +10,13 @@ import (
 	"github.com/buyandship/bns-golib/cache"
 	"github.com/buyandship/supply-service/biz/common/config"
 	"github.com/buyandship/supply-service/biz/infrastructure/db"
+	"github.com/buyandship/supply-service/biz/infrastructure/mq"
 	"github.com/buyandship/supply-service/biz/infrastructure/yahoo"
 	"github.com/buyandship/supply-service/biz/model/mercari"
 	model "github.com/buyandship/supply-service/biz/model/yahoo"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/google/uuid"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 func GetAccount(ctx context.Context, accId int32) (*mercari.Account, error) {
@@ -49,6 +53,7 @@ func GetAuctionItem(ctx context.Context, auctionID string) (*yahoo.AuctionItemRe
 			hlog.CtxErrorf(ctx, "get bid request failed: %+v", err)
 			return
 		}
+		// check win bid
 
 		// TBC: use TaxinBidPrice or Price?
 		if int64(auctionItemResp.ResultSet.Result.Price) > bidRequest.MaxBid {
@@ -181,9 +186,33 @@ func OutBid(ctx context.Context, bidId string) error {
 	}
 	// TODO: send message to mq
 	go func() {
-		// out bid
+		//
 
 	}()
 
 	return nil
+}
+
+func WinBid(ctx context.Context, bidId string) error {
+	return nil
+}
+
+func NotifyB4UBiddingResult(ctx context.Context, result *model.BiddingResult) error {
+	jsonBody, err := json.Marshal(result)
+	if err != nil {
+		return err
+	}
+
+	headers := amqp.Table{}
+	// TODO: generate batch number
+	headers["x-batch-number"] = uuid.New().String()
+
+	return mq.SendMessage(mq.Message{
+		Exchange:   config.RetryExchange,
+		RoutingKey: config.RetryRoutingKey,
+		Publishing: amqp.Publishing{
+			Body:    jsonBody,
+			Headers: headers,
+		},
+	})
 }

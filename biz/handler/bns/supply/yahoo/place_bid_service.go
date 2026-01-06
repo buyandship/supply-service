@@ -5,7 +5,7 @@ import (
 
 	globalConfig "github.com/buyandship/bns-golib/config"
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
-	"github.com/buyandship/supply-service/biz/handler/bns/supply/utils"
+	"github.com/buyandship/supply-service/biz/handler/bns/supply/yahoo/utils"
 	"github.com/buyandship/supply-service/biz/infrastructure/db"
 	"github.com/buyandship/supply-service/biz/infrastructure/yahoo"
 	"github.com/buyandship/supply-service/biz/mock"

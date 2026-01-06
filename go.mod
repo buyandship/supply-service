@@ -18,7 +18,7 @@ require (
 	github.com/buyandship/bns-golib/db v0.0.3
 	github.com/buyandship/bns-golib/http v1.0.1
 	github.com/buyandship/bns-golib/log v0.0.8
-	github.com/buyandship/bns-golib/rabbitmq v0.1.0
+	github.com/buyandship/bns-golib/rabbitmq v1.0.0
 	github.com/buyandship/bns-golib/retry v1.0.0
 	github.com/buyandship/bns-golib/trace v0.0.1
 	github.com/cenkalti/backoff/v5 v5.0.3

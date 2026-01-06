@@ -48,6 +48,7 @@ func main() {
 		provider.WithExportEndpoint(config.GlobalAppConfig.Otel.Endpoint),
 		provider.WithInsecure(),
 	)
+
 	defer p.Shutdown(context.Background())
 
 	// set hlog
@@ -69,13 +70,17 @@ func main() {
 		hertztracing.WithTextMapPropagator(propagator),
 	)
 	opts = append(opts, server.WithHostPorts(":8573"))
-	opts = append(opts, tracer)
+
+	if config.GlobalAppConfig.Env == "dev" {
+		opts = append(opts, tracer)
+	}
 
 	h := server.Default(opts...)
 
 	// consumer to watch message from mq
 	mq.Init()
-	yahoo.MQWatcher()
+	yahoo.DelayedQueueConsumer()
+	yahoo.RetryQueueConsumer()
 
 	h.Use(hertztracing.ServerMiddleware(cfg))
 	register(h)

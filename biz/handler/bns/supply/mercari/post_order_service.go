@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
-	"github.com/buyandship/supply-service/biz/handler/bns/supply/utils"
+	"github.com/buyandship/supply-service/biz/handler/bns/supply/mercari/utils"
 	"github.com/buyandship/supply-service/biz/infrastructure/db"
 	"github.com/buyandship/supply-service/biz/infrastructure/mercari"
 	"github.com/buyandship/supply-service/biz/mock"
