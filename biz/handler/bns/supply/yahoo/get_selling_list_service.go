@@ -8,10 +8,5 @@ import (
 )
 
 func GetSellingListService(ctx context.Context, req *supply.YahooGetSellingListReq) (*yahoo.SellingListResponse, error) {
-	client := yahoo.GetClient()
-	resp, err := client.GetSellingList(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	return resp, nil
+	return yahoo.GetClient().GetSellingList(ctx, req)
 }

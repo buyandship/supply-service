@@ -1,5 +1,11 @@
 package yahoo
 
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
+
 // Category represents a Yahoo Auction category with nested child categories
 type Category struct {
 	CategoryID       int64       `json:"CategoryId,omitempty" example:"23336"`
@@ -20,8 +26,14 @@ type Category struct {
 
 // Account represents a Yahoo account
 type Account struct {
-	YahooID  string `json:"yahoo_id" example:"chkyj_cp_evjr2p2v"`
-	Email    string `json:"email" example:"bnstest.yahoo01@buyandship.com"`
-	Password string `json:"password" example:"password"`
-	Purpose  string `json:"purpose" example:"for bidding"`
+	gorm.Model
+	YahooID  string     `gorm:"yahoo_id" example:"chkyj_cp_evjr2p2v"`
+	Email    string     `gorm:"email" example:"bnstest.yahoo01@buyandship.com"`
+	Password string     `gorm:"password" example:"password"`
+	Purpose  string     `gorm:"purpose" example:"for bidding"`
+	ActiveAt *time.Time `gorm:"active_at" example:"2026-01-01 00:00:00"`
+}
+
+func (o *Account) TableName() string {
+	return "yahoo.account"
 }

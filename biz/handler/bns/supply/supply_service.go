@@ -855,3 +855,43 @@ func MercariReleaseAccountService(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 }
+
+// YahooDeleteMyWonListService .
+// @router /v1/supplysrv/internal/yahoo/myWonList [DELETE]
+func YahooDeleteMyWonListService(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req supply.YahooDeleteMyWonListReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := service.DeleteMyWonListService(ctx, &req); err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, "success")
+}
+
+// YahooManualSwitchAccountService .
+// @router /v1/supplysrv/internal/yahoo/switch_account [POST]
+func YahooManualSwitchAccountService(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req supply.YahooManualSwitchAccountReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := service.ManualSwitchAccountService(ctx, &req); err != nil {
+		cerr := bizErr.ConvertErr(err)
+		c.AbortWithStatusJSON(cerr.Status, cerr)
+		return
+	}
+
+	c.JSON(consts.StatusOK, "success")
+}

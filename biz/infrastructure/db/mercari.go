@@ -8,6 +8,7 @@ import (
 	"github.com/buyandship/bns-golib/db"
 	"github.com/buyandship/bns-golib/trace"
 	model "github.com/buyandship/supply-service/biz/model/mercari"
+	YahooModel "github.com/buyandship/supply-service/biz/model/yahoo"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"gorm.io/gorm"
 )
@@ -140,6 +141,18 @@ func (h *H) GetAccount(ctx context.Context, id int32) (account *model.Account, e
 
 	if err != nil {
 		hlog.CtxErrorf(ctx, "get account error: %s", err.Error())
+		return nil, err
+	}
+	return
+}
+
+func (h *H) GetYahooAccount(ctx context.Context, id int32) (account *YahooModel.Account, err error) {
+	ctx, span := trace.StartDBOperation(ctx, "GetYahooAccount")
+	defer trace.EndSpan(span, err)
+
+	sql := h.cli.WithContext(ctx)
+
+	if err = sql.Where("id = ?", id).First(&account).Error; err != nil {
 		return nil, err
 	}
 	return

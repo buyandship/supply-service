@@ -6,15 +6,12 @@ import (
 
 	"github.com/buyandship/supply-service/biz/infrastructure/yahoo"
 	"github.com/buyandship/supply-service/biz/model/bns/supply"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
 func GetTransactionsService(ctx context.Context, req *supply.YahooGetTransactionsReq) ([]*yahoo.TransactionResult, error) {
-	hlog.CtxInfof(ctx, "GetTransactionService: %+v", req)
-	yahooClient := yahoo.GetClient()
 	// get transaction id list with order id
 	// TODO: get bulk transaction
-	tx, err := yahooClient.GetTransactions(ctx, req) // TODO: get yahoo account
+	tx, err := yahoo.GetClient().GetTransactions(ctx, req) // TODO: get yahoo account
 	if err != nil {
 		return nil, err
 	}

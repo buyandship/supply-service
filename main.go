@@ -11,8 +11,10 @@ import (
 	"github.com/buyandship/bns-golib/config"
 	"github.com/buyandship/bns-golib/log"
 	"github.com/buyandship/bns-golib/log/rollwriter"
+	"github.com/buyandship/supply-service/biz/handler/bns/supply/yahoo"
 	"github.com/buyandship/supply-service/biz/infrastructure/db"
 	"github.com/buyandship/supply-service/biz/infrastructure/mercari"
+	"github.com/buyandship/supply-service/biz/infrastructure/mq"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	cc "github.com/cloudwego/hertz/pkg/common/config"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -70,6 +72,10 @@ func main() {
 	opts = append(opts, tracer)
 
 	h := server.Default(opts...)
+
+	// consumer to watch message from mq
+	mq.Init()
+	yahoo.MQWatcher()
 
 	h.Use(hertztracing.ServerMiddleware(cfg))
 	register(h)

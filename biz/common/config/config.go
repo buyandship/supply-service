@@ -23,3 +23,18 @@ const (
 	ActiveAccountId     = "supply_srv:v1:active_account_id"
 	TokenRedisKeyPrefix = "supply_srv:v1:token:%d"
 )
+
+// Yahoo cache keys
+const (
+	YahooActiveAccountId = "supply_srv:v1:yahoo:active_account_id"
+)
+
+// MQ topic
+const (
+	MessageDelayedQueue            = "message_delayed_queue"
+	MessageDelayedExchange         = "message_delayed_exchange"
+	MessageDelayedRoutingKey       = "message_delayed_routing_key"
+	OneHourBufferMessageQueue      = "one_hour_buffer_message_queue"
+	OneHourBufferMessageRoutingKey = "one_hour_buffer_message_routing_key"
+	OneHourBufferMessageExchange   = "one_hour_buffer_message_exchange"
+)

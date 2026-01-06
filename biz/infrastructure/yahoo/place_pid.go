@@ -4,6 +4,9 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+
+	globalConfig "github.com/buyandship/bns-golib/config"
+	"github.com/buyandship/supply-service/biz/common/config"
 )
 
 // PlaceBidRequest represents a bid request
@@ -47,8 +50,17 @@ type PlaceBidResponse struct {
 
 // PlaceBid executes a bid on Yahoo Auction
 func (c *Client) PlaceBid(ctx context.Context, req *PlaceBidRequest) (*PlaceBidResponse, error) {
+
+	var yahooAccountID string
+	switch globalConfig.GlobalAppConfig.Env {
+	case "dev":
+		yahooAccountID = config.DevYahoo02AccountID
+	case "prod":
+		yahooAccountID = config.ProdYahoo02AccountID
+	}
+
 	params := url.Values{}
-	params.Set("yahoo_account_id", req.YahooAccountID)
+	params.Set("yahoo_account_id", yahooAccountID)
 	params.Set("ys_ref_id", req.YsRefID)
 	params.Set("transaction_type", req.TransactionType)
 	params.Set("auction_id", req.AuctionID)

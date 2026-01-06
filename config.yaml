@@ -17,3 +17,7 @@ hmac_secret: "utmtuacz-hhme-fht4-gba6-3lg4vi8fzpu6"
 b4u_token: "y7CgIr0j9TNidRv64hRqPlLffO4RePxp"
 otel:
   endpoint: "ec2-user-tempo-1:4317"
+rabbitmq:
+   username: "guest"
+   password: "guest"
+   addr: "rabbitmq-tls:5671"

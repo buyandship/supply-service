@@ -8,7 +8,6 @@ import (
 	"github.com/buyandship/bns-golib/config"
 	router "github.com/buyandship/supply-service/biz/router"
 	"github.com/buyandship/supply-service/docs"
-	_ "github.com/buyandship/supply-service/docs"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/hertz-contrib/swagger"

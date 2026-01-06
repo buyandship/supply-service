@@ -9,14 +9,12 @@ import (
 )
 
 func SearchAuctionService(ctx context.Context, req *supply.YahooSearchAuctionsReq) (*yahoo.SearchAuctionsResponse, error) {
-	client := yahoo.GetClient()
-
 	// keyword is required
 	if req.Keyword == "" {
 		return nil, errors.New("keyword is required")
 	}
 
-	searchAuctionsResp, err := client.SearchAuctions(ctx, &yahoo.SearchAuctionsRequest{
+	searchAuctionsResp, err := yahoo.GetClient().SearchAuctions(ctx, &yahoo.SearchAuctionsRequest{
 		Query:                req.Keyword,
 		Type:                 req.Type,
 		Category:             int(req.Category),

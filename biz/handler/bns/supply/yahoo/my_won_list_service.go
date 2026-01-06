@@ -8,10 +8,5 @@ import (
 )
 
 func GetMyWonListService(ctx context.Context, req *supply.YahooGetMyWonListReq) (*yahoo.MyWonListResponse, error) {
-	client := yahoo.GetClient()
-	resp, err := client.GetMyWonList(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	return resp, nil
+	return yahoo.GetClient().GetMyWonList(ctx, req)
 }

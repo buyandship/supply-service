@@ -1587,6 +1587,9 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "responses": {}
             }
         },
         "/v1/supplysrv/internal/yahoo/placeBid": {
@@ -2002,6 +2005,11 @@ const docTemplate = `{
                         }
                     }
                 }
+            }
+        },
+        "/v1/supplysrv/internal/yahoo/switch_account": {
+            "post": {
+                "responses": {}
             }
         },
         "/v1/supplysrv/internal/yahoo/transaction": {

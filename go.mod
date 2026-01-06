@@ -18,6 +18,7 @@ require (
 	github.com/buyandship/bns-golib/db v0.0.3
 	github.com/buyandship/bns-golib/http v1.0.1
 	github.com/buyandship/bns-golib/log v0.0.8
+	github.com/buyandship/bns-golib/rabbitmq v0.1.0
 	github.com/buyandship/bns-golib/retry v1.0.0
 	github.com/buyandship/bns-golib/trace v0.0.1
 	github.com/cenkalti/backoff/v5 v5.0.3
@@ -27,6 +28,7 @@ require (
 	github.com/hertz-contrib/obs-opentelemetry/provider v0.3.0
 	github.com/hertz-contrib/obs-opentelemetry/tracing v0.4.1
 	github.com/hertz-contrib/swagger v0.1.1
+	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/shopspring/decimal v1.4.0
 	github.com/stretchr/testify v1.11.1
 	github.com/swaggo/files v1.0.1

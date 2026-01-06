@@ -13,6 +13,8 @@ import (
 	"golang.org/x/net/html"
 
 	"github.com/buyandship/bns-golib/cache"
+	globalConfig "github.com/buyandship/bns-golib/config"
+	"github.com/buyandship/supply-service/biz/common/config"
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
 	"github.com/buyandship/supply-service/biz/infrastructure/db"
 	"github.com/buyandship/supply-service/biz/model/yahoo"
@@ -1082,7 +1084,16 @@ func (c *Client) MockGetAuctionItem(ctx context.Context, req AuctionItemRequest)
 }
 
 // GetAuctionItemAuth gets authenticated auction item information
-func (c *Client) GetAuctionItemAuth(ctx context.Context, req AuctionItemRequest, yahooAccountID string) (*AuctionItemResponse, error) {
+func (c *Client) GetAuctionItemAuth(ctx context.Context, req AuctionItemRequest) (*AuctionItemResponse, error) {
+
+	var yahooAccountID string
+	switch globalConfig.GlobalAppConfig.Env {
+	case "dev":
+		yahooAccountID = config.DevYahoo02AccountID
+	case "prod":
+		yahooAccountID = config.ProdYahoo02AccountID
+	}
+
 	params := url.Values{}
 	params.Set("auctionID", req.AuctionID)
 	params.Set("yahoo_account_id", yahooAccountID)

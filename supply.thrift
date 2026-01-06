@@ -362,6 +362,15 @@ struct YahooGetSellingListReq {
     4: optional string status (api.query="status")
 }
 
+struct YahooDeleteMyWonListReq {
+    1: string ys_ref_id (api.query="ys_ref_id")
+    2: string auction_id (api.query="auction_id")
+}
+
+struct YahooManualSwitchAccountReq {
+    1: i32 account_id (api.json="account_id");
+}
+
 service SupplyService {
     string MercariGetItemService(1: MercariGetItemReq req) (api.get="/v1/supplysrv/internal/mercari/item");
     string MercariGetCategoriesService() (api.get="/v1/supplysrv/internal/mercari/categories")
@@ -398,4 +407,6 @@ service SupplyService {
     string YahooGetCategoryLeafService(1: YahooGetCategoryLeafReq req) (api.get="/v1/supplysrv/internal/yahoo/categoryLeaf")
     string YahooGetMyWonListService(1: YahooGetMyWonListReq req) (api.get="/v1/supplysrv/internal/yahoo/myWonList")
     string YahooGetSellingListService(1: YahooGetSellingListReq req) (api.get="/v1/supplysrv/internal/yahoo/sellingList")
+    string YahooDeleteMyWonListService(1: YahooDeleteMyWonListReq req) (api.delete="/v1/supplysrv/internal/yahoo/myWonList")
+    string YahooManualSwitchAccountService(1: YahooManualSwitchAccountReq req) (api.post="/v1/supplysrv/internal/yahoo/switch_account")
 }

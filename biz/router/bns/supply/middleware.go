@@ -225,3 +225,13 @@ func _mercarireleaseaccountserviceMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _yahoodeletemywonlistserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _yahoomanualswitchaccountserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

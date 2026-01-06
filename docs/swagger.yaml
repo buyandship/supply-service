@@ -3009,6 +3009,8 @@ paths:
       tags:
       - Yahoo
   /v1/supplysrv/internal/yahoo/myWonList:
+    delete:
+      responses: {}
     get:
       consumes:
       - application/json
@@ -3322,6 +3324,9 @@ paths:
       summary: Get Yahoo Auction selling list
       tags:
       - Yahoo
+  /v1/supplysrv/internal/yahoo/switch_account:
+    post:
+      responses: {}
   /v1/supplysrv/internal/yahoo/transaction:
     get:
       consumes:

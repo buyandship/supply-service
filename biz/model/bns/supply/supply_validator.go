@@ -148,3 +148,9 @@ func (p *YahooGetMyWonListReq) IsValid() error {
 func (p *YahooGetSellingListReq) IsValid() error {
 	return nil
 }
+func (p *YahooDeleteMyWonListReq) IsValid() error {
+	return nil
+}
+func (p *YahooManualSwitchAccountReq) IsValid() error {
+	return nil
+}

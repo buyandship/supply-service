@@ -8,10 +8,5 @@ import (
 )
 
 func GetCategoryLeafService(ctx context.Context, req *supply.YahooGetCategoryLeafReq) (*yahoo.CategoryLeafResponse, error) {
-	client := yahoo.GetClient()
-	resp, err := client.GetCategoryLeaf(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	return resp, nil
+	return yahoo.GetClient().GetCategoryLeaf(ctx, req)
 }

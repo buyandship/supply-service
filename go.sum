@@ -116,6 +116,8 @@ github.com/buyandship/bns-golib/monitor v0.0.0-20240430080408-55e5a0a2e995 h1:JH
 github.com/buyandship/bns-golib/monitor v0.0.0-20240430080408-55e5a0a2e995/go.mod h1:Ghw8spA2sOeUmzpy+LVgV61fFHzRS45kE/zjE1W590k=
 github.com/buyandship/bns-golib/mysql v0.0.3 h1:MsH+mRrpgYjItvSIrs8eiuBZZjmvFRQTnoUU1nrrXoA=
 github.com/buyandship/bns-golib/mysql v0.0.3/go.mod h1:F+bkLX7nXgk1eaytC6aFd8dc2CqkblAny57fvWCBVr0=
+github.com/buyandship/bns-golib/rabbitmq v0.1.0 h1:qsWwDNWHr4QhxuRYHRtkEs/VbRqk2QUGQr440g0RRLc=
+github.com/buyandship/bns-golib/rabbitmq v0.1.0/go.mod h1:6xvVPc2NTXugmLgmxXCZXd/bqOOkKMHQNCl32dXqRsM=
 github.com/buyandship/bns-golib/registry v0.0.0-20240430080408-55e5a0a2e995 h1:rkA1wjiIa8MvG5awn3hD7Ygx+b4eDGHS+fS4BVZs2GA=
 github.com/buyandship/bns-golib/registry v0.0.0-20240430080408-55e5a0a2e995/go.mod h1:ODwuWNeaSzSq425p4A8vb1LMzcPiKqBomtIa74X/108=
 github.com/buyandship/bns-golib/retry v1.0.0 h1:teaz7C4Cc10/i8Rw3rAylQNrE3XnLfdvG8kgI+HJpCY=
@@ -590,6 +592,8 @@ github.com/prometheus/procfs v0.7.3/go.mod h1:cz+aTbrPOrUb4q7XlbU9ygM+/jj0fzG6c1
 github.com/prometheus/procfs v0.8.0/go.mod h1:z7EfXMXOkbkqb9IINtpCn86r/to3BnA0uaxHdg830/4=
 github.com/prometheus/procfs v0.11.1 h1:xRC8Iq1yyca5ypa9n1EZnWZkt7dwcoRPQwX/5gwaUuI=
 github.com/prometheus/procfs v0.11.1/go.mod h1:eesXgaPo1q7lBpVMoMy0ZOFTth9hBn4W/y0/p/ScXhY=
+github.com/rabbitmq/amqp091-go v1.10.0 h1:STpn5XsHlHGcecLmMFCtg7mqq0RnD+zFr4uzukfVhBw=
+github.com/rabbitmq/amqp091-go v1.10.0/go.mod h1:Hy4jKW5kQART1u+JkDTF9YYOQUHXqMuhrgxOEeS7G4o=
 github.com/redis/go-redis/v9 v9.0.2/go.mod h1:/xDTe9EF1LM61hek62Poq2nzQSGj0xSrEtEHbBQevps=
 github.com/redis/go-redis/v9 v9.14.1 h1:nDCrEiJmfOWhD76xlaw+HXT0c9hfNWeXgl0vIRYSDvQ=
 github.com/redis/go-redis/v9 v9.14.1/go.mod h1:huWgSWd8mW6+m0VPhJjSSQ+d6Nh1VICQ6Q5lHuCH/Iw=
