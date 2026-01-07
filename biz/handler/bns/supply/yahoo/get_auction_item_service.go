@@ -3,7 +3,7 @@ package yahoo
 import (
 	"context"
 
-	"github.com/buyandship/supply-service/biz/handler/bns/supply/utils"
+	"github.com/buyandship/supply-service/biz/handler/bns/supply/yahoo/utils"
 	"github.com/buyandship/supply-service/biz/infrastructure/yahoo"
 	"github.com/buyandship/supply-service/biz/mock"
 	"github.com/buyandship/supply-service/biz/model/bns/supply"
