@@ -9,6 +9,7 @@ import (
 
 	"github.com/buyandship/bns-golib/cache"
 	"github.com/buyandship/supply-service/biz/common/config"
+	"github.com/buyandship/supply-service/biz/common/consts"
 	"github.com/buyandship/supply-service/biz/infrastructure/db"
 	"github.com/buyandship/supply-service/biz/infrastructure/mq"
 	"github.com/buyandship/supply-service/biz/infrastructure/yahoo"
@@ -155,7 +156,7 @@ func AddBid(ctx context.Context, req *yahoo.PlaceBidRequest, item *yahoo.Auction
 	placeBidResp, err := yahoo.GetClient().PlaceBid(ctx, &yahoo.PlaceBidRequest{
 		YahooAccountID:  config.DevYahoo02AccountID,
 		YsRefID:         req.YsRefID,
-		TransactionType: req.TransactionType,
+		TransactionType: consts.TransactionTypeBid,
 		AuctionID:       req.AuctionID,
 		Price:           nextBidPrice,
 		Signature:       req.Signature,
@@ -186,8 +187,21 @@ func OutBid(ctx context.Context, bidId string) error {
 	}
 	// TODO: send message to mq
 	go func() {
-		//
-
+		result := &model.BiddingResult{
+			OrderNumber: bidId,
+			Status:      "LOST_BID",
+		}
+		resultJson, _ := json.Marshal(result)
+		message := mq.Message{
+			Exchange:   config.RetryExchange,
+			RoutingKey: config.RetryRoutingKey,
+			Publishing: amqp.Publishing{
+				Body: resultJson,
+			},
+		}
+		if err := mq.SendMessage(message); err != nil {
+			hlog.CtxErrorf(ctx, "send message failed: %+v", err)
+		}
 	}()
 
 	return nil

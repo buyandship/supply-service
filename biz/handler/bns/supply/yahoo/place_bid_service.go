@@ -4,6 +4,7 @@ import (
 	"context"
 
 	globalConfig "github.com/buyandship/bns-golib/config"
+	"github.com/buyandship/supply-service/biz/common/consts"
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
 	"github.com/buyandship/supply-service/biz/handler/bns/supply/yahoo/utils"
 	"github.com/buyandship/supply-service/biz/infrastructure/db"
@@ -12,7 +13,7 @@ import (
 	"github.com/buyandship/supply-service/biz/model/bns/supply"
 	model "github.com/buyandship/supply-service/biz/model/yahoo"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	httpConsts "github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // TODO throttle and rate limit.
@@ -24,8 +25,8 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 
 	if req.YsRefID == "" {
 		return nil, bizErr.BizError{
-			Status:  consts.StatusBadRequest,
-			ErrCode: consts.StatusBadRequest,
+			Status:  httpConsts.StatusBadRequest,
+			ErrCode: httpConsts.StatusBadRequest,
 			ErrMsg:  "ys_ref_id is required",
 		}
 	}
@@ -34,32 +35,32 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 	if err != nil {
 		hlog.CtxErrorf(ctx, "get buyout bid request failed: %+v", err)
 		return nil, bizErr.BizError{
-			Status:  consts.StatusInternalServerError,
-			ErrCode: consts.StatusInternalServerError,
+			Status:  httpConsts.StatusInternalServerError,
+			ErrCode: httpConsts.StatusInternalServerError,
 			ErrMsg:  "internal server error",
 		}
 	}
 
 	if tx != nil {
 		return nil, bizErr.BizError{
-			Status:  consts.StatusUnprocessableEntity,
-			ErrCode: consts.StatusUnprocessableEntity,
+			Status:  httpConsts.StatusUnprocessableEntity,
+			ErrCode: httpConsts.StatusUnprocessableEntity,
 			ErrMsg:  "order already exists",
 		}
 	}
 
-	if req.TransactionType != "BID" && req.TransactionType != "BUYOUT" {
+	if req.TransactionType != consts.TransactionTypeBid && req.TransactionType != consts.TransactionTypeBuyout {
 		return nil, bizErr.BizError{
-			Status:  consts.StatusBadRequest,
-			ErrCode: consts.StatusBadRequest,
+			Status:  httpConsts.StatusBadRequest,
+			ErrCode: httpConsts.StatusBadRequest,
 			ErrMsg:  "transaction_type must be BID or BUYOUT",
 		}
 	}
 
 	if req.AuctionID == "" {
 		return nil, bizErr.BizError{
-			Status:  consts.StatusBadRequest,
-			ErrCode: consts.StatusBadRequest,
+			Status:  httpConsts.StatusBadRequest,
+			ErrCode: httpConsts.StatusBadRequest,
 			ErrMsg:  "auction_id is required",
 		}
 	}
@@ -67,16 +68,16 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 	if req.Price <= 0 {
 		// for BID type, price is the max bid price
 		return nil, bizErr.BizError{
-			Status:  consts.StatusBadRequest,
-			ErrCode: consts.StatusBadRequest,
+			Status:  httpConsts.StatusBadRequest,
+			ErrCode: httpConsts.StatusBadRequest,
 			ErrMsg:  "price must be greater than 0",
 		}
 	}
 
 	if req.Quantity <= 0 {
 		return nil, bizErr.BizError{
-			Status:  consts.StatusBadRequest,
-			ErrCode: consts.StatusBadRequest,
+			Status:  httpConsts.StatusBadRequest,
+			ErrCode: httpConsts.StatusBadRequest,
 			ErrMsg:  "quantity must be greater than 0",
 		}
 	}
@@ -86,8 +87,8 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 	if err != nil {
 		// Auction item not found
 		return nil, bizErr.BizError{
-			Status:  consts.StatusNotFound,
-			ErrCode: consts.StatusNotFound,
+			Status:  httpConsts.StatusNotFound,
+			ErrCode: httpConsts.StatusNotFound,
 			ErrMsg:  "get auction item failed",
 		}
 	}
@@ -95,8 +96,8 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 	if globalConfig.GlobalAppConfig.Env == "dev" {
 		if auctionItemResp.ResultSet.Result.Seller.AucUserId != "AnzTKsBM5HUpBc3CCQc3dHpETkds1" {
 			return nil, bizErr.BizError{
-				Status:  consts.StatusUnprocessableEntity,
-				ErrCode: consts.StatusUnprocessableEntity,
+				Status:  httpConsts.StatusUnprocessableEntity,
+				ErrCode: httpConsts.StatusUnprocessableEntity,
 				ErrMsg:  "this product is not allowed to be placed bid in staging environment",
 			}
 		}
@@ -107,8 +108,8 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 	if item.Status != "open" {
 		// TODO: return Auction Item is not available
 		return nil, bizErr.BizError{
-			Status:  consts.StatusUnprocessableEntity,
-			ErrCode: consts.StatusUnprocessableEntity, // TODO: define error code
+			Status:  httpConsts.StatusUnprocessableEntity,
+			ErrCode: httpConsts.StatusUnprocessableEntity, // TODO: define error code
 			ErrMsg:  "The auction item is not available",
 		}
 	}
@@ -116,16 +117,16 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 		if item.TaxinBidorbuy != 0 {
 			if req.Price != int32(item.TaxinBidorbuy) {
 				return nil, bizErr.BizError{
-					Status:  consts.StatusUnprocessableEntity,
-					ErrCode: consts.StatusUnprocessableEntity, // TODO: define error code
+					Status:  httpConsts.StatusUnprocessableEntity,
+					ErrCode: httpConsts.StatusUnprocessableEntity, // TODO: define error code
 					ErrMsg:  "The request price is not same as Buyout price",
 				}
 			}
 		} else {
 			if req.Price != int32(item.Bidorbuy) {
 				return nil, bizErr.BizError{
-					Status:  consts.StatusUnprocessableEntity,
-					ErrCode: consts.StatusUnprocessableEntity, // TODO: define error code
+					Status:  httpConsts.StatusUnprocessableEntity,
+					ErrCode: httpConsts.StatusUnprocessableEntity, // TODO: define error code
 					ErrMsg:  "The request price is not same as Buyout price",
 				}
 			}
@@ -134,8 +135,8 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 	if !req.Partial && item.Quantity < int(req.Quantity) {
 		// TODO: Requested Quantity is not able to fulfil
 		return nil, bizErr.BizError{
-			Status:  consts.StatusUnprocessableEntity,
-			ErrCode: consts.StatusUnprocessableEntity, // TODO: define error code
+			Status:  httpConsts.StatusUnprocessableEntity,
+			ErrCode: httpConsts.StatusUnprocessableEntity, // TODO: define error code
 			ErrMsg:  "The requested quantity is not able to fulfill",
 		}
 	}
@@ -159,8 +160,8 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 		hlog.CtxErrorf(ctx, "order already exists: %+v", order.Status)
 		// order already exists
 		return nil, bizErr.BizError{
-			Status:  consts.StatusUnprocessableEntity,
-			ErrCode: consts.StatusUnprocessableEntity,
+			Status:  httpConsts.StatusUnprocessableEntity,
+			ErrCode: httpConsts.StatusUnprocessableEntity,
 			ErrMsg:  "order already exists",
 		}
 	}
@@ -189,8 +190,8 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 			hlog.CtxErrorf(ctx, "update yahoo order failed: %+v", err)
 		}
 		return nil, bizErr.BizError{
-			Status:  consts.StatusUnprocessableEntity,
-			ErrCode: consts.StatusUnprocessableEntity,
+			Status:  httpConsts.StatusUnprocessableEntity,
+			ErrCode: httpConsts.StatusUnprocessableEntity,
 			ErrMsg:  "place bid preview failed",
 		}
 	}
@@ -211,8 +212,8 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 			hlog.CtxErrorf(ctx, "update yahoo order failed: %+v", err)
 		}
 		return nil, bizErr.BizError{
-			Status:  consts.StatusInternalServerError,
-			ErrCode: consts.StatusInternalServerError,
+			Status:  httpConsts.StatusInternalServerError,
+			ErrCode: httpConsts.StatusInternalServerError,
 			ErrMsg:  "internal server error",
 		}
 	}
@@ -232,10 +233,10 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 
 	// check if it's buyout
 	switch req.TransactionType {
-	case "BID":
+	case consts.TransactionTypeBid:
 		// check if the current price is highest in this auction
 		return utils.Bid(ctx, &bidReq, &item)
-	case "BUYOUT":
+	case consts.TransactionTypeBuyout:
 		return utils.Buyout(ctx, &bidReq, &item)
 	}
 
