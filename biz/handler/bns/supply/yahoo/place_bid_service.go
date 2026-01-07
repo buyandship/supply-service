@@ -155,7 +155,7 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 		RequestType: req.TransactionType,
 		OrderID:     req.YsRefID,
 		AuctionID:   req.AuctionID,
-		MaxBid:      int64(req.Price),
+		MaxBid:      int64(item.Bidorbuy),
 		Quantity:    int32(req.Quantity),
 		Partial:     false,
 		Status:      "CREATED",
@@ -235,6 +235,7 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 		yahooAccountID = config.ProdYahoo02AccountID
 	}
 
+	if 
 	// TODO: check if it's neccessary to update the bid request in database.
 	// TODO: determine if it's shopping item.
 	bidReq := yahoo.PlaceBidRequest{
