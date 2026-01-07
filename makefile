@@ -21,7 +21,7 @@ docker_build:
 .PHONY: t2
 t2:
 	@echo "Restarting docker service on t2"
-	@ssh -i ~/.ssh/t2.pem ec2-user@52.77.135.123 'bash /home/ec2-user/build_supply_svr.sh'
+	@ssh -i ~/.ssh/CollectToday-T2.pem ec2-user@52.77.135.123 'bash /home/ec2-user/build_supply_svr.sh'
 	@echo "Script execution completed on remote server"
 
 .PHONY: t1
