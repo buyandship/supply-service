@@ -181,7 +181,7 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 		YsRefID:         req.YsRefID,
 		TransactionType: req.TransactionType,
 		AuctionID:       req.AuctionID,
-		Price:           int(req.Price),
+		Price:           int(item.Bidorbuy),
 		Quantity:        int(req.Quantity),
 		Partial:         false,
 	}
