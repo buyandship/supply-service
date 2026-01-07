@@ -42,9 +42,9 @@ type PlaceBidResult struct {
 type PlaceBidResponse struct {
 	ResultSet struct {
 		Result                PlaceBidResult `json:"Result"`
-		TotalResultsAvailable int            `json:"totalResultsAvailable,omitempty"`
-		TotalResultsReturned  int            `json:"totalResultsReturned,omitempty"`
-		FirstResultPosition   int            `json:"firstResultPosition,omitempty"`
+		TotalResultsAvailable int            `json:"@totalResultsAvailable,omitempty"`
+		TotalResultsReturned  int            `json:"@totalResultsReturned,omitempty"`
+		FirstResultPosition   int            `json:"@firstResultPosition,omitempty"`
 	} `json:"ResultSet"`
 }
 
@@ -101,9 +101,9 @@ func (c *Client) MockPlaceBid(ctx context.Context, req *PlaceBidRequest) (*Place
 	placeBidResponse := PlaceBidResponse{
 		ResultSet: struct {
 			Result                PlaceBidResult `json:"Result"`
-			TotalResultsAvailable int            `json:"totalResultsAvailable,omitempty"`
-			TotalResultsReturned  int            `json:"totalResultsReturned,omitempty"`
-			FirstResultPosition   int            `json:"firstResultPosition,omitempty"`
+			TotalResultsAvailable int            `json:"@totalResultsAvailable,omitempty"`
+			TotalResultsReturned  int            `json:"@totalResultsReturned,omitempty"`
+			FirstResultPosition   int            `json:"@firstResultPosition,omitempty"`
 		}{
 			Result: PlaceBidResult{
 				AuctionID:       req.AuctionID,
