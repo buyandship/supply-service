@@ -1962,13 +1962,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "name": "sellerAucUserId",
+                        "type": "integer",
+                        "name": "page",
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "name": "start",
+                        "type": "string",
+                        "name": "sellerAucUserId",
                         "in": "query"
                     },
                     {
