@@ -8,6 +8,7 @@ import (
 
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
 	"github.com/buyandship/supply-service/biz/model/bns/supply"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/shopspring/decimal"
 )
 
@@ -75,8 +76,9 @@ func (c *Client) GetSellingList(ctx context.Context, req *supply.YahooGetSelling
 	if req.YsRefID != nil {
 		params.Set("ys_ref_id", *req.YsRefID)
 	}
-	if req.Start != nil {
-		params.Set("start", strconv.Itoa(int(*req.Start)))
+	if req.Page != nil {
+		hlog.CtxInfof(ctx, "get selling list params: %+v", *req.Page)
+		params.Set("page", strconv.Itoa(int(*req.Page)))
 	}
 	if req.Status != nil {
 		params.Set("status", *req.Status)

@@ -2,6 +2,15 @@ package yahoo
 
 import "gorm.io/gorm"
 
+const (
+	StatusCreated           = "CREATED"
+	StatusBiddingInProgress = "BIDDING_IN_PROGRESS"
+	StatusOutBid            = "OUT_BID" // transaction status only
+	StatusWinBid            = "WIN_BID"
+	StatusLostBid           = "LOST_BID"
+	StatusFailed            = "FAILED"
+)
+
 type BidRequest struct {
 	gorm.Model
 	RequestType  string `gorm:"column:request_type"`

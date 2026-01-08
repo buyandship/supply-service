@@ -54,7 +54,7 @@ func GetAuctionItem(ctx context.Context, auctionID string) (*yahoo.AuctionItemRe
 			hlog.CtxErrorf(ctx, "get bid request failed: %+v", err)
 			return
 		}
-		// check win bid
+		// TODO: check win bid
 
 		// TBC: use TaxinBidPrice or Price?
 		if int64(auctionItemResp.ResultSet.Result.Price) > bidRequest.MaxBid {
@@ -106,7 +106,7 @@ func Buyout(ctx context.Context, req *yahoo.PlaceBidRequest, item *yahoo.Auction
 
 	if err := db.GetHandler().UpdateBuyoutRequest(ctx, &model.BidRequest{
 		OrderID:       req.YsRefID,
-		Status:        "WIN_BID",
+		Status:        model.StatusWinBid,
 		TransactionID: placeBidResp.ResultSet.Result.TransactionId,
 		MaxBid:        int64(req.Price),
 	}); err != nil {
@@ -142,6 +142,7 @@ func Bid(ctx context.Context, req *yahoo.PlaceBidRequest, item *yahoo.AuctionIte
 	}
 	// if not, out bid this bid request [LOST_BID]
 	if outBidOrderId != req.YsRefID {
+		// TBC: the user maybe confused why it out bid.
 		return AddBid(ctx, req, item)
 	} else {
 		// TODO: return out bid error code
@@ -170,7 +171,7 @@ func AddBid(ctx context.Context, req *yahoo.PlaceBidRequest, item *yahoo.Auction
 	if err := db.GetHandler().AddBidRequest(ctx, &model.YahooTransaction{
 		BidRequestID:  req.YsRefID,
 		Price:         int64(nextBidPrice),
-		Status:        "BIDDING_IN_PROGRESS",
+		Status:        model.StatusBiddingInProgress,
 		TransactionID: placeBidResp.ResultSet.Result.TransactionId,
 	}); err != nil {
 		hlog.CtxErrorf(ctx, "add bid request failed: %+v", err)
@@ -189,7 +190,7 @@ func OutBid(ctx context.Context, bidId string) error {
 	go func() {
 		result := &model.BiddingResult{
 			OrderNumber: bidId,
-			Status:      "LOST_BID",
+			Status:      model.StatusLostBid,
 		}
 		resultJson, _ := json.Marshal(result)
 		message := mq.Message{

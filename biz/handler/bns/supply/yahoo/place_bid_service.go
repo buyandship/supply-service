@@ -113,7 +113,9 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 			ErrMsg:  "The auction item is not available",
 		}
 	}
-	if req.TransactionType == "BUYOUT" {
+
+	price := 0
+	if req.TransactionType == consts.TransactionTypeBuyout {
 		if item.TaxinBidorbuy != 0 {
 			if req.Price != int32(item.TaxinBidorbuy) {
 				return nil, bizErr.BizError{
@@ -131,7 +133,11 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 				}
 			}
 		}
+		price = int(item.Bidorbuy)
+	} else {
+		price = int(item.BidInfo.NextBid.Price) // TBC: should display next bid price?
 	}
+
 	if !req.Partial && item.Quantity < int(req.Quantity) {
 		// TODO: Requested Quantity is not able to fulfil
 		return nil, bizErr.BizError{
@@ -146,17 +152,17 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 		RequestType: req.TransactionType,
 		OrderID:     req.YsRefID,
 		AuctionID:   req.AuctionID,
-		MaxBid:      int64(req.Price),
+		MaxBid:      int64(price),
 		Quantity:    int32(req.Quantity),
 		Partial:     false,
-		Status:      "CREATED",
+		Status:      model.StatusCreated,
 	}
 	if err := db.GetHandler().InsertBidRequest(ctx, order); err != nil {
 		hlog.CtxErrorf(ctx, "insert yahoo order failed: %+v", err)
 		return nil, err
 	}
 
-	if order.Status != "CREATED" {
+	if order.Status != model.StatusCreated {
 		hlog.CtxErrorf(ctx, "order already exists: %+v", order.Status)
 		// order already exists
 		return nil, bizErr.BizError{
@@ -172,7 +178,7 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 		YsRefID:         req.YsRefID,
 		TransactionType: req.TransactionType,
 		AuctionID:       req.AuctionID,
-		Price:           int(req.Price),
+		Price:           price,
 		Quantity:        int(req.Quantity),
 		Partial:         false,
 	}
@@ -199,7 +205,7 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 	if err := db.GetHandler().UpdateBuyoutRequest(ctx, &model.BidRequest{
 		OrderID:       req.YsRefID,
 		TransactionID: previewResp.ResultSet.Result.TransactionId,
-		Status:        "CREATED",
+		Status:        model.StatusCreated,
 		MaxBid:        int64(req.Price),
 	}); err != nil {
 		hlog.CtxErrorf(ctx, "update yahoo order failed: %+v", err)
@@ -219,16 +225,15 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 	}
 
 	// TODO: check if it's neccessary to update the bid request in database.
-	// TODO: determine if it's shopping item.
 	bidReq := yahoo.PlaceBidRequest{
 		YsRefID:         req.YsRefID,
 		TransactionType: req.TransactionType,
 		AuctionID:       req.AuctionID,
-		Price:           int(item.Bidorbuy),
+		Price:           price,
 		Quantity:        int(req.Quantity),
 		Partial:         req.Partial,
 		Signature:       previewResp.ResultSet.Result.Signature,
-		// TODO: IsShoppingItem
+		IsShoppingItem:  isShoppingItem(&item),
 	}
 
 	// check if it's buyout
@@ -241,4 +246,14 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 	}
 
 	return nil, nil
+}
+
+func isShoppingItem(item *yahoo.AuctionItemDetail) bool {
+	if item == nil {
+		return false
+	}
+	if item.ShoppingItemCode != "" && item.ShoppingItem.IsOptionEnabled {
+		return true
+	}
+	return false
 }

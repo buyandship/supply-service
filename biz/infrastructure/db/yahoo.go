@@ -57,7 +57,7 @@ func (h *H) GetBidRequestByAuctionID(ctx context.Context, auctionID string) (ord
 	db := h.cli.WithContext(ctx)
 
 	order = &yahoo.BidRequest{}
-	if err := db.Where("auction_id = ? AND status IN (?)", auctionID, []string{"CREATED", "BID_PROCESSING"}).First(order).Error; err != nil {
+	if err := db.Where("auction_id = ? AND status IN (?)", auctionID, []string{yahoo.StatusCreated, yahoo.StatusBiddingInProgress}).First(order).Error; err != nil {
 		if err != gorm.ErrRecordNotFound {
 			return nil, err
 		}
@@ -110,7 +110,7 @@ func (h *H) AddBidRequest(ctx context.Context, bid *yahoo.YahooTransaction) (err
 
 	// get transaction
 	var transaction yahoo.YahooTransaction
-	if err := tx.Model(&yahoo.YahooTransaction{}).Where("bid_request_id = ? and status = ?", bid.BidRequestID, "BIDDING_IN_PROGRESS").First(&transaction).Error; err != nil {
+	if err := tx.Model(&yahoo.YahooTransaction{}).Where("bid_request_id = ? and status = ?", bid.BidRequestID, yahoo.StatusBiddingInProgress).First(&transaction).Error; err != nil {
 		if err != gorm.ErrRecordNotFound {
 			tx.Rollback()
 			return err
@@ -118,7 +118,7 @@ func (h *H) AddBidRequest(ctx context.Context, bid *yahoo.YahooTransaction) (err
 	} else {
 		// out bid old transaction
 		if err := tx.Model(&yahoo.YahooTransaction{}).Where("id = ?", transaction.ID).Updates(&yahoo.YahooTransaction{
-			Status: "LOST_BID",
+			Status: yahoo.StatusOutBid,
 		}).Error; err != nil {
 			tx.Rollback()
 			return err
@@ -152,7 +152,7 @@ func (h *H) OutBidRequest(ctx context.Context, orderID string) (err error) {
 
 	// get transaction
 	var transaction yahoo.YahooTransaction
-	if err := tx.Model(&yahoo.YahooTransaction{}).Where("bid_request_id = ? and status = ?", orderID, "BIDDING_IN_PROGRESS").First(&transaction).Error; err != nil {
+	if err := tx.Model(&yahoo.YahooTransaction{}).Where("bid_request_id = ? and status = ?", orderID, yahoo.StatusBiddingInProgress).First(&transaction).Error; err != nil {
 		if err != gorm.ErrRecordNotFound {
 			tx.Rollback()
 			return err
@@ -160,7 +160,7 @@ func (h *H) OutBidRequest(ctx context.Context, orderID string) (err error) {
 	} else {
 		// out bid old transaction
 		if err := tx.Model(&yahoo.YahooTransaction{}).Where("id = ?", transaction.ID).Updates(&yahoo.YahooTransaction{
-			Status: "LOST_BID",
+			Status: yahoo.StatusOutBid,
 		}).Error; err != nil {
 			tx.Rollback()
 			return err
@@ -168,7 +168,7 @@ func (h *H) OutBidRequest(ctx context.Context, orderID string) (err error) {
 	}
 
 	if err := tx.Model(&yahoo.BidRequest{}).Where("order_id = ?", orderID).Updates(&yahoo.BidRequest{
-		Status: "LOST_BID",
+		Status: yahoo.StatusLostBid,
 	}).Error; err != nil {
 		tx.Rollback()
 		return err
