@@ -13532,7 +13532,7 @@ func (p *YahooGetMyWonListReq) String() string {
 type YahooGetSellingListReq struct {
 	SellerAucUserId string  `thrift:"sellerAucUserId,1" json:"sellerAucUserId" query:"sellerAucUserId"`
 	YsRefID         *string `thrift:"ys_ref_id,2,optional" json:"ys_ref_id,omitempty" query:"ys_ref_id"`
-	Start           *int32  `thrift:"start,3,optional" json:"start,omitempty" query:"start"`
+	Page            *int32  `thrift:"page,3,optional" json:"page,omitempty" query:"page"`
 	Status          *string `thrift:"status,4,optional" json:"status,omitempty" query:"status"`
 }
 
@@ -13553,13 +13553,13 @@ func (p *YahooGetSellingListReq) GetYsRefID() (v string) {
 	return *p.YsRefID
 }
 
-var YahooGetSellingListReq_Start_DEFAULT int32
+var YahooGetSellingListReq_Page_DEFAULT int32
 
-func (p *YahooGetSellingListReq) GetStart() (v int32) {
-	if !p.IsSetStart() {
-		return YahooGetSellingListReq_Start_DEFAULT
+func (p *YahooGetSellingListReq) GetPage() (v int32) {
+	if !p.IsSetPage() {
+		return YahooGetSellingListReq_Page_DEFAULT
 	}
-	return *p.Start
+	return *p.Page
 }
 
 var YahooGetSellingListReq_Status_DEFAULT string
@@ -13574,7 +13574,7 @@ func (p *YahooGetSellingListReq) GetStatus() (v string) {
 var fieldIDToName_YahooGetSellingListReq = map[int16]string{
 	1: "sellerAucUserId",
 	2: "ys_ref_id",
-	3: "start",
+	3: "page",
 	4: "status",
 }
 
@@ -13582,8 +13582,8 @@ func (p *YahooGetSellingListReq) IsSetYsRefID() bool {
 	return p.YsRefID != nil
 }
 
-func (p *YahooGetSellingListReq) IsSetStart() bool {
-	return p.Start != nil
+func (p *YahooGetSellingListReq) IsSetPage() bool {
+	return p.Page != nil
 }
 
 func (p *YahooGetSellingListReq) IsSetStatus() bool {
@@ -13693,7 +13693,7 @@ func (p *YahooGetSellingListReq) ReadField3(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI32(); err != nil {
 		return err
 	} else {
-		p.Start = &v
+		p.Page = &v
 	}
 	return nil
 }
@@ -13784,11 +13784,11 @@ WriteFieldEndError:
 }
 
 func (p *YahooGetSellingListReq) writeField3(oprot thrift.TProtocol) (err error) {
-	if p.IsSetStart() {
-		if err = oprot.WriteFieldBegin("start", thrift.I32, 3); err != nil {
+	if p.IsSetPage() {
+		if err = oprot.WriteFieldBegin("page", thrift.I32, 3); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI32(*p.Start); err != nil {
+		if err := oprot.WriteI32(*p.Page); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {

@@ -75,8 +75,8 @@ func (c *Client) GetSellingList(ctx context.Context, req *supply.YahooGetSelling
 	if req.YsRefID != nil {
 		params.Set("ys_ref_id", *req.YsRefID)
 	}
-	if req.Start != nil {
-		params.Set("start", strconv.Itoa(int(*req.Start)))
+	if req.Page != nil {
+		params.Set("page", strconv.Itoa(int(*req.Page)))
 	}
 	if req.Status != nil {
 		params.Set("status", *req.Status)

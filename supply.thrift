@@ -358,7 +358,7 @@ struct YahooGetMyWonListReq {
 struct YahooGetSellingListReq {
     1: string sellerAucUserId (api.query="sellerAucUserId")
     2: optional string ys_ref_id (api.query="ys_ref_id")
-    3: optional i32 start (api.query="start")
+    3: optional i32 page (api.query="page")
     4: optional string status (api.query="status")
 }
 
