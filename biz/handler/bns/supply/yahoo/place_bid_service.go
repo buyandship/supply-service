@@ -246,7 +246,7 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 		Quantity:        int(req.Quantity),
 		Partial:         req.Partial,
 		Signature:       previewResp.ResultSet.Result.Signature,
-		// TODO: IsShoppingItem
+		IsShoppingItem:  isShoppingItem(&auctionItemResp.ResultSet.Result),
 	}
 
 	// check if it's buyout
@@ -300,4 +300,14 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 	}
 
 	return nil, nil
+}
+
+func isShoppingItem(item *yahoo.AuctionItemDetail) bool {
+	if item == nil {
+		return false
+	}
+	if item.ShoppingItemCode != "" && item.ShoppingItem != nil && !item.ShoppingItem.IsOptionEnabled {
+		return true
+	}
+	return false
 }
