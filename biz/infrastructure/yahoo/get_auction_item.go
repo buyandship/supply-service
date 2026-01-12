@@ -540,7 +540,7 @@ type AuctionItemDetail struct {
 	ExternalFleaMarketInfo     *ExternalFleaMarketInfo `json:"ExternalFleaMarketInfo,omitempty"`
 	ShoppingSpecs              *ShoppingSpecs          `json:"ShoppingSpecs,omitempty"`
 	ItemTagList                *ItemTagList            `json:"ItemTagList,omitempty"`
-	ShoppingItem               ShoppingItem            `json:"ShoppingItem,omitempty"`
+	ShoppingItem               *ShoppingItem           `json:"ShoppingItem,omitempty"`
 	IsWatched                  bool                    `json:"IsWatched,omitempty" example:"true"`
 	NotifyID                   string                  `json:"NotifyID,omitempty" example:"notify_abc123"`
 	StoreSearchKeywords        string                  `json:"StoreSearchKeywords,omitempty" example:"CD,音楽,限定版"`
@@ -947,7 +947,7 @@ func (c *Client) MockGetAuctionItem(ctx context.Context, req AuctionItemRequest)
 					TotalItemTagList: 2,
 					Tag:              []string{"adidas", "Nike"},
 				},
-				ShoppingItem: ShoppingItem{
+				ShoppingItem: &ShoppingItem{
 					PostageSetId:    12345,
 					PostageId:       67890,
 					LeadTimeId:      5000,

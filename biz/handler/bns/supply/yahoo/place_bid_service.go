@@ -162,7 +162,17 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 		return nil, err
 	}
 
-	if order.Status != model.StatusCreated {
+	// save auction item when WIN_BID
+	go func() {
+		auctionItem := item.ToBidAuctionItem()
+		auctionItem.BidRequestID = req.YsRefID
+		auctionItem.ItemType = req.TransactionType
+		if err := db.GetHandler().InsertBidAuctionItem(ctx, auctionItem); err != nil {
+			hlog.CtxErrorf(ctx, "insert auction item failed: %+v", err)
+		}
+	}()
+
+	if order.Status != "CREATED" {
 		hlog.CtxErrorf(ctx, "order already exists: %+v", order.Status)
 		// order already exists
 		return nil, bizErr.BizError{
@@ -252,7 +262,7 @@ func isShoppingItem(item *yahoo.AuctionItemDetail) bool {
 	if item == nil {
 		return false
 	}
-	if item.ShoppingItemCode != "" && item.ShoppingItem.IsOptionEnabled {
+	if item.ShoppingItemCode != "" && item.ShoppingItem != nil && !item.ShoppingItem.IsOptionEnabled {
 		return true
 	}
 	return false

@@ -183,6 +183,11 @@ func (h *H) InsertBidAuctionItem(ctx context.Context, item *yahoo.BidAuctionItem
 
 	db := h.cli.WithContext(ctx)
 
+	var existing yahoo.BidAuctionItem
+	if err := db.Where("bid_request_id = ?", item.BidRequestID).First(&existing).Error; err == nil {
+		return nil
+	}
+
 	if err := db.Create(&item).Error; err != nil {
 		return err
 	}

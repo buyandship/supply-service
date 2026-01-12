@@ -3295,11 +3295,11 @@ paths:
         required: true
         type: string
       - in: query
+        name: page
+        type: integer
+      - in: query
         name: sellerAucUserId
         type: string
-      - in: query
-        name: start
-        type: integer
       - in: query
         name: status
         type: string

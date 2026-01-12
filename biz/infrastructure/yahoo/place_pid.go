@@ -7,6 +7,7 @@ import (
 
 	globalConfig "github.com/buyandship/bns-golib/config"
 	"github.com/buyandship/supply-service/biz/common/config"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
 // PlaceBidRequest represents a bid request
@@ -83,6 +84,7 @@ func (c *Client) PlaceBid(ctx context.Context, req *PlaceBidRequest) (*PlaceBidR
 
 	resp, err := c.makeRequest(ctx, "POST", path, params, nil, AuthTypeHMAC)
 	if err != nil {
+		hlog.CtxErrorf(ctx, "place bid failed: %+v", err)
 		return nil, err
 	}
 
