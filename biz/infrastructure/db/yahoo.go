@@ -256,3 +256,81 @@ func (h *H) SwitchYahooAccount(ctx context.Context, accountId int32) (err error)
 
 	return nil
 }
+
+func (h *H) WinBidRequest(ctx context.Context, orderID string, wonPrice int64) (err error) {
+	ctx, span := trace.StartDBOperation(ctx, "WinBidRequest")
+	defer trace.EndSpan(span, err)
+
+	tx := h.cli.WithContext(ctx).Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	// get bid request
+	var bidRequest yahoo.BidRequest
+	if err := tx.Model(&yahoo.BidRequest{}).Where("order_id = ?", orderID).First(&bidRequest).Error; err != nil {
+		if err != gorm.ErrRecordNotFound {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	if err := tx.Model(&yahoo.BidRequest{}).Where("order_id = ?", orderID).Updates(&yahoo.BidRequest{
+		Status: yahoo.StatusWinBid,
+	}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// get transaction
+	var transaction *yahoo.YahooTransaction
+	if err := tx.Model(&yahoo.YahooTransaction{}).Where("bid_request_id = ? AND status = ?", orderID, yahoo.StatusBiddingInProgress).First(transaction).Error; err != nil {
+		if err != gorm.ErrRecordNotFound {
+			tx.Rollback()
+			return err
+		} else {
+			// create new transaction
+			if err := tx.Create(&yahoo.YahooTransaction{
+				BidRequestID:  orderID,
+				Price:         wonPrice,
+				Status:        yahoo.StatusWinBid,
+				TransactionID: "TBC",
+			}).Error; err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+	}
+
+	if transaction != nil && transaction.Price != wonPrice {
+		if err := tx.Model(&yahoo.YahooTransaction{}).Where("id = ?", transaction.ID).Updates(&yahoo.YahooTransaction{
+			Status: yahoo.StatusOutBid,
+		}).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+		// insert new transaction
+		if err := tx.Create(&yahoo.YahooTransaction{
+			BidRequestID:  orderID,
+			Price:         wonPrice,
+			Status:        yahoo.StatusWinBid,
+			TransactionID: "TBC",
+		}).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	} else {
+		if err := tx.Model(&yahoo.YahooTransaction{}).
+			Where("bid_request_id = ? AND status = ?", orderID, yahoo.StatusBiddingInProgress).
+			Updates(&yahoo.YahooTransaction{
+				Status: yahoo.StatusWinBid,
+			}).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	return tx.Commit().Error
+}

@@ -837,37 +837,7 @@ func TestAuction() *yahoo.AuctionItemResponse {
 					BidQuantityLimit:                5,
 				},
 				AucUserIdContactUrl: "https://auctions.yahoo.co.jp/jp/show/contact?aID=x123456789",
-				WinnersInfo: &yahoo.WinnersInfo{
-					WinnersNum: 1,
-					Winner: []yahoo.Winner{
-						{
-							AucUserId: "winner_user_1",
-							Rating: yahoo.WinnerRating{
-								Point:       120,
-								IsSuspended: false,
-								IsDeleted:   false,
-								IsNotRated:  false,
-							},
-							IsRemovable:        true,
-							RemovableLimitTime: 1739836800,
-							WonQuantity:        1,
-							LastBidQuantity:    1,
-							WonPrice:           2480,
-							TaxinWonPrice:      2678.4,
-							LastBidTime:        1707955199,
-							BuyTime:            "2025-02-15T23:59:59+09:00",
-							IsFnaviBundledDeal: false,
-							ShoppingInfo: &yahoo.WinnerShoppingInfo{
-								OrderId: "order_12345",
-							},
-							DisplayName: "落札者1",
-							IconUrl128:  "https://s.yimg.jp/images/auct/profile/icon/128/winner_user_1.jpg",
-							IconUrl256:  "https://s.yimg.jp/images/auct/profile/icon/256/winner_user_1.jpg",
-							IconUrl512:  "https://s.yimg.jp/images/auct/profile/icon/512/winner_user_1.jpg",
-							IsStore:     false,
-						},
-					},
-				},
+				WinnersInfo:         &yahoo.WinnersInfo{},
 				ReservesInfo: &yahoo.ReservesInfo{
 					ReservesNum: 1,
 					Reserve: []yahoo.Reserve{

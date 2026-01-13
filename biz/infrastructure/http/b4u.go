@@ -16,17 +16,22 @@ import (
 type Notifier struct {
 	Endpoint string
 	Token    string
+
+	B4UEndpoint string
 }
 
 func GetNotifier() *Notifier {
 	endpoint := "https://b4u-admin-test.buynship.com"
+	b4uEndpoint := "https://b4u-req-api-test.buynship.com"
 	if config.GlobalAppConfig.Env == "prod" {
 		endpoint = "https://b4u-admin.buynship.com"
+		b4uEndpoint = "https://b4u-req-api.buynship.com"
 	}
 	token := config.GlobalAppConfig.GetString("b4u_token")
 	return &Notifier{
-		Endpoint: endpoint,
-		Token:    token,
+		Endpoint:    endpoint,
+		Token:       token,
+		B4UEndpoint: b4uEndpoint,
 	}
 }
 
@@ -63,19 +68,18 @@ func (n *Notifier) Notify(ctx context.Context, body any) error {
 	return nil
 }
 
-func (n *Notifier) NotifyBiddingStatus(ctx context.Context, batchNumber string, body []byte) error {
+func (n *Notifier) NotifyBiddingStatus(ctx context.Context, orderNumber string, body []byte) error {
 	cli := http.Client{
 		Timeout: 5 * time.Second,
 	}
 
-	url := fmt.Sprintf("%s/bns/orders/update_order_status/%s", n.Endpoint, batchNumber)
+	url := fmt.Sprintf("%s/bns/orders/update_order_status/%s", n.B4UEndpoint, orderNumber)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(body))
 	if err != nil {
 		return err
 	}
 
-	req.Header.Set("Authorization", fmt.Sprintf("Token %s", n.Token))
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := cli.Do(req)

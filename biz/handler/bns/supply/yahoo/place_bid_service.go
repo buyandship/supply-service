@@ -219,27 +219,29 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 		}
 	}
 
-	if err := db.GetHandler().UpdateBuyoutRequest(ctx, &model.BidRequest{
-		OrderID:       req.YsRefID,
-		TransactionID: previewResp.ResultSet.Result.TransactionId,
-		Status:        model.StatusCreated,
-		MaxBid:        int64(req.Price),
-	}); err != nil {
-		hlog.CtxErrorf(ctx, "update yahoo order failed: %+v", err)
+	/*
 		if err := db.GetHandler().UpdateBuyoutRequest(ctx, &model.BidRequest{
-			OrderID:      req.YsRefID,
-			Status:       "FAILED",
-			MaxBid:       int64(req.Price),
-			ErrorMessage: err.Error(),
+			OrderID:       req.YsRefID,
+			TransactionID: previewResp.ResultSet.Result.TransactionId,
+			Status:        model.StatusCreated,
+			MaxBid:        int64(req.Price),
 		}); err != nil {
 			hlog.CtxErrorf(ctx, "update yahoo order failed: %+v", err)
+			if err := db.GetHandler().UpdateBuyoutRequest(ctx, &model.BidRequest{
+				OrderID:      req.YsRefID,
+				Status:       "FAILED",
+				MaxBid:       int64(req.Price),
+				ErrorMessage: err.Error(),
+			}); err != nil {
+				hlog.CtxErrorf(ctx, "update yahoo order failed: %+v", err)
+			}
+			return nil, bizErr.BizError{
+				Status:  httpConsts.StatusInternalServerError,
+				ErrCode: httpConsts.StatusInternalServerError,
+				ErrMsg:  "internal server error",
+			}
 		}
-		return nil, bizErr.BizError{
-			Status:  httpConsts.StatusInternalServerError,
-			ErrCode: httpConsts.StatusInternalServerError,
-			ErrMsg:  "internal server error",
-		}
-	}
+	*/
 
 	// TODO: check if it's neccessary to update the bid request in database.
 	bidReq := yahoo.PlaceBidRequest{

@@ -2,11 +2,8 @@ package yahoo
 
 import (
 	"context"
-	"fmt"
-	"time"
 
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"github.com/google/uuid"
 
 	ServiceConfig "github.com/buyandship/supply-service/biz/common/config"
 	"github.com/buyandship/supply-service/biz/infrastructure/http"
@@ -86,20 +83,18 @@ func RetryQueueConsumer() {
 			// For first attempt, headers may be empty
 			retryAttempt := getRetryAttemptFromHeaders(msg.Headers)
 
-			// get batch number from headers
-			batchNumber := getBatchNumberFromHeaders(msg.Headers)
-			if batchNumber == "" {
-				hlog.Errorf("batch number not found in headers")
+			hlog.Debugf("retry queue body: %s", string(msg.Body))
+
+			orderNumber := getOrderNumberFromHeaders(msg.Headers)
+			if orderNumber == "" {
+				hlog.Errorf("order number not found in headers")
 				if err := msg.Ack(false); err != nil {
 					hlog.Errorf("failed to ack message: %v", err)
 				}
 				continue
 			}
-
-			hlog.Debugf("retry queue body: %s", string(msg.Body))
-
 			// Process your message
-			if err := http.GetNotifier().NotifyBiddingStatus(context.Background(), batchNumber, msg.Body); err != nil {
+			if err := http.GetNotifier().NotifyBiddingStatus(context.Background(), orderNumber, msg.Body); err != nil {
 
 				retryAttempt++
 				// Increment retry attempt
@@ -164,17 +159,6 @@ func getRetryAttemptFromHeaders(headers amqp.Table) int {
 	}
 }
 
-func getBatchNumberFromHeaders(headers amqp.Table) string {
-	if headers == nil {
-		return ""
-	}
-	batchNumber, exists := headers["x-batch-number"]
-	if !exists {
-		return ""
-	}
-	return fmt.Sprintf("%s_%d_%s", batchNumber.(string), time.Now().Unix(), uuid.New().String())
-}
-
 func GetRetryMessage(attempt int, publishing amqp.Publishing) mq.Message {
 	switch attempt {
 	case 1:
@@ -209,4 +193,15 @@ func GetRetryMessage(attempt int, publishing amqp.Publishing) mq.Message {
 			Publishing: publishing,
 		}
 	}
+}
+
+func getOrderNumberFromHeaders(headers amqp.Table) string {
+	if headers == nil {
+		return ""
+	}
+	orderNumber, exists := headers["x-order-number"]
+	if !exists {
+		return ""
+	}
+	return orderNumber.(string)
 }

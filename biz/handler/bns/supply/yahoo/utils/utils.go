@@ -2,6 +2,9 @@ package utils
 
 import (
 	"context"
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -18,7 +21,6 @@ import (
 	"github.com/buyandship/supply-service/biz/model/mercari"
 	model "github.com/buyandship/supply-service/biz/model/yahoo"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"github.com/google/uuid"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -41,17 +43,24 @@ func GetAccount(ctx context.Context, accId int32) (*mercari.Account, error) {
 	return acc, nil
 }
 
+func generateHmac(bidId string) string {
+	hmac := hmac.New(sha256.New, []byte(GlobalConfig.GlobalAppConfig.GetString("b4u_secret")))
+	hmac.Write([]byte(bidId))
+	return hex.EncodeToString(hmac.Sum(nil))
+}
+
 func GetAuctionItem(ctx context.Context, auctionID string) (*yahoo.AuctionItemResponse, error) {
-	if GlobalConfig.GlobalAppConfig.Env == "dev" {
-		if auctionID == "bravo_test_item" {
-			return mock.TestAuction(), nil
-		}
-	}
+	auctionItemResp := &yahoo.AuctionItemResponse{}
 
 	client := yahoo.GetClient()
-	auctionItemResp, err := client.GetAuctionItemAuth(ctx, yahoo.AuctionItemRequest{AuctionID: auctionID})
-	if err != nil {
-		return nil, err
+	if GlobalConfig.GlobalAppConfig.Env == "dev" && auctionID == "bravo_test_item" {
+		auctionItemResp = mock.TestAuction()
+	} else {
+		resp, err := client.GetAuctionItemAuth(ctx, yahoo.AuctionItemRequest{AuctionID: auctionID})
+		if err != nil {
+			return nil, err
+		}
+		auctionItemResp = resp
 	}
 
 	// TODO: update bid request status
@@ -66,19 +75,23 @@ func GetAuctionItem(ctx context.Context, auctionID string) (*yahoo.AuctionItemRe
 			return
 		}
 		// TODO: check win bid
-		if auctionItemResp.ResultSet.Result.WinnersInfo.Winner != nil {
+		if auctionItemResp != nil && auctionItemResp.ResultSet.Result.WinnersInfo != nil && auctionItemResp.ResultSet.Result.WinnersInfo.Winner != nil {
 			if auctionItemResp.ResultSet.Result.WinnersInfo.Winner[0].AucUserId == "AnzTKsBM5HUpBc3CCQc3dHpETkds1" { // TODO: change to list
 				// Win bid
-				if err := WinBid(ctx, bidRequest.OrderID); err != nil {
+				if err := WinBid(ctx, bidRequest.OrderID, int64(auctionItemResp.ResultSet.Result.WinnersInfo.Winner[0].WonPrice)); err != nil {
 					hlog.CtxErrorf(ctx, "win bid failed: %+v", err)
 					return
 				}
 			} else {
 				// OUTBID
+				if err := OutBid(ctx, bidRequest.OrderID); err != nil {
+					hlog.CtxErrorf(ctx, "out bid failed: %+v", err)
+					return
+				}
 			}
+			return
 		}
 
-		// TBC: use TaxinBidPrice or Price?
 		if int64(auctionItemResp.ResultSet.Result.Price) > bidRequest.MaxBid {
 			// out bid
 			if err := OutBid(ctx, bidRequest.OrderID); err != nil {
@@ -218,18 +231,7 @@ func OutBid(ctx context.Context, bidId string) error {
 			OrderNumber: bidId,
 			Status:      model.StatusLostBid,
 		}
-		resultJson, _ := json.Marshal(result)
-		message := mq.Message{
-			Exchange:   config.RetryExchange,
-			RoutingKey: config.RetryRoutingKey,
-			Publishing: amqp.Publishing{
-				Body: resultJson,
-				Headers: amqp.Table{
-					"x-batch-number": uuid.New().String(),
-				},
-			},
-		}
-		if err := mq.SendMessage(message); err != nil {
+		if err := notifyB4UBiddingResult(ctx, result); err != nil {
 			hlog.CtxErrorf(ctx, "send message failed: %+v", err)
 		}
 	}()
@@ -237,20 +239,34 @@ func OutBid(ctx context.Context, bidId string) error {
 	return nil
 }
 
-func WinBid(ctx context.Context, bidId string) error {
-	// TODO: update bid request status to [WIN_BID]
+func WinBid(ctx context.Context, bidId string, wonPrice int64) error {
+	if err := db.GetHandler().WinBidRequest(ctx, bidId, wonPrice); err != nil {
+		hlog.CtxErrorf(ctx, "win bid request failed: %+v", err)
+		return err
+	}
+	go func() {
+		result := &model.BiddingResult{
+			MetaInfo: model.BiddingMetaInfo{
+				WonPrice: wonPrice,
+			},
+			OrderNumber: bidId,
+			Status:      model.StatusWinBid,
+		}
+		if err := notifyB4UBiddingResult(ctx, result); err != nil {
+			hlog.CtxErrorf(ctx, "notifyB4UBiddingResulte failed: %+v", err)
+		}
+	}()
 	return nil
 }
 
-func NotifyB4UBiddingResult(ctx context.Context, result *model.BiddingResult) error {
+func notifyB4UBiddingResult(ctx context.Context, result *model.BiddingResult) error {
+	result.Hmac = generateHmac(result.OrderNumber)
 	jsonBody, err := json.Marshal(result)
 	if err != nil {
 		return err
 	}
-
 	headers := amqp.Table{}
-	// TODO: generate batch number
-	headers["x-batch-number"] = uuid.New().String()
+	headers["x-order-number"] = result.OrderNumber
 
 	return mq.SendMessage(mq.Message{
 		Exchange:   config.RetryExchange,

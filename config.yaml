@@ -15,6 +15,7 @@ yahoo:
   secret_key: "yDD0BhPdCmW9w13urb9VtX1wKQJHJKmFkH7mTpDYM8jo4pP6t7_QEeuuXVSaj3UnmHovmYNjHK1hO-VDHrHdhw"
 hmac_secret: "utmtuacz-hhme-fht4-gba6-3lg4vi8fzpu6"
 b4u_token: "y7CgIr0j9TNidRv64hRqPlLffO4RePxp"
+b4u_secret: "u09fuitdh)-o05%uogmth5f%eh84@bueqv#x!)@-_ug!fwg@7n"
 otel:
   endpoint: "ec2-user-tempo-1:4317"
 rabbitmq:

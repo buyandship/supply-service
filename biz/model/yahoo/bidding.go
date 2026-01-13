@@ -9,4 +9,5 @@ type BiddingResult struct {
 	Status       string          `json:"status"`
 	OrderNumber  string          `json:"order_number"`
 	ErrorMessage string          `json:"error_message"`
+	Hmac         string          `json:"hmac"`
 }
