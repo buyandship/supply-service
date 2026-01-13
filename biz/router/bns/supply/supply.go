@@ -56,6 +56,7 @@ func Register(r *server.Hertz) {
 					_yahoo.GET("/sellingList", append(_yahoogetsellinglistserviceMw(), supply.YahooGetSellingListService)...)
 					_yahoo.POST("/switch_account", append(_yahoomanualswitchaccountserviceMw(), supply.YahooManualSwitchAccountService)...)
 					_yahoo.GET("/transaction", append(_yahoogettransactionserviceMw(), supply.YahooGetTransactionService)...)
+					_yahoo.POST("/update_next_bid_price", append(_yahooupdatenextbidpriceserviceMw(), supply.YahooUpdateNextBidPriceService)...)
 				}
 			}
 			{

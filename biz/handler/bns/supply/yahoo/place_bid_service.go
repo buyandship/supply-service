@@ -135,7 +135,14 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 		}
 		price = int(item.Bidorbuy)
 	} else {
-		price = int(item.BidInfo.NextBid.Price) // TBC: should display next bid price?
+		price = int(req.Price) // TBC: should display next bid price?
+		if int(req.Price) < int(item.BidInfo.NextBid.Price) {
+			return nil, bizErr.BizError{
+				Status:  httpConsts.StatusUnprocessableEntity,
+				ErrCode: httpConsts.StatusUnprocessableEntity, // TODO: define error code
+				ErrMsg:  "The request price is not greater than the current price",
+			}
+		}
 	}
 
 	if !req.Partial && item.Quantity < int(req.Quantity) {

@@ -409,4 +409,6 @@ service SupplyService {
     string YahooGetSellingListService(1: YahooGetSellingListReq req) (api.get="/v1/supplysrv/internal/yahoo/sellingList")
     string YahooDeleteMyWonListService(1: YahooDeleteMyWonListReq req) (api.delete="/v1/supplysrv/internal/yahoo/myWonList")
     string YahooManualSwitchAccountService(1: YahooManualSwitchAccountReq req) (api.post="/v1/supplysrv/internal/yahoo/switch_account")
+
+    string YahooUpdateNextBidPriceService() (api.post="/v1/supplysrv/internal/yahoo/update_next_bid_price")
 }

@@ -2086,6 +2086,11 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/supplysrv/internal/yahoo/update_next_bid_price": {
+            "post": {
+                "responses": {}
+            }
+        },
         "/v1/supplysrv/public/mercari/release_account": {
             "post": {
                 "parameters": [

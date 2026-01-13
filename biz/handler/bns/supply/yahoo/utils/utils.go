@@ -8,11 +8,13 @@ import (
 	"time"
 
 	"github.com/buyandship/bns-golib/cache"
+	GlobalConfig "github.com/buyandship/bns-golib/config"
 	"github.com/buyandship/supply-service/biz/common/config"
 	"github.com/buyandship/supply-service/biz/common/consts"
 	"github.com/buyandship/supply-service/biz/infrastructure/db"
 	"github.com/buyandship/supply-service/biz/infrastructure/mq"
 	"github.com/buyandship/supply-service/biz/infrastructure/yahoo"
+	"github.com/buyandship/supply-service/biz/mock"
 	"github.com/buyandship/supply-service/biz/model/mercari"
 	model "github.com/buyandship/supply-service/biz/model/yahoo"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -40,6 +42,12 @@ func GetAccount(ctx context.Context, accId int32) (*mercari.Account, error) {
 }
 
 func GetAuctionItem(ctx context.Context, auctionID string) (*yahoo.AuctionItemResponse, error) {
+	if GlobalConfig.GlobalAppConfig.Env == "dev" {
+		if auctionID == "bravo_test_item" {
+			return mock.TestAuction(), nil
+		}
+	}
+
 	client := yahoo.GetClient()
 	auctionItemResp, err := client.GetAuctionItemAuth(ctx, yahoo.AuctionItemRequest{AuctionID: auctionID})
 	if err != nil {
@@ -49,12 +57,26 @@ func GetAuctionItem(ctx context.Context, auctionID string) (*yahoo.AuctionItemRe
 	// TODO: update bid request status
 	go func() {
 		// get bid request
-		bidRequest, err := db.GetHandler().GetBidRequestByAuctionID(ctx, auctionID)
+		bidRequest, err := db.GetHandler().GetBidRequestByAuctionID(ctx, auctionID, "")
 		if err != nil {
 			hlog.CtxErrorf(ctx, "get bid request failed: %+v", err)
 			return
 		}
+		if bidRequest == nil {
+			return
+		}
 		// TODO: check win bid
+		if auctionItemResp.ResultSet.Result.WinnersInfo.Winner != nil {
+			if auctionItemResp.ResultSet.Result.WinnersInfo.Winner[0].AucUserId == "AnzTKsBM5HUpBc3CCQc3dHpETkds1" { // TODO: change to list
+				// Win bid
+				if err := WinBid(ctx, bidRequest.OrderID); err != nil {
+					hlog.CtxErrorf(ctx, "win bid failed: %+v", err)
+					return
+				}
+			} else {
+				// OUTBID
+			}
+		}
 
 		// TBC: use TaxinBidPrice or Price?
 		if int64(auctionItemResp.ResultSet.Result.Price) > bidRequest.MaxBid {
@@ -119,7 +141,7 @@ func Buyout(ctx context.Context, req *yahoo.PlaceBidRequest, item *yahoo.Auction
 func Bid(ctx context.Context, req *yahoo.PlaceBidRequest, item *yahoo.AuctionItemDetail) (resp *yahoo.PlaceBidResult, err error) {
 	// Place bid
 	// 1. check if the bid request for this item is already exists
-	cBid, err := db.GetHandler().GetBidRequestByAuctionID(ctx, req.AuctionID)
+	cBid, err := db.GetHandler().GetBidRequestByAuctionID(ctx, req.AuctionID, req.YsRefID)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "get bid request failed: %+v", err)
 		return nil, err
@@ -135,6 +157,7 @@ func Bid(ctx context.Context, req *yahoo.PlaceBidRequest, item *yahoo.AuctionIte
 		} else {
 			outBidOrderId = req.YsRefID
 		}
+		hlog.CtxDebugf(ctx, "out bid order id: %s, cBid.MaxBid: %d, req.Price: %d", outBidOrderId, cBid.MaxBid, req.Price)
 		if err := OutBid(ctx, outBidOrderId); err != nil {
 			hlog.CtxErrorf(ctx, "out bid failed: %+v", err)
 			return nil, err
@@ -167,6 +190,9 @@ func AddBid(ctx context.Context, req *yahoo.PlaceBidRequest, item *yahoo.Auction
 		return nil, err
 	}
 
+	// update the next bid price
+	mock.UpdateNextBidPrice()
+
 	// update bid request status to [BID_PROCESSING]
 	if err := db.GetHandler().AddBidRequest(ctx, &model.YahooTransaction{
 		BidRequestID:  req.YsRefID,
@@ -198,6 +224,9 @@ func OutBid(ctx context.Context, bidId string) error {
 			RoutingKey: config.RetryRoutingKey,
 			Publishing: amqp.Publishing{
 				Body: resultJson,
+				Headers: amqp.Table{
+					"x-batch-number": uuid.New().String(),
+				},
 			},
 		}
 		if err := mq.SendMessage(message); err != nil {
@@ -209,6 +238,7 @@ func OutBid(ctx context.Context, bidId string) error {
 }
 
 func WinBid(ctx context.Context, bidId string) error {
+	// TODO: update bid request status to [WIN_BID]
 	return nil
 }
 

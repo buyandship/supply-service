@@ -1,6 +1,9 @@
 package mock
 
 import (
+	"context"
+
+	"github.com/buyandship/bns-golib/cache"
 	"github.com/buyandship/bns-golib/config"
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
 	"github.com/buyandship/supply-service/biz/infrastructure/mercari"
@@ -574,4 +577,370 @@ func MockYahooGetAuctionItemDetail(resp *yahoo.AuctionItemResponse) error {
 	}
 
 	return nil
+}
+
+func UpdateNextBidPrice() {
+	p := &yahoo.AuctionItemResponse{}
+	if err := cache.GetRedisClient().Get(context.Background(), "bravo_test_item", p); err != nil {
+		return
+	}
+
+	p.ResultSet.Result.Price = float64(p.ResultSet.Result.BidInfo.NextBid.Price)
+	if p.ResultSet.Result.Price > 2000 {
+		// Win bid
+		p.ResultSet.Result.WinnersInfo.Winner = []yahoo.Winner{{
+			AucUserId: "AnzTKsBM5HUpBc3CCQc3dHpETkds1",
+			Rating: yahoo.WinnerRating{
+				Point: 150,
+			},
+			WonPrice: int(p.ResultSet.Result.Price),
+		}}
+	}
+	p.ResultSet.Result.TaxinPrice = float64(p.ResultSet.Result.BidInfo.NextBid.Price) * 1.1
+	p.ResultSet.Result.BidInfo.NextBid.Price += 100
+	if err := cache.GetRedisClient().Set(context.Background(), "bravo_test_item", p, 0); err != nil {
+		return
+	}
+
+}
+
+func TestAuction() *yahoo.AuctionItemResponse {
+	p := &yahoo.AuctionItemResponse{}
+	if err := cache.GetRedisClient().Get(context.Background(), "bravo_test_item", p); err == nil {
+		return p
+	}
+
+	initProduct := &yahoo.AuctionItemResponse{
+		ResultSet: struct {
+			TotalResultsAvailable int                     `json:"@totalResultsAvailable"`
+			TotalResultsReturned  int                     `json:"@totalResultsReturned"`
+			FirstResultPosition   int                     `json:"@firstResultPosition"`
+			Result                yahoo.AuctionItemDetail `json:"Result"`
+		}{
+			Result: yahoo.AuctionItemDetail{
+				AuctionID:      "bravo_test_item",
+				CategoryID:     22216,
+				CategoryFarm:   2,
+				CategoryIdPath: "0,2084005403,22216",
+				CategoryPath:   "オークション > 音楽 > CD > R&B、ソウル",
+				Title:          "【新品未開封】サンプルCD アルバム 限定版",
+				SeoKeywords:    "CD,R&B,ソウル,新品,未開封",
+				Seller: yahoo.SellerInfo{
+					AucUserId: "AnzTKsBM5HUpBc3CCQc3dHpETkds1",
+					Rating: yahoo.Rating{
+						Point:                   150,
+						TotalGoodRating:         145,
+						TotalNormalRating:       3,
+						TotalBadRating:          2,
+						SellerTotalGoodRating:   120,
+						SellerTotalNormalRating: 2,
+						SellerTotalBadRating:    1,
+						IsSuspended:             false,
+						IsDeleted:               false,
+					},
+					AucUserIdItemListURL: "https://auctions.yahooapis.jp/AuctionWebService/V2/sellingList?appid=xxxxx&ItemListAucUserIdUrl=sample_seller_123",
+					AucUserIdRatingURL:   "https://auctions.yahooapis.jp/AuctionWebService/V1/ShowRating?appid=xxxxx&RatingAucUserIdUrl=sample_seller_123",
+					DisplayName:          "サンプルセラー",
+					StoreName:            "サンプルストア",
+					IconUrl128:           "https://s.yimg.jp/images/auct/profile/icon/128/sample_seller_123.jpg",
+					IconUrl256:           "https://s.yimg.jp/images/auct/profile/icon/256/sample_seller_123.jpg",
+					IconUrl512:           "https://s.yimg.jp/images/auct/profile/icon/512/sample_seller_123.jpg",
+					IsStore:              true,
+					ShoppingSellerId:     "store_12345",
+					Performance:          map[string]interface{}{},
+				},
+				ShoppingItemCode: "shopping_item_abc123",
+				AuctionItemUrl:   "https://page.auctions.yahoo.co.jp/jp/auction/x123456789",
+				ImgColor:         "red",
+				Thumbnails: yahoo.Thumbnails{
+					Thumbnail1: "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890abc.jpg",
+					Thumbnail2: "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890def.jpg",
+					Thumbnail3: "https://auctions.c.yimg.jp/images.auctions.yahoo.co.jp/image/dr000/auc0101/users/1/2/3/4/sample_user-thumb-1234567890ghi.jpg",
+				},
+				Initprice:         1000,
+				LastInitprice:     1200,
+				Price:             1000,
+				TaxinStartPrice:   1100,
+				TaxinPrice:        1100,
+				TaxinBidorbuy:     5500,
+				Bidorbuy:          5000,
+				TaxRate:           10,
+				Quantity:          2,
+				AvailableQuantity: 1,
+				WatchListNum:      42,
+				Bids:              5,
+				YPoint:            10,
+				ItemStatus: yahoo.ItemStatus{
+					Condition: "new",
+					Comment:   "新品・未開封品です",
+				},
+				ItemReturnable: yahoo.ItemReturnable{
+					Allowed: true,
+					Comment: "未開封のため返品可能です",
+				},
+				StartTime:                 "2025-01-15T10:00:00+09:00",
+				EndTime:                   "2025-02-15T23:59:59+09:00",
+				IsBidCreditRestrictions:   true,
+				IsBidderRestrictions:      true,
+				IsBidderRatioRestrictions: false,
+				IsEarlyClosing:            false,
+				IsAutomaticExtension:      true,
+				IsOffer:                   true,
+				IsCharity:                 false,
+				Option: yahoo.Option{
+					StoreIcon:            "https://image.auctions.yahoo.co.jp/images/store.gif",
+					FeaturedIcon:         "https://image.auctions.yahoo.co.jp/images/featured.gif",
+					FreeshippingIcon:     "https://image.auctions.yahoo.co.jp/images/freeshipping.gif",
+					NewItemIcon:          "https://image.auctions.yahoo.co.jp/images/newitem.gif",
+					EasyPaymentIcon:      "https://img.yahoo.co.jp/images/pay/icon_s16.gif",
+					IsTradingNaviAuction: true,
+				},
+				Description:          "<![CDATA[新品未開封のCDアルバムです。限定版となります。<br>送料無料でお届けします。]]>",
+				ItemDescriptionURL:   "https://pageX.auctions.yahoo.co.jp/jp/show/description?aID=x123456789&plainview=1",
+				DescriptionInputType: "html",
+				Payment: yahoo.Payment{
+					YBank: map[string]interface{}{},
+					EasyPayment: &yahoo.EasyPayment{
+						SafeKeepingPayment: "1.00",
+						IsCreditCard:       true,
+						AllowInstallment:   true,
+						IsPayPay:           true,
+					},
+					Bank: &yahoo.BankPayment{
+						TotalBankMethodAvailable: 3,
+						Method: []yahoo.BankMethod{
+							{Name: "三菱UFJ銀行", BankID: "0005"},
+							{Name: "みずほ銀行", BankID: "0001"},
+							{Name: "ゆうちょ銀行", BankID: "9900"},
+						},
+					},
+					CashRegistration: "可能",
+					PostalTransfer:   "可能",
+					PostalOrder:      "可能",
+					CashOnDelivery:   "可能",
+					Other: &yahoo.OtherPayment{
+						TotalOtherMethodAvailable: 1,
+						Method:                    []string{"手渡し"},
+					},
+				},
+				BlindBusiness:              "impossible",
+				SevenElevenReceive:         "impossible",
+				ChargeForShipping:          "seller",
+				Location:                   "東京都",
+				IsWorldwide:                true,
+				ShipTime:                   "after",
+				ShippingInput:              "now",
+				IsYahunekoPack:             true,
+				IsJPOfficialDelivery:       true,
+				IsPrivacyDeliveryAvailable: true,
+				ShipSchedule:               1,
+				ManualStartTime:            "2025-01-15T10:00:00+09:00",
+				Shipping: &yahoo.Shipping{
+					TotalShippingMethodAvailable: 4,
+					LowestIndex:                  0,
+				},
+				BaggageInfo: yahoo.BaggageInfo{
+					Size:        "～70cm",
+					SizeIndex:   1,
+					Weight:      "～4kg",
+					WeightIndex: 2,
+				},
+				IsAdult:            false,
+				IsCreature:         false,
+				IsSpecificCategory: false,
+				IsCharityCategory:  false,
+				CharityOption: &yahoo.CharityOption{
+					Proportion: 10,
+				},
+				AnsweredQAndANum:  3,
+				Status:            "open",
+				CpaRate:           5,
+				BiddingViaCpa:     true,
+				BrandLineIDPath:   "brand123|line456",
+				BrandLineNamePath: "サンプルブランド|サンプルライン",
+				ItemSpec: yahoo.ItemSpec{
+					Size:    "M",
+					Segment: "メンズ",
+				},
+				CatalogId:   "catalog_12345",
+				ProductName: "サンプルCD アルバム",
+				Car: &yahoo.Car{
+					TotalCosts:              250000,
+					TaxinTotalCosts:         270000,
+					TotalPrice:              1250000,
+					TaxinTotalPrice:         1350000,
+					TotalBidorbuyPrice:      1500000,
+					TaxinTotalBidorbuyPrice: 1620000,
+					OverheadCosts:           150000,
+					TaxinOverheadCosts:      162000,
+					LegalCosts:              100000,
+					ContactTelNumber:        "03-1234-5678",
+					ContactReceptionTime:    "平日10:00-18:00",
+					ContactUrl:              "https://example.com/contact",
+					Regist: yahoo.CarRegist{
+						Model: "2020年式",
+					},
+					Options: yahoo.CarOptions{
+						Item: []string{"カーナビ", "ETC", "バックカメラ"},
+					},
+					TotalAmountComment: "諸費用込みの総額です",
+				},
+				OfferNum:              2,
+				HasOfferAccept:        false,
+				ArticleNumber:         "1234567890123",
+				IsDsk:                 true,
+				CategoryInsuranceType: 1,
+				ExternalFleaMarketInfo: &yahoo.ExternalFleaMarketInfo{
+					IsWinner: false,
+				},
+				ShoppingSpecs: &yahoo.ShoppingSpecs{
+					TotalShoppingSpecs: 2,
+					Spec: []yahoo.ShoppingSpec{
+						{ID: 100, ValueID: 1001},
+						{ID: 200, ValueID: 2001},
+					},
+				},
+				ItemTagList: &yahoo.ItemTagList{
+					TotalItemTagList: 2,
+					Tag:              []string{"adidas", "Nike"},
+				},
+				ShoppingItem: &yahoo.ShoppingItem{
+					PostageSetId:    12345,
+					PostageId:       67890,
+					LeadTimeId:      5000,
+					ItemWeight:      500,
+					IsOptionEnabled: true,
+				},
+				IsWatched:           true,
+				NotifyID:            "notify_abc123",
+				StoreSearchKeywords: "CD,音楽,限定版",
+				SellingInfo: &yahoo.SellingInfo{
+					PageView:                        1250,
+					WatchListNum:                    42,
+					ReportedViolationNum:            0,
+					AnsweredQAndANum:                3,
+					UnansweredQAndANum:              1,
+					OfferNum:                        2,
+					UnansweredOfferNum:              0,
+					AffiliateRatio:                  5,
+					PageViewFromAff:                 180,
+					WatchListNumFromAff:             8,
+					BidsFromAff:                     2,
+					IsWon:                           false,
+					IsFirstSubmit:                   true,
+					Duration:                        7,
+					FirstAutoResubmitAvailableCount: 3,
+					AutoResubmitAvailableCount:      3,
+					FeaturedDpd:                     "500",
+					ResubmitPriceDownRatio:          5,
+					IsNoResubmit:                    false,
+					BidQuantityLimit:                5,
+				},
+				AucUserIdContactUrl: "https://auctions.yahoo.co.jp/jp/show/contact?aID=x123456789",
+				WinnersInfo: &yahoo.WinnersInfo{
+					WinnersNum: 1,
+					Winner: []yahoo.Winner{
+						{
+							AucUserId: "winner_user_1",
+							Rating: yahoo.WinnerRating{
+								Point:       120,
+								IsSuspended: false,
+								IsDeleted:   false,
+								IsNotRated:  false,
+							},
+							IsRemovable:        true,
+							RemovableLimitTime: 1739836800,
+							WonQuantity:        1,
+							LastBidQuantity:    1,
+							WonPrice:           2480,
+							TaxinWonPrice:      2678.4,
+							LastBidTime:        1707955199,
+							BuyTime:            "2025-02-15T23:59:59+09:00",
+							IsFnaviBundledDeal: false,
+							ShoppingInfo: &yahoo.WinnerShoppingInfo{
+								OrderId: "order_12345",
+							},
+							DisplayName: "落札者1",
+							IconUrl128:  "https://s.yimg.jp/images/auct/profile/icon/128/winner_user_1.jpg",
+							IconUrl256:  "https://s.yimg.jp/images/auct/profile/icon/256/winner_user_1.jpg",
+							IconUrl512:  "https://s.yimg.jp/images/auct/profile/icon/512/winner_user_1.jpg",
+							IsStore:     false,
+						},
+					},
+				},
+				ReservesInfo: &yahoo.ReservesInfo{
+					ReservesNum: 1,
+					Reserve: []yahoo.Reserve{
+						{
+							AucUserId: "reserve_user_1",
+							Rating: yahoo.ReserveRating{
+								Point:       85,
+								IsSuspended: false,
+								IsDeleted:   false,
+							},
+							LastBidQuantity:   1,
+							LastBidPrice:      2450,
+							TaxinLastBidPrice: 2646,
+							LastBidTime:       1707955150,
+							DisplayName:       "次点者1",
+							IconUrl128:        "https://s.yimg.jp/images/auct/profile/icon/128/reserve_user_1.jpg",
+							IconUrl256:        "https://s.yimg.jp/images/auct/profile/icon/256/reserve_user_1.jpg",
+							IconUrl512:        "https://s.yimg.jp/images/auct/profile/icon/512/reserve_user_1.jpg",
+							IsStore:           false,
+						},
+					},
+				},
+				CancelsInfo: &yahoo.CancelsInfo{
+					CancelsNum: 0,
+					Cancel:     []yahoo.Cancel{},
+				},
+				BidInfo: &yahoo.BidInfo{
+					IsHighestBidder: true,
+					IsWinner:        false,
+					IsDeletedWinner: false,
+					IsNextWinner:    false,
+					LastBid: yahoo.LastBid{
+						Price:              1000,
+						TaxinPrice:         1100,
+						Quantity:           1,
+						Partial:            false,
+						IsFnaviBundledDeal: false,
+					},
+					NextBid: yahoo.NextBid{
+						Price:         1100,
+						LimitQuantity: 1,
+						UnitPrice:     100,
+					},
+				},
+				OfferInfo: &yahoo.OfferInfo{
+					OfferCondition:      1,
+					SellerOfferredPrice: 4500,
+					BidderOfferredPrice: 4000,
+					RemainingOfferNum:   2,
+				},
+				EasyPaymentInfo: &yahoo.EasyPaymentInfo{
+					EasyPayment: yahoo.EasyPaymentDetail{
+						AucUserId:  "winner_user_1",
+						Status:     "completed",
+						LimitTime:  1710547199,
+						UpdateTime: 1709337599,
+					},
+				},
+				StorePayment: &yahoo.StorePayment{
+					TotalStorePaymentMethodAvailable: 2,
+					Method:                           []string{"クレジットカード", "代金引換"},
+					UpdateTime:                       1704614400,
+				},
+			},
+			TotalResultsAvailable: 1,
+			TotalResultsReturned:  1,
+			FirstResultPosition:   1,
+		},
+	}
+
+	if err := cache.GetRedisClient().Set(context.Background(), "bravo_test_item", initProduct, 0); err != nil {
+		return nil
+	}
+
+	return initProduct
 }

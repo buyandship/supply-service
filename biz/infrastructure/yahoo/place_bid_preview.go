@@ -9,6 +9,7 @@ import (
 	"github.com/buyandship/supply-service/biz/common/config"
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"github.com/google/uuid"
 )
 
 type PlaceBidPreviewResponse struct {
@@ -33,6 +34,11 @@ type PlaceBidPreviewRequest struct {
 
 // PlaceBidPreview gets bid preview with signature
 func (c *Client) PlaceBidPreview(ctx context.Context, req *PlaceBidPreviewRequest) (*PlaceBidPreviewResponse, error) {
+
+	if globalConfig.GlobalAppConfig.Env == "dev" {
+		return c.MockPlaceBidPreview(ctx, req)
+	}
+
 	params := url.Values{}
 	switch globalConfig.GlobalAppConfig.Env {
 	case "dev":
@@ -85,7 +91,8 @@ func (c *Client) MockPlaceBidPreview(ctx context.Context, req *PlaceBidPreviewRe
 			FirstResultPosition   int            `json:"firstResultPosition"`
 		}{
 			Result: PlaceBidResult{
-				Signature: "abc123def456...",
+				Signature:     "abc123def456...",
+				TransactionId: uuid.New().String(),
 			},
 		},
 	}

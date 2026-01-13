@@ -96,6 +96,8 @@ func RetryQueueConsumer() {
 				continue
 			}
 
+			hlog.Debugf("retry queue body: %s", string(msg.Body))
+
 			// Process your message
 			if err := http.GetNotifier().NotifyBiddingStatus(context.Background(), batchNumber, msg.Body); err != nil {
 

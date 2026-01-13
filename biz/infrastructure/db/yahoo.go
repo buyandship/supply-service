@@ -50,19 +50,29 @@ func (h *H) GetBidRequest(ctx context.Context, orderID string) (order *yahoo.Bid
 	return order, nil
 }
 
-func (h *H) GetBidRequestByAuctionID(ctx context.Context, auctionID string) (order *yahoo.BidRequest, err error) {
+func (h *H) GetBidRequestByAuctionID(ctx context.Context, auctionID, bidRequestId string) (order *yahoo.BidRequest, err error) {
 	ctx, span := trace.StartDBOperation(ctx, "GetBidRequestByAuctionID")
 	defer trace.EndSpan(span, err)
 
 	db := h.cli.WithContext(ctx)
 
 	order = &yahoo.BidRequest{}
-	if err := db.Where("auction_id = ? AND status IN (?)", auctionID, []string{yahoo.StatusCreated, yahoo.StatusBiddingInProgress}).First(order).Error; err != nil {
-		if err != gorm.ErrRecordNotFound {
-			return nil, err
+	if bidRequestId != "" {
+		if err := db.Debug().Where("order_id != ? AND auction_id = ? AND status IN (?)", bidRequestId, auctionID, []string{yahoo.StatusCreated, yahoo.StatusBiddingInProgress}).First(order).Error; err != nil {
+			if err != gorm.ErrRecordNotFound {
+				return nil, err
+			}
+			return nil, nil
 		}
-		return nil, err
+	} else {
+		if err := db.Debug().Where("auction_id = ? AND status IN (?)", auctionID, []string{yahoo.StatusCreated, yahoo.StatusBiddingInProgress}).First(order).Error; err != nil {
+			if err != gorm.ErrRecordNotFound {
+				return nil, err
+			}
+			return nil, nil
+		}
 	}
+
 	return order, nil
 }
 
@@ -130,6 +140,14 @@ func (h *H) AddBidRequest(ctx context.Context, bid *yahoo.YahooTransaction) (err
 		Price:         bid.Price,
 		Status:        bid.Status,
 		TransactionID: bid.TransactionID,
+	}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// update bid request status to [BID_PROCESSING]
+	if err := tx.Model(&yahoo.BidRequest{}).Where("order_id = ?", bid.BidRequestID).Updates(&yahoo.BidRequest{
+		Status: yahoo.StatusBiddingInProgress,
 	}).Error; err != nil {
 		tx.Rollback()
 		return err

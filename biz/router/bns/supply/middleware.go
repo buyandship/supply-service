@@ -235,3 +235,8 @@ func _yahoomanualswitchaccountserviceMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _yahooupdatenextbidpriceserviceMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

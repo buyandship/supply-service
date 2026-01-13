@@ -8,6 +8,7 @@ import (
 	bizErr "github.com/buyandship/supply-service/biz/common/err"
 	"github.com/buyandship/supply-service/biz/handler/bns/supply/mercari"
 	service "github.com/buyandship/supply-service/biz/handler/bns/supply/yahoo"
+	"github.com/buyandship/supply-service/biz/mock"
 	"github.com/buyandship/supply-service/biz/model/bns/supply"
 	_ "github.com/buyandship/supply-service/biz/model/yahoo"
 	"github.com/cloudwego/hertz/pkg/app"
@@ -892,6 +893,14 @@ func YahooManualSwitchAccountService(ctx context.Context, c *app.RequestContext)
 		c.AbortWithStatusJSON(cerr.Status, cerr)
 		return
 	}
+
+	c.JSON(consts.StatusOK, "success")
+}
+
+// YahooUpdateNextBidPriceService .
+// @router /v1/supplysrv/internal/yahoo/update_next_bid_price [POST]
+func YahooUpdateNextBidPriceService(ctx context.Context, c *app.RequestContext) {
+	mock.UpdateNextBidPrice()
 
 	c.JSON(consts.StatusOK, "success")
 }

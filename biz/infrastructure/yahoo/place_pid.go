@@ -8,6 +8,7 @@ import (
 	globalConfig "github.com/buyandship/bns-golib/config"
 	"github.com/buyandship/supply-service/biz/common/config"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/google/uuid"
 )
 
 // PlaceBidRequest represents a bid request
@@ -51,6 +52,10 @@ type PlaceBidResponse struct {
 
 // PlaceBid executes a bid on Yahoo Auction
 func (c *Client) PlaceBid(ctx context.Context, req *PlaceBidRequest) (*PlaceBidResponse, error) {
+
+	if globalConfig.GlobalAppConfig.Env == "dev" {
+		return c.MockPlaceBid(ctx, req)
+	}
 
 	var yahooAccountID string
 	switch globalConfig.GlobalAppConfig.Env {
@@ -119,6 +124,7 @@ func (c *Client) MockPlaceBid(ctx context.Context, req *PlaceBidRequest) (*Place
 				// NextBidPrice:    req.Price + 100,
 				AuctionUrl:     "https://auctions.yahooapis.jp/AuctionWebService/V2/auctionItem?auctionID=x12345678",
 				AuctionItemUrl: "https://page.auctions.yahoo.co.jp/jp/auction/x12345678",
+				TransactionId:  uuid.New().String(),
 			},
 			TotalResultsAvailable: 1,
 			TotalResultsReturned:  1,

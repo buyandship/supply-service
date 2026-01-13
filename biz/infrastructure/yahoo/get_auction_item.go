@@ -724,9 +724,9 @@ type AuctionItemRequest struct {
 // Response models
 type AuctionItemResponse struct {
 	ResultSet struct {
-		TotalResultsAvailable int               `json:"totalResultsAvailable"`
-		TotalResultsReturned  int               `json:"totalResultsReturned"`
-		FirstResultPosition   int               `json:"firstResultPosition"`
+		TotalResultsAvailable int               `json:"@totalResultsAvailable"`
+		TotalResultsReturned  int               `json:"@totalResultsReturned"`
+		FirstResultPosition   int               `json:"@firstResultPosition"`
 		Result                AuctionItemDetail `json:"Result"`
 	} `json:"ResultSet"`
 }
@@ -755,9 +755,9 @@ func (c *Client) GetAuctionItem(ctx context.Context, req AuctionItemRequest) (*A
 func (c *Client) MockGetAuctionItem(ctx context.Context, req AuctionItemRequest) (*AuctionItemResponse, error) {
 	auctionItemResponse := AuctionItemResponse{
 		ResultSet: struct {
-			TotalResultsAvailable int               `json:"totalResultsAvailable"`
-			TotalResultsReturned  int               `json:"totalResultsReturned"`
-			FirstResultPosition   int               `json:"firstResultPosition"`
+			TotalResultsAvailable int               `json:"@totalResultsAvailable"`
+			TotalResultsReturned  int               `json:"@totalResultsReturned"`
+			FirstResultPosition   int               `json:"@firstResultPosition"`
 			Result                AuctionItemDetail `json:"Result"`
 		}{
 			Result: AuctionItemDetail{
