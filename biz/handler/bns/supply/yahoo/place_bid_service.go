@@ -165,7 +165,6 @@ func PlaceBidService(ctx context.Context, req *supply.YahooPlaceBidReq) (resp *y
 		return nil, err
 	}
 
-	// save auction item when WIN_BID
 	go func() {
 		auctionItem := item.ToBidAuctionItem()
 		auctionItem.BidRequestID = req.YsRefID
@@ -307,6 +306,7 @@ func isShoppingItem(item *yahoo.AuctionItemDetail) bool {
 		return false
 	}
 	if item.ShoppingItemCode != "" && item.ShoppingItem != nil && !item.ShoppingItem.IsOptionEnabled {
+		hlog.Errorf("[This is not an error, only for checking out] we place bid for shopping item, auction item: %+v", item.AuctionID)
 		return true
 	}
 	return false
