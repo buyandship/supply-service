@@ -53,7 +53,7 @@ type PlaceBidResponse struct {
 // PlaceBid executes a bid on Yahoo Auction
 func (c *Client) PlaceBid(ctx context.Context, req *PlaceBidRequest) (*PlaceBidResponse, error) {
 
-	if globalConfig.GlobalAppConfig.Env == "dev" {
+	if globalConfig.GlobalAppConfig.Env == "dev" && req.AuctionID == "bravo_test_item" {
 		return c.MockPlaceBid(ctx, req)
 	}
 

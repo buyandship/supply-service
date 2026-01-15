@@ -188,14 +188,14 @@ func Bid(ctx context.Context, req *yahoo.PlaceBidRequest, item *yahoo.AuctionIte
 }
 
 func AddBid(ctx context.Context, req *yahoo.PlaceBidRequest, item *yahoo.AuctionItemDetail) (resp *yahoo.PlaceBidResult, err error) {
-	nextBidPrice := item.BidInfo.NextBid.Price
+	// currenct price
 	// place bid
 	placeBidResp, err := yahoo.GetClient().PlaceBid(ctx, &yahoo.PlaceBidRequest{
 		YahooAccountID:  config.DevYahoo02AccountID,
 		YsRefID:         req.YsRefID,
 		TransactionType: consts.TransactionTypeBid,
 		AuctionID:       req.AuctionID,
-		Price:           nextBidPrice,
+		Price:           req.Price,
 		Signature:       req.Signature,
 	})
 	if err != nil {
@@ -204,12 +204,14 @@ func AddBid(ctx context.Context, req *yahoo.PlaceBidRequest, item *yahoo.Auction
 	}
 
 	// update the next bid price
-	mock.UpdateNextBidPrice()
+	if GlobalConfig.GlobalAppConfig.Env == "dev" && req.AuctionID == "bravo_test_item" {
+		mock.UpdateNextBidPrice()
+	}
 
 	// update bid request status to [BID_PROCESSING]
 	if err := db.GetHandler().AddBidRequest(ctx, &model.YahooTransaction{
 		BidRequestID:  req.YsRefID,
-		Price:         int64(nextBidPrice),
+		Price:         int64(req.Price),
 		Status:        model.StatusBiddingInProgress,
 		TransactionID: placeBidResp.ResultSet.Result.TransactionId,
 	}); err != nil {
